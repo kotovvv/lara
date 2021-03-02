@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', array('uses' => 'App\Http\Controllers\HomeController@showLogin'));
 
 // route to process the form
-Route::post('login', array('uses' => 'App\Http\Controllers\HomeController@doLogin'));
+Route::match(['get','post'],'login', array('uses' => 'App\Http\Controllers\HomeController@doLogin'));
 
-Auth::routes();
+ //Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
