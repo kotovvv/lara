@@ -30,18 +30,21 @@ class DatabaseSeeder extends Seeder
                 'name' => 'lara',
                 'password' => Hash::make('lara'),
                 'role_id' => $role_id,
+                'fio' => 'Admin Adminich',
                 'status' => 1
             ],
             [
                 'name' => 'larac',
                 'password' => Hash::make('lara'),
                 'role_id' => 2,
+                'fio' => 'CRM Manager',
                 'status' => 1
             ],
             [
                 'name' => 'laram',
                 'password' => Hash::make('lara'),
                 'role_id' => 3,
+                'fio' => 'Manager',
                 'status' => 1
             ],
 

@@ -37,6 +37,7 @@ class HomeController extends Controller
             $user = Auth::getUser();
             $roleName = $user->getRoleName($user);
             echo $roleName;
+            echo $user->fio;
         }
     }
 }
