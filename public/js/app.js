@@ -14377,7 +14377,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var _vuetify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./vuetify */ "./resources/js/vuetify.js");
 
- // Vue.component('admin-component', require('./components/admin/main.vue').default);
 
 new vue__WEBPACK_IMPORTED_MODULE_1__.default({
   vuetify: _vuetify__WEBPACK_IMPORTED_MODULE_0__.default
