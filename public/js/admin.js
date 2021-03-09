@@ -25635,7 +25635,7 @@ var render = function() {
           attrs: { fixed: "", temporary: "" },
           on: {
             click: function($event) {
-              _vm.drawer = null
+              _vm.drawer = !_vm.drawer
             }
           },
           model: {
@@ -25649,7 +25649,15 @@ var render = function() {
         [
           _c(
             "v-card",
-            { staticClass: "mx-auto", attrs: { "max-width": "300", tile: "" } },
+            {
+              staticClass: "mx-auto",
+              attrs: { "max-width": "300", tile: "" },
+              on: {
+                click: function($event) {
+                  _vm.drawer = !_vm.drawer
+                }
+              }
+            },
             [
               _c(
                 "v-list",

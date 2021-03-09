@@ -1,22 +1,26 @@
 <template>
   <v-row>
     <v-col cols="4">
-    <v-file-input
-      v-model="files"
-      ref="fileupload"
-      label="Загрузите CSV"
-      show-size
-      truncate-length="24"
-      @change="onFileChange"
-    ></v-file-input>
+      <v-select :items="provider" label="Поставщик"></v-select>
+    </v-col>
+    <v-col cols="4">
+      <v-file-input
+        v-model="files"
+        ref="fileupload"
+        label="Загрузите CSV"
+        show-size
+        truncate-length="24"
+        @change="onFileChange"
+      ></v-file-input>
     </v-col>
   </v-row>
 </template>
 
 <script>
 export default {
-  data: () => ( {
-    files: []
+  data: () => ({
+    provider: ['Провайдер 1','Провайдер 2','Провайдер 3','Провайдер 4'],
+    files: [],
   }),
   methods: {
     onFileChange(f) {

@@ -18,12 +18,13 @@
       <button>ВЫХОД</button>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" fixed temporary @click="drawer = null">
+    <v-navigation-drawer v-model="drawer" fixed temporary @click="drawer = !drawer">
       <!-- menu -->
   <v-card
     class="mx-auto"
     max-width="300"
     tile
+    @click="drawer = !drawer"
   >
     <v-list>
       <v-subheader>MENU</v-subheader>
