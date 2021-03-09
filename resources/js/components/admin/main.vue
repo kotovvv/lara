@@ -59,7 +59,7 @@
 
 <script>
 import tablenewlid from './tablenewlid';
-const importcsv  = () => import("./components/admin/importcsv");
+const importcsv  = () => import("./importcsv");
 // const tableNewLid = () => import("./components/admin/tablenewlid");
 // const User = () => import("./components/User");
 // const Member = () => import("./components/Member");
