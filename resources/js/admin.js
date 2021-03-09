@@ -5,7 +5,7 @@ import MultiFiltersPlugin from '../plugins/MultiFilters';
 
 Vue.config.productionTip = false;
 
-Vue.use(MultiFiltersPlugin);
+//Vue.use(MultiFiltersPlugin);
 
 Vue.component('admin-component', require('./components/admin/main.vue').default);
 new Vue({

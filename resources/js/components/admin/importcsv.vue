@@ -1,5 +1,6 @@
 <template>
   <v-row>
+    <v-col cols="4">
     <v-file-input
       v-model="files"
       ref="fileupload"
@@ -8,15 +9,15 @@
       truncate-length="24"
       @change="onFileChange"
     ></v-file-input>
+    </v-col>
   </v-row>
 </template>
 
 <script>
 export default {
-  data: {
-    // fileinput: "",
-    files: [],
-  },
+  data: () => ( {
+    files: []
+  }),
   methods: {
     onFileChange(f) {
       const ftype = [
@@ -31,7 +32,6 @@ export default {
       if (ftype.indexOf(f.type) >= 0) {
         this.createInput(f);
       } else {
-        // empty input ?????
         this.files = [];
       }
     },
