@@ -23793,6 +23793,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 var users = function users() {
   return __webpack_require__.e(/*! import() */ "resources_js_components_admin_users_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./users.vue */ "./resources/js/components/admin/users.vue"));
 };
@@ -25754,7 +25755,7 @@ var render = function() {
           attrs: { fixed: "", temporary: "" },
           on: {
             click: function($event) {
-              _vm.drawer = null
+              _vm.drawer = !_vm.drawer
             }
           },
           model: {
@@ -25768,7 +25769,15 @@ var render = function() {
         [
           _c(
             "v-card",
-            { staticClass: "mx-auto", attrs: { "max-width": "300", tile: "" } },
+            {
+              staticClass: "mx-auto",
+              attrs: { "max-width": "300", tile: "" },
+              on: {
+                click: function($event) {
+                  _vm.drawer = !_vm.drawer
+                }
+              }
+            },
             [
               _c(
                 "v-list",
