@@ -2,11 +2,11 @@
   <v-row>
     <v-col cols="3">
       <v-select
-       :items="providers"
-       label="Поставщик"
-       item-text="name"
-          item-value="id"
-       ></v-select>
+        :items="providers"
+        label="Поставщик"
+        item-text="name"
+        item-value="id"
+      ></v-select>
     </v-col>
     <v-col cols="3">
       <v-file-input
@@ -33,9 +33,12 @@ export default {
   },
   methods: {
     getProviders() {
-      axios.get("/api/provider")
-      .then((res) => { this.providers = (res.data).map(({ name,id }) => ( { name,id } ) ) })
-      .catch(error => console.log(error));
+      axios
+        .get("/api/provider")
+        .then((res) => {
+          this.providers = res.data.map(({ name, id }) => ({ name, id }));
+        })
+        .catch((error) => console.log(error));
     },
     onFileChange(f) {
       const ftype = [
