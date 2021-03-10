@@ -62,23 +62,16 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-import tablenewlid from './tablenewlid';
-const importcsv  = () => import("./importcsv");
-// const tableNewLid = () => import("./components/admin/tablenewlid");
-// const User = () => import("./components/User");
-// const Member = () => import("./components/Member");
-=======
 const users = () => import("./users.vue");
 const importcsv  = () => import("./importcsv.vue");
 const statusLid = () => import("./statusLid.vue");
 const workPlaces = () => import("./workPlaces");
->>>>>>> c1ece9d23d6900f554d1b26fb161887767e380a4
 
 export default {
     data: () => ({
        drawer: null,
       selectedItem: 0,
+
       items: [
         { text: 'Импорт CSV',name:'importcsv', icon: 'mdi-progress-upload' },
         { text: 'Пользователи',name: 'users', icon: 'mdi-account' },
@@ -95,8 +88,14 @@ export default {
       if (this.adminMenu == "workPlaces") return workPlaces;
     },
   },
+
+  methods: {
+
+  },
+
+
   //  components:{
-  //   'importcsv':() => import("./components/admin/importcsv.vue")
+  //  axios
   //  }
 };
 </script>

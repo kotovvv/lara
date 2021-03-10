@@ -1,9 +1,14 @@
 <template>
   <v-row>
-    <v-col cols="4">
-      <v-select :items="provider" label="Поставщик"></v-select>
+    <v-col cols="3">
+      <v-select
+       :items="providers"
+       label="Поставщик"
+       item-text="name"
+          item-value="id"
+       ></v-select>
     </v-col>
-    <v-col cols="4">
+    <v-col cols="3">
       <v-file-input
         v-model="files"
         ref="fileupload"
@@ -17,12 +22,21 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data: () => ({
-    provider: ['Провайдер 1','Провайдер 2','Провайдер 3','Провайдер 4'],
+    providers: [],
     files: [],
   }),
+  mounted() {
+    this.getProviders();
+  },
   methods: {
+    getProviders() {
+      axios.get("/api/provider")
+      .then((res) => { this.providers = (res.data).map(({ name,id }) => ( { name,id } ) ) })
+      .catch(error => console.log(error));
+    },
     onFileChange(f) {
       const ftype = [
         "text/comma-separated-values",

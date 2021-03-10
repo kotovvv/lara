@@ -23724,9 +23724,130 @@ function mixins(...args) {
 /*!**********************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/babel-loader/lib/index.js!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/admin/main.vue?vue&type=script&lang=js& ***!
   \**********************************************************************************************************************************************************************************************************************************************************/
-/***/ (() => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: D:\\laragon\\www\\lara\\resources\\js\\components\\admin\\main.vue: Unexpected token (64:0)\n\n\u001b[0m \u001b[90m 62 |\u001b[39m \u001b[90m//\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 63 |\u001b[39m\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 64 |\u001b[39m \u001b[33m<<\u001b[39m\u001b[33m<<\u001b[39m\u001b[33m<<\u001b[39m\u001b[33m<\u001b[39m \u001b[33mHEAD\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m    |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 65 |\u001b[39m \u001b[36mimport\u001b[39m tablenewlid \u001b[36mfrom\u001b[39m \u001b[32m'./tablenewlid'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 66 |\u001b[39m \u001b[36mconst\u001b[39m importcsv  \u001b[33m=\u001b[39m () \u001b[33m=>\u001b[39m \u001b[36mimport\u001b[39m(\u001b[32m\"./importcsv\"\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 67 |\u001b[39m \u001b[90m// const tableNewLid = () => import(\"./components/admin/tablenewlid\");\u001b[39m\u001b[0m\n    at Parser._raise (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:776:17)\n    at Parser.raiseWithData (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:769:17)\n    at Parser.raise (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:737:17)\n    at Parser.unexpected (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:9675:16)\n    at Parser.parseExprAtom (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:11069:20)\n    at Parser.parseExprSubscripts (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:10644:23)\n    at Parser.parseUpdate (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:10624:21)\n    at Parser.parseMaybeUnary (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:10602:23)\n    at Parser.parseExprOps (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:10463:23)\n    at Parser.parseMaybeConditional (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:10437:23)\n    at Parser.parseMaybeAssign (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:10400:21)\n    at Parser.parseExpressionBase (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:10345:23)\n    at D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:10339:39\n    at Parser.allowInAnd (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:12037:16)\n    at Parser.parseExpression (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:10339:17)\n    at Parser.parseStatementContent (D:\\laragon\\www\\lara\\node_modules\\@babel\\parser\\lib\\index.js:12326:23)");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+var users = function users() {
+  return __webpack_require__.e(/*! import() */ "resources_js_components_admin_users_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./users.vue */ "./resources/js/components/admin/users.vue"));
+};
+
+var importcsv = function importcsv() {
+  return __webpack_require__.e(/*! import() */ "resources_js_components_admin_importcsv_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./importcsv.vue */ "./resources/js/components/admin/importcsv.vue"));
+};
+
+var statusLid = function statusLid() {
+  return __webpack_require__.e(/*! import() */ "resources_js_components_admin_statusLid_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./statusLid.vue */ "./resources/js/components/admin/statusLid.vue"));
+};
+
+var workPlaces = function workPlaces() {
+  return __webpack_require__.e(/*! import() */ "resources_js_components_admin_workPlaces_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./workPlaces */ "./resources/js/components/admin/workPlaces.vue"));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      drawer: null,
+      selectedItem: 0,
+      items: [{
+        text: 'Импорт CSV',
+        name: 'importcsv',
+        icon: 'mdi-progress-upload'
+      }, {
+        text: 'Пользователи',
+        name: 'users',
+        icon: 'mdi-account'
+      }, {
+        text: 'Статусы лидов',
+        name: 'statusLid',
+        icon: 'mdi-format-list-checks'
+      }, {
+        text: 'Рабочие места',
+        name: 'workPlaces',
+        icon: 'mdi-sitemap'
+      }],
+      adminMenu: "importcsv"
+    };
+  },
+  computed: {
+    adminComponent: function adminComponent() {
+      if (this.adminMenu == "importcsv") return importcsv;
+      if (this.adminMenu == "users") return users;
+      if (this.adminMenu == "statusLid") return statusLid;
+      if (this.adminMenu == "workPlaces") return workPlaces;
+    }
+  },
+  methods: {} //  components:{
+  //  axios
+  //  }
+
+});
 
 /***/ }),
 
@@ -25993,6 +26114,9 @@ module.exports = function installComponents (component, components) {
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	(() => {
@@ -26018,6 +26142,39 @@ module.exports = function installComponents (component, components) {
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/ensure chunk */
+/******/ 	(() => {
+/******/ 		__webpack_require__.f = {};
+/******/ 		// This file contains only the entry chunk.
+/******/ 		// The chunk loading function for additional chunks
+/******/ 		__webpack_require__.e = (chunkId) => {
+/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
+/******/ 				__webpack_require__.f[key](chunkId, promises);
+/******/ 				return promises;
+/******/ 			}, []));
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get javascript chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.u = (chunkId) => {
+/******/ 			// return url for filenames not based on template
+/******/ 			if ({"resources_js_components_admin_users_vue":1,"resources_js_components_admin_importcsv_vue":1,"resources_js_components_admin_statusLid_vue":1,"resources_js_components_admin_workPlaces_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			// return url for filenames based on template
+/******/ 			return undefined;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get mini-css chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference all chunks
+/******/ 		__webpack_require__.miniCssF = (chunkId) => {
+/******/ 			// return url for filenames based on template
+/******/ 			return undefined;
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/global */
 /******/ 	(() => {
 /******/ 		__webpack_require__.g = (function() {
@@ -26035,6 +26192,52 @@ module.exports = function installComponents (component, components) {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/load script */
+/******/ 	(() => {
+/******/ 		var inProgress = {};
+/******/ 		// data-webpack is not used as build has no uniqueName
+/******/ 		// loadScript function to load a script via script tag
+/******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
+/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
+/******/ 			var script, needAttach;
+/******/ 			if(key !== undefined) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				for(var i = 0; i < scripts.length; i++) {
+/******/ 					var s = scripts[i];
+/******/ 					if(s.getAttribute("src") == url) { script = s; break; }
+/******/ 				}
+/******/ 			}
+/******/ 			if(!script) {
+/******/ 				needAttach = true;
+/******/ 				script = document.createElement('script');
+/******/ 		
+/******/ 				script.charset = 'utf-8';
+/******/ 				script.timeout = 120;
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 		
+/******/ 				script.src = url;
+/******/ 			}
+/******/ 			inProgress[url] = [done];
+/******/ 			var onScriptComplete = (prev, event) => {
+/******/ 				// avoid mem leaks in IE.
+/******/ 				script.onerror = script.onload = null;
+/******/ 				clearTimeout(timeout);
+/******/ 				var doneFns = inProgress[url];
+/******/ 				delete inProgress[url];
+/******/ 				script.parentNode && script.parentNode.removeChild(script);
+/******/ 				doneFns && doneFns.forEach((fn) => (fn(event)));
+/******/ 				if(prev) return prev(event);
+/******/ 			}
+/******/ 			;
+/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
+/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
+/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
+/******/ 			needAttach && document.head.appendChild(script);
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -26044,6 +26247,107 @@ module.exports = function installComponents (component, components) {
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		__webpack_require__.p = "/";
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/jsonp chunk loading */
+/******/ 	(() => {
+/******/ 		// no baseURI
+/******/ 		
+/******/ 		// object to store loaded and loading chunks
+/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 		// Promise = chunk loading, 0 = chunk loaded
+/******/ 		var installedChunks = {
+/******/ 			"/js/admin": 0
+/******/ 		};
+/******/ 		
+/******/ 		
+/******/ 		__webpack_require__.f.j = (chunkId, promises) => {
+/******/ 				// JSONP chunk loading for javascript
+/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
+/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
+/******/ 		
+/******/ 					// a Promise means "currently loading".
+/******/ 					if(installedChunkData) {
+/******/ 						promises.push(installedChunkData[2]);
+/******/ 					} else {
+/******/ 						if(true) { // all chunks have JS
+/******/ 							// setup Promise in chunk cache
+/******/ 							var promise = new Promise((resolve, reject) => {
+/******/ 								installedChunkData = installedChunks[chunkId] = [resolve, reject];
+/******/ 							});
+/******/ 							promises.push(installedChunkData[2] = promise);
+/******/ 		
+/******/ 							// start chunk loading
+/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
+/******/ 							// create error before stack unwound to get useful stacktrace later
+/******/ 							var error = new Error();
+/******/ 							var loadingEnded = (event) => {
+/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
+/******/ 									installedChunkData = installedChunks[chunkId];
+/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
+/******/ 									if(installedChunkData) {
+/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 										var realSrc = event && event.target && event.target.src;
+/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
+/******/ 										error.name = 'ChunkLoadError';
+/******/ 										error.type = errorType;
+/******/ 										error.request = realSrc;
+/******/ 										installedChunkData[1](error);
+/******/ 									}
+/******/ 								}
+/******/ 							};
+/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
+/******/ 						} else installedChunks[chunkId] = 0;
+/******/ 					}
+/******/ 				}
+/******/ 		};
+/******/ 		
+/******/ 		// no prefetching
+/******/ 		
+/******/ 		// no preloaded
+/******/ 		
+/******/ 		// no HMR
+/******/ 		
+/******/ 		// no HMR manifest
+/******/ 		
+/******/ 		// no deferred startup
+/******/ 		
+/******/ 		// install a JSONP callback for chunk loading
+/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 			var [chunkIds, moreModules, runtime] = data;
+/******/ 			// add "moreModules" to the modules object,
+/******/ 			// then flag all "chunkIds" as loaded and fire callback
+/******/ 			var moduleId, chunkId, i = 0, resolves = [];
+/******/ 			for(;i < chunkIds.length; i++) {
+/******/ 				chunkId = chunkIds[i];
+/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 					resolves.push(installedChunks[chunkId][0]);
+/******/ 				}
+/******/ 				installedChunks[chunkId] = 0;
+/******/ 			}
+/******/ 			for(moduleId in moreModules) {
+/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 					__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 				}
+/******/ 			}
+/******/ 			if(runtime) runtime(__webpack_require__);
+/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 			while(resolves.length) {
+/******/ 				resolves.shift()();
+/******/ 			}
+/******/ 		
+/******/ 		}
+/******/ 		
+/******/ 		var chunkLoadingGlobal = self["webpackChunk"] = self["webpackChunk"] || [];
+/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ 		
+/******/ 		// no deferred startup
 /******/ 	})();
 /******/ 	
 /************************************************************************/
