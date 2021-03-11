@@ -1,24 +1,48 @@
 <template>
-  <v-row>
-    <v-col cols="3">
-      <v-select
-        :items="providers"
-        label="Поставщик"
-        item-text="name"
-        item-value="id"
-      ></v-select>
-    </v-col>
-    <v-col cols="3">
-      <v-file-input
-        v-model="files"
-        ref="fileupload"
-        label="Загрузите CSV"
-        show-size
-        truncate-length="24"
-        @change="onFileChange"
-      ></v-file-input>
-    </v-col>
-  </v-row>
+  <div>
+    <v-row>
+      <v-col cols="3">
+        <v-select
+          :items="providers"
+          label="Поставщик"
+          item-text="name"
+          item-value="id"
+        ></v-select>
+      </v-col>
+      <v-col cols="3">
+        <v-file-input
+          v-model="files"
+          ref="fileupload"
+          label="Загрузите CSV"
+          show-size
+          truncate-length="24"
+          @change="onFileChange"
+        ></v-file-input>
+      </v-col>
+    </v-row>
+    <v-main>
+      <v-row>
+        <v-col cols="8">
+        <v-card >
+          <v-card-title>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Поиск"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-card-title>
+          <v-data-table
+            :headers="headers"
+            :items="desserts"
+            :search="search"
+          ></v-data-table>
+        </v-card>
+        </v-col>
+      </v-row>
+    </v-main>
+  </div>
 </template>
 
 <script>
@@ -27,6 +51,7 @@ export default {
   data: () => ({
     providers: [],
     files: [],
+    search: "",
   }),
   mounted() {
     this.getProviders();
