@@ -2100,6 +2100,15 @@ __webpack_require__.r(__webpack_exports__);
     listeners
   }) {
     const children = [];
+    let icon = props.offIcon;
+    if (props.indeterminate) icon = props.indeterminateIcon;else if (props.value) icon = props.onIcon;
+    children.push(h(_VIcon__WEBPACK_IMPORTED_MODULE_5__.default, _mixins_colorable__WEBPACK_IMPORTED_MODULE_3__.default.options.methods.setTextColor(props.value && props.color, {
+      props: {
+        disabled: props.disabled,
+        dark: props.dark,
+        light: props.light
+      }
+    }), icon));
 
     if (props.ripple && !props.disabled) {
       const ripple = h('div', _mixins_colorable__WEBPACK_IMPORTED_MODULE_3__.default.options.methods.setTextColor(props.color, {
@@ -2114,21 +2123,11 @@ __webpack_require__.r(__webpack_exports__);
       children.push(ripple);
     }
 
-    let icon = props.offIcon;
-    if (props.indeterminate) icon = props.indeterminateIcon;else if (props.value) icon = props.onIcon;
-    children.push(h(_VIcon__WEBPACK_IMPORTED_MODULE_5__.default, _mixins_colorable__WEBPACK_IMPORTED_MODULE_3__.default.options.methods.setTextColor(props.value && props.color, {
-      props: {
-        disabled: props.disabled,
-        dark: props.dark,
-        light: props.light
-      }
-    }), icon));
-    const classes = {
-      'v-simple-checkbox': true,
-      'v-simple-checkbox--disabled': props.disabled
-    };
     return h('div', (0,_util_mergeData__WEBPACK_IMPORTED_MODULE_6__.default)(data, {
-      class: classes,
+      class: {
+        'v-simple-checkbox': true,
+        'v-simple-checkbox--disabled': props.disabled
+      },
       on: {
         click: e => {
           e.stopPropagation();
@@ -2138,7 +2137,9 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       }
-    }), children);
+    }), [h('div', {
+      staticClass: 'v-input--selection-controls__input'
+    }, children)]);
   }
 
 }));
@@ -4700,7 +4701,7 @@ __webpack_require__.r(__webpack_exports__);
       // Make sure we don't try to display non-existant page if items suddenly change
       // TODO: Could possibly move this to pageStart/pageStop?
       if (this.serverItemsLength === -1 && items.length <= this.pageStart) {
-        this.internalOptions.page = Math.max(1, Math.ceil(items.length / this.internalOptions.itemsPerPage));
+        this.internalOptions.page = Math.max(1, Math.ceil(items.length / this.internalOptions.itemsPerPage)) || 1; // Prevent NaN
       }
 
       return items.slice(this.pageStart, this.pageStop);
@@ -6769,21 +6770,22 @@ const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_2__.default)(_VTextF
     },
 
     genChipSelection(item, index) {
-      const isDisabled = !this.isInteractive || this.getDisabled(item);
+      const isDisabled = this.isDisabled || this.getDisabled(item);
+      const isInteractive = !isDisabled && this.isInteractive;
       return this.$createElement(_VChip__WEBPACK_IMPORTED_MODULE_10__.default, {
         staticClass: 'v-chip--select',
         attrs: {
           tabindex: -1
         },
         props: {
-          close: this.deletableChips && !isDisabled,
+          close: this.deletableChips && isInteractive,
           disabled: isDisabled,
           inputValue: index === this.selectedIndex,
           small: this.smallChips
         },
         on: {
           click: e => {
-            if (isDisabled) return;
+            if (!isInteractive) return;
             e.stopPropagation();
             this.selectedIndex = index;
           },
@@ -6795,7 +6797,7 @@ const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_2__.default)(_VTextF
 
     genCommaSelection(item, index, last) {
       const color = index === this.selectedIndex && this.computedColor;
-      const isDisabled = !this.isInteractive || this.getDisabled(item);
+      const isDisabled = this.isDisabled || this.getDisabled(item);
       return this.$createElement('div', this.setTextColor(color, {
         staticClass: 'v-select__selection v-select__selection--comma',
         class: {
@@ -6852,7 +6854,8 @@ const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_2__.default)(_VTextF
           type: 'text',
           'aria-readonly': String(this.isReadonly),
           'aria-activedescendant': (0,_util_helpers__WEBPACK_IMPORTED_MODULE_13__.getObjectValueByPath)(this.$refs.menu, 'activeTile.id'),
-          autocomplete: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_13__.getObjectValueByPath)(input.data, 'attrs.autocomplete', 'off')
+          autocomplete: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_13__.getObjectValueByPath)(input.data, 'attrs.autocomplete', 'off'),
+          placeholder: !this.isDirty && (this.isFocused || !this.hasLabel) ? this.placeholder : undefined
         },
         on: {
           keypress: this.onKeyPress
@@ -7357,7 +7360,8 @@ __webpack_require__.r(__webpack_exports__);
       return this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_5__.default, [this.$createElement(_VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_6__.default, {
         props: {
           color: this.color,
-          value: inputValue
+          value: inputValue,
+          ripple: false
         },
         on: {
           input: () => this.$emit('select', item)
@@ -8540,6 +8544,8 @@ function validateAttachTarget(val) {
     } catch (e) {
       console.log(e);
     }
+    /* eslint-disable-line no-console */
+
   },
 
   methods: {
@@ -9597,13 +9603,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       providers: [],
       files: [],
-      search: ""
+      search: "",
+      headers: [{
+        text: "Tel.",
+        align: "start",
+        value: "tel"
+      }, {
+        text: "Email",
+        value: "email"
+      }, {
+        text: "Name",
+        value: "fio"
+      }],
+      parse_header: [],
+      parse_csv: [],
+      sortOrders: {},
+      sortKey: "tel"
     };
   },
   mounted: function mounted() {
@@ -9635,6 +9660,31 @@ __webpack_require__.r(__webpack_exports__);
         this.files = [];
       }
     },
+    csvJSON: function csvJSON(csv) {
+      var vm = this;
+      var lines = csv.split("\n");
+      var result = [];
+      var headers = lines[0].split(",");
+      headers = ['tel', 'email', 'fio']; // vm.parse_header = lines[0].split(",");
+      // lines[0].split(",").forEach(function (key) {
+      //   vm.sortOrders[key] = 1;
+      // });
+
+      lines.map(function (line, indexLine) {
+        if (indexLine < 1) return; // Jump header line
+
+        var obj = {};
+        line = line.trim();
+        var currentline = line.split(",");
+        headers.map(function (header, indexHeader) {
+          obj[header] = currentline[indexHeader];
+        });
+        result.push(obj);
+      });
+      result.pop(); // remove the last item because undefined values
+
+      return result; // JavaScript object
+    },
     createInput: function createInput(file) {
       var _this2 = this;
 
@@ -9649,8 +9699,13 @@ __webpack_require__.r(__webpack_exports__);
         reader.readAsText(file);
       });
       promise.then(function (result) {
+        var vm = _this2;
         /* handle a successful result */
-        console.log(_this2.fileinput);
+        // console.log(this.fileinput);
+        // reader.onload = function(event) {
+
+        vm.parse_csv = vm.csvJSON(_this2.fileinput);
+        console.log(vm.parse_csv); // };
       }, function (error) {
         /* handle an error */
         console.log(error);
@@ -9678,7 +9733,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".v-simple-checkbox {\n  align-self: center;\n  line-height: normal;\n  position: relative;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  cursor: pointer;\n}\n\n.v-simple-checkbox--disabled {\n  cursor: default;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".v-simple-checkbox {\n  align-self: center;\n  line-height: normal;\n  position: relative;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.v-simple-checkbox .v-icon {\n  cursor: pointer;\n}\n\n.v-simple-checkbox--disabled {\n  cursor: default;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -9846,7 +9901,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".theme--light.v-divider {\n  border-color: rgba(0, 0, 0, 0.12);\n}\n\n.theme--dark.v-divider {\n  border-color: rgba(255, 255, 255, 0.12);\n}\n\n.v-divider {\n  display: block;\n  flex: 1 1 0px;\n  max-width: 100%;\n  height: 0px;\n  max-height: 0px;\n  border: solid;\n  border-width: thin 0 0 0;\n  transition: inherit;\n}\n.v-divider--inset:not(.v-divider--vertical) {\n  max-width: calc(100% - 72px);\n}\n.v-application--is-ltr .v-divider--inset:not(.v-divider--vertical) {\n  margin-left: 72px;\n}\n.v-application--is-rtl .v-divider--inset:not(.v-divider--vertical) {\n  margin-right: 72px;\n}\n.v-divider--vertical {\n  align-self: stretch;\n  border: solid;\n  border-width: 0 thin 0 0;\n  display: inline-flex;\n  height: inherit;\n  min-height: 100%;\n  max-height: 100%;\n  max-width: 0px;\n  width: 0px;\n  vertical-align: text-bottom;\n}\n.v-divider--vertical.v-divider--inset {\n  margin-top: 8px;\n  min-height: 0;\n  max-height: calc(100% - 16px);\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".theme--light.v-divider {\n  border-color: rgba(0, 0, 0, 0.12);\n}\n\n.theme--dark.v-divider {\n  border-color: rgba(255, 255, 255, 0.12);\n}\n\n.v-divider {\n  display: block;\n  flex: 1 1 0px;\n  max-width: 100%;\n  height: 0px;\n  max-height: 0px;\n  border: solid;\n  border-width: thin 0 0 0;\n  transition: inherit;\n}\n.v-divider--inset:not(.v-divider--vertical) {\n  max-width: calc(100% - 72px);\n}\n.v-application--is-ltr .v-divider--inset:not(.v-divider--vertical) {\n  margin-left: 72px;\n}\n.v-application--is-rtl .v-divider--inset:not(.v-divider--vertical) {\n  margin-right: 72px;\n}\n.v-divider--vertical {\n  align-self: stretch;\n  border: solid;\n  border-width: 0 thin 0 0;\n  display: inline-flex;\n  height: inherit;\n  min-height: 100%;\n  max-height: 100%;\n  max-width: 0px;\n  width: 0px;\n  vertical-align: text-bottom;\n  margin: 0 -1px;\n}\n.v-divider--vertical.v-divider--inset {\n  margin-top: 8px;\n  min-height: 0;\n  max-height: calc(100% - 16px);\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -9990,7 +10045,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".theme--light.v-select .v-select__selection--comma {\n  color: rgba(0, 0, 0, 0.87);\n}\n.theme--light.v-select .v-select__selection--disabled {\n  color: rgba(0, 0, 0, 0.38);\n}\n.theme--light.v-select.v-text-field--solo-inverted.v-input--is-focused .v-select__selection--comma {\n  color: #FFFFFF;\n}\n\n.theme--dark.v-select .v-select__selection--comma {\n  color: #FFFFFF;\n}\n.theme--dark.v-select .v-select__selection--disabled {\n  color: rgba(255, 255, 255, 0.5);\n}\n.theme--dark.v-select.v-text-field--solo-inverted.v-input--is-focused .v-select__selection--comma {\n  color: rgba(0, 0, 0, 0.87);\n}\n\n.v-select {\n  position: relative;\n}\n.v-select:not(.v-select--is-multi).v-text-field--single-line .v-select__selections {\n  flex-wrap: nowrap;\n}\n.v-select > .v-input__control > .v-input__slot {\n  cursor: pointer;\n}\n.v-select .v-chip {\n  flex: 0 1 auto;\n  margin: 4px;\n}\n.v-select .v-chip--selected:after {\n  opacity: 0.22;\n}\n.v-select .fade-transition-leave-active {\n  position: absolute;\n  left: 0;\n}\n.v-select.v-input--is-dirty ::-moz-placeholder {\n  color: transparent !important;\n}\n.v-select.v-input--is-dirty :-ms-input-placeholder {\n  color: transparent !important;\n}\n.v-select.v-input--is-dirty ::placeholder {\n  color: transparent !important;\n}\n.v-select:not(.v-input--is-dirty):not(.v-input--is-focused) .v-text-field__prefix {\n  line-height: 20px;\n  top: 7px;\n  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n}\n.v-select.v-text-field--enclosed:not(.v-text-field--single-line):not(.v-text-field--outlined) .v-select__selections {\n  padding-top: 20px;\n}\n.v-select.v-text-field--outlined:not(.v-text-field--single-line) .v-select__selections {\n  padding: 8px 0;\n}\n.v-select.v-text-field--outlined:not(.v-text-field--single-line).v-input--dense .v-select__selections {\n  padding: 4px 0;\n}\n.v-select.v-text-field input {\n  flex: 1 1;\n  margin-top: 0;\n  min-width: 0;\n  pointer-events: none;\n  position: relative;\n}\n.v-select.v-select--is-menu-active .v-input__icon--append .v-icon {\n  transform: rotate(180deg);\n}\n.v-select.v-select--chips input {\n  margin: 0;\n}\n.v-select.v-select--chips .v-select__selections {\n  min-height: 42px;\n}\n.v-select.v-select--chips.v-input--dense .v-select__selections {\n  min-height: 40px;\n}\n.v-select.v-select--chips .v-chip--select.v-chip--active::before {\n  opacity: 0.2;\n}\n.v-select.v-select--chips.v-select--chips--small .v-select__selections {\n  min-height: 26px;\n}\n.v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--box .v-select__selections, .v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--enclosed .v-select__selections {\n  min-height: 68px;\n}\n.v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--box.v-input--dense .v-select__selections, .v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--enclosed.v-input--dense .v-select__selections {\n  min-height: 40px;\n}\n.v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--box.v-select--chips--small .v-select__selections, .v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--enclosed.v-select--chips--small .v-select__selections {\n  min-height: 26px;\n}\n.v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--box.v-select--chips--small.v-input--dense .v-select__selections, .v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--enclosed.v-select--chips--small.v-input--dense .v-select__selections {\n  min-height: 38px;\n}\n.v-select.v-text-field--reverse .v-select__slot,\n.v-select.v-text-field--reverse .v-select__selections {\n  flex-direction: row-reverse;\n}\n.v-select__selections {\n  align-items: center;\n  display: flex;\n  flex: 1 1;\n  flex-wrap: wrap;\n  line-height: 18px;\n  max-width: 100%;\n  min-width: 0;\n}\n.v-select__selection {\n  max-width: 90%;\n}\n.v-select__selection--comma {\n  margin: 7px 4px 7px 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.v-select.v-input--dense .v-select__selection--comma {\n  margin: 5px 4px 3px 0;\n}\n.v-select.v-input--dense .v-chip {\n  margin: 0 4px 0 4px;\n}\n.v-select__slot {\n  position: relative;\n  align-items: center;\n  display: flex;\n  max-width: 100%;\n  min-width: 0;\n  width: 100%;\n}\n.v-select:not(.v-text-field--single-line):not(.v-text-field--outlined) .v-select__slot > input {\n  align-self: flex-end;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".theme--light.v-select .v-select__selections {\n  color: rgba(0, 0, 0, 0.87);\n}\n.theme--light.v-select.v-input--is-disabled .v-select__selections {\n  color: rgba(0, 0, 0, 0.38);\n}\n.theme--light.v-select .v-select__selection--disabled {\n  color: rgba(0, 0, 0, 0.38);\n}\n.theme--light.v-select.v-text-field--solo-inverted.v-input--is-focused .v-select__selections {\n  color: #FFFFFF;\n}\n\n.theme--dark.v-select .v-select__selections {\n  color: #FFFFFF;\n}\n.theme--dark.v-select.v-input--is-disabled .v-select__selections {\n  color: rgba(255, 255, 255, 0.5);\n}\n.theme--dark.v-select .v-select__selection--disabled {\n  color: rgba(255, 255, 255, 0.5);\n}\n.theme--dark.v-select.v-text-field--solo-inverted.v-input--is-focused .v-select__selections {\n  color: rgba(0, 0, 0, 0.87);\n}\n\n.v-select {\n  position: relative;\n}\n.v-select:not(.v-select--is-multi).v-text-field--single-line .v-select__selections {\n  flex-wrap: nowrap;\n}\n.v-select > .v-input__control > .v-input__slot {\n  cursor: pointer;\n}\n.v-select .v-chip {\n  flex: 0 1 auto;\n  margin: 4px;\n}\n.v-select .v-chip--selected:after {\n  opacity: 0.22;\n}\n.v-select .fade-transition-leave-active {\n  position: absolute;\n  left: 0;\n}\n.v-select.v-input--is-dirty ::-moz-placeholder {\n  color: transparent !important;\n}\n.v-select.v-input--is-dirty :-ms-input-placeholder {\n  color: transparent !important;\n}\n.v-select.v-input--is-dirty ::placeholder {\n  color: transparent !important;\n}\n.v-select:not(.v-input--is-dirty):not(.v-input--is-focused) .v-text-field__prefix {\n  line-height: 20px;\n  top: 7px;\n  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n}\n.v-select.v-text-field--enclosed:not(.v-text-field--single-line):not(.v-text-field--outlined) .v-select__selections {\n  padding-top: 20px;\n}\n.v-select.v-text-field--outlined:not(.v-text-field--single-line) .v-select__selections {\n  padding: 8px 0;\n}\n.v-select.v-text-field--outlined:not(.v-text-field--single-line).v-input--dense .v-select__selections {\n  padding: 4px 0;\n}\n.v-select.v-text-field input {\n  flex: 1 1;\n  margin-top: 0;\n  min-width: 0;\n  pointer-events: none;\n  position: relative;\n}\n.v-select.v-select--is-menu-active .v-input__icon--append .v-icon {\n  transform: rotate(180deg);\n}\n.v-select.v-select--chips input {\n  margin: 0;\n}\n.v-select.v-select--chips .v-select__selections {\n  min-height: 42px;\n}\n.v-select.v-select--chips.v-input--dense .v-select__selections {\n  min-height: 40px;\n}\n.v-select.v-select--chips .v-chip--select.v-chip--active::before {\n  opacity: 0.2;\n}\n.v-select.v-select--chips.v-select--chips--small .v-select__selections {\n  min-height: 26px;\n}\n.v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--box .v-select__selections, .v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--enclosed .v-select__selections {\n  min-height: 68px;\n}\n.v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--box.v-input--dense .v-select__selections, .v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--enclosed.v-input--dense .v-select__selections {\n  min-height: 40px;\n}\n.v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--box.v-select--chips--small .v-select__selections, .v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--enclosed.v-select--chips--small .v-select__selections {\n  min-height: 26px;\n}\n.v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--box.v-select--chips--small.v-input--dense .v-select__selections, .v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--enclosed.v-select--chips--small.v-input--dense .v-select__selections {\n  min-height: 38px;\n}\n.v-select.v-text-field--reverse .v-select__slot,\n.v-select.v-text-field--reverse .v-select__selections {\n  flex-direction: row-reverse;\n}\n.v-select__selections {\n  align-items: center;\n  display: flex;\n  flex: 1 1;\n  flex-wrap: wrap;\n  line-height: 18px;\n  max-width: 100%;\n  min-width: 0;\n}\n.v-select__selection {\n  max-width: 90%;\n}\n.v-select__selection--comma {\n  margin: 7px 4px 7px 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.v-select.v-input--dense .v-select__selection--comma {\n  margin: 5px 4px 3px 0;\n}\n.v-select.v-input--dense .v-chip {\n  margin: 0 4px 0 4px;\n}\n.v-select__slot {\n  position: relative;\n  align-items: center;\n  display: flex;\n  max-width: 100%;\n  min-width: 0;\n  width: 100%;\n}\n.v-select:not(.v-text-field--single-line):not(.v-text-field--outlined) .v-select__slot > input {\n  align-self: flex-end;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -10588,7 +10643,7 @@ var render = function() {
                           _c("v-text-field", {
                             attrs: {
                               "append-icon": "mdi-magnify",
-                              label: "Поиск 123",
+                              label: "Поиск",
                               "single-line": "",
                               "hide-details": ""
                             },
@@ -10607,8 +10662,11 @@ var render = function() {
                       _c("v-data-table", {
                         attrs: {
                           headers: _vm.headers,
-                          items: _vm.desserts,
-                          search: _vm.search
+                          items: _vm.parse_csv,
+                          search: _vm.search,
+                          "single-select": false,
+                          "item-key": "tel",
+                          "show-select": ""
                         }
                       })
                     ],

@@ -23,22 +23,26 @@
     <v-main>
       <v-row>
         <v-col cols="8">
-        <v-card >
-          <v-card-title>
-            <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="Поиск"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-card-title>
-          <v-data-table
-            :headers="headers"
-            :items="desserts"
-            :search="search"
-          ></v-data-table>
-        </v-card>
+          <v-card>
+            <v-card-title>
+              <v-text-field
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Поиск"
+                single-line
+                hide-details
+              ></v-text-field>
+            </v-card-title>
+            <v-data-table
+              :headers="headers"
+              :items="parse_csv"
+              :search="search"
+              :single-select=false
+              item-key="tel"
+              show-select
+
+            ></v-data-table>
+          </v-card>
         </v-col>
       </v-row>
     </v-main>
@@ -52,6 +56,15 @@ export default {
     providers: [],
     files: [],
     search: "",
+    headers: [
+      { text: "Tel.",align: "start",value: "tel" },
+      { text: "Email", value: "email" },
+      { text: "Name", value: "fio" },
+    ],
+    parse_header: [],
+    parse_csv: [],
+    sortOrders: {},
+    sortKey: "tel",
   }),
   mounted() {
     this.getProviders();
@@ -81,6 +94,35 @@ export default {
         this.files = [];
       }
     },
+    csvJSON(csv) {
+      var vm = this;
+      var lines = csv.split("\n");
+      var result = [];
+      var headers = lines[0].split(",");
+      headers = ['tel','email','fio'];
+      // vm.parse_header = lines[0].split(",");
+      // lines[0].split(",").forEach(function (key) {
+      //   vm.sortOrders[key] = 1;
+      // });
+
+      lines.map(function (line, indexLine) {
+        if (indexLine < 1) return; // Jump header line
+
+        var obj = {};
+        line = line.trim();
+        var currentline = line.split(",");
+
+        headers.map(function (header, indexHeader) {
+          obj[header] = currentline[indexHeader];
+        });
+
+        result.push(obj);
+      });
+
+      result.pop(); // remove the last item because undefined values
+
+      return result; // JavaScript object
+    },
     createInput(file) {
       let promise = new Promise((resolve, reject) => {
         var reader = new FileReader();
@@ -93,8 +135,15 @@ export default {
 
       promise.then(
         (result) => {
+          let vm = this;
           /* handle a successful result */
-          console.log(this.fileinput);
+          // console.log(this.fileinput);
+          // reader.onload = function(event) {
+
+          vm.parse_csv = vm.csvJSON(this.fileinput);
+          console.log(vm.parse_csv);
+
+          // };
         },
         (error) => {
           /* handle an error */
