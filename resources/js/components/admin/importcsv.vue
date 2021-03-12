@@ -24,23 +24,39 @@
       <v-row>
         <v-col cols="8">
           <v-card>
-            <v-card-title>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Поиск"
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-card-title>
+            <v-row>
+              <v-col cols="4">
+                <v-card-title>
+                  <v-text-field
+                    v-model="search"
+                    append-icon="mdi-magnify"
+                    label="Поиск"
+                    single-line
+                    hide-details
+                  ></v-text-field>
+                </v-card-title>
+              </v-col>
+              <v-col cols="4">
+                <v-card-title>
+                  <v-text-field
+                    v-model="filtertel"
+                    @change="getfiltertel"
+                    append-icon="mdi-magnify"
+                    label="Фильтр по телефону"
+                    single-line
+                    hide-details
+                  ></v-text-field>
+                </v-card-title>
+              </v-col>
+            </v-row>
             <v-data-table
               :headers="headers"
               :items="parse_csv"
               :search="search"
-              :single-select=false
+              custom-filter="customFilter"
+              :single-select="false"
               item-key="tel"
               show-select
-
             ></v-data-table>
           </v-card>
         </v-col>
@@ -56,8 +72,9 @@ export default {
     providers: [],
     files: [],
     search: "",
+    filtertel: "",
     headers: [
-      { text: "Tel.",align: "start",value: "tel" },
+      { text: "Tel.", align: "start", value: "tel" },
       { text: "Email", value: "email" },
       { text: "Name", value: "fio" },
     ],
@@ -70,6 +87,13 @@ export default {
     this.getProviders();
   },
   methods: {
+    getfiltertel() {
+      this.parse_csv = [];
+    },
+    customFilter(items, search, filter) {
+      search = search.toString().toLowerCase();
+      return items.filter((row) => filter(row["type"], search));
+    },
     getProviders() {
       axios
         .get("/api/provider")
@@ -99,7 +123,7 @@ export default {
       var lines = csv.split("\n");
       var result = [];
       var headers = lines[0].split(",");
-      headers = ['tel','email','fio'];
+      headers = ["tel", "email", "fio"];
       // vm.parse_header = lines[0].split(",");
       // lines[0].split(",").forEach(function (key) {
       //   vm.sortOrders[key] = 1;

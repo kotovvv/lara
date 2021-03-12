@@ -9607,6 +9607,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -9614,6 +9629,7 @@ __webpack_require__.r(__webpack_exports__);
       providers: [],
       files: [],
       search: "",
+      filtertel: '',
       headers: [{
         text: "Tel.",
         align: "start",
@@ -9635,6 +9651,9 @@ __webpack_require__.r(__webpack_exports__);
     this.getProviders();
   },
   methods: {
+    getfiltertel: function getfiltertel() {
+      this.parse_csv = [];
+    },
     getProviders: function getProviders() {
       var _this = this;
 
@@ -10638,23 +10657,66 @@ var render = function() {
                     "v-card",
                     [
                       _c(
-                        "v-card-title",
+                        "v-row",
                         [
-                          _c("v-text-field", {
-                            attrs: {
-                              "append-icon": "mdi-magnify",
-                              label: "Поиск",
-                              "single-line": "",
-                              "hide-details": ""
-                            },
-                            model: {
-                              value: _vm.search,
-                              callback: function($$v) {
-                                _vm.search = $$v
-                              },
-                              expression: "search"
-                            }
-                          })
+                          _c(
+                            "v-col",
+                            { attrs: { cols: "4" } },
+                            [
+                              _c(
+                                "v-card-title",
+                                [
+                                  _c("v-text-field", {
+                                    attrs: {
+                                      "append-icon": "mdi-magnify",
+                                      label: "Поиск",
+                                      "single-line": "",
+                                      "hide-details": ""
+                                    },
+                                    model: {
+                                      value: _vm.search,
+                                      callback: function($$v) {
+                                        _vm.search = $$v
+                                      },
+                                      expression: "search"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-col",
+                            { attrs: { cols: "4" } },
+                            [
+                              _c(
+                                "v-card-title",
+                                [
+                                  _c("v-text-field", {
+                                    attrs: {
+                                      "append-icon": "mdi-magnify",
+                                      label: "Фильтр по телефону",
+                                      "single-line": "",
+                                      "hide-details": ""
+                                    },
+                                    on: { change: _vm.getfiltertel },
+                                    model: {
+                                      value: _vm.filtertel,
+                                      callback: function($$v) {
+                                        _vm.filtertel = $$v
+                                      },
+                                      expression: "filtertel"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
                         ],
                         1
                       ),
