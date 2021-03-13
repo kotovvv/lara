@@ -53,8 +53,8 @@
               :headers="headers"
               :items="parse_csv"
               :search="search"
-              custom-filter="customFilter"
               :single-select="false"
+              custom-filter="customFilter"
               item-key="tel"
               show-select
             ></v-data-table>
@@ -74,26 +74,47 @@ export default {
     search: "",
     filtertel: "",
     headers: [
-      { text: "Tel.", align: "start", value: "tel" },
+      { text: "Name", value: "name" },
       { text: "Email", value: "email" },
-      { text: "Name", value: "fio" },
+      { text: "Tel.", align: "start", value: "tel" },
     ],
     parse_header: [],
     parse_csv: [],
     sortOrders: {},
-    sortKey: "tel",
+    sortKey: "",
   }),
   mounted() {
     this.getProviders();
   },
+  computed: {
+
+  },
   methods: {
+    // filterTelUsingSearchbar(parse_csv, search, filter) {
+    //   if (this.filtertel !== "") {
+    //     return items.filter((i) =>
+    //       Object.keys(i).some((j) => filter(i[j], search))
+    //     );
+    //   }
+    // },
     getfiltertel() {
-      this.parse_csv = [];
+      //this.parse_csv = [];
     },
-    customFilter(items, search, filter) {
-      search = search.toString().toLowerCase();
-      return items.filter((row) => filter(row["type"], search));
+        customFilter(value, search, item) {
+      let reg = new RegExp('^'+this.filtertel)
+      console.log(value)
+      console.log(search)
+      console.log(item)
+      if (this.filtertel === '') return value
+return value
+      // return this.parse_csv.filter((i) => {
+      //   return this.filtertel !== '' || (reg.test(i.tel));
+      //})
     },
+    // customFilter(items, search, filter) {
+    //   search = search.toString().toLowerCase();
+    //   return items.filter((row) => filter(row["type"], search));
+    // },
     getProviders() {
       axios
         .get("/api/provider")
@@ -111,6 +132,7 @@ export default {
         "application/vnd.ms-excel",
         "application/vnd.msexcel",
         "text/anytext",
+        "text/plain",
       ];
       if (ftype.indexOf(f.type) >= 0) {
         this.createInput(f);
@@ -122,8 +144,8 @@ export default {
       var vm = this;
       var lines = csv.split("\n");
       var result = [];
-      var headers = lines[0].split(",");
-      headers = ["tel", "email", "fio"];
+      var headers = lines[0].split(";");
+      headers = ["name", "email", "tel"];
       // vm.parse_header = lines[0].split(",");
       // lines[0].split(",").forEach(function (key) {
       //   vm.sortOrders[key] = 1;
@@ -134,7 +156,7 @@ export default {
 
         var obj = {};
         line = line.trim();
-        var currentline = line.split(",");
+        var currentline = line.split(";");
 
         headers.map(function (header, indexHeader) {
           obj[header] = currentline[indexHeader];
