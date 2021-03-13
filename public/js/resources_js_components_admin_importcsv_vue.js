@@ -10257,6 +10257,28 @@ __webpack_require__.r(__webpack_exports__);
         return console.log(error);
       });
     },
+    getUsers: function getUsers() {
+      var _this4 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/users/getusers").then(function (res) {
+        _this4.users = res.data.map(function (_ref2) {
+          var name = _ref2.name,
+              id = _ref2.id,
+              role_id = _ref2.role_id,
+              fio = _ref2.fio,
+              hmlids = _ref2.hmlids;
+          return {
+            name: name,
+            id: id,
+            role_id: role_id,
+            fio: fio,
+            hmlids: hmlids
+          };
+        });
+      })["catch"](function (error) {
+        return console.log(error);
+      });
+    },
     onFileChange: function onFileChange(f) {
       var ftype = ["text/comma-separated-values", "text/csv", "application/csv", "application/excel", "application/vnd.ms-excel", "application/vnd.msexcel", "text/anytext", "text/plain"];
 
@@ -10292,11 +10314,11 @@ __webpack_require__.r(__webpack_exports__);
       return result; // JavaScript object
     },
     createInput: function createInput(file) {
-      var _this4 = this;
+      var _this5 = this;
 
       var promise = new Promise(function (resolve, reject) {
         var reader = new FileReader();
-        var vm = _this4;
+        var vm = _this5;
 
         reader.onload = function (e) {
           resolve(vm.fileinput = reader.result);
@@ -10305,13 +10327,13 @@ __webpack_require__.r(__webpack_exports__);
         reader.readAsText(file);
       });
       promise.then(function (result) {
-        var vm = _this4;
+        var vm = _this5;
         /* handle a successful result */
         // console.log(this.fileinput);
         // reader.onload = function(event) {
         // arr.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
 
-        vm.parse_csv = vm.csvJSON(_this4.fileinput).filter(function (v, i, a) {
+        vm.parse_csv = vm.csvJSON(_this5.fileinput).filter(function (v, i, a) {
           return a.findIndex(function (t) {
             return t.tel === v.tel;
           }) === i;

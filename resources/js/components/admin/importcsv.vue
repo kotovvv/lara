@@ -155,6 +155,14 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+        getUsers() {
+      axios
+        .get("/api/users/getusers")
+        .then((res) => {
+          this.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({ name, id, role_id, fio, hmlids}));
+        })
+        .catch((error) => console.log(error));
+    },
     onFileChange(f) {
       const ftype = [
         "text/comma-separated-values",
