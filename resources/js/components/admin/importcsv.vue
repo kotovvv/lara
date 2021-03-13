@@ -3,61 +3,78 @@
     <v-row>
       <v-col cols="3">
         <v-select
+          v-model="selectedProvider"
           :items="providers"
-          label="Поставщик"
+          label="Provider"
           item-text="name"
           item-value="id"
         ></v-select>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="3" v-if="selectedProvider">
         <v-file-input
           v-model="files"
           ref="fileupload"
-          label="Загрузите CSV"
+          label="Upload CSV"
           show-size
           truncate-length="24"
           @change="onFileChange"
         ></v-file-input>
       </v-col>
     </v-row>
-    <v-main>
+    <v-main v-if="parse_csv.length">
       <v-row>
         <v-col cols="8">
           <v-card>
-            <v-row>
-              <v-col cols="4">
-                <v-card-title>
-                  <v-text-field
-                    v-model="search"
-                    append-icon="mdi-magnify"
-                    label="Поиск"
-                    single-line
-                    hide-details
-                  ></v-text-field>
-                </v-card-title>
-              </v-col>
-              <v-col cols="4">
-                <v-card-title>
-                  <v-text-field
-                    v-model="filtertel"
-                    @change="getfiltertel"
-                    append-icon="mdi-magnify"
-                    label="Фильтр по телефону"
-                    single-line
-                    hide-details
-                  ></v-text-field>
-                </v-card-title>
-              </v-col>
-            </v-row>
+            <v-container>
+              <v-row>
+                <v-col cols="4">
+                  <v-card-title>
+                    <v-text-field
+                      v-model="search"
+                      append-icon="mdi-magnify"
+                      label="Search"
+                      single-line
+                      hide-details
+                    ></v-text-field>
+                  </v-card-title>
+                </v-col>
+                <v-col cols="4">
+                  <v-card-title>
+                    <v-text-field
+                      v-model.lazy.trim="filtertel"
+                      append-icon="mdi-phone"
+                      label="Start number"
+                      single-line
+                      hide-details
+                    ></v-text-field>
+                  </v-card-title>
+                </v-col>
+              </v-row>
+            </v-container>
             <v-data-table
+              v-model.lazy.trim="selected"
               :headers="headers"
-              :items="parse_csv"
               :search="search"
               :single-select="false"
-              custom-filter="customFilter"
               item-key="tel"
               show-select
+              @click:row="clickrow"
+              :items="filteredItems"
+              ref="datatable"
             ></v-data-table>
+          </v-card>
+        </v-col>
+        <v-col cols="4">
+          <v-card height="100%" class="pa-5">
+            Select user for filtered lids
+            <!-- <v-sheet color="white" elevation="1" height="100%" width="100%"> -->
+            <v-list>
+              <v-radio-group ref="selectUser" selectUser @change="getUser">
+                <v-radio label="User" value="1"></v-radio>
+                <v-radio label="User" value="2"></v-radio>
+              </v-radio-group>
+            </v-list>
+            <!-- </v-sheet> -->
           </v-card>
         </v-col>
       </v-row>
@@ -69,7 +86,10 @@
 import axios from "axios";
 export default {
   data: () => ({
+    users:[],
     providers: [],
+    selectedProvider: 0,
+    selected: [],
     files: [],
     search: "",
     filtertel: "",
@@ -81,40 +101,52 @@ export default {
     parse_header: [],
     parse_csv: [],
     sortOrders: {},
-    sortKey: "",
+    sortKey: "tel",
   }),
   mounted() {
     this.getProviders();
   },
   computed: {
-
+    filteredItems() {
+      let reg = new RegExp("^" + this.filtertel);
+      return this.parse_csv.filter((i) => {
+        return !this.filtertel || reg.test(i.tel);
+      });
+    },
   },
   methods: {
-    // filterTelUsingSearchbar(parse_csv, search, filter) {
-    //   if (this.filtertel !== "") {
-    //     return items.filter((i) =>
-    //       Object.keys(i).some((j) => filter(i[j], search))
-    //     );
-    //   }
-    // },
-    getfiltertel() {
-      //this.parse_csv = [];
+    getUser() {
+      let user = this.$refs.selectUser.lazyValue;
+      console.log(this.$refs.datatable.items.length);
+      if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
+        console.log("selectUser", user);
+        this.parse_csv = this.parse_csv.filter(
+          (ar) => !this.selected.find((rm) => rm.tel === ar.tel)
+        );
+      }
+      if (
+        (this.search !== "" || this.filtertel !== "") &&
+        this.$refs.datatable.items.length > 0
+      ) {
+        this.parse_csv = this.parse_csv.filter(
+          (ar) => !this.$refs.datatable.items.find((rm) => rm.tel === ar.tel)
+        );
+        this.search = "";
+        this.filtertel = "";
+      }
+      if (this.parse_csv.length == 0) {
+        this.files = [];
+        this.selectedProvider = "";
+      }
+      this.$refs.selectUser.lazyValue = "";
     },
-        customFilter(value, search, item) {
-      let reg = new RegExp('^'+this.filtertel)
-      console.log(value)
-      console.log(search)
-      console.log(item)
-      if (this.filtertel === '') return value
-return value
-      // return this.parse_csv.filter((i) => {
-      //   return this.filtertel !== '' || (reg.test(i.tel));
-      //})
+    clickrow() {
+      // console.log(this.selected);
+      console.log(this.files);
     },
-    // customFilter(items, search, filter) {
-    //   search = search.toString().toLowerCase();
-    //   return items.filter((row) => filter(row["type"], search));
-    // },
+    getFiltered(el) {
+      console.log("Get filtered", el);
+    },
     getProviders() {
       axios
         .get("/api/provider")
@@ -185,9 +217,11 @@ return value
           /* handle a successful result */
           // console.log(this.fileinput);
           // reader.onload = function(event) {
-
-          vm.parse_csv = vm.csvJSON(this.fileinput);
-          console.log(vm.parse_csv);
+          // arr.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
+          vm.parse_csv = vm
+            .csvJSON(this.fileinput)
+            .filter((v, i, a) => a.findIndex((t) => t.tel === v.tel) === i);
+          // console.log(vm.parse_csv);
 
           // };
         },

@@ -6429,6 +6429,297 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/vuetify/lib/components/VRadioGroup/VRadio.js":
+/*!*******************************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VRadioGroup/VRadio.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _src_components_VRadioGroup_VRadio_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VRadioGroup/VRadio.sass */ "./node_modules/vuetify/src/components/VRadioGroup/VRadio.sass");
+/* harmony import */ var _VLabel__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../VLabel */ "./node_modules/vuetify/lib/components/VLabel/index.js");
+/* harmony import */ var _VIcon__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
+/* harmony import */ var _VInput__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../VInput */ "./node_modules/vuetify/lib/components/VInput/index.js");
+/* harmony import */ var _mixins_binds_attrs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mixins/binds-attrs */ "./node_modules/vuetify/lib/mixins/binds-attrs/index.js");
+/* harmony import */ var _mixins_colorable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/colorable */ "./node_modules/vuetify/lib/mixins/colorable/index.js");
+/* harmony import */ var _mixins_groupable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/groupable */ "./node_modules/vuetify/lib/mixins/groupable/index.js");
+/* harmony import */ var _mixins_rippleable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/rippleable */ "./node_modules/vuetify/lib/mixins/rippleable/index.js");
+/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
+/* harmony import */ var _mixins_selectable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../mixins/selectable */ "./node_modules/vuetify/lib/mixins/selectable/index.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+/* harmony import */ var _util_mergeData__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../util/mergeData */ "./node_modules/vuetify/lib/util/mergeData.js");
+// Styles
+
+
+
+ // Mixins
+
+
+
+
+
+
+ // Utilities
+
+
+
+
+const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_1__.default)(_mixins_binds_attrs__WEBPACK_IMPORTED_MODULE_2__.default, _mixins_colorable__WEBPACK_IMPORTED_MODULE_3__.default, _mixins_rippleable__WEBPACK_IMPORTED_MODULE_4__.default, (0,_mixins_groupable__WEBPACK_IMPORTED_MODULE_5__.factory)('radioGroup'), _mixins_themeable__WEBPACK_IMPORTED_MODULE_6__.default);
+/* @vue/component */
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (baseMixins.extend().extend({
+  name: 'v-radio',
+  inheritAttrs: false,
+  props: {
+    disabled: Boolean,
+    id: String,
+    label: String,
+    name: String,
+    offIcon: {
+      type: String,
+      default: '$radioOff'
+    },
+    onIcon: {
+      type: String,
+      default: '$radioOn'
+    },
+    readonly: Boolean,
+    value: {
+      default: null
+    }
+  },
+  data: () => ({
+    isFocused: false
+  }),
+  computed: {
+    classes() {
+      return {
+        'v-radio--is-disabled': this.isDisabled,
+        'v-radio--is-focused': this.isFocused,
+        ...this.themeClasses,
+        ...this.groupClasses
+      };
+    },
+
+    computedColor() {
+      return _mixins_selectable__WEBPACK_IMPORTED_MODULE_7__.default.options.computed.computedColor.call(this);
+    },
+
+    computedIcon() {
+      return this.isActive ? this.onIcon : this.offIcon;
+    },
+
+    computedId() {
+      return _VInput__WEBPACK_IMPORTED_MODULE_8__.default.options.computed.computedId.call(this);
+    },
+
+    hasLabel: _VInput__WEBPACK_IMPORTED_MODULE_8__.default.options.computed.hasLabel,
+
+    hasState() {
+      return (this.radioGroup || {}).hasState;
+    },
+
+    isDisabled() {
+      return this.disabled || !!this.radioGroup && this.radioGroup.isDisabled;
+    },
+
+    isReadonly() {
+      return this.readonly || !!this.radioGroup && this.radioGroup.isReadonly;
+    },
+
+    computedName() {
+      if (this.name || !this.radioGroup) {
+        return this.name;
+      }
+
+      return this.radioGroup.name || `radio-${this.radioGroup._uid}`;
+    },
+
+    rippleState() {
+      return _mixins_selectable__WEBPACK_IMPORTED_MODULE_7__.default.options.computed.rippleState.call(this);
+    },
+
+    validationState() {
+      return (this.radioGroup || {}).validationState || this.computedColor;
+    }
+
+  },
+  methods: {
+    genInput(args) {
+      // We can't actually use the mixin directly because
+      // it's made for standalone components, but its
+      // genInput method is exactly what we need
+      return _mixins_selectable__WEBPACK_IMPORTED_MODULE_7__.default.options.methods.genInput.call(this, 'radio', args);
+    },
+
+    genLabel() {
+      if (!this.hasLabel) return null;
+      return this.$createElement(_VLabel__WEBPACK_IMPORTED_MODULE_9__.default, {
+        on: {
+          // Label shouldn't cause the input to focus
+          click: _mixins_selectable__WEBPACK_IMPORTED_MODULE_7__.prevent
+        },
+        attrs: {
+          for: this.computedId
+        },
+        props: {
+          color: this.validationState,
+          focused: this.hasState
+        }
+      }, (0,_util_helpers__WEBPACK_IMPORTED_MODULE_10__.getSlot)(this, 'label') || this.label);
+    },
+
+    genRadio() {
+      return this.$createElement('div', {
+        staticClass: 'v-input--selection-controls__input'
+      }, [this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_11__.default, this.setTextColor(this.validationState, {
+        props: {
+          dense: this.radioGroup && this.radioGroup.dense
+        }
+      }), this.computedIcon), this.genInput({
+        name: this.computedName,
+        value: this.value,
+        ...this.attrs$
+      }), this.genRipple(this.setTextColor(this.rippleState))]);
+    },
+
+    onFocus(e) {
+      this.isFocused = true;
+      this.$emit('focus', e);
+    },
+
+    onBlur(e) {
+      this.isFocused = false;
+      this.$emit('blur', e);
+    },
+
+    onChange() {
+      if (this.isDisabled || this.isReadonly || this.isActive) return;
+      this.toggle();
+    },
+
+    onKeydown: () => {}
+  },
+
+  render(h) {
+    const data = {
+      staticClass: 'v-radio',
+      class: this.classes,
+      on: (0,_util_mergeData__WEBPACK_IMPORTED_MODULE_12__.mergeListeners)({
+        click: this.onChange
+      }, this.listeners$)
+    };
+    return h('div', data, [this.genRadio(), this.genLabel()]);
+  }
+
+}));
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/lib/components/VRadioGroup/VRadioGroup.js":
+/*!************************************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VRadioGroup/VRadioGroup.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _src_styles_components_selection_controls_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/styles/components/_selection-controls.sass */ "./node_modules/vuetify/src/styles/components/_selection-controls.sass");
+/* harmony import */ var _src_components_VRadioGroup_VRadioGroup_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../src/components/VRadioGroup/VRadioGroup.sass */ "./node_modules/vuetify/src/components/VRadioGroup/VRadioGroup.sass");
+/* harmony import */ var _VInput__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../VInput */ "./node_modules/vuetify/lib/components/VInput/index.js");
+/* harmony import */ var _VItemGroup_VItemGroup__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../VItemGroup/VItemGroup */ "./node_modules/vuetify/lib/components/VItemGroup/VItemGroup.js");
+/* harmony import */ var _mixins_comparable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/comparable */ "./node_modules/vuetify/lib/mixins/comparable/index.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+// Styles
+
+ // Extensions
+
+
+ // Mixins
+
+ // Types
+
+
+const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_2__.default)(_mixins_comparable__WEBPACK_IMPORTED_MODULE_3__.default, _VItemGroup_VItemGroup__WEBPACK_IMPORTED_MODULE_4__.BaseItemGroup, _VInput__WEBPACK_IMPORTED_MODULE_5__.default);
+/* @vue/component */
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (baseMixins.extend({
+  name: 'v-radio-group',
+
+  provide() {
+    return {
+      radioGroup: this
+    };
+  },
+
+  props: {
+    column: {
+      type: Boolean,
+      default: true
+    },
+    height: {
+      type: [Number, String],
+      default: 'auto'
+    },
+    name: String,
+    row: Boolean,
+    // If no value set on VRadio
+    // will match valueComparator
+    // force default to null
+    value: null
+  },
+  computed: {
+    classes() {
+      return { ..._VInput__WEBPACK_IMPORTED_MODULE_5__.default.options.computed.classes.call(this),
+        'v-input--selection-controls v-input--radio-group': true,
+        'v-input--radio-group--column': this.column && !this.row,
+        'v-input--radio-group--row': this.row
+      };
+    }
+
+  },
+  methods: {
+    genDefaultSlot() {
+      return this.$createElement('div', {
+        staticClass: 'v-input--radio-group__input',
+        attrs: {
+          id: this.id,
+          role: 'radiogroup',
+          'aria-labelledby': this.computedId
+        }
+      }, _VInput__WEBPACK_IMPORTED_MODULE_5__.default.options.methods.genDefaultSlot.call(this));
+    },
+
+    genInputSlot() {
+      const render = _VInput__WEBPACK_IMPORTED_MODULE_5__.default.options.methods.genInputSlot.call(this);
+      delete render.data.on.click;
+      return render;
+    },
+
+    genLabel() {
+      const label = _VInput__WEBPACK_IMPORTED_MODULE_5__.default.options.methods.genLabel.call(this);
+      if (!label) return null;
+      label.data.attrs.id = this.computedId; // WAI considers this an orphaned label
+
+      delete label.data.attrs.for;
+      label.tag = 'legend';
+      return label;
+    },
+
+    onClick: _VItemGroup_VItemGroup__WEBPACK_IMPORTED_MODULE_4__.BaseItemGroup.options.methods.onClick
+  }
+}));
+
+/***/ }),
+
 /***/ "./node_modules/vuetify/lib/components/VSelect/VSelect.js":
 /*!****************************************************************!*\
   !*** ./node_modules/vuetify/lib/components/VSelect/VSelect.js ***!
@@ -9104,6 +9395,235 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/vuetify/lib/mixins/rippleable/index.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/vuetify/lib/mixins/rippleable/index.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _directives_ripple__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../directives/ripple */ "./node_modules/vuetify/lib/directives/ripple/index.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+// Directives
+ // Types
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (vue__WEBPACK_IMPORTED_MODULE_0__.default.extend({
+  name: 'rippleable',
+  directives: {
+    ripple: _directives_ripple__WEBPACK_IMPORTED_MODULE_1__.default
+  },
+  props: {
+    ripple: {
+      type: [Boolean, Object],
+      default: true
+    }
+  },
+  methods: {
+    genRipple(data = {}) {
+      if (!this.ripple) return null;
+      data.staticClass = 'v-input--selection-controls__ripple';
+      data.directives = data.directives || [];
+      data.directives.push({
+        name: 'ripple',
+        value: {
+          center: true
+        }
+      });
+      return this.$createElement('div', data);
+    }
+
+  }
+}));
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/lib/mixins/selectable/index.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/vuetify/lib/mixins/selectable/index.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "prevent": () => (/* binding */ prevent),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _components_VInput__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/VInput */ "./node_modules/vuetify/lib/components/VInput/index.js");
+/* harmony import */ var _rippleable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../rippleable */ "./node_modules/vuetify/lib/mixins/rippleable/index.js");
+/* harmony import */ var _comparable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../comparable */ "./node_modules/vuetify/lib/mixins/comparable/index.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+// Components
+ // Mixins
+
+
+ // Utilities
+
+
+function prevent(e) {
+  e.preventDefault();
+}
+/* @vue/component */
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_0__.default)(_components_VInput__WEBPACK_IMPORTED_MODULE_1__.default, _rippleable__WEBPACK_IMPORTED_MODULE_2__.default, _comparable__WEBPACK_IMPORTED_MODULE_3__.default).extend({
+  name: 'selectable',
+  model: {
+    prop: 'inputValue',
+    event: 'change'
+  },
+  props: {
+    id: String,
+    inputValue: null,
+    falseValue: null,
+    trueValue: null,
+    multiple: {
+      type: Boolean,
+      default: null
+    },
+    label: String
+  },
+
+  data() {
+    return {
+      hasColor: this.inputValue,
+      lazyValue: this.inputValue
+    };
+  },
+
+  computed: {
+    computedColor() {
+      if (!this.isActive) return undefined;
+      if (this.color) return this.color;
+      if (this.isDark && !this.appIsDark) return 'white';
+      return 'primary';
+    },
+
+    isMultiple() {
+      return this.multiple === true || this.multiple === null && Array.isArray(this.internalValue);
+    },
+
+    isActive() {
+      const value = this.value;
+      const input = this.internalValue;
+
+      if (this.isMultiple) {
+        if (!Array.isArray(input)) return false;
+        return input.some(item => this.valueComparator(item, value));
+      }
+
+      if (this.trueValue === undefined || this.falseValue === undefined) {
+        return value ? this.valueComparator(value, input) : Boolean(input);
+      }
+
+      return this.valueComparator(input, this.trueValue);
+    },
+
+    isDirty() {
+      return this.isActive;
+    },
+
+    rippleState() {
+      return !this.isDisabled && !this.validationState ? undefined : this.validationState;
+    }
+
+  },
+  watch: {
+    inputValue(val) {
+      this.lazyValue = val;
+      this.hasColor = val;
+    }
+
+  },
+  methods: {
+    genLabel() {
+      const label = _components_VInput__WEBPACK_IMPORTED_MODULE_1__.default.options.methods.genLabel.call(this);
+      if (!label) return label;
+      label.data.on = {
+        // Label shouldn't cause the input to focus
+        click: prevent
+      };
+      return label;
+    },
+
+    genInput(type, attrs) {
+      return this.$createElement('input', {
+        attrs: Object.assign({
+          'aria-checked': this.isActive.toString(),
+          disabled: this.isDisabled,
+          id: this.computedId,
+          role: type,
+          type
+        }, attrs),
+        domProps: {
+          value: this.value,
+          checked: this.isActive
+        },
+        on: {
+          blur: this.onBlur,
+          change: this.onChange,
+          focus: this.onFocus,
+          keydown: this.onKeydown,
+          click: prevent
+        },
+        ref: 'input'
+      });
+    },
+
+    onBlur() {
+      this.isFocused = false;
+    },
+
+    onClick(e) {
+      this.onChange();
+      this.$emit('click', e);
+    },
+
+    onChange() {
+      if (!this.isInteractive) return;
+      const value = this.value;
+      let input = this.internalValue;
+
+      if (this.isMultiple) {
+        if (!Array.isArray(input)) {
+          input = [];
+        }
+
+        const length = input.length;
+        input = input.filter(item => !this.valueComparator(item, value));
+
+        if (input.length === length) {
+          input.push(value);
+        }
+      } else if (this.trueValue !== undefined && this.falseValue !== undefined) {
+        input = this.valueComparator(input, this.trueValue) ? this.falseValue : this.trueValue;
+      } else if (value) {
+        input = this.valueComparator(input, value) ? null : value;
+      } else {
+        input = !input;
+      }
+
+      this.validate(true, input);
+      this.internalValue = input;
+      this.hasColor = input;
+    },
+
+    onFocus() {
+      this.isFocused = true;
+    },
+
+    /** @abstract */
+    onKeydown(e) {}
+
+  }
+}));
+
+/***/ }),
+
 /***/ "./node_modules/vuetify/lib/mixins/stackable/index.js":
 /*!************************************************************!*\
   !*** ./node_modules/vuetify/lib/mixins/stackable/index.js ***!
@@ -9624,11 +10144,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      users: [],
       providers: [],
+      selectedProvider: 0,
+      selected: [],
       files: [],
       search: "",
       filtertel: "",
@@ -9646,42 +10185,67 @@ __webpack_require__.r(__webpack_exports__);
       parse_header: [],
       parse_csv: [],
       sortOrders: {},
-      sortKey: ""
+      sortKey: "tel"
     };
   },
   mounted: function mounted() {
     this.getProviders();
   },
-  computed: {},
-  methods: {
-    // filterTelUsingSearchbar(parse_csv, search, filter) {
-    //   if (this.filtertel !== "") {
-    //     return items.filter((i) =>
-    //       Object.keys(i).some((j) => filter(i[j], search))
-    //     );
-    //   }
-    // },
-    getfiltertel: function getfiltertel() {//this.parse_csv = [];
-    },
-    customFilter: function customFilter(value, search, item) {
-      var reg = new RegExp('^' + this.filtertel);
-      console.log(value);
-      console.log(search);
-      console.log(item);
-      if (this.filtertel === '') return value;
-      return value; // return this.parse_csv.filter((i) => {
-      //   return this.filtertel !== '' || (reg.test(i.tel));
-      //})
-    },
-    // customFilter(items, search, filter) {
-    //   search = search.toString().toLowerCase();
-    //   return items.filter((row) => filter(row["type"], search));
-    // },
-    getProviders: function getProviders() {
+  computed: {
+    filteredItems: function filteredItems() {
       var _this = this;
 
+      var reg = new RegExp("^" + this.filtertel);
+      return this.parse_csv.filter(function (i) {
+        return !_this.filtertel || reg.test(i.tel);
+      });
+    }
+  },
+  methods: {
+    getUser: function getUser() {
+      var _this2 = this;
+
+      var user = this.$refs.selectUser.lazyValue;
+      console.log(this.$refs.datatable.items.length);
+
+      if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
+        console.log("selectUser", user);
+        this.parse_csv = this.parse_csv.filter(function (ar) {
+          return !_this2.selected.find(function (rm) {
+            return rm.tel === ar.tel;
+          });
+        });
+      }
+
+      if ((this.search !== "" || this.filtertel !== "") && this.$refs.datatable.items.length > 0) {
+        this.parse_csv = this.parse_csv.filter(function (ar) {
+          return !_this2.$refs.datatable.items.find(function (rm) {
+            return rm.tel === ar.tel;
+          });
+        });
+        this.search = "";
+        this.filtertel = "";
+      }
+
+      if (this.parse_csv.length == 0) {
+        this.files = [];
+        this.selectedProvider = "";
+      }
+
+      this.$refs.selectUser.lazyValue = "";
+    },
+    clickrow: function clickrow() {
+      // console.log(this.selected);
+      console.log(this.files);
+    },
+    getFiltered: function getFiltered(el) {
+      console.log("Get filtered", el);
+    },
+    getProviders: function getProviders() {
+      var _this3 = this;
+
       axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/provider").then(function (res) {
-        _this.providers = res.data.map(function (_ref) {
+        _this3.providers = res.data.map(function (_ref) {
           var name = _ref.name,
               id = _ref.id;
           return {
@@ -9728,11 +10292,11 @@ __webpack_require__.r(__webpack_exports__);
       return result; // JavaScript object
     },
     createInput: function createInput(file) {
-      var _this2 = this;
+      var _this4 = this;
 
       var promise = new Promise(function (resolve, reject) {
         var reader = new FileReader();
-        var vm = _this2;
+        var vm = _this4;
 
         reader.onload = function (e) {
           resolve(vm.fileinput = reader.result);
@@ -9741,13 +10305,18 @@ __webpack_require__.r(__webpack_exports__);
         reader.readAsText(file);
       });
       promise.then(function (result) {
-        var vm = _this2;
+        var vm = _this4;
         /* handle a successful result */
         // console.log(this.fileinput);
         // reader.onload = function(event) {
+        // arr.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
 
-        vm.parse_csv = vm.csvJSON(_this2.fileinput);
-        console.log(vm.parse_csv); // };
+        vm.parse_csv = vm.csvJSON(_this4.fileinput).filter(function (v, i, a) {
+          return a.findIndex(function (t) {
+            return t.tel === v.tel;
+          }) === i;
+        }); // console.log(vm.parse_csv);
+        // };
       }, function (error) {
         /* handle an error */
         console.log(error);
@@ -10070,6 +10639,54 @@ ___CSS_LOADER_EXPORT___.push([module.id, "/* Theme */\n.theme--light.v-messages 
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VRadioGroup/VRadio.sass":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VRadioGroup/VRadio.sass ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".theme--light.v-radio--is-disabled label {\n  color: rgba(0, 0, 0, 0.38);\n}\n.theme--light.v-radio--is-disabled .v-icon {\n  color: rgba(0, 0, 0, 0.26) !important;\n}\n\n.theme--dark.v-radio--is-disabled label {\n  color: rgba(255, 255, 255, 0.5);\n}\n.theme--dark.v-radio--is-disabled .v-icon {\n  color: rgba(255, 255, 255, 0.3) !important;\n}\n\n.v-radio {\n  align-items: center;\n  display: flex;\n  height: auto;\n  outline: none;\n}\n.v-radio--is-disabled {\n  pointer-events: none;\n  cursor: default;\n}\n\n.v-input--radio-group.v-input--radio-group--row .v-radio {\n  margin-right: 16px;\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VRadioGroup/VRadioGroup.sass":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VRadioGroup/VRadioGroup.sass ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".v-input--radio-group legend.v-label {\n  cursor: text;\n  font-size: 14px;\n  height: auto;\n}\n.v-input--radio-group__input {\n  border: none;\n  cursor: default;\n  display: flex;\n  width: 100%;\n}\n.v-input--radio-group--column .v-input--radio-group__input > .v-label {\n  padding-bottom: 8px;\n}\n.v-input--radio-group--row .v-input--radio-group__input > .v-label {\n  padding-right: 8px;\n}\n.v-input--radio-group--row legend {\n  align-self: center;\n  display: inline-block;\n}\n.v-input--radio-group--row .v-input--radio-group__input {\n  flex-direction: row;\n  flex-wrap: wrap;\n}\n.v-input--radio-group--column legend {\n  padding-bottom: 8px;\n}\n.v-input--radio-group--column .v-radio:not(:last-child):not(:only-child) {\n  margin-bottom: 8px;\n}\n.v-input--radio-group--column .v-input--radio-group__input {\n  flex-direction: column;\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VSelect/VSelect.sass":
 /*!********************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VSelect/VSelect.sass ***!
@@ -10112,6 +10729,30 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, ".theme--light.v-text-field > .v-input__control > .v-input__slot:before {\n  border-color: rgba(0, 0, 0, 0.42);\n}\n.theme--light.v-text-field:not(.v-input--has-state):hover > .v-input__control > .v-input__slot:before {\n  border-color: rgba(0, 0, 0, 0.87);\n}\n.theme--light.v-text-field.v-input--is-disabled .v-input__slot::before {\n  -o-border-image: repeating-linear-gradient(to right, rgba(0, 0, 0, 0.38) 0px, rgba(0, 0, 0, 0.38) 2px, transparent 2px, transparent 4px) 1 repeat;\n     border-image: repeating-linear-gradient(to right, rgba(0, 0, 0, 0.38) 0px, rgba(0, 0, 0, 0.38) 2px, transparent 2px, transparent 4px) 1 repeat;\n}\n.theme--light.v-text-field--filled > .v-input__control > .v-input__slot {\n  background: rgba(0, 0, 0, 0.06);\n}\n.theme--light.v-text-field--filled:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot:hover {\n  background: rgba(0, 0, 0, 0.12);\n}\n.theme--light.v-text-field--solo > .v-input__control > .v-input__slot {\n  background: #FFFFFF;\n}\n.theme--light.v-text-field--solo-inverted > .v-input__control > .v-input__slot {\n  background: rgba(0, 0, 0, 0.06);\n}\n.theme--light.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot {\n  background: #424242;\n}\n.theme--light.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot input {\n  color: #FFFFFF;\n}\n.theme--light.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot input::-moz-placeholder {\n  color: rgba(255, 255, 255, 0.5);\n}\n.theme--light.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot input:-ms-input-placeholder {\n  color: rgba(255, 255, 255, 0.5);\n}\n.theme--light.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot input::placeholder {\n  color: rgba(255, 255, 255, 0.5);\n}\n.theme--light.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot .v-label {\n  color: rgba(255, 255, 255, 0.7);\n}\n.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset {\n  color: rgba(0, 0, 0, 0.38);\n}\n.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state):not(.v-input--is-disabled) > .v-input__control > .v-input__slot:hover fieldset {\n  color: rgba(0, 0, 0, 0.86);\n}\n.theme--light.v-text-field--outlined:not(.v-input--is-focused).v-input--is-disabled > .v-input__control > .v-input__slot fieldset {\n  color: rgba(0, 0, 0, 0.26);\n}\n\n.theme--dark.v-text-field > .v-input__control > .v-input__slot:before {\n  border-color: rgba(255, 255, 255, 0.7);\n}\n.theme--dark.v-text-field:not(.v-input--has-state):hover > .v-input__control > .v-input__slot:before {\n  border-color: #FFFFFF;\n}\n.theme--dark.v-text-field.v-input--is-disabled .v-input__slot::before {\n  -o-border-image: repeating-linear-gradient(to right, rgba(255, 255, 255, 0.5) 0px, rgba(255, 255, 255, 0.5) 2px, transparent 2px, transparent 4px) 1 repeat;\n     border-image: repeating-linear-gradient(to right, rgba(255, 255, 255, 0.5) 0px, rgba(255, 255, 255, 0.5) 2px, transparent 2px, transparent 4px) 1 repeat;\n}\n.theme--dark.v-text-field--filled > .v-input__control > .v-input__slot {\n  background: rgba(255, 255, 255, 0.08);\n}\n.theme--dark.v-text-field--filled:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot:hover {\n  background: rgba(255, 255, 255, 0.16);\n}\n.theme--dark.v-text-field--solo > .v-input__control > .v-input__slot {\n  background: #1E1E1E;\n}\n.theme--dark.v-text-field--solo-inverted > .v-input__control > .v-input__slot {\n  background: rgba(255, 255, 255, 0.16);\n}\n.theme--dark.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot {\n  background: #FFFFFF;\n}\n.theme--dark.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot input {\n  color: rgba(0, 0, 0, 0.87);\n}\n.theme--dark.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot input::-moz-placeholder {\n  color: rgba(0, 0, 0, 0.38);\n}\n.theme--dark.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot input:-ms-input-placeholder {\n  color: rgba(0, 0, 0, 0.38);\n}\n.theme--dark.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot input::placeholder {\n  color: rgba(0, 0, 0, 0.38);\n}\n.theme--dark.v-text-field--solo-inverted.v-input--is-focused > .v-input__control > .v-input__slot .v-label {\n  color: rgba(0, 0, 0, 0.6);\n}\n.theme--dark.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset {\n  color: rgba(255, 255, 255, 0.24);\n}\n.theme--dark.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state):not(.v-input--is-disabled) > .v-input__control > .v-input__slot:hover fieldset {\n  color: #FFFFFF;\n}\n.theme--dark.v-text-field--outlined:not(.v-input--is-focused).v-input--is-disabled > .v-input__control > .v-input__slot fieldset {\n  color: rgba(255, 255, 255, 0.16);\n}\n\n.v-text-field {\n  padding-top: 12px;\n  margin-top: 4px;\n}\n.v-text-field__prefix, .v-text-field__suffix {\n  line-height: 20px;\n}\n.v-text-field input {\n  flex: 1 1 auto;\n  line-height: 20px;\n  padding: 8px 0 8px;\n  max-width: 100%;\n  min-width: 0px;\n  width: 100%;\n}\n.v-text-field fieldset,\n.v-text-field .v-input__control,\n.v-text-field .v-input__slot {\n  border-radius: inherit;\n}\n.v-text-field fieldset,\n.v-text-field .v-input__control {\n  color: inherit;\n}\n.v-text-field.v-input--has-state .v-input__control > .v-text-field__details > .v-counter {\n  color: inherit;\n}\n.v-text-field.v-input--is-disabled .v-input__control > .v-text-field__details > .v-counter,\n.v-text-field.v-input--is-disabled .v-input__control > .v-text-field__details > .v-messages {\n  color: inherit;\n}\n.v-text-field.v-input--dense {\n  padding-top: 0;\n}\n.v-text-field.v-input--dense .v-label {\n  top: 4px;\n}\n.v-text-field.v-input--dense:not(.v-text-field--outlined) .v-text-field__prefix,\n.v-text-field.v-input--dense:not(.v-text-field--outlined) .v-text-field__suffix,\n.v-text-field.v-input--dense:not(.v-text-field--outlined) input {\n  padding: 4px 0 2px;\n}\n.v-text-field.v-input--dense:not(.v-text-field--outlined) .v-text-field__prefix {\n  padding-right: 4px;\n}\n.v-text-field.v-input--dense:not(.v-text-field--outlined) .v-text-field__suffix {\n  padding-left: 4px;\n}\n.v-text-field.v-input--dense[type=text]::-ms-clear {\n  display: none;\n}\n.v-text-field.v-input--dense .v-input__prepend-inner,\n.v-text-field.v-input--dense .v-input__append-inner {\n  margin-top: 0px;\n}\n.v-text-field .v-input__prepend-inner,\n.v-text-field .v-input__append-inner {\n  align-self: flex-start;\n  display: inline-flex;\n  margin-top: 4px;\n  line-height: 1;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.v-application--is-ltr .v-text-field .v-input__prepend-inner {\n  margin-right: auto;\n  padding-right: 4px;\n}\n.v-application--is-rtl .v-text-field .v-input__prepend-inner {\n  margin-left: auto;\n  padding-left: 4px;\n}\n.v-application--is-ltr .v-text-field .v-input__append-inner {\n  margin-left: auto;\n  padding-left: 4px;\n}\n.v-application--is-rtl .v-text-field .v-input__append-inner {\n  margin-right: auto;\n  padding-right: 4px;\n}\n.v-text-field .v-counter {\n  white-space: nowrap;\n}\n.v-application--is-ltr .v-text-field .v-counter {\n  margin-left: 8px;\n}\n.v-application--is-rtl .v-text-field .v-counter {\n  margin-right: 8px;\n}\n.v-text-field .v-label {\n  max-width: 90%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  top: 6px;\n  white-space: nowrap;\n  pointer-events: none;\n}\n.v-application--is-ltr .v-text-field .v-label {\n  transform-origin: top left;\n}\n.v-application--is-rtl .v-text-field .v-label {\n  transform-origin: top right;\n}\n.v-text-field .v-label--active {\n  max-width: 133%;\n  transform: translateY(-18px) scale(0.75);\n}\n.v-text-field > .v-input__control > .v-input__slot {\n  cursor: text;\n}\n.v-text-field > .v-input__control > .v-input__slot:before, .v-text-field > .v-input__control > .v-input__slot:after {\n  bottom: -1px;\n  content: \"\";\n  left: 0;\n  position: absolute;\n  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n  width: 100%;\n}\n.v-text-field > .v-input__control > .v-input__slot:before {\n  border-color: inherit;\n  border-style: solid;\n  border-width: thin 0 0 0;\n}\n.v-text-field > .v-input__control > .v-input__slot:after {\n  background-color: currentColor;\n  border-color: currentColor;\n  border-style: solid;\n  border-width: thin 0 thin 0;\n  transform: scaleX(0);\n}\n.v-text-field__details {\n  display: flex;\n  flex: 1 0 auto;\n  max-width: 100%;\n  min-height: 14px;\n  overflow: hidden;\n}\n.v-text-field__prefix, .v-text-field__suffix {\n  align-self: center;\n  cursor: default;\n  transition: color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n  white-space: nowrap;\n}\n.v-application--is-ltr .v-text-field__prefix {\n  text-align: right;\n  padding-right: 4px;\n}\n.v-application--is-rtl .v-text-field__prefix {\n  text-align: left;\n  padding-left: 4px;\n}\n.v-text-field__suffix {\n  white-space: nowrap;\n}\n.v-application--is-ltr .v-text-field__suffix {\n  padding-left: 4px;\n}\n.v-application--is-rtl .v-text-field__suffix {\n  padding-right: 4px;\n}\n.v-application--is-ltr .v-text-field--reverse .v-text-field__prefix {\n  text-align: left;\n  padding-right: 0;\n  padding-left: 4px;\n}\n.v-application--is-rtl .v-text-field--reverse .v-text-field__prefix {\n  text-align: right;\n  padding-right: 4px;\n  padding-left: 0;\n}\n.v-application--is-ltr .v-text-field--reverse .v-text-field__suffix {\n  padding-left: 0;\n  padding-right: 4px;\n}\n.v-application--is-rtl .v-text-field--reverse .v-text-field__suffix {\n  padding-left: 4px;\n  padding-right: 0;\n}\n.v-text-field > .v-input__control > .v-input__slot > .v-text-field__slot {\n  display: flex;\n  flex: 1 1 auto;\n  position: relative;\n}\n.v-text-field:not(.v-text-field--is-booted) .v-label,\n.v-text-field:not(.v-text-field--is-booted) legend {\n  transition: none;\n}\n.v-text-field--filled, .v-text-field--full-width, .v-text-field--outlined {\n  position: relative;\n}\n.v-text-field--filled > .v-input__control > .v-input__slot, .v-text-field--full-width > .v-input__control > .v-input__slot, .v-text-field--outlined > .v-input__control > .v-input__slot {\n  align-items: stretch;\n  min-height: 56px;\n}\n.v-text-field--filled.v-input--dense > .v-input__control > .v-input__slot, .v-text-field--full-width.v-input--dense > .v-input__control > .v-input__slot, .v-text-field--outlined.v-input--dense > .v-input__control > .v-input__slot {\n  min-height: 52px;\n}\n.v-text-field--filled.v-input--dense.v-text-field--single-line > .v-input__control > .v-input__slot, .v-text-field--filled.v-input--dense.v-text-field--outlined > .v-input__control > .v-input__slot, .v-text-field--filled.v-input--dense.v-text-field--outlined.v-text-field--filled > .v-input__control > .v-input__slot, .v-text-field--full-width.v-input--dense.v-text-field--single-line > .v-input__control > .v-input__slot, .v-text-field--full-width.v-input--dense.v-text-field--outlined > .v-input__control > .v-input__slot, .v-text-field--full-width.v-input--dense.v-text-field--outlined.v-text-field--filled > .v-input__control > .v-input__slot, .v-text-field--outlined.v-input--dense.v-text-field--single-line > .v-input__control > .v-input__slot, .v-text-field--outlined.v-input--dense.v-text-field--outlined > .v-input__control > .v-input__slot, .v-text-field--outlined.v-input--dense.v-text-field--outlined.v-text-field--filled > .v-input__control > .v-input__slot {\n  min-height: 40px;\n}\n.v-text-field--outlined {\n  border-radius: 4px;\n}\n.v-text-field--full-width .v-input__prepend-outer,\n.v-text-field--full-width .v-input__prepend-inner,\n.v-text-field--full-width .v-input__append-inner,\n.v-text-field--full-width .v-input__append-outer, .v-text-field--enclosed .v-input__prepend-outer,\n.v-text-field--enclosed .v-input__prepend-inner,\n.v-text-field--enclosed .v-input__append-inner,\n.v-text-field--enclosed .v-input__append-outer {\n  margin-top: 17px;\n}\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo) .v-input__prepend-outer,\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo) .v-input__prepend-inner,\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo) .v-input__append-inner,\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo) .v-input__append-outer, .v-text-field--enclosed.v-input--dense:not(.v-text-field--solo) .v-input__prepend-outer,\n.v-text-field--enclosed.v-input--dense:not(.v-text-field--solo) .v-input__prepend-inner,\n.v-text-field--enclosed.v-input--dense:not(.v-text-field--solo) .v-input__append-inner,\n.v-text-field--enclosed.v-input--dense:not(.v-text-field--solo) .v-input__append-outer {\n  margin-top: 14px;\n}\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo).v-text-field--single-line .v-input__prepend-outer,\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo).v-text-field--single-line .v-input__prepend-inner,\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo).v-text-field--single-line .v-input__append-inner,\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo).v-text-field--single-line .v-input__append-outer, .v-text-field--enclosed.v-input--dense:not(.v-text-field--solo).v-text-field--single-line .v-input__prepend-outer,\n.v-text-field--enclosed.v-input--dense:not(.v-text-field--solo).v-text-field--single-line .v-input__prepend-inner,\n.v-text-field--enclosed.v-input--dense:not(.v-text-field--solo).v-text-field--single-line .v-input__append-inner,\n.v-text-field--enclosed.v-input--dense:not(.v-text-field--solo).v-text-field--single-line .v-input__append-outer {\n  margin-top: 9px;\n}\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo).v-text-field--outlined .v-input__prepend-outer,\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo).v-text-field--outlined .v-input__prepend-inner,\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo).v-text-field--outlined .v-input__append-inner,\n.v-text-field--full-width.v-input--dense:not(.v-text-field--solo).v-text-field--outlined .v-input__append-outer, .v-text-field--enclosed.v-input--dense:not(.v-text-field--solo).v-text-field--outlined .v-input__prepend-outer,\n.v-text-field--enclosed.v-input--dense:not(.v-text-field--solo).v-text-field--outlined .v-input__prepend-inner,\n.v-text-field--enclosed.v-input--dense:not(.v-text-field--solo).v-text-field--outlined .v-input__append-inner,\n.v-text-field--enclosed.v-input--dense:not(.v-text-field--solo).v-text-field--outlined .v-input__append-outer {\n  margin-top: 8px;\n}\n.v-text-field--filled .v-label, .v-text-field--full-width .v-label {\n  top: 18px;\n}\n.v-text-field--filled .v-label--active, .v-text-field--full-width .v-label--active {\n  transform: translateY(-6px) scale(0.75);\n}\n.v-text-field--filled.v-input--dense .v-label, .v-text-field--full-width.v-input--dense .v-label {\n  top: 17px;\n}\n.v-text-field--filled.v-input--dense .v-label--active, .v-text-field--full-width.v-input--dense .v-label--active {\n  transform: translateY(-10px) scale(0.75);\n}\n.v-text-field--filled.v-input--dense.v-text-field--single-line .v-label, .v-text-field--full-width.v-input--dense.v-text-field--single-line .v-label {\n  top: 11px;\n}\n.v-text-field--filled {\n  border-radius: 4px 4px 0 0;\n}\n.v-text-field--filled:not(.v-text-field--single-line) input {\n  margin-top: 22px;\n}\n.v-text-field--filled.v-input--dense:not(.v-text-field--single-line).v-text-field--outlined input {\n  margin-top: 0;\n}\n.v-text-field--filled .v-text-field__prefix,\n.v-text-field--filled .v-text-field__suffix {\n  max-height: 32px;\n  margin-top: 20px;\n}\n.v-text-field--full-width {\n  border-radius: 0;\n}\n.v-text-field--outlined .v-text-field__slot, .v-text-field--single-line .v-text-field__slot {\n  align-items: center;\n}\n.v-text-field.v-text-field--enclosed {\n  margin: 0;\n  padding: 0;\n}\n.v-text-field.v-text-field--enclosed.v-text-field--single-line .v-text-field__prefix,\n.v-text-field.v-text-field--enclosed.v-text-field--single-line .v-text-field__suffix {\n  margin-top: 0;\n}\n.v-text-field.v-text-field--enclosed:not(.v-text-field--filled) .v-progress-linear__background {\n  display: none;\n}\n.v-text-field.v-text-field--enclosed:not(.v-text-field--rounded) > .v-input__control > .v-input__slot,\n.v-text-field.v-text-field--enclosed .v-text-field__details {\n  padding: 0 12px;\n}\n.v-text-field.v-text-field--enclosed .v-text-field__details {\n  padding-top: 0px;\n  margin-bottom: 8px;\n}\n.v-application--is-ltr .v-text-field--reverse input {\n  text-align: right;\n}\n.v-application--is-rtl .v-text-field--reverse input {\n  text-align: left;\n}\n.v-application--is-ltr .v-text-field--reverse .v-label {\n  transform-origin: top right;\n}\n.v-application--is-rtl .v-text-field--reverse .v-label {\n  transform-origin: top left;\n}\n.v-text-field--reverse > .v-input__control > .v-input__slot,\n.v-text-field--reverse .v-text-field__slot {\n  flex-direction: row-reverse;\n}\n.v-text-field--outlined > .v-input__control > .v-input__slot:before, .v-text-field--outlined > .v-input__control > .v-input__slot:after, .v-text-field--solo > .v-input__control > .v-input__slot:before, .v-text-field--solo > .v-input__control > .v-input__slot:after, .v-text-field--rounded > .v-input__control > .v-input__slot:before, .v-text-field--rounded > .v-input__control > .v-input__slot:after {\n  display: none;\n}\n.v-text-field--outlined, .v-text-field--solo {\n  border-radius: 4px;\n}\n.v-text-field--outlined {\n  margin-bottom: 16px;\n  transition: border 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n}\n.v-text-field--outlined .v-label {\n  top: 18px;\n}\n.v-text-field--outlined .v-label--active {\n  transform: translateY(-24px) scale(0.75);\n}\n.v-text-field--outlined.v-input--dense .v-label {\n  top: 10px;\n}\n.v-text-field--outlined.v-input--dense .v-label--active {\n  transform: translateY(-16px) scale(0.75);\n}\n.v-text-field--outlined fieldset {\n  border-collapse: collapse;\n  border-color: currentColor;\n  border-style: solid;\n  border-width: 1px;\n  bottom: 0;\n  left: 0;\n  pointer-events: none;\n  position: absolute;\n  right: 0;\n  top: -5px;\n  transition-duration: 0.3s;\n  transition-property: color, border-width;\n  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);\n}\n.v-application--is-ltr .v-text-field--outlined fieldset {\n  padding-left: 8px;\n}\n.v-application--is-rtl .v-text-field--outlined fieldset {\n  padding-right: 8px;\n}\n.v-application--is-ltr .v-text-field--outlined.v-text-field--reverse fieldset {\n  padding-right: 8px;\n}\n.v-application--is-rtl .v-text-field--outlined.v-text-field--reverse fieldset {\n  padding-left: 8px;\n}\n.v-text-field--outlined legend {\n  line-height: 11px;\n  padding: 0;\n  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n}\n.v-application--is-ltr .v-text-field--outlined legend {\n  text-align: left;\n}\n.v-application--is-rtl .v-text-field--outlined legend {\n  text-align: right;\n}\n.v-application--is-ltr .v-text-field--outlined.v-text-field--reverse legend {\n  margin-left: auto;\n}\n.v-application--is-rtl .v-text-field--outlined.v-text-field--reverse legend {\n  margin-right: auto;\n}\n.v-application--is-ltr .v-text-field--outlined.v-text-field--rounded legend {\n  margin-left: 12px;\n}\n.v-application--is-rtl .v-text-field--outlined.v-text-field--rounded legend {\n  margin-right: 12px;\n}\n.v-text-field--outlined > .v-input__control > .v-input__slot {\n  background: transparent;\n}\n.v-text-field--outlined .v-text-field__prefix {\n  max-height: 32px;\n}\n.v-text-field--outlined .v-input__prepend-outer,\n.v-text-field--outlined .v-input__append-outer {\n  margin-top: 18px;\n}\n.v-text-field--outlined.v-input--is-focused fieldset, .v-text-field--outlined.v-input--has-state fieldset {\n  border: 2px solid currentColor;\n}\n.v-text-field--rounded {\n  border-radius: 28px;\n}\n.v-text-field--rounded > .v-input__control > .v-input__slot {\n  padding: 0 24px;\n}\n.v-text-field--shaped {\n  border-radius: 16px 16px 0 0;\n}\n.v-text-field.v-text-field--solo .v-label {\n  top: calc(50% - 9px);\n}\n.v-text-field.v-text-field--solo .v-input__control {\n  min-height: 48px;\n  padding: 0;\n}\n.v-text-field.v-text-field--solo .v-input__control input {\n  caret-color: auto;\n}\n.v-text-field.v-text-field--solo.v-input--dense > .v-input__control {\n  min-height: 38px;\n}\n.v-text-field.v-text-field--solo:not(.v-text-field--solo-flat) > .v-input__control > .v-input__slot {\n  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n}\n.v-text-field.v-text-field--solo .v-input__append-inner,\n.v-text-field.v-text-field--solo .v-input__prepend-inner {\n  align-self: center;\n  margin-top: 0;\n}\n.v-text-field.v-text-field--solo .v-input__prepend-outer,\n.v-text-field.v-text-field--solo .v-input__append-outer {\n  margin-top: 12px;\n}\n.v-text-field.v-text-field--solo.v-input--dense .v-input__prepend-outer,\n.v-text-field.v-text-field--solo.v-input--dense .v-input__append-outer {\n  margin-top: 7px;\n}\n.v-text-field.v-input--is-focused > .v-input__control > .v-input__slot:after {\n  transform: scaleX(1);\n}\n.v-text-field.v-input--has-state > .v-input__control > .v-input__slot:before {\n  border-color: currentColor;\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/styles/components/_selection-controls.sass":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/styles/components/_selection-controls.sass ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".theme--light.v-input--selection-controls.v-input--is-disabled:not(.v-input--indeterminate) .v-icon {\n  color: rgba(0, 0, 0, 0.26) !important;\n}\n\n.theme--dark.v-input--selection-controls.v-input--is-disabled:not(.v-input--indeterminate) .v-icon {\n  color: rgba(255, 255, 255, 0.3) !important;\n}\n\n.v-input--selection-controls {\n  margin-top: 16px;\n  padding-top: 4px;\n}\n.v-input--selection-controls > .v-input__append-outer,\n.v-input--selection-controls > .v-input__prepend-outer {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n.v-input--selection-controls:not(.v-input--hide-details) > .v-input__slot {\n  margin-bottom: 12px;\n}\n.v-input--selection-controls .v-input__slot,\n.v-input--selection-controls .v-radio {\n  cursor: pointer;\n}\n.v-input--selection-controls .v-input__slot > .v-label,\n.v-input--selection-controls .v-radio > .v-label {\n  align-items: center;\n  display: inline-flex;\n  flex: 1 1 auto;\n  height: auto;\n}\n.v-input--selection-controls__input {\n  color: inherit;\n  display: inline-flex;\n  flex: 0 0 auto;\n  height: 24px;\n  position: relative;\n  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n  transition-property: transform;\n  width: 24px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.v-input--selection-controls__input .v-icon {\n  width: 100%;\n}\n.v-application--is-ltr .v-input--selection-controls__input {\n  margin-right: 8px;\n}\n.v-application--is-rtl .v-input--selection-controls__input {\n  margin-left: 8px;\n}\n.v-input--selection-controls__input input[role=checkbox],\n.v-input--selection-controls__input input[role=radio],\n.v-input--selection-controls__input input[role=switch] {\n  position: absolute;\n  opacity: 0;\n  width: 100%;\n  height: 100%;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.v-input--selection-controls__input + .v-label {\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.v-input--selection-controls__ripple {\n  border-radius: 50%;\n  cursor: pointer;\n  height: 34px;\n  position: absolute;\n  transition: inherit;\n  width: 34px;\n  left: -12px;\n  top: calc(50% - 24px);\n  margin: 7px;\n}\n.v-input--selection-controls__ripple:before {\n  border-radius: inherit;\n  bottom: 0;\n  content: \"\";\n  position: absolute;\n  opacity: 0.2;\n  left: 0;\n  right: 0;\n  top: 0;\n  transform-origin: center center;\n  transform: scale(0.2);\n  transition: inherit;\n}\n.v-input--selection-controls__ripple > .v-ripple__container {\n  transform: scale(1.2);\n}\n.v-input--selection-controls.v-input--dense .v-input--selection-controls__ripple {\n  width: 28px;\n  height: 28px;\n  left: -9px;\n}\n.v-input--selection-controls.v-input--dense:not(.v-input--switch) .v-input--selection-controls__ripple {\n  top: calc(50% - 21px);\n}\n.v-input--selection-controls.v-input {\n  flex: 0 1 auto;\n}\n.v-input--selection-controls.v-input--is-focused .v-input--selection-controls__ripple:before,\n.v-input--selection-controls .v-radio--is-focused .v-input--selection-controls__ripple:before {\n  background: currentColor;\n  transform: scale(1.2);\n}\n\n.v-input--selection-controls__input:hover .v-input--selection-controls__ripple:before {\n  background: currentColor;\n  transform: scale(1.2);\n  transition: none;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -10508,6 +11149,66 @@ var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMP
 
 /***/ }),
 
+/***/ "./node_modules/vuetify/src/components/VRadioGroup/VRadio.sass":
+/*!*********************************************************************!*\
+  !*** ./node_modules/vuetify/src/components/VRadioGroup/VRadio.sass ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VRadio_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!../../../../postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!../../../../sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./VRadio.sass */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VRadioGroup/VRadio.sass");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VRadio_sass__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VRadio_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/src/components/VRadioGroup/VRadioGroup.sass":
+/*!**************************************************************************!*\
+  !*** ./node_modules/vuetify/src/components/VRadioGroup/VRadioGroup.sass ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VRadioGroup_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!../../../../postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!../../../../sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./VRadioGroup.sass */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VRadioGroup/VRadioGroup.sass");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VRadioGroup_sass__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VRadioGroup_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
 /***/ "./node_modules/vuetify/src/components/VSelect/VSelect.sass":
 /*!******************************************************************!*\
   !*** ./node_modules/vuetify/src/components/VSelect/VSelect.sass ***!
@@ -10565,6 +11266,36 @@ var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMP
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VTextField_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/src/styles/components/_selection-controls.sass":
+/*!*****************************************************************************!*\
+  !*** ./node_modules/vuetify/src/styles/components/_selection-controls.sass ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_selection_controls_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!../../../../postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!../../../../sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./_selection-controls.sass */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/styles/components/_selection-controls.sass");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_selection_controls_sass__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_selection_controls_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
 
 /***/ }),
 
@@ -10630,80 +11361,131 @@ var render = function() {
               _c("v-select", {
                 attrs: {
                   items: _vm.providers,
-                  label: "Поставщик",
+                  label: "Provider",
                   "item-text": "name",
                   "item-value": "id"
+                },
+                model: {
+                  value: _vm.selectedProvider,
+                  callback: function($$v) {
+                    _vm.selectedProvider = $$v
+                  },
+                  expression: "selectedProvider"
                 }
               })
             ],
             1
           ),
           _vm._v(" "),
-          _c(
-            "v-col",
-            { attrs: { cols: "3" } },
-            [
-              _c("v-file-input", {
-                ref: "fileupload",
-                attrs: {
-                  label: "Загрузите CSV",
-                  "show-size": "",
-                  "truncate-length": "24"
-                },
-                on: { change: _vm.onFileChange },
-                model: {
-                  value: _vm.files,
-                  callback: function($$v) {
-                    _vm.files = $$v
-                  },
-                  expression: "files"
-                }
-              })
-            ],
-            1
-          )
+          _vm.selectedProvider
+            ? _c(
+                "v-col",
+                { attrs: { cols: "3" } },
+                [
+                  _c("v-file-input", {
+                    ref: "fileupload",
+                    attrs: {
+                      label: "Upload CSV",
+                      "show-size": "",
+                      "truncate-length": "24"
+                    },
+                    on: { change: _vm.onFileChange },
+                    model: {
+                      value: _vm.files,
+                      callback: function($$v) {
+                        _vm.files = $$v
+                      },
+                      expression: "files"
+                    }
+                  })
+                ],
+                1
+              )
+            : _vm._e()
         ],
         1
       ),
       _vm._v(" "),
-      _c(
-        "v-main",
-        [
-          _c(
-            "v-row",
+      _vm.parse_csv.length
+        ? _c(
+            "v-main",
             [
               _c(
-                "v-col",
-                { attrs: { cols: "8" } },
+                "v-row",
                 [
                   _c(
-                    "v-card",
+                    "v-col",
+                    { attrs: { cols: "8" } },
                     [
                       _c(
-                        "v-row",
+                        "v-card",
                         [
                           _c(
-                            "v-col",
-                            { attrs: { cols: "4" } },
+                            "v-container",
                             [
                               _c(
-                                "v-card-title",
+                                "v-row",
                                 [
-                                  _c("v-text-field", {
-                                    attrs: {
-                                      "append-icon": "mdi-magnify",
-                                      label: "Поиск",
-                                      "single-line": "",
-                                      "hide-details": ""
-                                    },
-                                    model: {
-                                      value: _vm.search,
-                                      callback: function($$v) {
-                                        _vm.search = $$v
-                                      },
-                                      expression: "search"
-                                    }
-                                  })
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "4" } },
+                                    [
+                                      _c(
+                                        "v-card-title",
+                                        [
+                                          _c("v-text-field", {
+                                            attrs: {
+                                              "append-icon": "mdi-magnify",
+                                              label: "Search",
+                                              "single-line": "",
+                                              "hide-details": ""
+                                            },
+                                            model: {
+                                              value: _vm.search,
+                                              callback: function($$v) {
+                                                _vm.search = $$v
+                                              },
+                                              expression: "search"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "4" } },
+                                    [
+                                      _c(
+                                        "v-card-title",
+                                        [
+                                          _c("v-text-field", {
+                                            attrs: {
+                                              "append-icon": "mdi-phone",
+                                              label: "Start number",
+                                              "single-line": "",
+                                              "hide-details": ""
+                                            },
+                                            model: {
+                                              value: _vm.filtertel,
+                                              callback: function($$v) {
+                                                _vm.filtertel =
+                                                  typeof $$v === "string"
+                                                    ? $$v.trim()
+                                                    : $$v
+                                              },
+                                              expression: "filtertel"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
                                 ],
                                 1
                               )
@@ -10711,28 +11493,62 @@ var render = function() {
                             1
                           ),
                           _vm._v(" "),
+                          _c("v-data-table", {
+                            ref: "datatable",
+                            attrs: {
+                              headers: _vm.headers,
+                              search: _vm.search,
+                              "single-select": false,
+                              "item-key": "tel",
+                              "show-select": "",
+                              items: _vm.filteredItems
+                            },
+                            on: { "click:row": _vm.clickrow },
+                            model: {
+                              value: _vm.selected,
+                              callback: function($$v) {
+                                _vm.selected =
+                                  typeof $$v === "string" ? $$v.trim() : $$v
+                              },
+                              expression: "selected"
+                            }
+                          })
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-col",
+                    { attrs: { cols: "4" } },
+                    [
+                      _c(
+                        "v-card",
+                        { staticClass: "pa-5", attrs: { height: "100%" } },
+                        [
+                          _vm._v(
+                            "\n          Select user for filtered lids\n          "
+                          ),
+                          _vm._v(" "),
                           _c(
-                            "v-col",
-                            { attrs: { cols: "4" } },
+                            "v-list",
                             [
                               _c(
-                                "v-card-title",
+                                "v-radio-group",
+                                {
+                                  ref: "selectUser",
+                                  attrs: { selectUser: "" },
+                                  on: { change: _vm.getUser }
+                                },
                                 [
-                                  _c("v-text-field", {
-                                    attrs: {
-                                      "append-icon": "mdi-magnify",
-                                      label: "Фильтр по телефону",
-                                      "single-line": "",
-                                      "hide-details": ""
-                                    },
-                                    on: { change: _vm.getfiltertel },
-                                    model: {
-                                      value: _vm.filtertel,
-                                      callback: function($$v) {
-                                        _vm.filtertel = $$v
-                                      },
-                                      expression: "filtertel"
-                                    }
+                                  _c("v-radio", {
+                                    attrs: { label: "User", value: "1" }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("v-radio", {
+                                    attrs: { label: "User", value: "2" }
                                   })
                                 ],
                                 1
@@ -10742,19 +11558,7 @@ var render = function() {
                           )
                         ],
                         1
-                      ),
-                      _vm._v(" "),
-                      _c("v-data-table", {
-                        attrs: {
-                          headers: _vm.headers,
-                          items: _vm.parse_csv,
-                          search: _vm.search,
-                          "single-select": false,
-                          "custom-filter": "customFilter",
-                          "item-key": "tel",
-                          "show-select": ""
-                        }
-                      })
+                      )
                     ],
                     1
                   )
@@ -10764,9 +11568,7 @@ var render = function() {
             ],
             1
           )
-        ],
-        1
-      )
+        : _vm._e()
     ],
     1
   )
@@ -10797,12 +11599,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/VCard.js");
 /* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
 /* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VCol.js");
-/* harmony import */ var vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VDataTable */ "./node_modules/vuetify/lib/components/VDataTable/VDataTable.js");
-/* harmony import */ var vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VFileInput */ "./node_modules/vuetify/lib/components/VFileInput/VFileInput.js");
-/* harmony import */ var vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VMain */ "./node_modules/vuetify/lib/components/VMain/VMain.js");
-/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VRow.js");
-/* harmony import */ var vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VSelect */ "./node_modules/vuetify/lib/components/VSelect/VSelect.js");
-/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/VTextField.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VContainer.js");
+/* harmony import */ var vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VDataTable */ "./node_modules/vuetify/lib/components/VDataTable/VDataTable.js");
+/* harmony import */ var vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VFileInput */ "./node_modules/vuetify/lib/components/VFileInput/VFileInput.js");
+/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/VList.js");
+/* harmony import */ var vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VMain */ "./node_modules/vuetify/lib/components/VMain/VMain.js");
+/* harmony import */ var vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VRadioGroup */ "./node_modules/vuetify/lib/components/VRadioGroup/VRadio.js");
+/* harmony import */ var vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vuetify/lib/components/VRadioGroup */ "./node_modules/vuetify/lib/components/VRadioGroup/VRadioGroup.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VRow.js");
+/* harmony import */ var vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! vuetify/lib/components/VSelect */ "./node_modules/vuetify/lib/components/VSelect/VSelect.js");
+/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/VTextField.js");
 
 
 
@@ -10832,7 +11638,11 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 
 
 
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_4__.default,VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__.VCardTitle,VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__.default,VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_7__.default,VFileInput: vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_8__.default,VMain: vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_9__.default,VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_10__.default,VSelect: vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_11__.default,VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_12__.default})
+
+
+
+
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_4__.default,VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__.VCardTitle,VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__.default,VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_7__.default,VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_8__.default,VFileInput: vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_9__.default,VList: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_10__.default,VMain: vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_11__.default,VRadio: vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_12__.default,VRadioGroup: vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_13__.default,VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_14__.default,VSelect: vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_15__.default,VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_16__.default})
 
 
 /* hot reload */
