@@ -9622,6 +9622,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -9629,31 +9631,52 @@ __webpack_require__.r(__webpack_exports__);
       providers: [],
       files: [],
       search: "",
-      filtertel: '',
+      filtertel: "",
       headers: [{
-        text: "Tel.",
-        align: "start",
-        value: "tel"
+        text: "Name",
+        value: "name"
       }, {
         text: "Email",
         value: "email"
       }, {
-        text: "Name",
-        value: "fio"
+        text: "Tel.",
+        align: "start",
+        value: "tel"
       }],
       parse_header: [],
       parse_csv: [],
       sortOrders: {},
-      sortKey: "tel"
+      sortKey: ""
     };
   },
   mounted: function mounted() {
     this.getProviders();
   },
+  computed: {},
   methods: {
-    getfiltertel: function getfiltertel() {
-      this.parse_csv = [];
+    // filterTelUsingSearchbar(parse_csv, search, filter) {
+    //   if (this.filtertel !== "") {
+    //     return items.filter((i) =>
+    //       Object.keys(i).some((j) => filter(i[j], search))
+    //     );
+    //   }
+    // },
+    getfiltertel: function getfiltertel() {//this.parse_csv = [];
     },
+    customFilter: function customFilter(value, search, item) {
+      var reg = new RegExp('^' + this.filtertel);
+      console.log(value);
+      console.log(search);
+      console.log(item);
+      if (this.filtertel === '') return value;
+      return value; // return this.parse_csv.filter((i) => {
+      //   return this.filtertel !== '' || (reg.test(i.tel));
+      //})
+    },
+    // customFilter(items, search, filter) {
+    //   search = search.toString().toLowerCase();
+    //   return items.filter((row) => filter(row["type"], search));
+    // },
     getProviders: function getProviders() {
       var _this = this;
 
@@ -9671,7 +9694,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     onFileChange: function onFileChange(f) {
-      var ftype = ["text/comma-separated-values", "text/csv", "application/csv", "application/excel", "application/vnd.ms-excel", "application/vnd.msexcel", "text/anytext"];
+      var ftype = ["text/comma-separated-values", "text/csv", "application/csv", "application/excel", "application/vnd.ms-excel", "application/vnd.msexcel", "text/anytext", "text/plain"];
 
       if (ftype.indexOf(f.type) >= 0) {
         this.createInput(f);
@@ -9683,8 +9706,8 @@ __webpack_require__.r(__webpack_exports__);
       var vm = this;
       var lines = csv.split("\n");
       var result = [];
-      var headers = lines[0].split(",");
-      headers = ['tel', 'email', 'fio']; // vm.parse_header = lines[0].split(",");
+      var headers = lines[0].split(";");
+      headers = ["name", "email", "tel"]; // vm.parse_header = lines[0].split(",");
       // lines[0].split(",").forEach(function (key) {
       //   vm.sortOrders[key] = 1;
       // });
@@ -9694,7 +9717,7 @@ __webpack_require__.r(__webpack_exports__);
 
         var obj = {};
         line = line.trim();
-        var currentline = line.split(",");
+        var currentline = line.split(";");
         headers.map(function (header, indexHeader) {
           obj[header] = currentline[indexHeader];
         });
@@ -10727,6 +10750,7 @@ var render = function() {
                           items: _vm.parse_csv,
                           search: _vm.search,
                           "single-select": false,
+                          "custom-filter": "customFilter",
                           "item-key": "tel",
                           "show-select": ""
                         }
