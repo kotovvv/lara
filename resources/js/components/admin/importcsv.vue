@@ -21,6 +21,7 @@
         ></v-file-input>
       </v-col>
     </v-row>
+
     <v-main v-if="parse_csv.length">
       <v-row>
         <v-col cols="8">
@@ -67,14 +68,22 @@
         <v-col cols="4">
           <v-card height="100%" class="pa-5">
             Select user for filtered lids
-            <!-- <v-sheet color="white" elevation="1" height="100%" width="100%"> -->
+
             <v-list>
-              <v-radio-group ref="selectUser" selectUser @change="getUser">
-                <v-radio label="User" value="1"></v-radio>
-                <v-radio label="User" value="2"></v-radio>
+              <v-radio-group @change="putSelectedLidsDB" ref="radiogroup" v-model="userid">
+                <v-radio :value="user.id" v-for="user in users" :key="user.id">
+                  <template v-slot:label>
+                    {{ user.fio }}
+                    <v-badge :content="100" :color="usercolor(user)" overlap>
+                      <v-icon large v-if="user.role_id === 2">
+                        mdi-account-group-outline
+                      </v-icon>
+                      <v-icon large v-else> mdi-account-outline </v-icon>
+                    </v-badge>
+                  </template>
+                </v-radio>
               </v-radio-group>
             </v-list>
-            <!-- </v-sheet> -->
           </v-card>
         </v-col>
       </v-row>
@@ -86,7 +95,8 @@
 import axios from "axios";
 export default {
   data: () => ({
-    users:[],
+    userid: null,
+    users: [],
     providers: [],
     selectedProvider: 0,
     selected: [],
@@ -105,6 +115,7 @@ export default {
   }),
   mounted() {
     this.getProviders();
+    this.getUsers();
   },
   computed: {
     filteredItems() {
@@ -115,30 +126,53 @@ export default {
     },
   },
   methods: {
-    getUser() {
-      let user = this.$refs.selectUser.lazyValue;
-      console.log(this.$refs.datatable.items.length);
+    usercolor(user) {
+      return user.role_id == 2 ? "green" : "blue";
+    },
+    putSelectedLidsDB() {
+      let user_id = this.userid;
+      let provider_id = this.selectedProvider;
+let self = this;
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-        console.log("selectUser", user);
-        this.parse_csv = this.parse_csv.filter(
-          (ar) => !this.selected.find((rm) => rm.tel === ar.tel)
+
+        self.parse_csv = self.parse_csv.filter(
+          (ar) => !self.selected.find((rm) => rm.tel === ar.tel)
         );
       }
       if (
         (this.search !== "" || this.filtertel !== "") &&
         this.$refs.datatable.items.length > 0
       ) {
-        this.parse_csv = this.parse_csv.filter(
-          (ar) => !this.$refs.datatable.items.find((rm) => rm.tel === ar.tel)
-        );
-        this.search = "";
-        this.filtertel = "";
+        let send = this.$refs.datatable.items;
+        send = send.map(function (el) {
+          let o = Object.assign({}, el);
+          o.user_id = user_id;
+          o.provider_id = provider_id;
+          return o;
+        });
+        
+        axios
+          .post("api/Lid/newlids", {data:send})
+          .then(function (response) {
+            // console.log(response);
+            self.parse_csv = self.parse_csv.filter(
+              (ar) =>
+                !self.$refs.datatable.items.find((rm) => rm.tel === ar.tel)
+            );
+            self.search = "";
+            self.filtertel = "";
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       }
       if (this.parse_csv.length == 0) {
         this.files = [];
         this.selectedProvider = "";
       }
-      this.$refs.selectUser.lazyValue = "";
+      this.userid = null;
+      console.log(this.$refs.radiogroup)
+      this.$refs.radiogroup.value = null;
     },
     clickrow() {
       // console.log(this.selected);
@@ -155,11 +189,17 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-        getUsers() {
+    getUsers() {
       axios
         .get("/api/users/getusers")
         .then((res) => {
-          this.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({ name, id, role_id, fio, hmlids}));
+          this.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({
+            name,
+            id,
+            role_id,
+            fio,
+            hmlids,
+          }));
         })
         .catch((error) => console.log(error));
     },

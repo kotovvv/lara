@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Provider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use App\Models\Lid;
 
-class ProvidersController extends Controller
+class LidsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +16,7 @@ class ProvidersController extends Controller
      */
     public function index()
     {
-        return Provider::all()->where('active',1);
+        //
     }
 
     /**
@@ -37,31 +37,34 @@ class ProvidersController extends Controller
      */
     public function store(Request $request)
     {
-      $validator = Validator::make(
-        $request->all(),
-        [
-            "name" => ["required"]
-        ]
-    );
-
-    if ($validator->fails()) {
-        return [
-            "status" => false,
-            "errors" => $validator->messages()
-        ];
+        //
+        Log::alert($request);
     }
 
-    $provider = Provider::create([
-        "name" => $request->name,
-        "tel" => $request->tel,
-        "active" => $request->active
-    ]);
+    public function newlids(Request $request)
+    {
+        //  Log::alert($request);
+        // $data = $this->validate($request, [
+        //     'name' => 'requered',
+        //     'tel' => 'requered',
+        //     'email' => 'requered',
+        //     'provider_id' => 'requered',
+        //     'user_id' => 'requered'
+        //    ]);
+            // Log::alert($request->all());
+            $data = $request->all();
 
-    return [
-        "active" => true,
-        "provider" => $provider
-    ];
+           foreach ($data['data'] as $lid) {
 
+            Lid::create([
+                'name' => $lid['name'],
+                'tel' => $lid['tel'],
+                'email' => $lid['email'],
+                'provider_id' => $lid['provider_id'],
+                'user_id' => $lid['user_id']
+            ]);
+          }
+          return response('Lids imported', 200);
     }
 
     /**
@@ -72,15 +75,7 @@ class ProvidersController extends Controller
      */
     public function show($id)
     {
-      $provider = Provider::find($id);
-      if (!$provider) {
-          return response()->json([
-              "status" => false,
-              "message" => "provider not found"
-          ])->setStatusCode(404);
-      }
-
-      return $provider;
+        //
     }
 
     /**

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\v1\ProvidersController;
 use App\Http\Controllers\API\v1\UsersController;
+use App\Http\Controllers\API\v1\LidsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,3 +23,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::resource('provider', ProvidersController::class);
 Route::get('users/getusers', [UsersController::class,'getusers'])->name('user.getusers');
+
+Route::post('Lid/newlids', [LidsController::class,'newlids'])->name('Lid.newlids');

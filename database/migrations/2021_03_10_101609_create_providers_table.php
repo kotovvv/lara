@@ -17,7 +17,7 @@ class CreateProvidersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('tel');
-            $table->boolean('status')->default(true);
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

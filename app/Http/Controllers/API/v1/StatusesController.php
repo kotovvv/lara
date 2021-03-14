@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Provider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
-class ProvidersController extends Controller
+class StatusesController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +14,7 @@ class ProvidersController extends Controller
      */
     public function index()
     {
-        return Provider::all()->where('active',1);
+        //
     }
 
     /**
@@ -37,31 +35,7 @@ class ProvidersController extends Controller
      */
     public function store(Request $request)
     {
-      $validator = Validator::make(
-        $request->all(),
-        [
-            "name" => ["required"]
-        ]
-    );
-
-    if ($validator->fails()) {
-        return [
-            "status" => false,
-            "errors" => $validator->messages()
-        ];
-    }
-
-    $provider = Provider::create([
-        "name" => $request->name,
-        "tel" => $request->tel,
-        "active" => $request->active
-    ]);
-
-    return [
-        "active" => true,
-        "provider" => $provider
-    ];
-
+        //
     }
 
     /**
@@ -72,15 +46,7 @@ class ProvidersController extends Controller
      */
     public function show($id)
     {
-      $provider = Provider::find($id);
-      if (!$provider) {
-          return response()->json([
-              "status" => false,
-              "message" => "provider not found"
-          ])->setStatusCode(404);
-      }
-
-      return $provider;
+        //
     }
 
     /**

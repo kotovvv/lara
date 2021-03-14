@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\API\v1;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\Status;
 use Illuminate\Http\Request;
-use App\Models\User;
 
-class UsersController extends Controller
+class StatusController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -42,10 +41,10 @@ class UsersController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Status  $status
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Status $status)
     {
         //
     }
@@ -53,10 +52,10 @@ class UsersController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Status  $status
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Status $status)
     {
         //
     }
@@ -65,29 +64,21 @@ class UsersController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Models\Status  $status
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Status $status)
     {
         //
     }
 
-
-    public function getusers()
-    {
-        $hmlids = 'SELECT 100';
-        return User::select('*')->where('role_id','>',1)->where('active',1)->orderBy('role_id','asc')->selectSub($hmlids, 'hmlids')->get();
-    }
-
-
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Models\Status  $status
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Status $status)
     {
         //
     }
