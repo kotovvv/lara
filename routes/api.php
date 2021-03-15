@@ -27,3 +27,4 @@ Route::resource('statuses', StatusesController::class);
 Route::get('users/getusers', [UsersController::class,'getusers'])->name('user.getusers');
 
 Route::post('Lid/newlids', [LidsController::class,'newlids'])->name('Lid.newlids');
+Route::resource('lids', LidsController::class);

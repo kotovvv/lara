@@ -17,7 +17,7 @@ class LidsController extends Controller
      */
     public function index()
     {
-        return Lid::all()->where('active',1);
+        return Lid::all()->where('active',1)->where('user_id',2);
     }
 
     /**

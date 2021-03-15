@@ -59,7 +59,7 @@
 </template>
 
 <script>
-const users = () => import("./lids.vue");
+const lids = () => import("./lids.vue");
 
 
 export default {

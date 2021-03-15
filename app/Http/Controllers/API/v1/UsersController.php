@@ -77,7 +77,7 @@ class UsersController extends Controller
 
     public function getusers()
     {
-        $hmlids = 'SELECT 100';
+        // $hmlids = 'SELECT 100';
 
         // return User::select('*')->where('role_id','>',1)->where('active',1)->orderBy('role_id','asc')->selectSub($hmlids, 'hmlids')->get();
         return User::select(['users.*',DB::raw('(SELECT COUNT(user_id) FROM lids WHERE lids.user_id = users.id) as hmlids ')])

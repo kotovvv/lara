@@ -10477,7 +10477,10 @@ __webpack_require__.r(__webpack_exports__);
       var send = {};
       send.user_id = this.userid;
       send.provider_id = this.selectedProvider;
-      send.status_id = this.selectedStatus;
+
+      if (this.selectedStatus !== '') {
+        send.status_id = this.selectedStatus;
+      }
 
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
         send.data = this.selected;

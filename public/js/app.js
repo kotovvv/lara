@@ -23799,7 +23799,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-var users = function users() {
+var lids = function lids() {
   return __webpack_require__.e(/*! import() */ "resources_js_components_manager_lids_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./lids.vue */ "./resources/js/components/manager/lids.vue"));
 };
 
