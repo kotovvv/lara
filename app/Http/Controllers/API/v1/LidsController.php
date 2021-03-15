@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Lid;
 
+
 class LidsController extends Controller
 {
     /**
@@ -16,7 +17,7 @@ class LidsController extends Controller
      */
     public function index()
     {
-        //
+        return Lid::all()->where('active',1);
     }
 
     /**
@@ -45,23 +46,23 @@ class LidsController extends Controller
     {
         //  Log::alert($request);
         // $data = $this->validate($request, [
-        //     'name' => 'requered',
-        //     'tel' => 'requered',
-        //     'email' => 'requered',
         //     'provider_id' => 'requered',
-        //     'user_id' => 'requered'
+        //     'user_id' => 'requered',
+        //     'data' => 'requered'
         //    ]);
             // Log::alert($request->all());
             $data = $request->all();
 
+
            foreach ($data['data'] as $lid) {
 
-            Lid::create([
+            Lid::updateOrCreate(['tel' => $lid['tel']],[
                 'name' => $lid['name'],
-                'tel' => $lid['tel'],
+
                 'email' => $lid['email'],
-                'provider_id' => $lid['provider_id'],
-                'user_id' => $lid['user_id']
+                'provider_id' => $data['provider_id'],
+                'status_id' => $data['status_id'],
+                'user_id' => $data['user_id']
             ]);
           }
           return response('Lids imported', 200);

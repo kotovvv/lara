@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Status;
 
 class StatusesController extends Controller
 {
@@ -14,7 +15,7 @@ class StatusesController extends Controller
      */
     public function index()
     {
-        //
+        return Status::all()->where('active',1);
     }
 
     /**

@@ -10402,6 +10402,26 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -10409,6 +10429,8 @@ __webpack_require__.r(__webpack_exports__);
       userid: null,
       users: [],
       providers: [],
+      statuses: [],
+      selectedStatus: 0,
       selectedProvider: 0,
       selected: [],
       files: [],
@@ -10434,6 +10456,7 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     this.getProviders();
     this.getUsers();
+    this.getStatuses();
   },
   computed: {
     filteredItems: function filteredItems() {
@@ -10450,35 +10473,43 @@ __webpack_require__.r(__webpack_exports__);
       return user.role_id == 2 ? "green" : "blue";
     },
     putSelectedLidsDB: function putSelectedLidsDB() {
-      var user_id = this.userid;
-      var provider_id = this.selectedProvider;
       var self = this;
+      var send = {};
+      send.user_id = this.userid;
+      send.provider_id = this.selectedProvider;
+      send.status_id = this.selectedStatus;
 
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-        self.parse_csv = self.parse_csv.filter(function (ar) {
-          return !self.selected.find(function (rm) {
-            return rm.tel === ar.tel;
-          });
-        });
-      }
-
-      if ((this.search !== "" || this.filtertel !== "") && this.$refs.datatable.items.length > 0) {
-        var send = this.$refs.datatable.items;
-        send = send.map(function (el) {
-          var o = Object.assign({}, el);
-          o.user_id = user_id;
-          o.provider_id = provider_id;
-          return o;
-        });
-        axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/Lid/newlids", {
-          data: send
-        }).then(function (response) {
+        send.data = this.selected;
+        axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/Lid/newlids", send).then(function (response) {
           // console.log(response);
           self.parse_csv = self.parse_csv.filter(function (ar) {
-            return !self.$refs.datatable.items.find(function (rm) {
+            return !self.selected.find(function (rm) {
               return rm.tel === ar.tel;
             });
           });
+          self.selected = [];
+          self.getUsers();
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      } else if ((this.search !== "" || this.filtertel !== "") && this.$refs.datatable.$children[0].filteredItems.length > 0) {
+        send.data = this.$refs.datatable.$children[0].filteredItems; // add user and provider to array
+        // send = send.map(function (el) {
+        //   let o = Object.assign({}, el);
+        //   o.user_id = user_id;
+        //   o.provider_id = provider_id;
+        //   return o;
+        // });
+
+        axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/Lid/newlids", send).then(function (response) {
+          // console.log(response);
+          self.parse_csv = self.parse_csv.filter(function (ar) {
+            return !self.$refs.datatable.$children[0].filteredItems.find(function (rm) {
+              return rm.tel === ar.tel;
+            });
+          });
+          self.getUsers();
           self.search = "";
           self.filtertel = "";
         })["catch"](function (error) {
@@ -10492,21 +10523,16 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.userid = null;
-      console.log(this.$refs.radiogroup);
-      this.$refs.radiogroup.value = null;
+      this.$refs.radiogroup.lazyValue = null;
+      this.getUsers();
     },
     clickrow: function clickrow() {
-      // console.log(this.selected);
-      console.log(this.files);
-    },
-    getFiltered: function getFiltered(el) {
-      console.log("Get filtered", el);
+      console.log('You can click on row))');
     },
     getProviders: function getProviders() {
-      var _this2 = this;
-
+      var self = this;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/provider").then(function (res) {
-        _this2.providers = res.data.map(function (_ref) {
+        self.providers = res.data.map(function (_ref) {
           var name = _ref.name,
               id = _ref.id;
           return {
@@ -10519,10 +10545,9 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     getUsers: function getUsers() {
-      var _this3 = this;
-
+      var self = this;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/users/getusers").then(function (res) {
-        _this3.users = res.data.map(function (_ref2) {
+        self.users = res.data.map(function (_ref2) {
           var name = _ref2.name,
               id = _ref2.id,
               role_id = _ref2.role_id,
@@ -10534,6 +10559,21 @@ __webpack_require__.r(__webpack_exports__);
             role_id: role_id,
             fio: fio,
             hmlids: hmlids
+          };
+        });
+      })["catch"](function (error) {
+        return console.log(error);
+      });
+    },
+    getStatuses: function getStatuses() {
+      var self = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/statuses").then(function (res) {
+        self.statuses = res.data.map(function (_ref3) {
+          var name = _ref3.name,
+              id = _ref3.id;
+          return {
+            name: name,
+            id: id
           };
         });
       })["catch"](function (error) {
@@ -10575,11 +10615,11 @@ __webpack_require__.r(__webpack_exports__);
       return result; // JavaScript object
     },
     createInput: function createInput(file) {
-      var _this4 = this;
+      var _this2 = this;
 
       var promise = new Promise(function (resolve, reject) {
         var reader = new FileReader();
-        var vm = _this4;
+        var vm = _this2;
 
         reader.onload = function (e) {
           resolve(vm.fileinput = reader.result);
@@ -10588,13 +10628,13 @@ __webpack_require__.r(__webpack_exports__);
         reader.readAsText(file);
       });
       promise.then(function (result) {
-        var vm = _this4;
+        var vm = _this2;
         /* handle a successful result */
         // console.log(this.fileinput);
         // reader.onload = function(event) {
         // arr.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
 
-        vm.parse_csv = vm.csvJSON(_this4.fileinput).filter(function (v, i, a) {
+        vm.parse_csv = vm.csvJSON(_this2.fileinput).filter(function (v, i, a) {
           return a.findIndex(function (t) {
             return t.tel === v.tel;
           }) === i;
@@ -11743,7 +11783,7 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _vm.parse_csv.length
+      _vm.parse_csv.length && _vm.files
         ? _c(
             "v-main",
             [
@@ -11763,6 +11803,32 @@ var render = function() {
                               _c(
                                 "v-row",
                                 [
+                                  _c(
+                                    "v-col",
+                                    {
+                                      staticClass: "pt-3 mt-4",
+                                      attrs: { cols: "5" }
+                                    },
+                                    [
+                                      _c("v-select", {
+                                        attrs: {
+                                          items: _vm.statuses,
+                                          label: "Status",
+                                          "item-text": "name",
+                                          "item-value": "id"
+                                        },
+                                        model: {
+                                          value: _vm.selectedStatus,
+                                          callback: function($$v) {
+                                            _vm.selectedStatus = $$v
+                                          },
+                                          expression: "selectedStatus"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
                                   _c(
                                     "v-col",
                                     { attrs: { cols: "4" } },
@@ -11794,7 +11860,7 @@ var render = function() {
                                   _vm._v(" "),
                                   _c(
                                     "v-col",
-                                    { attrs: { cols: "4" } },
+                                    { attrs: { cols: "3" } },
                                     [
                                       _c(
                                         "v-card-title",
@@ -11873,17 +11939,23 @@ var render = function() {
                             [
                               _c(
                                 "v-radio-group",
-                                {
-                                  ref: "radiogroup",
-                                  on: { change: _vm.putSelectedLidsDB },
-                                  model: {
-                                    value: _vm.userid,
-                                    callback: function($$v) {
-                                      _vm.userid = $$v
-                                    },
-                                    expression: "userid"
-                                  }
-                                },
+                                _vm._b(
+                                  {
+                                    ref: "radiogroup",
+                                    attrs: { id: "usersradiogroup" },
+                                    on: { change: _vm.putSelectedLidsDB },
+                                    model: {
+                                      value: _vm.userid,
+                                      callback: function($$v) {
+                                        _vm.userid = $$v
+                                      },
+                                      expression: "userid"
+                                    }
+                                  },
+                                  "v-radio-group",
+                                  _vm.users,
+                                  false
+                                ),
                                 _vm._l(_vm.users, function(user) {
                                   return _c("v-radio", {
                                     key: user.id,
@@ -11903,7 +11975,8 @@ var render = function() {
                                                 "v-badge",
                                                 {
                                                   attrs: {
-                                                    content: 100,
+                                                    content: user.hmlids,
+                                                    value: user.hmlids,
                                                     color: _vm.usercolor(user),
                                                     overlap: ""
                                                   }

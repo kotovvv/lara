@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\v1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use DB;
 
 class UsersController extends Controller
 {
@@ -77,8 +78,20 @@ class UsersController extends Controller
     public function getusers()
     {
         $hmlids = 'SELECT 100';
-        return User::select('*')->where('role_id','>',1)->where('active',1)->orderBy('role_id','asc')->selectSub($hmlids, 'hmlids')->get();
+
+        // return User::select('*')->where('role_id','>',1)->where('active',1)->orderBy('role_id','asc')->selectSub($hmlids, 'hmlids')->get();
+        return User::select(['users.*',DB::raw('(SELECT COUNT(user_id) FROM lids WHERE lids.user_id = users.id) as hmlids ')])
+        
+        ->where('users.role_id','>',1)
+        ->where('users.active',1)
+        ->leftJoin('lids', 'users.id', '=', 'lids.user_id')
+        ->orderBy('users.role_id','asc')
+        ->groupBy('users.id')
+        ->get()
+        ;
+
     }
+
 
 
     /**

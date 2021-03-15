@@ -23893,114 +23893,6 @@ vue__WEBPACK_IMPORTED_MODULE_1__.default.use((vuetify__WEBPACK_IMPORTED_MODULE_2
 
 /***/ }),
 
-/***/ "./resources/plugins/MultiFilters.js":
-/*!*******************************************!*\
-  !*** ./resources/plugins/MultiFilters.js ***!
-  \*******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-/**
- * Enabled v-data-table to have moire than one filter.
- */
-var MultiFilters = /*#__PURE__*/function () {
-  /**
-   * Constructor.
-   *
-   * @param items
-   * @param filters
-   * @param filter
-   * @param headers
-   */
-  function MultiFilters(items, filters, filter, headers) {
-    _classCallCheck(this, MultiFilters);
-
-    this.items = items;
-    this.filter = filter;
-    this.headers = headers;
-    this.filters = filters;
-    this.filterCallbacks = {};
-  }
-  /**
-   * Updates filter values.
-   * @param filters filter´s object
-   * @param val JSON chunk to be updated.
-   * @returns {*}
-   */
-
-
-  _createClass(MultiFilters, [{
-    key: "registerFilter",
-    value:
-    /**
-     * Adds a new filter
-     * @param filterName The name of the filter from which the information will be extracted
-     * @param filterCallback The callback that will apply the filter.
-     */
-    function registerFilter(filterName, filterCallback) {
-      this.filterCallbacks[filterName] = filterCallback;
-    }
-    /**
-     * Run all filters.
-     * @returns {*}
-     */
-
-  }, {
-    key: "runFilters",
-    value: function runFilters() {
-      var self = this;
-      var filteredItems = self.items;
-      Object.entries(this.filterCallbacks).forEach(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            entity = _ref2[0],
-            cb = _ref2[1];
-
-        filteredItems = cb.call(self, self.filters[entity], filteredItems);
-      });
-      return filteredItems;
-    }
-  }], [{
-    key: "updateFilters",
-    value: function updateFilters(filters, val) {
-      return Object.assign({}, filters, val);
-    }
-  }]);
-
-  return MultiFilters;
-}(); // Vue plugin.
-
-
-var MultiFiltersPlugin = {
-  install: function install(Vue, options) {
-    Vue.prototype.$MultiFilters = MultiFilters;
-  }
-};
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MultiFiltersPlugin);
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VAppBar/VAppBar.sass":
 /*!********************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VAppBar/VAppBar.sass ***!
@@ -26367,16 +26259,13 @@ var __webpack_exports__ = {};
   !*** ./resources/js/admin.js ***!
   \*******************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var _vuetify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./vuetify */ "./resources/js/vuetify.js");
-/* harmony import */ var _plugins_MultiFilters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../plugins/MultiFilters */ "./resources/plugins/MultiFilters.js");
 
 
-
-vue__WEBPACK_IMPORTED_MODULE_2__.default.config.productionTip = false; //Vue.use(MultiFiltersPlugin);
-
-vue__WEBPACK_IMPORTED_MODULE_2__.default.component('admin-component', __webpack_require__(/*! ./components/admin/main.vue */ "./resources/js/components/admin/main.vue").default);
-new vue__WEBPACK_IMPORTED_MODULE_2__.default({
+vue__WEBPACK_IMPORTED_MODULE_1__.default.config.productionTip = false;
+vue__WEBPACK_IMPORTED_MODULE_1__.default.component('admin-component', __webpack_require__(/*! ./components/admin/main.vue */ "./resources/js/components/admin/main.vue").default);
+new vue__WEBPACK_IMPORTED_MODULE_1__.default({
   vuetify: _vuetify__WEBPACK_IMPORTED_MODULE_0__.default
 }).$mount('#app');
 })();

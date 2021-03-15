@@ -22,12 +22,21 @@
       </v-col>
     </v-row>
 
-    <v-main v-if="parse_csv.length">
+    <v-main v-if="parse_csv.length && files">
       <v-row>
         <v-col cols="8">
           <v-card>
             <v-container>
               <v-row>
+                <v-col cols="5" class="pt-3 mt-4">
+                  <v-select
+                    v-model="selectedStatus"
+                    :items="statuses"
+                    label="Status"
+                    item-text="name"
+                    item-value="id"
+                  ></v-select>
+                </v-col>
                 <v-col cols="4">
                   <v-card-title>
                     <v-text-field
@@ -39,7 +48,7 @@
                     ></v-text-field>
                   </v-card-title>
                 </v-col>
-                <v-col cols="4">
+                <v-col cols="3">
                   <v-card-title>
                     <v-text-field
                       v-model.lazy.trim="filtertel"
@@ -70,11 +79,22 @@
             Select user for filtered lids
 
             <v-list>
-              <v-radio-group @change="putSelectedLidsDB" ref="radiogroup" v-model="userid">
+              <v-radio-group
+                @change="putSelectedLidsDB"
+                ref="radiogroup"
+                v-model="userid"
+                v-bind="users"
+                id="usersradiogroup"
+              >
                 <v-radio :value="user.id" v-for="user in users" :key="user.id">
                   <template v-slot:label>
                     {{ user.fio }}
-                    <v-badge :content="100" :color="usercolor(user)" overlap>
+                    <v-badge
+                      :content="user.hmlids"
+                      :value="user.hmlids"
+                      :color="usercolor(user)"
+                      overlap
+                    >
                       <v-icon large v-if="user.role_id === 2">
                         mdi-account-group-outline
                       </v-icon>
@@ -98,6 +118,8 @@ export default {
     userid: null,
     users: [],
     providers: [],
+    statuses: [],
+    selectedStatus: 0,
     selectedProvider: 0,
     selected: [],
     files: [],
@@ -116,6 +138,7 @@ export default {
   mounted() {
     this.getProviders();
     this.getUsers();
+    this.getStatuses();
   },
   computed: {
     filteredItems() {
@@ -130,35 +153,49 @@ export default {
       return user.role_id == 2 ? "green" : "blue";
     },
     putSelectedLidsDB() {
-      let user_id = this.userid;
-      let provider_id = this.selectedProvider;
-let self = this;
+      let self = this;
+      let send = {};
+      send.user_id = this.userid;
+      send.provider_id = this.selectedProvider;
+      send.status_id = this.selectedStatus
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-
-        self.parse_csv = self.parse_csv.filter(
-          (ar) => !self.selected.find((rm) => rm.tel === ar.tel)
-        );
-      }
-      if (
-        (this.search !== "" || this.filtertel !== "") &&
-        this.$refs.datatable.items.length > 0
-      ) {
-        let send = this.$refs.datatable.items;
-        send = send.map(function (el) {
-          let o = Object.assign({}, el);
-          o.user_id = user_id;
-          o.provider_id = provider_id;
-          return o;
-        });
-        
+        send.data = this.selected;
         axios
-          .post("api/Lid/newlids", {data:send})
+          .post("api/Lid/newlids", send)
+          .then(function (response) {
+            // console.log(response);
+            self.parse_csv = self.parse_csv.filter(
+              (ar) => !self.selected.find((rm) => rm.tel === ar.tel)
+            );
+            self.selected=[]
+            self.getUsers();
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      } else if (
+        (this.search !== "" || this.filtertel !== "") &&
+        this.$refs.datatable.$children[0].filteredItems.length > 0
+      ) {
+        send.data = this.$refs.datatable.$children[0].filteredItems;
+        // add user and provider to array
+
+        // send = send.map(function (el) {
+        //   let o = Object.assign({}, el);
+        //   o.user_id = user_id;
+        //   o.provider_id = provider_id;
+        //   return o;
+        // });
+
+        axios
+          .post("api/Lid/newlids", send)
           .then(function (response) {
             // console.log(response);
             self.parse_csv = self.parse_csv.filter(
               (ar) =>
-                !self.$refs.datatable.items.find((rm) => rm.tel === ar.tel)
+                !self.$refs.datatable.$children[0].filteredItems.find((rm) => rm.tel === ar.tel)
             );
+            self.getUsers();
             self.search = "";
             self.filtertel = "";
           })
@@ -171,34 +208,44 @@ let self = this;
         this.selectedProvider = "";
       }
       this.userid = null;
-      console.log(this.$refs.radiogroup)
-      this.$refs.radiogroup.value = null;
+      this.$refs.radiogroup.lazyValue = null;
+      this.getUsers();
     },
     clickrow() {
-      // console.log(this.selected);
-      console.log(this.files);
-    },
-    getFiltered(el) {
-      console.log("Get filtered", el);
+      console.log('You can click on row))');
     },
     getProviders() {
+      let self = this;
       axios
         .get("/api/provider")
         .then((res) => {
-          this.providers = res.data.map(({ name, id }) => ({ name, id }));
+          self.providers = res.data.map(({ name, id }) => ({ name, id }));
         })
         .catch((error) => console.log(error));
     },
     getUsers() {
+      let self = this;
       axios
         .get("/api/users/getusers")
         .then((res) => {
-          this.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({
+          self.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({
             name,
             id,
             role_id,
             fio,
             hmlids,
+          }));
+        })
+        .catch((error) => console.log(error));
+    },
+    getStatuses() {
+      let self = this;
+      axios
+        .get("/api/statuses")
+        .then((res) => {
+          self.statuses = res.data.map(({ name, id }) => ({
+            name,
+            id,
           }));
         })
         .catch((error) => console.log(error));
