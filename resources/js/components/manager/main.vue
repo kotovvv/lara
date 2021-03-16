@@ -69,7 +69,7 @@ export default {
     managerMenu: "lids",
 
     items: [
-      { text: "Lids", name: "lids", icon: "mdi-progress-upload" },
+      { text: "Lids", name: "lids", icon: "mdi-account-arrow-left" },
 
     ],
   }),

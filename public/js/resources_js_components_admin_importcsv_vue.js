@@ -10530,7 +10530,7 @@ __webpack_require__.r(__webpack_exports__);
       this.getUsers();
     },
     clickrow: function clickrow() {
-      console.log('You can click on row))');
+      console.log("You can click on row))");
     },
     getProviders: function getProviders() {
       var self = this;
@@ -11781,6 +11781,31 @@ var render = function() {
                 ],
                 1
               )
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.parse_csv.length
+            ? _c(
+                "v-col",
+                { staticClass: "pt-3 mt-4", attrs: { cols: "5" } },
+                [
+                  _c("v-select", {
+                    attrs: {
+                      items: _vm.statuses,
+                      label: "Status",
+                      "item-text": "name",
+                      "item-value": "id"
+                    },
+                    model: {
+                      value: _vm.selectedStatus,
+                      callback: function($$v) {
+                        _vm.selectedStatus = $$v
+                      },
+                      expression: "selectedStatus"
+                    }
+                  })
+                ],
+                1
+              )
             : _vm._e()
         ],
         1
@@ -11806,32 +11831,6 @@ var render = function() {
                               _c(
                                 "v-row",
                                 [
-                                  _c(
-                                    "v-col",
-                                    {
-                                      staticClass: "pt-3 mt-4",
-                                      attrs: { cols: "5" }
-                                    },
-                                    [
-                                      _c("v-select", {
-                                        attrs: {
-                                          items: _vm.statuses,
-                                          label: "Status",
-                                          "item-text": "name",
-                                          "item-value": "id"
-                                        },
-                                        model: {
-                                          value: _vm.selectedStatus,
-                                          callback: function($$v) {
-                                            _vm.selectedStatus = $$v
-                                          },
-                                          expression: "selectedStatus"
-                                        }
-                                      })
-                                    ],
-                                    1
-                                  ),
-                                  _vm._v(" "),
                                   _c(
                                     "v-col",
                                     { attrs: { cols: "4" } },

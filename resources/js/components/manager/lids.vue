@@ -47,7 +47,7 @@
               item-key="id"
               show-select
               @click:row="clickrow"
-              :items="lids"
+              :items="filteredItems"
               ref="datatable"
             ></v-data-table>
           </v-card>
@@ -64,34 +64,19 @@
                 v-bind="users"
                 id="usersradiogroup"
               >
-              <v-row v-for="user in users" :key="user.id">
-                <v-radio :label="user.fio" :value="user.id" >
+                <v-row v-for="user in users" :key="user.id">
+                  <v-radio :label="user.fio" :value="user.id" :disabled="disableuser == user.id"> </v-radio>
 
-
-
-                </v-radio>
-
-                         <!-- <v-badge
-                      :content="user.hmlids"
-                      :value="user.hmlids"
-                      :color="usercolor(user)"
-                      overlap
-                      @click = "getUserLids"
-                    > -->
-                    <v-btn
+                  <v-btn
                     class="ml-3"
                     small
                     :color="usercolor(user)"
-                    @click = "getUserLids(user.id)"
+                    @click="getLids(user.id)"
                     :value="user.hmlids"
-                    >{{user.hmlids}}</v-btn>
-                      <!-- <v-icon small v-if="user.role_id === 2">
-                        mdi-account-group-outline
-                      </v-icon>
-                      <v-icon small v-else> mdi-account-outline </v-icon> -->
-                    <!-- </v-badge> -->
-
-</v-row>
+                    :disabled="disableuser == user.id"
+                    >{{ user.hmlids }}</v-btn
+                  >
+                </v-row>
               </v-radio-group>
             </v-list>
           </v-card>
@@ -107,6 +92,7 @@ export default {
   data: () => ({
     userid: null,
     users: [],
+    disableuser:0,
     statuses: [],
     selectedStatus: 0,
     selected: [],
@@ -118,17 +104,16 @@ export default {
       { text: "Email", value: "email" },
       { text: "Tel.", align: "start", value: "tel" },
       { text: "Status", value: "status" },
-      { text: "Manager", value: "manager" },
+      { text: "Manager", value: "user" },
     ],
     parse_header: [],
-    parse_csv: [],
     sortOrders: {},
     sortKey: "tel",
   }),
   mounted: function () {
     this.getUsers();
     this.getStatuses();
-    this.getLids();
+    this.getLids(2);
   },
   computed: {
     filteredItems() {
@@ -139,15 +124,13 @@ export default {
     },
   },
   methods: {
-    getUserLids(){
-      console.log('getUserLids')
-    },
-     putSelectedLidsDB() {
-      let self = this;
+    putSelectedLidsDB() {
+      const self = this;
       let send = {};
       send.user_id = this.userid;
-      if (this.selectedStatus !== 0){
-        send.status_id = this.selectedStatus
+     
+      if (this.selectedStatus !== 0) {
+        send.status_id = this.selectedStatus;
       }
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
         send.data = this.selected;
@@ -155,11 +138,12 @@ export default {
           .post("api/Lid/newlids", send)
           .then(function (response) {
             // console.log(response);
-            self.parse_csv = self.parse_csv.filter(
+            self.lids = self.lids.filter(
               (ar) => !self.selected.find((rm) => rm.tel === ar.tel)
             );
-            self.selected=[]
+            self.selected = [];
             self.getUsers();
+           
           })
           .catch(function (error) {
             console.log(error);
@@ -182,21 +166,23 @@ export default {
           .post("api/Lid/newlids", send)
           .then(function (response) {
             // console.log(response);
-            self.parse_csv = self.parse_csv.filter(
+            self.lids = self.lids.filter(
               (ar) =>
-                !self.$refs.datatable.$children[0].filteredItems.find((rm) => rm.tel === ar.tel)
+                !self.$refs.datatable.$children[0].filteredItems.find(
+                  (rm) => rm.tel === ar.tel
+                )
             );
-            self.getUsers();
+             self.getUsers();
             self.search = "";
             self.filtertel = "";
+           
           })
           .catch(function (error) {
             console.log(error);
           });
       }
-      if (this.parse_csv.length == 0) {
+      if (this.lids.length == 0) {
         this.files = [];
-
       }
       this.userid = null;
       this.$refs.radiogroup.lazyValue = null;
@@ -224,6 +210,7 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+
     getStatuses() {
       let self = this;
       axios
@@ -236,13 +223,24 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    getLids() {
+
+    getLids(id) {
       let self = this;
-      axios
-        .get("/api/lids")
+      let a_temp = [];
+      self.search = "";
+      self.filtertel = "";
+       self.disableuser = id
+       axios
+        .get("/api/userlids/" + id)
         .then((res) => {
-          console.log(res.data)
-          self.lids =Object.entries(res.data).map(e => e[1])
+          // console.log(res.data);
+          self.lids = Object.entries(res.data).map((e) => e[1]);
+
+          self.lids.map(function (e) {
+            e.user = self.users.find((u) => u.id === e.user_id).fio;
+            e.status = self.statuses.find((s) => s.id === e.status_id).name;
+            delete e.provider_id;
+          });
         })
         .catch((error) => console.log(error));
     },

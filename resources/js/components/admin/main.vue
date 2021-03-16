@@ -62,10 +62,11 @@
 </template>
 
 <script>
-const users = () => import("./users.vue");
-const importcsv  = () => import("./importcsv.vue");
-const statusLid = () => import("./statusLid.vue");
+const users = () => import("./users");
+const importcsv  = () => import("./importcsv");
+const statusLid = () => import("./statusLid");
 const workPlaces = () => import("./workPlaces");
+const providers = () => import("./providers");
 
 export default {
     data: () => ({
@@ -77,6 +78,7 @@ export default {
         { text: 'Пользователи',name: 'users', icon: 'mdi-account' },
         { text: 'Статусы лидов',name: 'statusLid', icon: 'mdi-format-list-checks' },
         { text: 'Рабочие места',name: 'workPlaces', icon: 'mdi-sitemap' },
+        { text: 'Поставщики',name: 'providers', icon: 'mdi-contact-phone-outline' },
       ],
       adminMenu: "importcsv"
     }),
@@ -86,6 +88,7 @@ export default {
       if (this.adminMenu == "users") return users;
       if (this.adminMenu == "statusLid") return statusLid;
       if (this.adminMenu == "workPlaces") return workPlaces;
+      if (this.adminMenu == "providers") return providers;
     },
   },
 

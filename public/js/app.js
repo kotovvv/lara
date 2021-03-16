@@ -23812,7 +23812,7 @@ var lids = function lids() {
       items: [{
         text: "Lids",
         name: "lids",
-        icon: "mdi-progress-upload"
+        icon: "mdi-account-arrow-left"
       }]
     };
   },

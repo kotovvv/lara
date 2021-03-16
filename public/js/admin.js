@@ -23803,19 +23803,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 var users = function users() {
-  return __webpack_require__.e(/*! import() */ "resources_js_components_admin_users_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./users.vue */ "./resources/js/components/admin/users.vue"));
+  return __webpack_require__.e(/*! import() */ "resources_js_components_admin_users_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./users */ "./resources/js/components/admin/users.vue"));
 };
 
 var importcsv = function importcsv() {
-  return __webpack_require__.e(/*! import() */ "resources_js_components_admin_importcsv_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./importcsv.vue */ "./resources/js/components/admin/importcsv.vue"));
+  return __webpack_require__.e(/*! import() */ "resources_js_components_admin_importcsv_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./importcsv */ "./resources/js/components/admin/importcsv.vue"));
 };
 
 var statusLid = function statusLid() {
-  return __webpack_require__.e(/*! import() */ "resources_js_components_admin_statusLid_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./statusLid.vue */ "./resources/js/components/admin/statusLid.vue"));
+  return __webpack_require__.e(/*! import() */ "resources_js_components_admin_statusLid_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./statusLid */ "./resources/js/components/admin/statusLid.vue"));
 };
 
 var workPlaces = function workPlaces() {
   return __webpack_require__.e(/*! import() */ "resources_js_components_admin_workPlaces_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./workPlaces */ "./resources/js/components/admin/workPlaces.vue"));
+};
+
+var providers = function providers() {
+  return __webpack_require__.e(/*! import() */ "resources_js_components_admin_providers_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./providers */ "./resources/js/components/admin/providers.vue"));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -23839,6 +23843,10 @@ var workPlaces = function workPlaces() {
         text: 'Рабочие места',
         name: 'workPlaces',
         icon: 'mdi-sitemap'
+      }, {
+        text: 'Поставщики',
+        name: 'providers',
+        icon: 'mdi-contact-phone-outline'
       }],
       adminMenu: "importcsv"
     };
@@ -23849,6 +23857,7 @@ var workPlaces = function workPlaces() {
       if (this.adminMenu == "users") return users;
       if (this.adminMenu == "statusLid") return statusLid;
       if (this.adminMenu == "workPlaces") return workPlaces;
+      if (this.adminMenu == "providers") return providers;
     }
   },
   methods: {} //  components:{
@@ -26060,7 +26069,7 @@ module.exports = function installComponents (component, components) {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if ({"resources_js_components_admin_users_vue":1,"resources_js_components_admin_importcsv_vue":1,"resources_js_components_admin_statusLid_vue":1,"resources_js_components_admin_workPlaces_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			if ({"resources_js_components_admin_users_vue":1,"resources_js_components_admin_importcsv_vue":1,"resources_js_components_admin_statusLid_vue":1,"resources_js_components_admin_workPlaces_vue":1,"resources_js_components_admin_providers_vue":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};

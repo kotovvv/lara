@@ -20,6 +20,15 @@
           @change="onFileChange"
         ></v-file-input>
       </v-col>
+      <v-col cols="5" class="pt-3 mt-4" v-if="parse_csv.length">
+        <v-select
+          v-model="selectedStatus"
+          :items="statuses"
+          label="Status"
+          item-text="name"
+          item-value="id"
+        ></v-select>
+      </v-col>
     </v-row>
 
     <v-main v-if="parse_csv.length && files">
@@ -28,15 +37,6 @@
           <v-card>
             <v-container>
               <v-row>
-                <v-col cols="5" class="pt-3 mt-4">
-                  <v-select
-                    v-model="selectedStatus"
-                    :items="statuses"
-                    label="Status"
-                    item-text="name"
-                    item-value="id"
-                  ></v-select>
-                </v-col>
                 <v-col cols="4">
                   <v-card-title>
                     <v-text-field
@@ -157,8 +157,8 @@ export default {
       let send = {};
       send.user_id = this.userid;
       send.provider_id = this.selectedProvider;
-      if (this.selectedStatus !== 0){
-        send.status_id = this.selectedStatus
+      if (this.selectedStatus !== 0) {
+        send.status_id = this.selectedStatus;
       }
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
         send.data = this.selected;
@@ -169,7 +169,7 @@ export default {
             self.parse_csv = self.parse_csv.filter(
               (ar) => !self.selected.find((rm) => rm.tel === ar.tel)
             );
-            self.selected=[]
+            self.selected = [];
             self.getUsers();
           })
           .catch(function (error) {
@@ -195,7 +195,9 @@ export default {
             // console.log(response);
             self.parse_csv = self.parse_csv.filter(
               (ar) =>
-                !self.$refs.datatable.$children[0].filteredItems.find((rm) => rm.tel === ar.tel)
+                !self.$refs.datatable.$children[0].filteredItems.find(
+                  (rm) => rm.tel === ar.tel
+                )
             );
             self.getUsers();
             self.search = "";
@@ -214,7 +216,7 @@ export default {
       this.getUsers();
     },
     clickrow() {
-      console.log('You can click on row))');
+      console.log("You can click on row))");
     },
     getProviders() {
       let self = this;

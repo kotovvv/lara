@@ -17,7 +17,7 @@ class LidsController extends Controller
      */
     public function index()
     {
-        return Lid::all()->where('active',1)->where('user_id',2);
+       
     }
 
     /**
@@ -70,6 +70,10 @@ class LidsController extends Controller
           return response('Lids imported', 200);
     }
 
+    public function userLids($id)
+    {
+        return Lid::all()->where('active',1)->where('user_id',$id);
+    }
     /**
      * Display the specified resource.
      *
