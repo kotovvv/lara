@@ -157,7 +157,7 @@ export default {
       let send = {};
       send.user_id = this.userid;
       send.provider_id = this.selectedProvider;
-      if (this.selectedStatus !== ''){
+      if (this.selectedStatus !== 0){
         send.status_id = this.selectedStatus
       }
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {

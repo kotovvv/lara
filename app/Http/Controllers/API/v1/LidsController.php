@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Lid;
-
+use Mockery\Undefined;
 
 class LidsController extends Controller
 {
@@ -55,15 +55,17 @@ class LidsController extends Controller
 
 
            foreach ($data['data'] as $lid) {
-
-            Lid::updateOrCreate(['tel' => $lid['tel']],[
-                'name' => $lid['name'],
-
+             $a_lid = [
+               'name' => $lid['name'],
                 'email' => $lid['email'],
-                'provider_id' => $data['provider_id'],
-                'status_id' => $data['status_id'],
-                'user_id' => $data['user_id']
-            ]);
+                'user_id' => $data['user_id'],
+             ];
+             if (isset($data['provider_id']))  $a_lid['provider_id'] = $data['provider_id'];
+             if (isset($data['status_id']))  $a_lid['status_id'] = $data['status_id'];
+
+            $status_id = !empty($data['status_id'])?$data['status_id']:null;
+            Lid::updateOrCreate(['tel' => $lid['tel']],$a_lid);
+
           }
           return response('Lids imported', 200);
     }

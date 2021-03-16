@@ -64,22 +64,34 @@
                 v-bind="users"
                 id="usersradiogroup"
               >
-                <v-radio :value="user.id" v-for="user in users" :key="user.id">
-                  <template v-slot:label>
-                    {{ user.fio }}
-                    <v-badge
+              <v-row v-for="user in users" :key="user.id">
+                <v-radio :label="user.fio" :value="user.id" >
+
+
+
+                </v-radio>
+
+                         <!-- <v-badge
                       :content="user.hmlids"
                       :value="user.hmlids"
                       :color="usercolor(user)"
                       overlap
-                    >
-                      <v-icon large v-if="user.role_id === 2">
+                      @click = "getUserLids"
+                    > -->
+                    <v-btn
+                    class="ml-3"
+                    small
+                    :color="usercolor(user)"
+                    @click = "getUserLids(user.id)"
+                    :value="user.hmlids"
+                    >{{user.hmlids}}</v-btn>
+                      <!-- <v-icon small v-if="user.role_id === 2">
                         mdi-account-group-outline
                       </v-icon>
-                      <v-icon large v-else> mdi-account-outline </v-icon>
-                    </v-badge>
-                  </template>
-                </v-radio>
+                      <v-icon small v-else> mdi-account-outline </v-icon> -->
+                    <!-- </v-badge> -->
+
+</v-row>
               </v-radio-group>
             </v-list>
           </v-card>
@@ -127,15 +139,68 @@ export default {
     },
   },
   methods: {
-    putSelectedLidsDB() {
+    getUserLids(){
+      console.log('getUserLids')
+    },
+     putSelectedLidsDB() {
       let self = this;
       let send = {};
       send.user_id = this.userid;
-      send.provider_id = this.selectedProvider;
-      if (this.selectedStatus !== "") {
-        send.status_id = this.selectedStatus;
+      if (this.selectedStatus !== 0){
+        send.status_id = this.selectedStatus
       }
+      if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
+        send.data = this.selected;
+        axios
+          .post("api/Lid/newlids", send)
+          .then(function (response) {
+            // console.log(response);
+            self.parse_csv = self.parse_csv.filter(
+              (ar) => !self.selected.find((rm) => rm.tel === ar.tel)
+            );
+            self.selected=[]
+            self.getUsers();
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      } else if (
+        (this.search !== "" || this.filtertel !== "") &&
+        this.$refs.datatable.$children[0].filteredItems.length > 0
+      ) {
+        send.data = this.$refs.datatable.$children[0].filteredItems;
+        // add user and provider to array
 
+        // send = send.map(function (el) {
+        //   let o = Object.assign({}, el);
+        //   o.user_id = user_id;
+        //   o.provider_id = provider_id;
+        //   return o;
+        // });
+
+        axios
+          .post("api/Lid/newlids", send)
+          .then(function (response) {
+            // console.log(response);
+            self.parse_csv = self.parse_csv.filter(
+              (ar) =>
+                !self.$refs.datatable.$children[0].filteredItems.find((rm) => rm.tel === ar.tel)
+            );
+            self.getUsers();
+            self.search = "";
+            self.filtertel = "";
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+      if (this.parse_csv.length == 0) {
+        this.files = [];
+
+      }
+      this.userid = null;
+      this.$refs.radiogroup.lazyValue = null;
+      this.getUsers();
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";

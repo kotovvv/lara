@@ -10478,7 +10478,7 @@ __webpack_require__.r(__webpack_exports__);
       send.user_id = this.userid;
       send.provider_id = this.selectedProvider;
 
-      if (this.selectedStatus !== '') {
+      if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
       }
 

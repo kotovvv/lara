@@ -18,12 +18,9 @@ class CreateLidsTable extends Migration
             $table->char('tel', 13)->unique();
             $table->string('name',60);
             $table->string('email',60);
-            $table->unsignedBigInteger('provider_id');
-            $table->foreign('provider_id')->references('id')->on('provider')->default(null);
-            $table->unsignedBigInteger('status_id')->default(null);
-            $table->foreign('status_id')->references('id')->on('status');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('user');
+            $table->foreignId('provider_id')->constrained('providers');
+            $table->foreignId('status_id')->nullable()->constrained('statuses');
+            $table->foreignId('user_id')->constrained('users');
             $table->string('text')->default(null);
             $table->boolean('active')->default(1);
             $table->timestamps();
