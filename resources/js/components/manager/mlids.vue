@@ -1,17 +1,11 @@
 <template>
   <div>
-    <v-container fluid>
+    <v-main>
       <v-row>
-        <v-col cols="3" class="pt-3 mt-4">
-          <v-select
-            v-model="selectedStatus"
-            :items="statuses"
-            label="Status"
-            item-text="name"
-            item-value="id"
-          ></v-select>
-        </v-col>
-        <v-col cols="3">
+        <v-col cols="8">
+
+      <v-row>
+        <v-col cols="4">
           <v-card-title>
             <v-text-field
               v-model="search"
@@ -22,7 +16,7 @@
             ></v-text-field>
           </v-card-title>
         </v-col>
-        <v-col cols="3">
+        <v-col cols="4">
           <v-card-title>
             <v-text-field
               v-model.lazy.trim="filtertel"
@@ -34,16 +28,13 @@
           </v-card-title>
         </v-col>
       </v-row>
-    </v-container>
-    <v-main>
-      <v-row>
-        <v-col cols="8">
+
           <v-card>
             <v-data-table
               v-model.lazy.trim="selected"
               :headers="headers"
               :search="search"
-              :single-select="false"
+              :single-select="true"
               item-key="id"
               show-select
               @click:row="clickrow"
@@ -54,29 +45,27 @@
         </v-col>
         <v-col cols="4">
           <v-card height="100%" class="pa-5">
-            Select user for filtered lids
-
+                    <!-- <v-col cols="3" class="pt-3 mt-4">
+          <v-select
+            v-model="selectedStatus"
+            :items="statuses"
+            label="Status"
+            item-text="name"
+            item-value="id"
+          ></v-select>
+        </v-col> -->
             <v-list>
               <v-radio-group
                 @change="putSelectedLidsDB"
                 ref="radiogroup"
-                v-model="userid"
-                v-bind="users"
-                id="usersradiogroup"
+                id="statusesradiogroup"
+                v-model="selectedStatus"
+                :disabled="selected.length == 0"
               >
-                <v-row v-for="user in users" :key="user.id">
-                  <v-radio :label="user.fio" :value="user.id" :disabled="disableuser == user.id"> </v-radio>
-
-                  <v-btn
-                    class="ml-3"
-                    small
-                    :color="usercolor(user)"
-                    @click="getLids(user.id)"
-                    :value="user.hmlids"
-                    :disabled="disableuser == user.id"
-                    >{{ user.hmlids }}</v-btn
-                  >
-                </v-row>
+                <!-- v-bind="selected.length?selected[0].status_id:null" -->
+                <!-- v-model="selectedStatus" -->
+                <v-radio :label="status.name" :value="status.id" v-for="status in statuses" :key="status.id">
+                </v-radio>
               </v-radio-group>
             </v-list>
           </v-card>
@@ -104,7 +93,8 @@ export default {
       { text: "Email", value: "email" },
       { text: "Tel.", align: "start", value: "tel" },
       { text: "Status", value: "status" },
-      { text: "Manager", value: "user" },
+      { text: "Date", value: "updated_at" },
+      // { text: "Message", value: "text" },
     ],
     parse_header: [],
     sortOrders: {},
@@ -113,7 +103,18 @@ export default {
   mounted: function () {
     this.getUsers();
     this.getStatuses();
-    this.getLids(2);
+    this.getLids(3);
+  },
+  watch: {
+selected:function(newval,oldval){
+  // console.log(newval)
+  // console.log(oldval)
+  if (this.selected.length == 0){
+
+   this.selectedStatus = null
+   }
+else this.selectedStatus = newval[0].status_id
+}
   },
   computed: {
     filteredItems() {
@@ -125,9 +126,11 @@ export default {
   },
   methods: {
     putSelectedLidsDB() {
+      console.log('test')
+      return
       const self = this;
       let send = {};
-      send.user_id = this.userid;
+      send.user_id = 2; // replace need
 
       if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
@@ -241,6 +244,7 @@ export default {
             e.user = self.users.find((u) => u.id === e.user_id).fio;
             e.status = self.statuses.find((s) => s.id === e.status_id).name;
             delete e.provider_id;
+            e.updated_at = e.updated_at.substring(0,16).replace('T',' ')
           });
         })
         .catch((error) => console.log(error));

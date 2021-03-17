@@ -20,7 +20,7 @@
           @change="onFileChange"
         ></v-file-input>
       </v-col>
-      <v-col cols="5" class="pt-3 mt-4" v-if="parse_csv.length">
+      <v-col cols="5" v-if="parse_csv.length">
         <v-select
           v-model="selectedStatus"
           :items="statuses"

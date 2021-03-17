@@ -23803,22 +23803,31 @@ var lids = function lids() {
   return __webpack_require__.e(/*! import() */ "resources_js_components_manager_lids_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./lids.vue */ "./resources/js/components/manager/lids.vue"));
 };
 
+var mlids = function mlids() {
+  return __webpack_require__.e(/*! import() */ "resources_js_components_manager_mlids_vue").then(__webpack_require__.bind(__webpack_require__, /*! ./mlids.vue */ "./resources/js/components/manager/mlids.vue"));
+};
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       drawer: null,
       selectedItem: 0,
-      managerMenu: "lids",
+      managerMenu: "mlids",
       items: [{
         text: "Lids",
         name: "lids",
         icon: "mdi-account-arrow-left"
+      }, {
+        text: "Manager",
+        name: "mlids",
+        icon: "mdi-phone-log-outline"
       }]
     };
   },
   computed: {
     managerComponent: function managerComponent() {
       if (this.managerMenu == "lids") return lids;
+      if (this.managerMenu == "mlids") return mlids;
     }
   },
   methods: {}
@@ -26064,7 +26073,7 @@ module.exports = function installComponents (component, components) {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === "resources_js_components_manager_lids_vue") return "js/" + chunkId + ".js";
+/******/ 			if ({"resources_js_components_manager_lids_vue":1,"resources_js_components_manager_mlids_vue":1}[chunkId]) return "js/" + chunkId + ".js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};
@@ -26182,7 +26191,7 @@ module.exports = function installComponents (component, components) {
 /******/ 					if(installedChunkData) {
 /******/ 						promises.push(installedChunkData[2]);
 /******/ 					} else {
-/******/ 						if("resources_js_components_manager_lids_vue" == chunkId) {
+/******/ 						if("css/app" != chunkId) {
 /******/ 							// setup Promise in chunk cache
 /******/ 							var promise = new Promise((resolve, reject) => {
 /******/ 								installedChunkData = installedChunks[chunkId] = [resolve, reject];

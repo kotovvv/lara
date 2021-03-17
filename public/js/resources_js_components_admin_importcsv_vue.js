@@ -11786,7 +11786,7 @@ var render = function() {
           _vm.parse_csv.length
             ? _c(
                 "v-col",
-                { staticClass: "pt-3 mt-4", attrs: { cols: "5" } },
+                { attrs: { cols: "5" } },
                 [
                   _c("v-select", {
                     attrs: {

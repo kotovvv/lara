@@ -60,22 +60,25 @@
 
 <script>
 const lids = () => import("./lids.vue");
+const mlids = () => import("./mlids.vue");
 
 
 export default {
   data: () => ({
     drawer: null,
     selectedItem: 0,
-    managerMenu: "lids",
+    managerMenu: "mlids",
 
     items: [
       { text: "Lids", name: "lids", icon: "mdi-account-arrow-left" },
+      { text: "Manager", name: "mlids", icon: "mdi-phone-log-outline" },
 
     ],
   }),
   computed: {
     managerComponent() {
       if (this.managerMenu == "lids") return lids;
+      if (this.managerMenu == "mlids") return mlids;
 
     },
   },
