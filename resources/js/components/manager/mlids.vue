@@ -3,31 +3,30 @@
     <v-main>
       <v-row>
         <v-col cols="8">
-
-      <v-row>
-        <v-col cols="4">
-          <v-card-title>
-            <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="Search"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-card-title>
-        </v-col>
-        <v-col cols="4">
-          <v-card-title>
-            <v-text-field
-              v-model.lazy.trim="filtertel"
-              append-icon="mdi-phone"
-              label="Start number"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-card-title>
-        </v-col>
-      </v-row>
+          <v-row>
+            <v-col cols="4">
+              <v-card-title>
+                <v-text-field
+                  v-model="search"
+                  append-icon="mdi-magnify"
+                  label="Search"
+                  single-line
+                  hide-details
+                ></v-text-field>
+              </v-card-title>
+            </v-col>
+            <v-col cols="4">
+              <v-card-title>
+                <v-text-field
+                  v-model.lazy.trim="filtertel"
+                  append-icon="mdi-phone"
+                  label="Start number"
+                  single-line
+                  hide-details
+                ></v-text-field>
+              </v-card-title>
+            </v-col>
+          </v-row>
 
           <v-card>
             <v-data-table
@@ -40,12 +39,18 @@
               @click:row="clickrow"
               :items="filteredItems"
               ref="datatable"
-            ></v-data-table>
+            >
+  <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          More info about {{ item.name }}
+        </td>
+      </template>
+            </v-data-table>
           </v-card>
         </v-col>
         <v-col cols="4">
           <v-card height="100%" class="pa-5">
-                    <!-- <v-col cols="3" class="pt-3 mt-4">
+            <!-- <v-col cols="3" class="pt-3 mt-4">
           <v-select
             v-model="selectedStatus"
             :items="statuses"
@@ -64,7 +69,12 @@
               >
                 <!-- v-bind="selected.length?selected[0].status_id:null" -->
                 <!-- v-model="selectedStatus" -->
-                <v-radio :label="status.name" :value="status.id" v-for="status in statuses" :key="status.id">
+                <v-radio
+                  :label="status.name"
+                  :value="status.id"
+                  v-for="status in statuses"
+                  :key="status.id"
+                >
                 </v-radio>
               </v-radio-group>
             </v-list>
@@ -106,15 +116,13 @@ export default {
     this.getLids(3);
   },
   watch: {
-selected:function(newval,oldval){
-  // console.log(newval)
-  // console.log(oldval)
-  if (this.selected.length == 0){
-
-   this.selectedStatus = null
-   }
-else this.selectedStatus = newval[0].status_id
-}
+    selected: function (newval, oldval) {
+      // console.log(newval)
+      // console.log(oldval)
+      if (this.selected.length == 0) {
+        this.selectedStatus = null;
+      } else this.selectedStatus = newval[0].status_id;
+    },
   },
   computed: {
     filteredItems() {
@@ -125,83 +133,45 @@ else this.selectedStatus = newval[0].status_id
     },
   },
   methods: {
+    currentDateTime() {
+      const date = new Date();
+      // 01, 02, 03, ... 29, 30, 31
+      const dd = (date.getDate() < 10 ? "0" : "") + date.getDate();
+      // 01, 02, 03, ... 10, 11, 12
+      const MM = (date.getMonth() + 1 < 10 ? "0" : "") + (date.getMonth() + 1);
+      // 1970, 1971, ... 2015, 2016, ...
+      const yyyy = date.getFullYear();
+      const time = date.getHours() + ":" + date.getMinutes();
+      // create the format you want
+      return yyyy + "-" + MM + "-" + dd + " " + time;
+    },
     putSelectedLidsDB() {
       const self = this;
       let send = {};
-      let send_el = {}
+      let send_el = {};
+      let costil = self.filtertel;
+      self.filtertel = 1;
+      self.filtertel = costil;
 
-      let eli = self.$refs.datatable.items.find((obj => obj.id == self.selected[0].id));
+      let eli = self.lids.find((obj) => obj.id == self.selected[0].id);
 
-eli.status = self.statuses.find((s) => s.id === self.selectedStatus).name;
-eli.status_id = self.selectedStatus
-send_el.tel = eli.tel
-send_el.status_id =self.selectedStatus
-send_el.user_id = eli.user_id
-send_el.text = 'some text'
-self.computed.filteredItems
-      console.log(self.computed.filteredItems)
-      return
-
-      send.user_id = 2; // replace need
-
-      if (this.selectedStatus !== 0) {
-        send.status_id = this.selectedStatus;
-      }
-      if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-        send.data = this.selected;
-        axios
-          .post("api/Lid/newlids", send)
-          .then(function (response) {
-            // console.log(response);
-            self.lids = self.lids.filter(
-              (ar) => !self.selected.find((rm) => rm.tel === ar.tel)
-            );
-            self.selected = [];
-            self.getUsers();
-
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      } else if (
-        (this.search !== "" || this.filtertel !== "") &&
-        this.$refs.datatable.$children[0].filteredItems.length > 0
-      ) {
-        send.data = this.$refs.datatable.$children[0].filteredItems;
-        // add user and provider to array
-
-        // send = send.map(function (el) {
-        //   let o = Object.assign({}, el);
-        //   o.user_id = user_id;
-        //   o.provider_id = provider_id;
-        //   return o;
-        // });
-
-        axios
-          .post("api/Lid/newlids", send)
-          .then(function (response) {
-            // console.log(response);
-            self.lids = self.lids.filter(
-              (ar) =>
-                !self.$refs.datatable.$children[0].filteredItems.find(
-                  (rm) => rm.tel === ar.tel
-                )
-            );
-             self.getUsers();
-            self.search = "";
-            self.filtertel = "";
-
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      }
-      if (this.lids.length == 0) {
-        this.files = [];
-      }
-      this.userid = null;
-      this.$refs.radiogroup.lazyValue = null;
-      this.getUsers();
+      eli.status = self.statuses.find((s) => s.id === self.selectedStatus).name;
+      eli.status_id = self.selectedStatus;
+      eli.updated_at = self.currentDateTime();
+      send.id = eli.id;
+      send_el.tel = eli.tel;
+      send_el.status_id = self.selectedStatus;
+      send_el.user_id = eli.user_id;
+      send_el.text = "some text";
+      send.data = send_el;
+      axios
+        .post("api/Lid/updatelids", send)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
@@ -240,13 +210,13 @@ self.computed.filteredItems
     },
 
     getLids(id) {
-      console.log(id)
+      console.log(id);
       let self = this;
       let a_temp = [];
       self.search = "";
       self.filtertel = "";
-       self.disableuser = id
-       axios
+      self.disableuser = id;
+      axios
         .get("/api/userlids/" + id)
         .then((res) => {
           // console.log(res.data);
@@ -256,7 +226,7 @@ self.computed.filteredItems
             e.user = self.users.find((u) => u.id === e.user_id).fio;
             e.status = self.statuses.find((s) => s.id === e.status_id).name;
             delete e.provider_id;
-            e.updated_at = e.updated_at.substring(0,16).replace('T',' ')
+            e.updated_at = e.updated_at.substring(0, 16).replace("T", " ");
           });
         })
         .catch((error) => console.log(error));
