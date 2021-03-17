@@ -126,10 +126,22 @@ else this.selectedStatus = newval[0].status_id
   },
   methods: {
     putSelectedLidsDB() {
-      console.log('test')
-      return
       const self = this;
       let send = {};
+      let send_el = {}
+
+      let eli = self.$refs.datatable.items.find((obj => obj.id == self.selected[0].id));
+
+eli.status = self.statuses.find((s) => s.id === self.selectedStatus).name;
+eli.status_id = self.selectedStatus
+send_el.tel = eli.tel
+send_el.status_id =self.selectedStatus
+send_el.user_id = eli.user_id
+send_el.text = 'some text'
+self.computed.filteredItems
+      console.log(self.computed.filteredItems)
+      return
+
       send.user_id = 2; // replace need
 
       if (this.selectedStatus !== 0) {
