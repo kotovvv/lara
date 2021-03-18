@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Lid;
 use Mockery\Undefined;
+use DB;
 
 class LidsController extends Controller
 {
@@ -17,7 +18,6 @@ class LidsController extends Controller
      */
     public function index()
     {
-       
     }
 
     /**
@@ -41,7 +41,17 @@ class LidsController extends Controller
         //
         Log::alert($request);
     }
+    public function updatelids(Request $request)
+    {
+        $data = $request->all();
+        $data['data']['updated_at'] = Now();
+        $res =  DB::table('lids')->where('id', $data['id'])->update($data['data']);
 
+        if ($res) {
+
+            return response('Lid updated', 200);
+        }
+    }
     public function newlids(Request $request)
     {
         //  Log::alert($request);
@@ -50,29 +60,28 @@ class LidsController extends Controller
         //     'user_id' => 'requered',
         //     'data' => 'requered'
         //    ]);
-            // Log::alert($request->all());
-            $data = $request->all();
+        // Log::alert($request->all());
+        $data = $request->all();
 
 
-           foreach ($data['data'] as $lid) {
-             $a_lid = [
-               'name' => $lid['name'],
+        foreach ($data['data'] as $lid) {
+            $a_lid = [
+                'name' => $lid['name'],
                 'email' => $lid['email'],
                 'user_id' => $data['user_id'],
-             ];
-             if (isset($data['provider_id']))  $a_lid['provider_id'] = $data['provider_id'];
-             if (isset($data['status_id']))  $a_lid['status_id'] = $data['status_id'];
+            ];
+            if (isset($data['provider_id']))  $a_lid['provider_id'] = $data['provider_id'];
+            if (isset($data['status_id']))  $a_lid['status_id'] = $data['status_id'];
 
-            $status_id = !empty($data['status_id'])?$data['status_id']:null;
-            Lid::updateOrCreate(['tel' => $lid['tel']],$a_lid);
-
-          }
-          return response('Lids imported', 200);
+            $status_id = !empty($data['status_id']) ? $data['status_id'] : null;
+            Lid::updateOrCreate(['tel' => $lid['tel']], $a_lid);
+        }
+        return response('Lids imported', 200);
     }
 
     public function userLids($id)
     {
-        return Lid::all()->where('active',1)->where('user_id',$id);
+        return Lid::all()->where('active', 1)->where('user_id', $id);
     }
     /**
      * Display the specified resource.
