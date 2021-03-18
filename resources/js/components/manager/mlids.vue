@@ -239,6 +239,9 @@ export default {
   },
   methods: {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ec72eb26f4d3296e9268da01cb894b3b6d76e294
     currentDateTime() {
       const date = new Date();
       // 01, 02, 03, ... 29, 30, 31
@@ -250,7 +253,11 @@ export default {
       const time = date.getHours() + ":" + date.getMinutes();
       // create the format you want
       return yyyy + "-" + MM + "-" + dd + " " + time;
+<<<<<<< HEAD
 =======
+=======
+      },
+>>>>>>> ec72eb26f4d3296e9268da01cb894b3b6d76e294
     changemes(eli) {
        const self = this;
       let send = {};
@@ -261,10 +268,11 @@ export default {
 console.log(i)
 >>>>>>> bb597aef89752fa7cd84562481ce0690675f4cd0
     },
-    putSelectedLidsDB() {
+     putSelectedLidsDB() {
       const self = this;
       let send = {};
       let send_el = {};
+<<<<<<< HEAD
 <<<<<<< HEAD
       let costil = self.filtertel;
       self.filtertel = 1;
@@ -290,16 +298,22 @@ console.log(i)
           console.log(error);
         });
 =======
+=======
+      let costil = self.filtertel;
+      self.filtertel = 1;
+      self.filtertel = costil;
+>>>>>>> ec72eb26f4d3296e9268da01cb894b3b6d76e294
 
-      let eli = self.$refs.datatable.items.find(
-        (obj) => obj.id == self.selected[0].id
-      );
+      let eli = self.lids.find((obj) => obj.id == self.selected[0].id);
 
       eli.status = self.statuses.find((s) => s.id === self.selectedStatus).name;
       eli.status_id = self.selectedStatus;
+      eli.updated_at = self.currentDateTime();
+      send.id = eli.id;
       send_el.tel = eli.tel;
       send_el.status_id = self.selectedStatus;
       send_el.user_id = eli.user_id;
+<<<<<<< HEAD
       // send_el.text = "some text";
       self.computed.filteredItems;
       // console.log(self.computed.filteredItems);
@@ -364,6 +378,18 @@ console.log(i)
       this.$refs.radiogroup.lazyValue = null;
       this.getUsers();
 >>>>>>> bb597aef89752fa7cd84562481ce0690675f4cd0
+=======
+      send_el.text = "some text";
+      send.data = send_el;
+      axios
+        .post("api/Lid/updatelids", send)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+>>>>>>> ec72eb26f4d3296e9268da01cb894b3b6d76e294
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
