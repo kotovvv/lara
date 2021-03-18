@@ -162,6 +162,18 @@ export default {
     },
   },
   methods: {
+    currentDateTime() {
+      const date = new Date();
+      // 01, 02, 03, ... 29, 30, 31
+      const dd = (date.getDate() < 10 ? "0" : "") + date.getDate();
+      // 01, 02, 03, ... 10, 11, 12
+      const MM = (date.getMonth() + 1 < 10 ? "0" : "") + (date.getMonth() + 1);
+      // 1970, 1971, ... 2015, 2016, ...
+      const yyyy = date.getFullYear();
+      const time = date.getHours() + ":" + date.getMinutes();
+      // create the format you want
+      return yyyy + "-" + MM + "-" + dd + " " + time;
+      },
     changemes(eli) {
        const self = this;
       let send = {};
@@ -171,83 +183,33 @@ export default {
 
 console.log(i)
     },
-    putSelectedLidsDB() {
+     putSelectedLidsDB() {
       const self = this;
       let send = {};
       let send_el = {};
+      let costil = self.filtertel;
+      self.filtertel = 1;
+      self.filtertel = costil;
 
-      let eli = self.$refs.datatable.items.find(
-        (obj) => obj.id == self.selected[0].id
-      );
+      let eli = self.lids.find((obj) => obj.id == self.selected[0].id);
 
       eli.status = self.statuses.find((s) => s.id === self.selectedStatus).name;
       eli.status_id = self.selectedStatus;
+      eli.updated_at = self.currentDateTime();
+      send.id = eli.id;
       send_el.tel = eli.tel;
       send_el.status_id = self.selectedStatus;
       send_el.user_id = eli.user_id;
-      // send_el.text = "some text";
-      self.computed.filteredItems;
-      // console.log(self.computed.filteredItems);
-      return;
-
-      send.user_id = 2; // replace need
-
-      if (this.selectedStatus !== 0) {
-        send.status_id = this.selectedStatus;
-      }
-      if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-        send.data = this.selected;
-        axios
-          .post("api/Lid/newlids", send)
-          .then(function (response) {
-            // console.log(response);
-            self.lids = self.lids.filter(
-              (ar) => !self.selected.find((rm) => rm.tel === ar.tel)
-            );
-            self.selected = [];
-            self.getUsers();
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      } else if (
-        (this.search !== "" || this.filtertel !== "") &&
-        this.$refs.datatable.$children[0].filteredItems.length > 0
-      ) {
-        send.data = this.$refs.datatable.$children[0].filteredItems;
-        // add user and provider to array
-
-        // send = send.map(function (el) {
-        //   let o = Object.assign({}, el);
-        //   o.user_id = user_id;
-        //   o.provider_id = provider_id;
-        //   return o;
-        // });
-
-        axios
-          .post("api/Lid/newlids", send)
-          .then(function (response) {
-            // console.log(response);
-            self.lids = self.lids.filter(
-              (ar) =>
-                !self.$refs.datatable.$children[0].filteredItems.find(
-                  (rm) => rm.tel === ar.tel
-                )
-            );
-            self.getUsers();
-            self.search = "";
-            self.filtertel = "";
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      }
-      if (this.lids.length == 0) {
-        this.files = [];
-      }
-      this.userid = null;
-      this.$refs.radiogroup.lazyValue = null;
-      this.getUsers();
+      send_el.text = "some text";
+      send.data = send_el;
+      axios
+        .post("api/Lid/updatelids", send)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
