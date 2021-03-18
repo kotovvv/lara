@@ -1,58 +1,5 @@
 <template>
   <div>
-<<<<<<< HEAD
-    <v-main>
-      <v-row>
-        <v-col cols="8">
-          <v-row>
-            <v-col cols="4">
-              <v-card-title>
-                <v-text-field
-                  v-model="search"
-                  append-icon="mdi-magnify"
-                  label="Search"
-                  single-line
-                  hide-details
-                ></v-text-field>
-              </v-card-title>
-            </v-col>
-            <v-col cols="4">
-              <v-card-title>
-                <v-text-field
-                  v-model.lazy.trim="filtertel"
-                  append-icon="mdi-phone"
-                  label="Start number"
-                  single-line
-                  hide-details
-                ></v-text-field>
-              </v-card-title>
-            </v-col>
-          </v-row>
-
-          <v-card>
-            <v-data-table
-              v-model.lazy.trim="selected"
-              :headers="headers"
-              :search="search"
-              :single-select="true"
-              item-key="id"
-              show-select
-              @click:row="clickrow"
-              :items="filteredItems"
-              ref="datatable"
-            >
-  <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length">
-          More info about {{ item.name }}
-        </td>
-      </template>
-            </v-data-table>
-          </v-card>
-        </v-col>
-        <v-col cols="4">
-          <v-card height="100%" class="pa-5">
-            <!-- <v-col cols="3" class="pt-3 mt-4">
-=======
     <v-row>
       <v-col cols="8">
         <v-row>
@@ -126,7 +73,6 @@
       <v-col cols="4">
         <v-card height="100%" class="pa-5">
           <!-- <v-col cols="3" class="pt-3 mt-4">
->>>>>>> bb597aef89752fa7cd84562481ce0690675f4cd0
           <v-select
             v-model="selectedStatus"
             :items="statuses"
@@ -151,30 +97,12 @@
                 v-for="status in statuses"
                 :key="status.id"
               >
-<<<<<<< HEAD
-                <!-- v-bind="selected.length?selected[0].status_id:null" -->
-                <!-- v-model="selectedStatus" -->
-                <v-radio
-                  :label="status.name"
-                  :value="status.id"
-                  v-for="status in statuses"
-                  :key="status.id"
-                >
-                </v-radio>
-              </v-radio-group>
-            </v-list>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-main>
-=======
               </v-radio>
             </v-radio-group>
           </v-list>
         </v-card>
       </v-col>
     </v-row>
->>>>>>> bb597aef89752fa7cd84562481ce0690675f4cd0
   </div>
 </template>
 
@@ -217,16 +145,12 @@ export default {
       // console.log(oldval)
       if (this.selected.length == 0) {
         this.selectedStatus = null;
-<<<<<<< HEAD
-      } else this.selectedStatus = newval[0].status_id;
-=======
         this.expanded = []
       } else {
         this.selectedStatus = newval[0].status_id;
         this.expanded = this.selected;
         // props.expanded = !props.expanded
       }
->>>>>>> bb597aef89752fa7cd84562481ce0690675f4cd0
     },
   },
   computed: {
