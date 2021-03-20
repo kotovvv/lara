@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\v1\loginController;
 use App\Http\Controllers\API\v1\ProvidersController;
 use App\Http\Controllers\API\v1\UsersController;
 use App\Http\Controllers\API\v1\LidsController;
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+Route::post('/login',[loginController::class,'login']);
 
 Route::resource('provider', ProvidersController::class);
 Route::resource('statuses', StatusesController::class);

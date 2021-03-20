@@ -16,20 +16,12 @@ use Illuminate\Support\Facades\Route;
 // route to show the login form
 //Route::get('/', array('uses' => 'App\Http\Controllers\HomeController@showLogin'));
 
-// route to process the form
-//Route::match(['get','post'],'login', array('uses' => 'App\Http\Controllers\HomeController@doLogin'));
-
- //Auth::routes();
-
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// Auth::routes();
-
-// Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/', function () {
+//     return view('admin');
+// });
+// Route::get('/manager', function () {
+//     return view('manager');
+// });
 Route::get('/', function () {
-    return view('admin');
+    return view('app');
 });
-Route::get('/manager', function () {
-    return view('manager');
-});
-Route::post('/vuelogin', [App\Http\Controllers\Auth\LoginController::class, 'vuelogin']);

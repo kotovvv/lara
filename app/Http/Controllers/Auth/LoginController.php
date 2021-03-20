@@ -27,7 +27,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -41,12 +41,12 @@ class LoginController extends Controller
 
     public function vuelogin(Request $request)
     {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+        if(Auth::attempt(['name' => $request->name, 'password' => $request->password])){ 
           $user                  = Auth::user();
-          $username = $user->name;
+          $user = $user->name;
           return response()->json([
             'status'   => 'success',
-            'user' => $username,
+            'user' => $user,
 
           ]); 
         } else { 
