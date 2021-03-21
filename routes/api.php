@@ -27,10 +27,17 @@ Route::post('/login',[loginController::class,'login']);
 
 Route::resource('provider', ProvidersController::class);
 Route::resource('statuses', StatusesController::class);
+Route::resource('users', UsersController::class);
+Route::resource('lids', LidsController::class);
+
+Route::get('statusall', [StatusesController::class,'getall'])->name('stasusall');
+Route::get('providerall', [ProvidersController::class,'getall'])->name('providerall');
+
 Route::get('users/getusers', [UsersController::class,'getusers'])->name('user.getusers');
+Route::get('users/getroles', [UsersController::class,'getroless'])->name('user.getroles');
+Route::post('user/update', [UsersController::class,'update'])->name('user.update');
+Route::get('userlids/{id}', [LidsController::class,'userLids'])->name('userlids');
 
 Route::post('Lid/newlids', [LidsController::class,'newlids'])->name('Lid.newlids');
 Route::post('Lid/updatelids', [LidsController::class,'updatelids'])->name('Lid.updatelids');
-Route::get('userlids/{id}', [LidsController::class,'userLids'])->name('userlids');
 
-Route::resource('lids', LidsController::class);

@@ -9,6 +9,5 @@ Vue.component('main-component', require('./Main').default);
 Vue.use(DatetimePicker);
 
 new Vue({
-    vuetify,
-    
+   vuetify,
 }).$mount('#app')

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <component :user='user' v-on:login="onLogin" :is="theComponent" />
+    <component ref="main" :user="user" v-on:login="onLogin" :is="theComponent" />
   </div>
 </template>
 

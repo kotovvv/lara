@@ -1,34 +1,19 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="desserts"
-    sort-by="calories"
+    :items="users"
+    sort-by="role_id"
     class="elevation-1"
   >
     <template v-slot:top>
-      <v-toolbar
-        flat
-      >
-        <v-toolbar-title>My CRUD</v-toolbar-title>
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
+      <v-toolbar flat>
+        <v-toolbar-title>Пользователи</v-toolbar-title>
+        <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-dialog
-          v-model="dialog"
-          max-width="500px"
-        >
+        <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              dark
-              class="mb-2"
-              v-bind="attrs"
-              v-on="on"
-            >
-              New Item
+            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+              Добавить пользователя
             </v-btn>
           </template>
           <v-card>
@@ -39,55 +24,42 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="editedItem.fio"
+                      label="ФИО"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="6">
                     <v-text-field
                       v-model="editedItem.name"
-                      label="Dessert name"
+                      label="Логин"
                     ></v-text-field>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
+                  <v-col cols="6">
                     <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
+                      v-model="editedItem.password"
+                      label="Пароль"
                     ></v-text-field>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
-                    ></v-text-field>
+                  <v-col cols="8">
+                    <v-select
+                      :items="roles"
+                      v-model="editedItem.role_id"
+                      item-text="name"
+                      item-value="id"
+                      label="Роль"
+                    ></v-select>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein (g)"
-                    ></v-text-field>
+                  <v-col cols="4">
+                    <!-- <v-text-field
+                      v-model="editedItem.active"
+                      label="Показывать"
+                    ></v-text-field> -->
+                    <v-switch
+                      v-model="editedItem.active"
+                      label="Показывать:"
+                    ></v-switch>
                   </v-col>
                 </v-row>
               </v-container>
@@ -95,30 +67,26 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="close"
-              >
-                Cancel
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="save"
-              >
-                Save
+              <v-btn color="blue darken-1" text @click="close"> Отмена </v-btn>
+              <v-btn color="blue darken-1" text @click="save">
+                Сохранить
               </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="headline">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="headline"
+              >Are you sure you want to delete this item?</v-card-title
+            >
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+              <v-btn color="blue darken-1" text @click="closeDelete"
+                >Cancel</v-btn
+              >
+              <v-btn color="blue darken-1" text @click="deleteItemConfirm"
+                >OK</v-btn
+              >
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -126,203 +94,148 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
+      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
+      <!-- <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon> -->
     </template>
     <template v-slot:no-data>
-      <v-btn
-        color="primary"
-        @click="initialize"
-      >
-        Reset
-      </v-btn>
+      <v-btn color="primary" @click="getUsers"> Reset </v-btn>
     </template>
   </v-data-table>
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      dialog: false,
-      dialogDelete: false,
-      headers: [
-        {
-          text: 'Dessert (100g serving)',
-          align: 'start',
-          sortable: false,
-          value: 'name',
-        },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Actions', value: 'actions', sortable: false },
-      ],
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-    }),
+import axios from "axios";
+export default {
+  data: () => ({
+    dialog: false,
+    dialogDelete: false,
+    users: [],
+    roles: [
+      { id: 1, name: "Administrator" },
+      { id: 2, name: "CRM Manager" },
+      { id: 3, name: "Manager" },
+    ],
+    headers: [
+      { text: "Логин", value: "name" },
+      { text: "ФИО", value: "fio" },
+      { text: "Роль", value: "role" },
+      { text: "Показывать", value: "active" },
+      { text: "Действия", value: "actions", sortable: false },
+    ],
 
-    computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-      },
+    editedIndex: -1,
+    editedItem: {
+      name: "",
+      fio: "",
+      role_id: 0,
+      password: "",
+      active: 0,
     },
-
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      dialogDelete (val) {
-        val || this.closeDelete()
-      },
+    defaultItem: {
+      name: "",
+      fio: "",
+      role_id: 0,
+      password: "",
+      active: 0,
     },
+  }),
 
-    created () {
-      this.initialize()
+  computed: {
+    formTitle() {
+      return this.editedIndex === -1
+        ? "Новый пользователь"
+        : "Редактировать пользователя";
     },
+  },
 
-    methods: {
-      initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-          },
-        ]
-      },
+  watch: {
+    dialog(val) {
+      val || this.close();
+    },
+    dialogDelete(val) {
+      val || this.closeDelete();
+    },
+  },
 
-      editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
+  created() {
+    // this.initialize(),
+    this.getUsers();
+  },
 
-      deleteItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialogDelete = true
-      },
-
-      deleteItemConfirm () {
-        this.desserts.splice(this.editedIndex, 1)
-        this.closeDelete()
-      },
-
-      close () {
-        this.dialog = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
+  methods: {
+    rolename(user){
+     user.role = this.roles.find((r) => r.id === user.role_id).name;
+    },
+    getUsers() {
+      let self = this;
+      axios
+        .get("/api/users")
+        .then((res) => {
+          // console.log(self.roles.find((r) => r.id === 1).name)
+          self.users = res.data;
+          self.users.map(function (u) {
+            u.role = self.roles.find((r) => r.id === u.role_id).name;
+          });
         })
-      },
-
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
-        }
-        this.close()
-      },
+        .catch((error) => console.log(error));
     },
-  }
+    saveUsers(user) {
+      let self = this;
+      axios
+        .post("/api/user/update", user)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => console.log(error));
+    },
+    initialize() {},
+    editItem(item) {
+      this.editedIndex = this.users.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+    },
+
+    deleteItem(item) {
+      this.editedIndex = this.users.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialogDelete = true;
+    },
+
+    deleteItemConfirm() {
+      this.users.splice(this.editedIndex, 1);
+      this.closeDelete();
+    },
+
+    close() {
+      this.dialog = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
+
+    closeDelete() {
+      this.dialogDelete = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
+
+    save() {
+      if (this.editedIndex > -1) {
+         delete this.editedItem.role;
+        this.saveUsers(this.editedItem);
+        this.rolename(this.editedItem)
+        Object.assign(this.users[this.editedIndex], this.editedItem);
+      } else {
+        delete this.editedItem.role;
+        this.saveUsers(this.editedItem);
+        this.rolename(this.editedItem)
+        this.users.push(this.editedItem);
+      }
+      this.close();
+    },
+  },
+};
 </script>

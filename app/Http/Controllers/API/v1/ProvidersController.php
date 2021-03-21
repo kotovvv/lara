@@ -16,7 +16,12 @@ class ProvidersController extends Controller
      */
     public function index()
     {
-        return Provider::all()->where('active',1);
+        return Provider::all()->where('active', 1);
+    }
+
+    public function getall()
+    {
+        return Provider::all();
     }
 
     /**
@@ -37,30 +42,24 @@ class ProvidersController extends Controller
      */
     public function store(Request $request)
     {
-      $validator = Validator::make(
-        $request->all(),
-        [
-            "name" => ["required"]
-        ]
-    );
+        $request->validate([
+            'name' => 'required|max:255',
+            
+        ]);
 
-    if ($validator->fails()) {
-        return [
-            "status" => false,
-            "errors" => $validator->messages()
-        ];
-    }
-
-    $provider = Provider::create([
-        "name" => $request->name,
-        "tel" => $request->tel,
-        "active" => $request->active
-    ]);
-
-    return [
-        "active" => true,
-        "provider" => $provider
-    ];
+        $data = $request->all();
+        // Debugbar::info($data);
+        if (isset($data['id'])) {
+            // Debugbar::info('update');
+            if (Provider::where('id', $data['id'])->update($data)) {
+                return response('Provider updated', 200);
+            } else return response('Provider updated error', 301);
+        } else {
+            // Debugbar::info('save');
+            if (Provider::create($data)) {
+                return response('Provider added', 200);
+            } else return response('Provider add error', 301);
+        }
 
     }
 
@@ -72,15 +71,15 @@ class ProvidersController extends Controller
      */
     public function show($id)
     {
-      $provider = Provider::find($id);
-      if (!$provider) {
-          return response()->json([
-              "status" => false,
-              "message" => "provider not found"
-          ])->setStatusCode(404);
-      }
+        $provider = Provider::find($id);
+        if (!$provider) {
+            return response()->json([
+                "status" => false,
+                "message" => "provider not found"
+            ])->setStatusCode(404);
+        }
 
-      return $provider;
+        return $provider;
     }
 
     /**

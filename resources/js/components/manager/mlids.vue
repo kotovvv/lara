@@ -137,7 +137,7 @@ export default {
   mounted: function () {
     this.getUsers();
     this.getStatuses();
-    this.getLids(3);
+    this.getLids(user.id);
   },
   watch: {
     selected: function (newval, oldval) {
@@ -226,21 +226,21 @@ export default {
       console.log("You can click on row))");
       // console.log(value);
     },
-    getUsers() {
-      let self = this;
-      axios
-        .get("/api/users/getusers")
-        .then((res) => {
-          self.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({
-            name,
-            id,
-            role_id,
-            fio,
-            hmlids,
-          }));
-        })
-        .catch((error) => console.log(error));
-    },
+    // getUsers() {
+    //   let self = this;
+    //   axios
+    //     .get("/api/users/getusers")
+    //     .then((res) => {
+    //       self.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({
+    //         name,
+    //         id,
+    //         role_id,
+    //         fio,
+    //         hmlids,
+    //       }));
+    //     })
+    //     .catch((error) => console.log(error));
+    // },
 
     getStatuses() {
       let self = this;

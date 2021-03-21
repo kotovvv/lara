@@ -18,6 +18,11 @@ class StatusesController extends Controller
         return Status::all()->where('active',1);
     }
 
+    public function getall()
+    {
+        return Status::all();
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -36,7 +41,19 @@ class StatusesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        // Debugbar::info($data);
+        if (isset($data['id'])) {
+            // Debugbar::info('update');
+            if (Status::where('id', $data['id'])->update($data)) {
+                return response('Status updated', 200);
+            } else return response('Status updated error', 301);
+        } else {
+            // Debugbar::info('save');
+            if (Status::create($data)) {
+                return response('Status added', 200);
+            } else return response('Status add error', 301);
+        }
     }
 
     /**

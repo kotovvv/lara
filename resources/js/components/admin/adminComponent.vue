@@ -15,7 +15,7 @@
 
       <v-toolbar-title>Пользователь в системе: {{ user.fio }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <button>ВЫХОД</button>
+      <v-btn @click="$emit('login', {})">ВЫХОД</v-btn>
     </v-app-bar>
 
     <v-navigation-drawer
@@ -86,7 +86,7 @@ export default {
         icon: "mdi-contact-phone-outline",
       },
     ],
-    adminMenu: "importcsv",
+    adminMenu: "statusLid",
   }),
   computed: {
     adminComponent() {
