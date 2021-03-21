@@ -35,57 +35,57 @@ class DatabaseSeeder extends Seeder
                 'fio' => 'Admin Adminich',
                 'active' => 1
             ],
-            [
-                'name' => 'larac',
-                'password' => Hash::make('lara'),
-                'role_id' => 2,
-                'fio' => 'CRM Manager',
-                'active' => 1
-            ],
-            [
-                'name' => 'laram',
-                'password' => Hash::make('lara'),
-                'role_id' => 3,
-                'fio' => 'Manager',
-                'active' => 1
-            ],
+            // [
+            //     'name' => 'larac',
+            //     'password' => Hash::make('lara'),
+            //     'role_id' => 2,
+            //     'fio' => 'CRM Manager',
+            //     'active' => 1
+            // ],
+            // [
+            //     'name' => 'laram',
+            //     'password' => Hash::make('lara'),
+            //     'role_id' => 3,
+            //     'fio' => 'Manager',
+            //     'active' => 1
+            // ],
 
         ]);
-        DB::table('providers')->insert([
-            [
-                'name' => 'Provider 1',
-                'active' => 1
-            ],
-            [
-                'name' => 'Provider 2',
-                'active' => 1
-            ],
-            [
-                'name' => 'Provider 3',
-                'active' => 1
-            ],
-        ]);
-        DB::table('statuses')->insert([
-            [
-                'name' => 'Interesting',
-                'active' => 1
-            ],
-            [
-                'name' => 'Don`t disturb',
-                'active' => 1
-            ],
-            [
-                'name' => 'No ansver',
-                'active' => 1
-            ],
-            [
-                'name' => 'Call next time',
-                'active' => 1
-            ],
-            [
-                'name' => 'ReCall beasy',
-                'active' => 1
-            ],
-        ]);
+        // DB::table('providers')->insert([
+        //     [
+        //         'name' => 'Provider 1',
+        //         'active' => 1
+        //     ],
+        //     [
+        //         'name' => 'Provider 2',
+        //         'active' => 1
+        //     ],
+        //     [
+        //         'name' => 'Provider 3',
+        //         'active' => 1
+        //     ],
+        // ]);
+        // DB::table('statuses')->insert([
+        //     [
+        //         'name' => 'Interesting',
+        //         'active' => 1
+        //     ],
+        //     [
+        //         'name' => 'Don`t disturb',
+        //         'active' => 1
+        //     ],
+        //     [
+        //         'name' => 'No ansver',
+        //         'active' => 1
+        //     ],
+        //     [
+        //         'name' => 'Call next time',
+        //         'active' => 1
+        //     ],
+        //     [
+        //         'name' => 'ReCall beasy',
+        //         'active' => 1
+        //     ],
+        // ]);
     }
 }
