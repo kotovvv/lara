@@ -109,6 +109,7 @@
 <script>
 import axios from "axios";
 export default {
+  props:['user'],
   data: () => ({
     expanded: ["Donut"],
     singleExpand: true,
@@ -135,9 +136,10 @@ export default {
     sortKey: "tel",
   }),
   mounted: function () {
-    this.getUsers();
+    // this.getUsers();
     this.getStatuses();
-    this.getLids(user.id);
+    this.getLids(this.$props.user.id);
+  
   },
   watch: {
     selected: function (newval, oldval) {
@@ -256,7 +258,6 @@ export default {
     },
 
     getLids(id) {
-      console.log(id);
       let self = this;
       let a_temp = [];
       self.search = "";
@@ -265,18 +266,18 @@ export default {
       axios
         .get("/api/userlids/" + id)
         .then((res) => {
-          // console.log(res.data);
           self.lids = Object.entries(res.data).map((e) => e[1]);
 
           self.lids.map(function (e) {
-            e.user = self.users.find((u) => u.id === e.user_id).fio;
-            e.status = self.statuses.find((s) => s.id === e.status_id).name;
+            // e.user = self.users.find((u) => u.id === e.user_id).fio;
+            e.status = self.statuses.find((s) => s.id === e.status_id).name || '';
             delete e.provider_id;
             e.updated_at = e.updated_at.substring(0, 16).replace("T", " ");
           });
         })
         .catch((error) => console.log(error));
     },
+
   },
 };
 </script>

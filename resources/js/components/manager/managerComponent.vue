@@ -50,7 +50,7 @@
       <v-container fluid>
         <!-- <v-row> -->
         <!-- table -->
-        <component :is="managerComponent" />
+        <component :user="user" :is="managerComponent" />
         <!-- <tablenewlid></tablenewlid> -->
         <!-- </v-row> -->
       </v-container>
