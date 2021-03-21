@@ -230,7 +230,7 @@ export default {
     getUsers() {
       let self = this;
       axios
-        .get("/api/users/getusers")
+        .get("/api/getusers")
         .then((res) => {
           self.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({
             name,

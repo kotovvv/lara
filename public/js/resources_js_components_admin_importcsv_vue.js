@@ -2189,25 +2189,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/vuetify/lib/components/VBadge/index.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/vuetify/lib/components/VBadge/index.js ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "VBadge": () => (/* reexport safe */ _VBadge__WEBPACK_IMPORTED_MODULE_0__.default),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _VBadge__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VBadge */ "./node_modules/vuetify/lib/components/VBadge/VBadge.js");
-
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_VBadge__WEBPACK_IMPORTED_MODULE_0__.default);
-
-/***/ }),
-
 /***/ "./node_modules/vuetify/lib/components/VCheckbox/VSimpleCheckbox.js":
 /*!**************************************************************************!*\
   !*** ./node_modules/vuetify/lib/components/VCheckbox/VSimpleCheckbox.js ***!
@@ -5221,25 +5202,6 @@ __webpack_require__.r(__webpack_exports__);
 
   }
 }));
-
-/***/ }),
-
-/***/ "./node_modules/vuetify/lib/components/VFileInput/index.js":
-/*!*****************************************************************!*\
-  !*** ./node_modules/vuetify/lib/components/VFileInput/index.js ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "VFileInput": () => (/* reexport safe */ _VFileInput__WEBPACK_IMPORTED_MODULE_0__.default),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _VFileInput__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VFileInput */ "./node_modules/vuetify/lib/components/VFileInput/VFileInput.js");
-
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_VFileInput__WEBPACK_IMPORTED_MODULE_0__.default);
 
 /***/ }),
 
@@ -8505,7 +8467,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     getUsers: function getUsers() {
       var self = this;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/users/getusers").then(function (res) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/getusers").then(function (res) {
         self.users = res.data.map(function (_ref2) {
           var name = _ref2.name,
               id = _ref2.id,
@@ -9751,16 +9713,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var vuetify_lib_components_VBadge__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VBadge */ "./node_modules/vuetify/lib/components/VBadge/index.js");
-/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/VCard.js");
-/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
-/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VCol.js");
-/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VContainer.js");
-/* harmony import */ var vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VDataTable */ "./node_modules/vuetify/lib/components/VDataTable/VDataTable.js");
-/* harmony import */ var vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VFileInput */ "./node_modules/vuetify/lib/components/VFileInput/index.js");
+/* harmony import */ var vuetify_lib_components_VBadge__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VBadge */ "./node_modules/vuetify/lib/components/VBadge/VBadge.js");
+/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/VCard.js");
+/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VCol.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VContainer.js");
+/* harmony import */ var vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VDataTable */ "./node_modules/vuetify/lib/components/VDataTable/VDataTable.js");
+/* harmony import */ var vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VFileInput */ "./node_modules/vuetify/lib/components/VFileInput/VFileInput.js");
 /* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/VIcon.js");
 /* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/VList.js");
-/* harmony import */ var vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VMain */ "./node_modules/vuetify/lib/components/VMain/index.js");
+/* harmony import */ var vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VMain */ "./node_modules/vuetify/lib/components/VMain/index.js");
 /* harmony import */ var vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! vuetify/lib/components/VRadioGroup */ "./node_modules/vuetify/lib/components/VRadioGroup/VRadio.js");
 /* harmony import */ var vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! vuetify/lib/components/VRadioGroup */ "./node_modules/vuetify/lib/components/VRadioGroup/VRadioGroup.js");
 /* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VRow.js");
@@ -9801,7 +9763,7 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 
 
 
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBadge: vuetify_lib_components_VBadge__WEBPACK_IMPORTED_MODULE_4__.VBadge,VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__.default,VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_8__.VCardTitle,VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_9__.default,VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_10__.default,VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_11__.default,VFileInput: vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_5__.VFileInput,VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_12__.default,VList: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__.default,VMain: vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_6__.VMain,VRadio: vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_14__.default,VRadioGroup: vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_15__.default,VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_16__.default,VSelect: vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_17__.default,VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_18__.default})
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBadge: vuetify_lib_components_VBadge__WEBPACK_IMPORTED_MODULE_5__.default,VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__.default,VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__.VCardTitle,VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__.default,VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_9__.default,VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_10__.default,VFileInput: vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_11__.default,VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_12__.default,VList: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__.default,VMain: vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_4__.VMain,VRadio: vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_14__.default,VRadioGroup: vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_15__.default,VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_16__.default,VSelect: vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_17__.default,VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_18__.default})
 
 
 /* hot reload */
