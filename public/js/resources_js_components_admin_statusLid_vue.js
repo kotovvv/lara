@@ -1992,11 +1992,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _src_components_VCheckbox_VSimpleCheckbox_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VCheckbox/VSimpleCheckbox.sass */ "./node_modules/vuetify/src/components/VCheckbox/VSimpleCheckbox.sass");
-/* harmony import */ var _directives_ripple__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../directives/ripple */ "./node_modules/vuetify/lib/directives/ripple/index.js");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var _VIcon__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
-/* harmony import */ var _mixins_colorable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/colorable */ "./node_modules/vuetify/lib/mixins/colorable/index.js");
-/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
+/* harmony import */ var _directives_ripple__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../directives/ripple */ "./node_modules/vuetify/lib/directives/ripple/index.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var _VIcon__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../VIcon */ "./node_modules/vuetify/lib/components/VIcon/VIcon.js");
+/* harmony import */ var _mixins_colorable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/colorable */ "./node_modules/vuetify/lib/mixins/colorable/index.js");
+/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
 /* harmony import */ var _util_mergeData__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../util/mergeData */ "./node_modules/vuetify/lib/util/mergeData.js");
 /* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
 
@@ -2009,14 +2009,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (vue__WEBPACK_IMPORTED_MODULE_2__.default.extend({
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (vue__WEBPACK_IMPORTED_MODULE_1__.default.extend({
   name: 'v-simple-checkbox',
   functional: true,
   directives: {
-    ripple: _directives_ripple__WEBPACK_IMPORTED_MODULE_1__.default
+    ripple: _directives_ripple__WEBPACK_IMPORTED_MODULE_2__.default
   },
-  props: { ..._mixins_colorable__WEBPACK_IMPORTED_MODULE_4__.default.options.props,
-    ..._mixins_themeable__WEBPACK_IMPORTED_MODULE_5__.default.options.props,
+  props: { ..._mixins_colorable__WEBPACK_IMPORTED_MODULE_3__.default.options.props,
+    ..._mixins_themeable__WEBPACK_IMPORTED_MODULE_4__.default.options.props,
     disabled: Boolean,
     ripple: {
       type: Boolean,
@@ -2046,7 +2046,7 @@ __webpack_require__.r(__webpack_exports__);
     const children = [];
     let icon = props.offIcon;
     if (props.indeterminate) icon = props.indeterminateIcon;else if (props.value) icon = props.onIcon;
-    children.push(h(_VIcon__WEBPACK_IMPORTED_MODULE_3__.VIcon, _mixins_colorable__WEBPACK_IMPORTED_MODULE_4__.default.options.methods.setTextColor(props.value && props.color, {
+    children.push(h(_VIcon__WEBPACK_IMPORTED_MODULE_5__.default, _mixins_colorable__WEBPACK_IMPORTED_MODULE_3__.default.options.methods.setTextColor(props.value && props.color, {
       props: {
         disabled: props.disabled,
         dark: props.dark,
@@ -2055,7 +2055,7 @@ __webpack_require__.r(__webpack_exports__);
     }), icon));
 
     if (props.ripple && !props.disabled) {
-      const ripple = h('div', _mixins_colorable__WEBPACK_IMPORTED_MODULE_4__.default.options.methods.setTextColor(props.color, {
+      const ripple = h('div', _mixins_colorable__WEBPACK_IMPORTED_MODULE_3__.default.options.methods.setTextColor(props.color, {
         staticClass: 'v-input--selection-controls__ripple',
         directives: [{
           name: 'ripple',
@@ -2306,6 +2306,944 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/vuetify/lib/components/VColorPicker/VColorPicker.js":
+/*!**************************************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VColorPicker/VColorPicker.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _src_components_VColorPicker_VColorPicker_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VColorPicker/VColorPicker.sass */ "./node_modules/vuetify/src/components/VColorPicker/VColorPicker.sass");
+/* harmony import */ var _VSheet_VSheet__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../VSheet/VSheet */ "./node_modules/vuetify/lib/components/VSheet/VSheet.js");
+/* harmony import */ var _VColorPickerPreview__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./VColorPickerPreview */ "./node_modules/vuetify/lib/components/VColorPicker/VColorPickerPreview.js");
+/* harmony import */ var _VColorPickerCanvas__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./VColorPickerCanvas */ "./node_modules/vuetify/lib/components/VColorPicker/VColorPickerCanvas.js");
+/* harmony import */ var _VColorPickerEdit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./VColorPickerEdit */ "./node_modules/vuetify/lib/components/VColorPicker/VColorPickerEdit.js");
+/* harmony import */ var _VColorPickerSwatches__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./VColorPickerSwatches */ "./node_modules/vuetify/lib/components/VColorPicker/VColorPickerSwatches.js");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./util */ "./node_modules/vuetify/lib/components/VColorPicker/util/index.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+/* harmony import */ var _mixins_elevatable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/elevatable */ "./node_modules/vuetify/lib/mixins/elevatable/index.js");
+/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
+// Styles
+ // Components
+
+
+
+
+
+ // Helpers
+
+
+
+ // Mixins
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_1__.default)(_mixins_elevatable__WEBPACK_IMPORTED_MODULE_3__.default, _mixins_themeable__WEBPACK_IMPORTED_MODULE_4__.default).extend({
+  name: 'v-color-picker',
+  props: {
+    canvasHeight: {
+      type: [String, Number],
+      default: 150
+    },
+    disabled: Boolean,
+    dotSize: {
+      type: [Number, String],
+      default: 10
+    },
+    flat: Boolean,
+    hideCanvas: Boolean,
+    hideSliders: Boolean,
+    hideInputs: Boolean,
+    hideModeSwitch: Boolean,
+    mode: {
+      type: String,
+      default: 'rgba',
+      validator: v => Object.keys(_VColorPickerEdit__WEBPACK_IMPORTED_MODULE_5__.modes).includes(v)
+    },
+    showSwatches: Boolean,
+    swatches: Array,
+    swatchesMaxHeight: {
+      type: [Number, String],
+      default: 150
+    },
+    value: {
+      type: [Object, String]
+    },
+    width: {
+      type: [Number, String],
+      default: 300
+    }
+  },
+  data: () => ({
+    internalValue: (0,_util__WEBPACK_IMPORTED_MODULE_6__.fromRGBA)({
+      r: 255,
+      g: 0,
+      b: 0,
+      a: 1
+    })
+  }),
+  computed: {
+    hideAlpha() {
+      if (!this.value) return false;
+      return !(0,_util__WEBPACK_IMPORTED_MODULE_6__.hasAlpha)(this.value);
+    }
+
+  },
+  watch: {
+    value: {
+      handler(color) {
+        this.updateColor((0,_util__WEBPACK_IMPORTED_MODULE_6__.parseColor)(color, this.internalValue));
+      },
+
+      immediate: true
+    }
+  },
+  methods: {
+    updateColor(color) {
+      this.internalValue = color;
+      const value = (0,_util__WEBPACK_IMPORTED_MODULE_6__.extractColor)(this.internalValue, this.value);
+
+      if (!(0,_util_helpers__WEBPACK_IMPORTED_MODULE_2__.deepEqual)(value, this.value)) {
+        this.$emit('input', value);
+        this.$emit('update:color', this.internalValue);
+      }
+    },
+
+    genCanvas() {
+      return this.$createElement(_VColorPickerCanvas__WEBPACK_IMPORTED_MODULE_7__.default, {
+        props: {
+          color: this.internalValue,
+          disabled: this.disabled,
+          dotSize: this.dotSize,
+          width: this.width,
+          height: this.canvasHeight
+        },
+        on: {
+          'update:color': this.updateColor
+        }
+      });
+    },
+
+    genControls() {
+      return this.$createElement('div', {
+        staticClass: 'v-color-picker__controls'
+      }, [!this.hideSliders && this.genPreview(), !this.hideInputs && this.genEdit()]);
+    },
+
+    genEdit() {
+      return this.$createElement(_VColorPickerEdit__WEBPACK_IMPORTED_MODULE_5__.default, {
+        props: {
+          color: this.internalValue,
+          disabled: this.disabled,
+          hideAlpha: this.hideAlpha,
+          hideModeSwitch: this.hideModeSwitch,
+          mode: this.mode
+        },
+        on: {
+          'update:color': this.updateColor,
+          'update:mode': v => this.$emit('update:mode', v)
+        }
+      });
+    },
+
+    genPreview() {
+      return this.$createElement(_VColorPickerPreview__WEBPACK_IMPORTED_MODULE_8__.default, {
+        props: {
+          color: this.internalValue,
+          disabled: this.disabled,
+          hideAlpha: this.hideAlpha
+        },
+        on: {
+          'update:color': this.updateColor
+        }
+      });
+    },
+
+    genSwatches() {
+      return this.$createElement(_VColorPickerSwatches__WEBPACK_IMPORTED_MODULE_9__.default, {
+        props: {
+          dark: this.dark,
+          light: this.light,
+          disabled: this.disabled,
+          swatches: this.swatches,
+          color: this.internalValue,
+          maxHeight: this.swatchesMaxHeight
+        },
+        on: {
+          'update:color': this.updateColor
+        }
+      });
+    }
+
+  },
+
+  render(h) {
+    return h(_VSheet_VSheet__WEBPACK_IMPORTED_MODULE_10__.default, {
+      staticClass: 'v-color-picker',
+      class: {
+        'v-color-picker--flat': this.flat,
+        ...this.themeClasses,
+        ...this.elevationClasses
+      },
+      props: {
+        maxWidth: this.width
+      }
+    }, [!this.hideCanvas && this.genCanvas(), (!this.hideSliders || !this.hideInputs) && this.genControls(), this.showSwatches && this.genSwatches()]);
+  }
+
+}));
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/lib/components/VColorPicker/VColorPickerCanvas.js":
+/*!********************************************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VColorPicker/VColorPickerCanvas.js ***!
+  \********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _src_components_VColorPicker_VColorPickerCanvas_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VColorPicker/VColorPickerCanvas.sass */ "./node_modules/vuetify/src/components/VColorPicker/VColorPickerCanvas.sass");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util */ "./node_modules/vuetify/lib/components/VColorPicker/util/index.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+// Styles
+ // Helpers
+
+
+ // Types
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (vue__WEBPACK_IMPORTED_MODULE_2__.default.extend({
+  name: 'v-color-picker-canvas',
+  props: {
+    color: {
+      type: Object,
+      default: () => (0,_util__WEBPACK_IMPORTED_MODULE_3__.fromRGBA)({
+        r: 255,
+        g: 0,
+        b: 0,
+        a: 1
+      })
+    },
+    disabled: Boolean,
+    dotSize: {
+      type: [Number, String],
+      default: 10
+    },
+    height: {
+      type: [Number, String],
+      default: 150
+    },
+    width: {
+      type: [Number, String],
+      default: 300
+    }
+  },
+
+  data() {
+    return {
+      boundingRect: {
+        width: 0,
+        height: 0,
+        left: 0,
+        top: 0
+      }
+    };
+  },
+
+  computed: {
+    dot() {
+      if (!this.color) return {
+        x: 0,
+        y: 0
+      };
+      return {
+        x: this.color.hsva.s * parseInt(this.width, 10),
+        y: (1 - this.color.hsva.v) * parseInt(this.height, 10)
+      };
+    }
+
+  },
+  watch: {
+    'color.hue': 'updateCanvas'
+  },
+
+  mounted() {
+    this.updateCanvas();
+  },
+
+  methods: {
+    emitColor(x, y) {
+      const {
+        left,
+        top,
+        width,
+        height
+      } = this.boundingRect;
+      this.$emit('update:color', (0,_util__WEBPACK_IMPORTED_MODULE_3__.fromHSVA)({
+        h: this.color.hue,
+        s: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.clamp)(x - left, 0, width) / width,
+        v: 1 - (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.clamp)(y - top, 0, height) / height,
+        a: this.color.alpha
+      }));
+    },
+
+    updateCanvas() {
+      if (!this.color) return;
+      const canvas = this.$refs.canvas;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const saturationGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      saturationGradient.addColorStop(0, 'hsla(0, 0%, 100%, 1)'); // white
+
+      saturationGradient.addColorStop(1, `hsla(${this.color.hue}, 100%, 50%, 1)`);
+      ctx.fillStyle = saturationGradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const valueGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      valueGradient.addColorStop(0, 'hsla(0, 0%, 100%, 0)'); // transparent
+
+      valueGradient.addColorStop(1, 'hsla(0, 0%, 0%, 1)'); // black
+
+      ctx.fillStyle = valueGradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    },
+
+    handleClick(e) {
+      if (this.disabled) return;
+      this.boundingRect = this.$el.getBoundingClientRect();
+      this.emitColor(e.clientX, e.clientY);
+    },
+
+    handleMouseDown(e) {
+      // To prevent selection while moving cursor
+      e.preventDefault();
+      if (this.disabled) return;
+      this.boundingRect = this.$el.getBoundingClientRect();
+      window.addEventListener('mousemove', this.handleMouseMove);
+      window.addEventListener('mouseup', this.handleMouseUp);
+    },
+
+    handleMouseMove(e) {
+      if (this.disabled) return;
+      this.emitColor(e.clientX, e.clientY);
+    },
+
+    handleMouseUp() {
+      window.removeEventListener('mousemove', this.handleMouseMove);
+      window.removeEventListener('mouseup', this.handleMouseUp);
+    },
+
+    genCanvas() {
+      return this.$createElement('canvas', {
+        ref: 'canvas',
+        attrs: {
+          width: this.width,
+          height: this.height
+        }
+      });
+    },
+
+    genDot() {
+      const radius = parseInt(this.dotSize, 10) / 2;
+      const x = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.convertToUnit)(this.dot.x - radius);
+      const y = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.convertToUnit)(this.dot.y - radius);
+      return this.$createElement('div', {
+        staticClass: 'v-color-picker__canvas-dot',
+        class: {
+          'v-color-picker__canvas-dot--disabled': this.disabled
+        },
+        style: {
+          width: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.convertToUnit)(this.dotSize),
+          height: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.convertToUnit)(this.dotSize),
+          transform: `translate(${x}, ${y})`
+        }
+      });
+    }
+
+  },
+
+  render(h) {
+    return h('div', {
+      staticClass: 'v-color-picker__canvas',
+      style: {
+        width: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.convertToUnit)(this.width),
+        height: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.convertToUnit)(this.height)
+      },
+      on: {
+        click: this.handleClick,
+        mousedown: this.handleMouseDown
+      }
+    }, [this.genCanvas(), this.genDot()]);
+  }
+
+}));
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/lib/components/VColorPicker/VColorPickerEdit.js":
+/*!******************************************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VColorPicker/VColorPickerEdit.js ***!
+  \******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "modes": () => (/* binding */ modes),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _src_components_VColorPicker_VColorPickerEdit_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VColorPicker/VColorPickerEdit.sass */ "./node_modules/vuetify/src/components/VColorPicker/VColorPickerEdit.sass");
+/* harmony import */ var _VBtn__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../VBtn */ "./node_modules/vuetify/lib/components/VBtn/index.js");
+/* harmony import */ var _VIcon__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
+/* harmony import */ var _util_colorUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/colorUtils */ "./node_modules/vuetify/lib/util/colorUtils.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util */ "./node_modules/vuetify/lib/components/VColorPicker/util/index.js");
+// Styles
+ // Components
+
+
+ // Helpers
+
+ // Types
+
+
+
+const modes = {
+  rgba: {
+    inputs: [['r', 255, 'int'], ['g', 255, 'int'], ['b', 255, 'int'], ['a', 1, 'float']],
+    from: _util__WEBPACK_IMPORTED_MODULE_3__.fromRGBA
+  },
+  hsla: {
+    inputs: [['h', 360, 'int'], ['s', 1, 'float'], ['l', 1, 'float'], ['a', 1, 'float']],
+    from: _util__WEBPACK_IMPORTED_MODULE_3__.fromHSLA
+  },
+  hexa: {
+    from: _util__WEBPACK_IMPORTED_MODULE_3__.fromHexa
+  }
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (vue__WEBPACK_IMPORTED_MODULE_2__.default.extend({
+  name: 'v-color-picker-edit',
+  props: {
+    color: Object,
+    disabled: Boolean,
+    hideAlpha: Boolean,
+    hideModeSwitch: Boolean,
+    mode: {
+      type: String,
+      default: 'rgba',
+      validator: v => Object.keys(modes).includes(v)
+    }
+  },
+
+  data() {
+    return {
+      modes,
+      internalMode: this.mode
+    };
+  },
+
+  computed: {
+    currentMode() {
+      return this.modes[this.internalMode];
+    }
+
+  },
+  watch: {
+    mode(mode) {
+      this.internalMode = mode;
+    }
+
+  },
+
+  created() {
+    this.internalMode = this.mode;
+  },
+
+  methods: {
+    getValue(v, type) {
+      if (type === 'float') return Math.round(v * 100) / 100;else if (type === 'int') return Math.round(v);else return 0;
+    },
+
+    parseValue(v, type) {
+      if (type === 'float') return parseFloat(v);else if (type === 'int') return parseInt(v, 10) || 0;else return 0;
+    },
+
+    changeMode() {
+      const modes = Object.keys(this.modes);
+      const index = modes.indexOf(this.internalMode);
+      const newMode = modes[(index + 1) % modes.length];
+      this.internalMode = newMode;
+      this.$emit('update:mode', newMode);
+    },
+
+    genInput(target, attrs, value, on) {
+      return this.$createElement('div', {
+        staticClass: 'v-color-picker__input'
+      }, [this.$createElement('input', {
+        key: target,
+        attrs,
+        domProps: {
+          value
+        },
+        on
+      }), this.$createElement('span', target.toUpperCase())]);
+    },
+
+    genInputs() {
+      if (this.internalMode === 'hexa') {
+        const hex = this.color.hexa;
+        const value = this.hideAlpha && hex.endsWith('FF') ? hex.substr(0, 7) : hex;
+        return this.genInput('hex', {
+          maxlength: this.hideAlpha ? 7 : 9,
+          disabled: this.disabled
+        }, value, {
+          change: e => {
+            const el = e.target;
+            this.$emit('update:color', this.currentMode.from((0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_1__.parseHex)(el.value)));
+          }
+        });
+      } else {
+        const inputs = this.hideAlpha ? this.currentMode.inputs.slice(0, -1) : this.currentMode.inputs;
+        return inputs.map(([target, max, type]) => {
+          const value = this.color[this.internalMode];
+          return this.genInput(target, {
+            type: 'number',
+            min: 0,
+            max,
+            step: type === 'float' ? '0.01' : type === 'int' ? '1' : undefined,
+            disabled: this.disabled
+          }, this.getValue(value[target], type), {
+            input: e => {
+              const el = e.target;
+              const newVal = this.parseValue(el.value || '0', type);
+              this.$emit('update:color', this.currentMode.from(Object.assign({}, value, {
+                [target]: newVal
+              }), this.color.alpha));
+            }
+          });
+        });
+      }
+    },
+
+    genSwitch() {
+      return this.$createElement(_VBtn__WEBPACK_IMPORTED_MODULE_4__.default, {
+        props: {
+          small: true,
+          icon: true,
+          disabled: this.disabled
+        },
+        on: {
+          click: this.changeMode
+        }
+      }, [this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_5__.default, '$unfold')]);
+    }
+
+  },
+
+  render(h) {
+    return h('div', {
+      staticClass: 'v-color-picker__edit'
+    }, [this.genInputs(), !this.hideModeSwitch && this.genSwitch()]);
+  }
+
+}));
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/lib/components/VColorPicker/VColorPickerPreview.js":
+/*!*********************************************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VColorPicker/VColorPickerPreview.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _src_components_VColorPicker_VColorPickerPreview_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VColorPicker/VColorPickerPreview.sass */ "./node_modules/vuetify/src/components/VColorPicker/VColorPickerPreview.sass");
+/* harmony import */ var _VSlider_VSlider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../VSlider/VSlider */ "./node_modules/vuetify/lib/components/VSlider/VSlider.js");
+/* harmony import */ var _util_colorUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/colorUtils */ "./node_modules/vuetify/lib/util/colorUtils.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util */ "./node_modules/vuetify/lib/components/VColorPicker/util/index.js");
+// Styles
+ // Components
+
+ // Utilities
+
+ // Types
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (vue__WEBPACK_IMPORTED_MODULE_2__.default.extend({
+  name: 'v-color-picker-preview',
+  props: {
+    color: Object,
+    disabled: Boolean,
+    hideAlpha: Boolean
+  },
+  methods: {
+    genAlpha() {
+      return this.genTrack({
+        staticClass: 'v-color-picker__alpha',
+        props: {
+          thumbColor: 'grey lighten-2',
+          hideDetails: true,
+          value: this.color.alpha,
+          step: 0,
+          min: 0,
+          max: 1
+        },
+        style: {
+          backgroundImage: this.disabled ? undefined : `linear-gradient(to ${this.$vuetify.rtl ? 'left' : 'right'}, transparent, ${(0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_1__.RGBtoCSS)(this.color.rgba)})`
+        },
+        on: {
+          input: val => this.color.alpha !== val && this.$emit('update:color', (0,_util__WEBPACK_IMPORTED_MODULE_3__.fromHSVA)({ ...this.color.hsva,
+            a: val
+          }))
+        }
+      });
+    },
+
+    genSliders() {
+      return this.$createElement('div', {
+        staticClass: 'v-color-picker__sliders'
+      }, [this.genHue(), !this.hideAlpha && this.genAlpha()]);
+    },
+
+    genDot() {
+      return this.$createElement('div', {
+        staticClass: 'v-color-picker__dot'
+      }, [this.$createElement('div', {
+        style: {
+          background: (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_1__.RGBAtoCSS)(this.color.rgba)
+        }
+      })]);
+    },
+
+    genHue() {
+      return this.genTrack({
+        staticClass: 'v-color-picker__hue',
+        props: {
+          thumbColor: 'grey lighten-2',
+          hideDetails: true,
+          value: this.color.hue,
+          step: 0,
+          min: 0,
+          max: 360
+        },
+        on: {
+          input: val => this.color.hue !== val && this.$emit('update:color', (0,_util__WEBPACK_IMPORTED_MODULE_3__.fromHSVA)({ ...this.color.hsva,
+            h: val
+          }))
+        }
+      });
+    },
+
+    genTrack(options) {
+      return this.$createElement(_VSlider_VSlider__WEBPACK_IMPORTED_MODULE_4__.default, {
+        class: 'v-color-picker__track',
+        ...options,
+        props: {
+          disabled: this.disabled,
+          ...options.props
+        }
+      });
+    }
+
+  },
+
+  render(h) {
+    return h('div', {
+      staticClass: 'v-color-picker__preview',
+      class: {
+        'v-color-picker__preview--hide-alpha': this.hideAlpha
+      }
+    }, [this.genDot(), this.genSliders()]);
+  }
+
+}));
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/lib/components/VColorPicker/VColorPickerSwatches.js":
+/*!**********************************************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VColorPicker/VColorPickerSwatches.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _src_components_VColorPicker_VColorPickerSwatches_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VColorPicker/VColorPickerSwatches.sass */ "./node_modules/vuetify/src/components/VColorPicker/VColorPickerSwatches.sass");
+/* harmony import */ var _VIcon__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
+/* harmony import */ var _util_colors__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../util/colors */ "./node_modules/vuetify/lib/util/colors.js");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./util */ "./node_modules/vuetify/lib/components/VColorPicker/util/index.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
+/* harmony import */ var _util_colorUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/colorUtils */ "./node_modules/vuetify/lib/util/colorUtils.js");
+// Styles
+ // Components
+
+ // Helpers
+
+
+
+
+
+
+
+
+function parseDefaultColors(colors) {
+  return Object.keys(colors).map(key => {
+    const color = colors[key];
+    return color.base ? [color.base, color.darken4, color.darken3, color.darken2, color.darken1, color.lighten1, color.lighten2, color.lighten3, color.lighten4, color.lighten5] : [color.black, color.white, color.transparent];
+  });
+}
+
+const white = (0,_util__WEBPACK_IMPORTED_MODULE_4__.fromHex)('#FFFFFF').rgba;
+const black = (0,_util__WEBPACK_IMPORTED_MODULE_4__.fromHex)('#000000').rgba;
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_2__.default)(_mixins_themeable__WEBPACK_IMPORTED_MODULE_5__.default).extend({
+  name: 'v-color-picker-swatches',
+  props: {
+    swatches: {
+      type: Array,
+      default: () => parseDefaultColors(_util_colors__WEBPACK_IMPORTED_MODULE_6__.default)
+    },
+    disabled: Boolean,
+    color: Object,
+    maxWidth: [Number, String],
+    maxHeight: [Number, String]
+  },
+  methods: {
+    genColor(color) {
+      const content = this.$createElement('div', {
+        style: {
+          background: color
+        }
+      }, [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.deepEqual)(this.color, (0,_util__WEBPACK_IMPORTED_MODULE_4__.parseColor)(color, null)) && this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_7__.default, {
+        props: {
+          small: true,
+          dark: (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_3__.contrastRatio)(this.color.rgba, white) > 2 && this.color.alpha > 0.5,
+          light: (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_3__.contrastRatio)(this.color.rgba, black) > 2 && this.color.alpha > 0.5
+        }
+      }, '$success')]);
+      return this.$createElement('div', {
+        staticClass: 'v-color-picker__color',
+        on: {
+          // TODO: Less hacky way of catching transparent
+          click: () => this.disabled || this.$emit('update:color', (0,_util__WEBPACK_IMPORTED_MODULE_4__.fromHex)(color === 'transparent' ? '#00000000' : color))
+        }
+      }, [content]);
+    },
+
+    genSwatches() {
+      return this.swatches.map(swatch => {
+        const colors = swatch.map(this.genColor);
+        return this.$createElement('div', {
+          staticClass: 'v-color-picker__swatch'
+        }, colors);
+      });
+    }
+
+  },
+
+  render(h) {
+    return h('div', {
+      staticClass: 'v-color-picker__swatches',
+      style: {
+        maxWidth: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.convertToUnit)(this.maxWidth),
+        maxHeight: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.convertToUnit)(this.maxHeight)
+      }
+    }, [this.$createElement('div', this.genSwatches())]);
+  }
+
+}));
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/lib/components/VColorPicker/util/index.js":
+/*!************************************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VColorPicker/util/index.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "fromHSVA": () => (/* binding */ fromHSVA),
+/* harmony export */   "fromHSLA": () => (/* binding */ fromHSLA),
+/* harmony export */   "fromRGBA": () => (/* binding */ fromRGBA),
+/* harmony export */   "fromHexa": () => (/* binding */ fromHexa),
+/* harmony export */   "fromHex": () => (/* binding */ fromHex),
+/* harmony export */   "parseColor": () => (/* binding */ parseColor),
+/* harmony export */   "extractColor": () => (/* binding */ extractColor),
+/* harmony export */   "hasAlpha": () => (/* binding */ hasAlpha)
+/* harmony export */ });
+/* harmony import */ var _util_colorUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../util/colorUtils */ "./node_modules/vuetify/lib/util/colorUtils.js");
+// Utilities
+
+function fromHSVA(hsva) {
+  hsva = { ...hsva
+  };
+  const hexa = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.HSVAtoHex)(hsva);
+  const hsla = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.HSVAtoHSLA)(hsva);
+  const rgba = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.HSVAtoRGBA)(hsva);
+  return {
+    alpha: hsva.a,
+    hex: hexa.substr(0, 7),
+    hexa,
+    hsla,
+    hsva,
+    hue: hsva.h,
+    rgba
+  };
+}
+function fromHSLA(hsla) {
+  const hsva = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.HSLAtoHSVA)(hsla);
+  const hexa = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.HSVAtoHex)(hsva);
+  const rgba = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.HSVAtoRGBA)(hsva);
+  return {
+    alpha: hsva.a,
+    hex: hexa.substr(0, 7),
+    hexa,
+    hsla,
+    hsva,
+    hue: hsva.h,
+    rgba
+  };
+}
+function fromRGBA(rgba) {
+  const hsva = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.RGBAtoHSVA)(rgba);
+  const hexa = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.RGBAtoHex)(rgba);
+  const hsla = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.HSVAtoHSLA)(hsva);
+  return {
+    alpha: hsva.a,
+    hex: hexa.substr(0, 7),
+    hexa,
+    hsla,
+    hsva,
+    hue: hsva.h,
+    rgba
+  };
+}
+function fromHexa(hexa) {
+  const hsva = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.HexToHSVA)(hexa);
+  const hsla = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.HSVAtoHSLA)(hsva);
+  const rgba = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.HSVAtoRGBA)(hsva);
+  return {
+    alpha: hsva.a,
+    hex: hexa.substr(0, 7),
+    hexa,
+    hsla,
+    hsva,
+    hue: hsva.h,
+    rgba
+  };
+}
+function fromHex(hex) {
+  return fromHexa((0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.parseHex)(hex));
+}
+
+function has(obj, key) {
+  return key.every(k => obj.hasOwnProperty(k));
+}
+
+function parseColor(color, oldColor) {
+  if (!color) return fromRGBA({
+    r: 255,
+    g: 0,
+    b: 0,
+    a: 1
+  });
+
+  if (typeof color === 'string') {
+    if (color === 'transparent') return fromHexa('#00000000');
+    const hex = (0,_util_colorUtils__WEBPACK_IMPORTED_MODULE_0__.parseHex)(color);
+    if (oldColor && hex === oldColor.hexa) return oldColor;else return fromHexa(hex);
+  }
+
+  if (typeof color === 'object') {
+    if (color.hasOwnProperty('alpha')) return color;
+    const a = color.hasOwnProperty('a') ? parseFloat(color.a) : 1;
+
+    if (has(color, ['r', 'g', 'b'])) {
+      if (oldColor && color === oldColor.rgba) return oldColor;else return fromRGBA({ ...color,
+        a
+      });
+    } else if (has(color, ['h', 's', 'l'])) {
+      if (oldColor && color === oldColor.hsla) return oldColor;else return fromHSLA({ ...color,
+        a
+      });
+    } else if (has(color, ['h', 's', 'v'])) {
+      if (oldColor && color === oldColor.hsva) return oldColor;else return fromHSVA({ ...color,
+        a
+      });
+    }
+  }
+
+  return fromRGBA({
+    r: 255,
+    g: 0,
+    b: 0,
+    a: 1
+  });
+}
+
+function stripAlpha(color, stripAlpha) {
+  if (stripAlpha) {
+    const {
+      a,
+      ...rest
+    } = color;
+    return rest;
+  }
+
+  return color;
+}
+
+function extractColor(color, input) {
+  if (input == null) return color;
+
+  if (typeof input === 'string') {
+    return input.length === 7 ? color.hex : color.hexa;
+  }
+
+  if (typeof input === 'object') {
+    const shouldStrip = typeof input.a === 'number' && input.a === 0 ? !!input.a : !input.a;
+    if (has(input, ['r', 'g', 'b'])) return stripAlpha(color.rgba, shouldStrip);else if (has(input, ['h', 's', 'l'])) return stripAlpha(color.hsla, shouldStrip);else if (has(input, ['h', 's', 'v'])) return stripAlpha(color.hsva, shouldStrip);
+  }
+
+  return color;
+}
+function hasAlpha(color) {
+  if (!color) return false;
+
+  if (typeof color === 'string') {
+    return color.length > 7;
+  }
+
+  if (typeof color === 'object') {
+    return has(color, ['a']) || has(color, ['alpha']);
+  }
+
+  return false;
+}
+
+/***/ }),
+
 /***/ "./node_modules/vuetify/lib/components/VDataIterator/VDataFooter.js":
 /*!**************************************************************************!*\
   !*** ./node_modules/vuetify/lib/components/VDataIterator/VDataFooter.js ***!
@@ -2543,11 +3481,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _VData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../VData */ "./node_modules/vuetify/lib/components/VData/index.js");
 /* harmony import */ var _VDataFooter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./VDataFooter */ "./node_modules/vuetify/lib/components/VDataIterator/VDataFooter.js");
-/* harmony import */ var _mixins_mobile__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../mixins/mobile */ "./node_modules/vuetify/lib/mixins/mobile/index.js");
-/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
-/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
-/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
-/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
+/* harmony import */ var _mixins_mobile__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/mobile */ "./node_modules/vuetify/lib/mixins/mobile/index.js");
+/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
 // Components
 
  // Mixins
@@ -2560,7 +3498,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* @vue/component */
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_3__.default)(_mixins_mobile__WEBPACK_IMPORTED_MODULE_6__.default, _mixins_themeable__WEBPACK_IMPORTED_MODULE_2__.default).extend({
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_2__.default)(_mixins_mobile__WEBPACK_IMPORTED_MODULE_5__.default, _mixins_themeable__WEBPACK_IMPORTED_MODULE_6__.default).extend({
   name: 'v-data-iterator',
   props: { ..._VData__WEBPACK_IMPORTED_MODULE_0__.VData.options.props,
     itemKey: {
@@ -2576,7 +3514,7 @@ __webpack_require__.r(__webpack_exports__);
       type: Array,
       default: () => []
     },
-    mobileBreakpoint: { ..._mixins_mobile__WEBPACK_IMPORTED_MODULE_6__.default.options.props.mobileBreakpoint,
+    mobileBreakpoint: { ..._mixins_mobile__WEBPACK_IMPORTED_MODULE_5__.default.options.props.mobileBreakpoint,
       default: 600
     },
     singleExpand: Boolean,
@@ -2615,7 +3553,7 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     sanitizedFooterProps() {
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.camelizeObjectKeys)(this.footerProps);
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.camelizeObjectKeys)(this.footerProps);
     },
 
     selectableItems() {
@@ -2627,7 +3565,7 @@ __webpack_require__.r(__webpack_exports__);
     value: {
       handler(value) {
         this.selection = value.reduce((selection, item) => {
-          selection[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey)] = item;
+          selection[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey)] = item;
           return selection;
         }, {});
       },
@@ -2636,14 +3574,14 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     selection(value, old) {
-      if ((0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.deepEqual)(Object.keys(value), Object.keys(old))) return;
+      if ((0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.deepEqual)(Object.keys(value), Object.keys(old))) return;
       this.$emit('input', Object.values(value));
     },
 
     expanded: {
       handler(value) {
         this.expansion = value.reduce((expansion, item) => {
-          expansion[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey)] = true;
+          expansion[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey)] = true;
           return expansion;
         }, {});
       },
@@ -2652,9 +3590,9 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     expansion(value, old) {
-      if ((0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.deepEqual)(value, old)) return;
+      if ((0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.deepEqual)(value, old)) return;
       const keys = Object.keys(value).filter(k => value[k]);
-      const expanded = !keys.length ? [] : this.items.filter(i => keys.includes(String((0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(i, this.itemKey))));
+      const expanded = !keys.length ? [] : this.items.filter(i => keys.includes(String((0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(i, this.itemKey))));
       this.$emit('update:expanded', expanded);
     }
 
@@ -2665,13 +3603,13 @@ __webpack_require__.r(__webpack_exports__);
     /* istanbul ignore next */
 
     breakingProps.forEach(([original, replacement]) => {
-      if (this.$attrs.hasOwnProperty(original)) (0,_util_console__WEBPACK_IMPORTED_MODULE_5__.breaking)(original, replacement, this);
+      if (this.$attrs.hasOwnProperty(original)) (0,_util_console__WEBPACK_IMPORTED_MODULE_4__.breaking)(original, replacement, this);
     });
     const removedProps = ['expand', 'content-class', 'content-props', 'content-tag'];
     /* istanbul ignore next */
 
     removedProps.forEach(prop => {
-      if (this.$attrs.hasOwnProperty(prop)) (0,_util_console__WEBPACK_IMPORTED_MODULE_5__.removed)(prop);
+      if (this.$attrs.hasOwnProperty(prop)) (0,_util_console__WEBPACK_IMPORTED_MODULE_4__.removed)(prop);
     });
   },
 
@@ -2682,7 +3620,7 @@ __webpack_require__.r(__webpack_exports__);
       for (let i = 0; i < this.selectableItems.length; i++) {
         const item = this.selectableItems[i];
         if (!this.isSelectable(item)) continue;
-        const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey);
+        const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey);
         if (value) selection[key] = item;else delete selection[key];
       }
 
@@ -2694,22 +3632,22 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     isSelectable(item) {
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.selectableKey) !== false;
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.selectableKey) !== false;
     },
 
     isSelected(item) {
-      return !!this.selection[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey)] || false;
+      return !!this.selection[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey)] || false;
     },
 
     select(item, value = true, emit = true) {
       if (!this.isSelectable(item)) return;
       const selection = this.singleSelect ? {} : Object.assign({}, this.selection);
-      const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey);
+      const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey);
       if (value) selection[key] = item;else delete selection[key];
 
       if (this.singleSelect && emit) {
         const keys = Object.keys(this.selection);
-        const old = keys.length && (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(this.selection[keys[0]], this.itemKey);
+        const old = keys.length && (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(this.selection[keys[0]], this.itemKey);
         old && old !== key && this.$emit('item-selected', {
           item: this.selection[old],
           value: false
@@ -2724,12 +3662,12 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     isExpanded(item) {
-      return this.expansion[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey)] || false;
+      return this.expansion[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey)] || false;
     },
 
     expand(item, value = true) {
       const expansion = this.singleExpand ? {} : Object.assign({}, this.expansion);
-      const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey);
+      const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey);
       if (value) expansion[key] = true;else delete expansion[key];
       this.expansion = expansion;
       this.$emit('item-expanded', {
@@ -2801,7 +3739,7 @@ __webpack_require__.r(__webpack_exports__);
           'update:options': value => props.updateOptions(value)
         }
       };
-      const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getPrefixedScopedSlots)('footer.', this.$scopedSlots);
+      const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getPrefixedScopedSlots)('footer.', this.$scopedSlots);
       return this.$createElement(_VDataFooter__WEBPACK_IMPORTED_MODULE_1__.default, {
         scopedSlots,
         ...data
@@ -2816,7 +3754,7 @@ __webpack_require__.r(__webpack_exports__);
       };
       return this.$createElement('div', {
         staticClass: 'v-data-iterator'
-      }, [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getSlot)(this, 'header', outerProps, true), this.genItems(props), this.genFooter(props), (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getSlot)(this, 'footer', outerProps, true)]);
+      }, [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getSlot)(this, 'header', outerProps, true), this.genItems(props), this.genFooter(props), (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getSlot)(this, 'footer', outerProps, true)]);
     }
 
   },
@@ -2825,14 +3763,14 @@ __webpack_require__.r(__webpack_exports__);
     return this.$createElement(_VData__WEBPACK_IMPORTED_MODULE_0__.VData, {
       props: this.$props,
       on: {
-        'update:options': (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.deepEqual)(v, old) && this.$emit('update:options', v),
+        'update:options': (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.deepEqual)(v, old) && this.$emit('update:options', v),
         'update:page': v => this.$emit('update:page', v),
         'update:items-per-page': v => this.$emit('update:items-per-page', v),
         'update:sort-by': v => this.$emit('update:sort-by', v),
         'update:sort-desc': v => this.$emit('update:sort-desc', v),
         'update:group-by': v => this.$emit('update:group-by', v),
         'update:group-desc': v => this.$emit('update:group-desc', v),
-        pagination: (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.deepEqual)(v, old) && this.$emit('pagination', v),
+        pagination: (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.deepEqual)(v, old) && this.$emit('pagination', v),
         'current-items': v => {
           this.internalCurrentItems = v;
           this.$emit('current-items', v);
@@ -3101,19 +4039,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _src_components_VDataTable_VDataTable_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VDataTable/VDataTable.sass */ "./node_modules/vuetify/src/components/VDataTable/VDataTable.sass");
 /* harmony import */ var _VData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../VData */ "./node_modules/vuetify/lib/components/VData/index.js");
 /* harmony import */ var _VDataIterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../VDataIterator */ "./node_modules/vuetify/lib/components/VDataIterator/index.js");
-/* harmony import */ var _VBtn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../VBtn */ "./node_modules/vuetify/lib/components/VBtn/index.js");
-/* harmony import */ var _VDataTableHeader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./VDataTableHeader */ "./node_modules/vuetify/lib/components/VDataTable/VDataTableHeader.js");
-/* harmony import */ var _VIcon__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
-/* harmony import */ var _Row__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Row */ "./node_modules/vuetify/lib/components/VDataTable/Row.js");
-/* harmony import */ var _RowGroup__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./RowGroup */ "./node_modules/vuetify/lib/components/VDataTable/RowGroup.js");
-/* harmony import */ var _VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../VCheckbox/VSimpleCheckbox */ "./node_modules/vuetify/lib/components/VCheckbox/VSimpleCheckbox.js");
-/* harmony import */ var _VSimpleTable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./VSimpleTable */ "./node_modules/vuetify/lib/components/VDataTable/VSimpleTable.js");
-/* harmony import */ var _MobileRow__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./MobileRow */ "./node_modules/vuetify/lib/components/VDataTable/MobileRow.js");
-/* harmony import */ var _mixins_loadable__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../mixins/loadable */ "./node_modules/vuetify/lib/mixins/loadable/index.js");
-/* harmony import */ var _directives_ripple__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../directives/ripple */ "./node_modules/vuetify/lib/directives/ripple/index.js");
-/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
-/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
-/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
+/* harmony import */ var _VBtn__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../VBtn */ "./node_modules/vuetify/lib/components/VBtn/index.js");
+/* harmony import */ var _VDataTableHeader__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./VDataTableHeader */ "./node_modules/vuetify/lib/components/VDataTable/VDataTableHeader.js");
+/* harmony import */ var _VIcon__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
+/* harmony import */ var _Row__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Row */ "./node_modules/vuetify/lib/components/VDataTable/Row.js");
+/* harmony import */ var _RowGroup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./RowGroup */ "./node_modules/vuetify/lib/components/VDataTable/RowGroup.js");
+/* harmony import */ var _VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../VCheckbox/VSimpleCheckbox */ "./node_modules/vuetify/lib/components/VCheckbox/VSimpleCheckbox.js");
+/* harmony import */ var _VSimpleTable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./VSimpleTable */ "./node_modules/vuetify/lib/components/VDataTable/VSimpleTable.js");
+/* harmony import */ var _MobileRow__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./MobileRow */ "./node_modules/vuetify/lib/components/VDataTable/MobileRow.js");
+/* harmony import */ var _mixins_loadable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../mixins/loadable */ "./node_modules/vuetify/lib/mixins/loadable/index.js");
+/* harmony import */ var _directives_ripple__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../directives/ripple */ "./node_modules/vuetify/lib/directives/ripple/index.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
 /* harmony import */ var _util_mergeData__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../util/mergeData */ "./node_modules/vuetify/lib/util/mergeData.js");
  // Components
 
@@ -3140,7 +4078,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function filterFn(item, search, filter) {
   return header => {
-    const value = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getObjectValueByPath)(item, header.value);
+    const value = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getObjectValueByPath)(item, header.value);
     return header.filter ? header.filter(value, search, item) : filter(value, search, item);
   };
 }
@@ -3150,7 +4088,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
   return items.filter(item => {
     // Headers with custom filters are evaluated whether or not a search term has been provided.
     // We need to match every filter to be included in the results.
-    const matchesColumnFilters = headersWithCustomFilters.every(filterFn(item, search, _util_helpers__WEBPACK_IMPORTED_MODULE_14__.defaultFilter)); // Headers without custom filters are only filtered by the `search` property if it is defined.
+    const matchesColumnFilters = headersWithCustomFilters.every(filterFn(item, search, _util_helpers__WEBPACK_IMPORTED_MODULE_12__.defaultFilter)); // Headers without custom filters are only filtered by the `search` property if it is defined.
     // We only need a single column to match the search term to be included in the results.
 
     const matchesSearchTerm = !search || headersWithoutCustomFilters.some(filterFn(item, search, customFilter));
@@ -3160,11 +4098,11 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
 /* @vue/component */
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_13__.default)(_VDataIterator__WEBPACK_IMPORTED_MODULE_2__.VDataIterator, _mixins_loadable__WEBPACK_IMPORTED_MODULE_11__.default).extend({
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_11__.default)(_VDataIterator__WEBPACK_IMPORTED_MODULE_2__.VDataIterator, _mixins_loadable__WEBPACK_IMPORTED_MODULE_9__.default).extend({
   name: 'v-data-table',
   // https://github.com/vuejs/vue/issues/6872
   directives: {
-    ripple: _directives_ripple__WEBPACK_IMPORTED_MODULE_12__.default
+    ripple: _directives_ripple__WEBPACK_IMPORTED_MODULE_10__.default
   },
   props: {
     headers: {
@@ -3190,7 +4128,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
     },
     customFilter: {
       type: Function,
-      default: _util_helpers__WEBPACK_IMPORTED_MODULE_14__.defaultFilter
+      default: _util_helpers__WEBPACK_IMPORTED_MODULE_12__.defaultFilter
     },
     itemClass: {
       type: [String, Function],
@@ -3263,7 +4201,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
     },
 
     sanitizedHeaderProps() {
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.camelizeObjectKeys)(this.headerProps);
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.camelizeObjectKeys)(this.headerProps);
     },
 
     computedItemsPerPage() {
@@ -3285,7 +4223,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
     /* istanbul ignore next */
 
     breakingProps.forEach(([original, replacement]) => {
-      if (this.$attrs.hasOwnProperty(original)) (0,_util_console__WEBPACK_IMPORTED_MODULE_15__.breaking)(original, replacement, this);
+      if (this.$attrs.hasOwnProperty(original)) (0,_util_console__WEBPACK_IMPORTED_MODULE_13__.breaking)(original, replacement, this);
     });
   },
 
@@ -3328,7 +4266,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
 
     genCaption(props) {
       if (this.caption) return [this.$createElement('caption', [this.caption])];
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getSlot)(this, 'caption', props, true);
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getSlot)(this, 'caption', props, true);
     },
 
     genColgroup(props) {
@@ -3370,13 +4308,13 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
           'toggle-select-all': this.toggleSelectAll
         }
       };
-      const children = [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getSlot)(this, 'header', { ...data,
+      const children = [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getSlot)(this, 'header', { ...data,
         isMobile: this.isMobile
       })];
 
       if (!this.hideDefaultHeader) {
-        const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getPrefixedScopedSlots)('header.', this.$scopedSlots);
-        children.push(this.$createElement(_VDataTableHeader__WEBPACK_IMPORTED_MODULE_4__.default, { ...data,
+        const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getPrefixedScopedSlots)('header.', this.$scopedSlots);
+        children.push(this.$createElement(_VDataTableHeader__WEBPACK_IMPORTED_MODULE_3__.default, { ...data,
           scopedSlots
         }));
       }
@@ -3444,7 +4382,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
           remove: removeFn
         })]));
       } else {
-        const toggle = this.$createElement(_VBtn__WEBPACK_IMPORTED_MODULE_3__.default, {
+        const toggle = this.$createElement(_VBtn__WEBPACK_IMPORTED_MODULE_14__.default, {
           staticClass: 'ma-0',
           props: {
             icon: true,
@@ -3453,8 +4391,8 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
           on: {
             click: toggleFn
           }
-        }, [this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_5__.default, [isOpen ? '$minus' : '$plus'])]);
-        const remove = this.$createElement(_VBtn__WEBPACK_IMPORTED_MODULE_3__.default, {
+        }, [this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_15__.default, [isOpen ? '$minus' : '$plus'])]);
+        const remove = this.$createElement(_VBtn__WEBPACK_IMPORTED_MODULE_14__.default, {
           staticClass: 'ma-0',
           props: {
             icon: true,
@@ -3463,7 +4401,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
           on: {
             click: removeFn
           }
-        }, [this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_5__.default, ['$close'])]);
+        }, [this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_15__.default, ['$close'])]);
         const column = this.$createElement('td', {
           staticClass: 'text-start',
           attrs: this.colspanAttrs
@@ -3487,7 +4425,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         })]));
       }
 
-      return this.$createElement(_RowGroup__WEBPACK_IMPORTED_MODULE_7__.default, {
+      return this.$createElement(_RowGroup__WEBPACK_IMPORTED_MODULE_5__.default, {
         key: group,
         props: {
           value: isOpen
@@ -3538,7 +4476,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         isMobile: this.isMobile,
         item
       })]);
-      return this.$createElement(_RowGroup__WEBPACK_IMPORTED_MODULE_7__.default, {
+      return this.$createElement(_RowGroup__WEBPACK_IMPORTED_MODULE_5__.default, {
         props: {
           value: isExpanded
         }
@@ -3550,14 +4488,14 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
     },
 
     genDefaultSimpleRow(item, index, classes = {}) {
-      const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getPrefixedScopedSlots)('item.', this.$scopedSlots);
+      const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getPrefixedScopedSlots)('item.', this.$scopedSlots);
       const data = this.createItemProps(item, index);
 
       if (this.showSelect) {
         const slot = scopedSlots['data-table-select'];
         scopedSlots['data-table-select'] = slot ? () => slot({ ...data,
           isMobile: this.isMobile
-        }) : () => this.$createElement(_VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_8__.default, {
+        }) : () => this.$createElement(_VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_6__.default, {
           staticClass: 'v-data-table__checkbox',
           props: {
             value: data.isSelected,
@@ -3571,7 +4509,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
 
       if (this.showExpand) {
         const slot = scopedSlots['data-table-expand'];
-        scopedSlots['data-table-expand'] = slot ? () => slot(data) : () => this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_5__.default, {
+        scopedSlots['data-table-expand'] = slot ? () => slot(data) : () => this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_15__.default, {
           staticClass: 'v-data-table__expand-icon',
           class: {
             'v-data-table__expand-icon--active': data.isExpanded
@@ -3585,11 +4523,11 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         }, [this.expandIcon]);
       }
 
-      return this.$createElement(this.isMobile ? _MobileRow__WEBPACK_IMPORTED_MODULE_10__.default : _Row__WEBPACK_IMPORTED_MODULE_6__.default, {
-        key: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getObjectValueByPath)(item, this.itemKey),
+      return this.$createElement(this.isMobile ? _MobileRow__WEBPACK_IMPORTED_MODULE_8__.default : _Row__WEBPACK_IMPORTED_MODULE_4__.default, {
+        key: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getObjectValueByPath)(item, this.itemKey),
         class: (0,_util_mergeData__WEBPACK_IMPORTED_MODULE_16__.mergeClasses)({ ...classes,
           'v-data-table__selected': data.isSelected
-        }, (0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getPropertyFromItem)(item, this.itemClass)),
+        }, (0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getPropertyFromItem)(item, this.itemClass)),
         props: {
           headers: this.computedHeaders,
           hideDefaultHeader: this.hideDefaultHeader,
@@ -3622,7 +4560,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         return this.$scopedSlots.body(data);
       }
 
-      return this.$createElement('tbody', [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getSlot)(this, 'body.prepend', data, true), this.genItems(props.items, props), (0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getSlot)(this, 'body.append', data, true)]);
+      return this.$createElement('tbody', [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getSlot)(this, 'body.prepend', data, true), this.genItems(props.items, props), (0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getSlot)(this, 'body.append', data, true)]);
     },
 
     genFooters(props) {
@@ -3639,11 +4577,11 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         widths: this.widths,
         headers: this.computedHeaders
       };
-      const children = [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getSlot)(this, 'footer', data, true)];
+      const children = [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getSlot)(this, 'footer', data, true)];
 
       if (!this.hideDefaultFooter) {
         children.push(this.$createElement(_VDataIterator__WEBPACK_IMPORTED_MODULE_2__.VDataFooter, { ...data,
-          scopedSlots: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getPrefixedScopedSlots)('footer.', this.$scopedSlots)
+          scopedSlots: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getPrefixedScopedSlots)('footer.', this.$scopedSlots)
         }));
       }
 
@@ -3673,9 +4611,9 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
       //   ])
       // }
 
-      return this.$createElement(_VSimpleTable__WEBPACK_IMPORTED_MODULE_9__.default, {
+      return this.$createElement(_VSimpleTable__WEBPACK_IMPORTED_MODULE_7__.default, {
         props: simpleProps
-      }, [this.proxySlot('top', (0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.getSlot)(this, 'top', { ...props,
+      }, [this.proxySlot('top', (0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.getSlot)(this, 'top', { ...props,
         isMobile: this.isMobile
       }, true)), this.genCaption(props), this.genColgroup(props), this.genHeaders(props), this.genBody(props), this.proxySlot('bottom', this.genFooters(props))]);
     },
@@ -3698,7 +4636,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
       on: {
         'update:options': (v, old) => {
           this.internalGroupBy = v.groupBy || [];
-          !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.deepEqual)(v, old) && this.$emit('update:options', v);
+          !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.deepEqual)(v, old) && this.$emit('update:options', v);
         },
         'update:page': v => this.$emit('update:page', v),
         'update:items-per-page': v => this.$emit('update:items-per-page', v),
@@ -3706,7 +4644,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         'update:sort-desc': v => this.$emit('update:sort-desc', v),
         'update:group-by': v => this.$emit('update:group-by', v),
         'update:group-desc': v => this.$emit('update:group-desc', v),
-        pagination: (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_14__.deepEqual)(v, old) && this.$emit('pagination', v),
+        pagination: (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_12__.deepEqual)(v, old) && this.$emit('pagination', v),
         'current-items': v => {
           this.internalCurrentItems = v;
           this.$emit('current-items', v);
@@ -4705,6 +5643,329 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/vuetify/lib/components/VGrid/VCol.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VGrid/VCol.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _src_components_VGrid_VGrid_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VGrid/VGrid.sass */ "./node_modules/vuetify/src/components/VGrid/VGrid.sass");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var _util_mergeData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/mergeData */ "./node_modules/vuetify/lib/util/mergeData.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+
+
+
+ // no xs
+
+const breakpoints = ['sm', 'md', 'lg', 'xl'];
+
+const breakpointProps = (() => {
+  return breakpoints.reduce((props, val) => {
+    props[val] = {
+      type: [Boolean, String, Number],
+      default: false
+    };
+    return props;
+  }, {});
+})();
+
+const offsetProps = (() => {
+  return breakpoints.reduce((props, val) => {
+    props['offset' + (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.upperFirst)(val)] = {
+      type: [String, Number],
+      default: null
+    };
+    return props;
+  }, {});
+})();
+
+const orderProps = (() => {
+  return breakpoints.reduce((props, val) => {
+    props['order' + (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.upperFirst)(val)] = {
+      type: [String, Number],
+      default: null
+    };
+    return props;
+  }, {});
+})();
+
+const propMap = {
+  col: Object.keys(breakpointProps),
+  offset: Object.keys(offsetProps),
+  order: Object.keys(orderProps)
+};
+
+function breakpointClass(type, prop, val) {
+  let className = type;
+
+  if (val == null || val === false) {
+    return undefined;
+  }
+
+  if (prop) {
+    const breakpoint = prop.replace(type, '');
+    className += `-${breakpoint}`;
+  } // Handling the boolean style prop when accepting [Boolean, String, Number]
+  // means Vue will not convert <v-col sm></v-col> to sm: true for us.
+  // Since the default is false, an empty string indicates the prop's presence.
+
+
+  if (type === 'col' && (val === '' || val === true)) {
+    // .col-md
+    return className.toLowerCase();
+  } // .order-md-6
+
+
+  className += `-${val}`;
+  return className.toLowerCase();
+}
+
+const cache = new Map();
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (vue__WEBPACK_IMPORTED_MODULE_2__.default.extend({
+  name: 'v-col',
+  functional: true,
+  props: {
+    cols: {
+      type: [Boolean, String, Number],
+      default: false
+    },
+    ...breakpointProps,
+    offset: {
+      type: [String, Number],
+      default: null
+    },
+    ...offsetProps,
+    order: {
+      type: [String, Number],
+      default: null
+    },
+    ...orderProps,
+    alignSelf: {
+      type: String,
+      default: null,
+      validator: str => ['auto', 'start', 'end', 'center', 'baseline', 'stretch'].includes(str)
+    },
+    tag: {
+      type: String,
+      default: 'div'
+    }
+  },
+
+  render(h, {
+    props,
+    data,
+    children,
+    parent
+  }) {
+    // Super-fast memoization based on props, 5x faster than JSON.stringify
+    let cacheKey = '';
+
+    for (const prop in props) {
+      cacheKey += String(props[prop]);
+    }
+
+    let classList = cache.get(cacheKey);
+
+    if (!classList) {
+      classList = []; // Loop through `col`, `offset`, `order` breakpoint props
+
+      let type;
+
+      for (type in propMap) {
+        propMap[type].forEach(prop => {
+          const value = props[prop];
+          const className = breakpointClass(type, prop, value);
+          if (className) classList.push(className);
+        });
+      }
+
+      const hasColClasses = classList.some(className => className.startsWith('col-'));
+      classList.push({
+        // Default to .col if no other col-{bp}-* classes generated nor `cols` specified.
+        col: !hasColClasses || !props.cols,
+        [`col-${props.cols}`]: props.cols,
+        [`offset-${props.offset}`]: props.offset,
+        [`order-${props.order}`]: props.order,
+        [`align-self-${props.alignSelf}`]: props.alignSelf
+      });
+      cache.set(cacheKey, classList);
+    }
+
+    return h(props.tag, (0,_util_mergeData__WEBPACK_IMPORTED_MODULE_3__.default)(data, {
+      class: classList
+    }), children);
+  }
+
+}));
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/lib/components/VGrid/VRow.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VGrid/VRow.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _src_components_VGrid_VGrid_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VGrid/VGrid.sass */ "./node_modules/vuetify/src/components/VGrid/VGrid.sass");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var _util_mergeData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/mergeData */ "./node_modules/vuetify/lib/util/mergeData.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+
+
+
+ // no xs
+
+const breakpoints = ['sm', 'md', 'lg', 'xl'];
+const ALIGNMENT = ['start', 'end', 'center'];
+
+function makeProps(prefix, def) {
+  return breakpoints.reduce((props, val) => {
+    props[prefix + (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.upperFirst)(val)] = def();
+    return props;
+  }, {});
+}
+
+const alignValidator = str => [...ALIGNMENT, 'baseline', 'stretch'].includes(str);
+
+const alignProps = makeProps('align', () => ({
+  type: String,
+  default: null,
+  validator: alignValidator
+}));
+
+const justifyValidator = str => [...ALIGNMENT, 'space-between', 'space-around'].includes(str);
+
+const justifyProps = makeProps('justify', () => ({
+  type: String,
+  default: null,
+  validator: justifyValidator
+}));
+
+const alignContentValidator = str => [...ALIGNMENT, 'space-between', 'space-around', 'stretch'].includes(str);
+
+const alignContentProps = makeProps('alignContent', () => ({
+  type: String,
+  default: null,
+  validator: alignContentValidator
+}));
+const propMap = {
+  align: Object.keys(alignProps),
+  justify: Object.keys(justifyProps),
+  alignContent: Object.keys(alignContentProps)
+};
+const classMap = {
+  align: 'align',
+  justify: 'justify',
+  alignContent: 'align-content'
+};
+
+function breakpointClass(type, prop, val) {
+  let className = classMap[type];
+
+  if (val == null) {
+    return undefined;
+  }
+
+  if (prop) {
+    // alignSm -> Sm
+    const breakpoint = prop.replace(type, '');
+    className += `-${breakpoint}`;
+  } // .align-items-sm-center
+
+
+  className += `-${val}`;
+  return className.toLowerCase();
+}
+
+const cache = new Map();
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (vue__WEBPACK_IMPORTED_MODULE_2__.default.extend({
+  name: 'v-row',
+  functional: true,
+  props: {
+    tag: {
+      type: String,
+      default: 'div'
+    },
+    dense: Boolean,
+    noGutters: Boolean,
+    align: {
+      type: String,
+      default: null,
+      validator: alignValidator
+    },
+    ...alignProps,
+    justify: {
+      type: String,
+      default: null,
+      validator: justifyValidator
+    },
+    ...justifyProps,
+    alignContent: {
+      type: String,
+      default: null,
+      validator: alignContentValidator
+    },
+    ...alignContentProps
+  },
+
+  render(h, {
+    props,
+    data,
+    children
+  }) {
+    // Super-fast memoization based on props, 5x faster than JSON.stringify
+    let cacheKey = '';
+
+    for (const prop in props) {
+      cacheKey += String(props[prop]);
+    }
+
+    let classList = cache.get(cacheKey);
+
+    if (!classList) {
+      classList = []; // Loop through `align`, `justify`, `alignContent` breakpoint props
+
+      let type;
+
+      for (type in propMap) {
+        propMap[type].forEach(prop => {
+          const value = props[prop];
+          const className = breakpointClass(type, prop, value);
+          if (className) classList.push(className);
+        });
+      }
+
+      classList.push({
+        'no-gutters': props.noGutters,
+        'row--dense': props.dense,
+        [`align-${props.align}`]: props.align,
+        [`justify-${props.justify}`]: props.justify,
+        [`align-content-${props.alignContent}`]: props.alignContent
+      });
+      cache.set(cacheKey, classList);
+    }
+
+    return h(props.tag, (0,_util_mergeData__WEBPACK_IMPORTED_MODULE_3__.default)(data, {
+      staticClass: 'row',
+      class: classList
+    }), children);
+  }
+
+}));
+
+/***/ }),
+
 /***/ "./node_modules/vuetify/lib/components/VMenu/VMenu.js":
 /*!************************************************************!*\
   !*** ./node_modules/vuetify/lib/components/VMenu/VMenu.js ***!
@@ -4726,12 +5987,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixins_returnable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../mixins/returnable */ "./node_modules/vuetify/lib/mixins/returnable/index.js");
 /* harmony import */ var _mixins_roundable__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../mixins/roundable */ "./node_modules/vuetify/lib/mixins/roundable/index.js");
 /* harmony import */ var _mixins_toggleable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../mixins/toggleable */ "./node_modules/vuetify/lib/mixins/toggleable/index.js");
-/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
-/* harmony import */ var _directives_click_outside__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../directives/click-outside */ "./node_modules/vuetify/lib/directives/click-outside/index.js");
-/* harmony import */ var _directives_resize__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../directives/resize */ "./node_modules/vuetify/lib/directives/resize/index.js");
-/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
-/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
-/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
+/* harmony import */ var _directives_click_outside__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../directives/click-outside */ "./node_modules/vuetify/lib/directives/click-outside/index.js");
+/* harmony import */ var _directives_resize__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../directives/resize */ "./node_modules/vuetify/lib/directives/resize/index.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
 // Styles
  // Components
 
@@ -4753,14 +6014,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_13__.default)(_mixins_dependent__WEBPACK_IMPORTED_MODULE_4__.default, _mixins_delayable__WEBPACK_IMPORTED_MODULE_3__.default, _mixins_detachable__WEBPACK_IMPORTED_MODULE_5__.default, _mixins_menuable__WEBPACK_IMPORTED_MODULE_6__.default, _mixins_returnable__WEBPACK_IMPORTED_MODULE_7__.default, _mixins_roundable__WEBPACK_IMPORTED_MODULE_8__.default, _mixins_toggleable__WEBPACK_IMPORTED_MODULE_9__.default, _mixins_themeable__WEBPACK_IMPORTED_MODULE_10__.default);
+const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_11__.default)(_mixins_dependent__WEBPACK_IMPORTED_MODULE_4__.default, _mixins_delayable__WEBPACK_IMPORTED_MODULE_3__.default, _mixins_detachable__WEBPACK_IMPORTED_MODULE_5__.default, _mixins_menuable__WEBPACK_IMPORTED_MODULE_6__.default, _mixins_returnable__WEBPACK_IMPORTED_MODULE_7__.default, _mixins_roundable__WEBPACK_IMPORTED_MODULE_8__.default, _mixins_toggleable__WEBPACK_IMPORTED_MODULE_9__.default, _mixins_themeable__WEBPACK_IMPORTED_MODULE_14__.default);
 /* @vue/component */
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (baseMixins.extend({
   name: 'v-menu',
   directives: {
-    ClickOutside: _directives_click_outside__WEBPACK_IMPORTED_MODULE_11__.default,
-    Resize: _directives_resize__WEBPACK_IMPORTED_MODULE_12__.default
+    ClickOutside: _directives_click_outside__WEBPACK_IMPORTED_MODULE_10__.default,
+    Resize: _directives_resize__WEBPACK_IMPORTED_MODULE_15__.default
   },
 
   provide() {
@@ -4824,30 +6085,30 @@ const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_13__.default)(_mixin
     calculatedLeft() {
       const menuWidth = Math.max(this.dimensions.content.width, parseFloat(this.calculatedMinWidth));
       if (!this.auto) return this.calcLeft(menuWidth) || '0';
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_15__.convertToUnit)(this.calcXOverflow(this.calcLeftAuto(), menuWidth)) || '0';
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_13__.convertToUnit)(this.calcXOverflow(this.calcLeftAuto(), menuWidth)) || '0';
     },
 
     calculatedMaxHeight() {
-      const height = this.auto ? '200px' : (0,_util_helpers__WEBPACK_IMPORTED_MODULE_15__.convertToUnit)(this.maxHeight);
+      const height = this.auto ? '200px' : (0,_util_helpers__WEBPACK_IMPORTED_MODULE_13__.convertToUnit)(this.maxHeight);
       return height || '0';
     },
 
     calculatedMaxWidth() {
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_15__.convertToUnit)(this.maxWidth) || '0';
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_13__.convertToUnit)(this.maxWidth) || '0';
     },
 
     calculatedMinWidth() {
       if (this.minWidth) {
-        return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_15__.convertToUnit)(this.minWidth) || '0';
+        return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_13__.convertToUnit)(this.minWidth) || '0';
       }
 
       const minWidth = Math.min(this.dimensions.activator.width + Number(this.nudgeWidth) + (this.auto ? 16 : 0), Math.max(this.pageWidth - 24, 0));
       const calculatedMaxWidth = isNaN(parseInt(this.calculatedMaxWidth)) ? minWidth : parseInt(this.calculatedMaxWidth);
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_15__.convertToUnit)(Math.min(calculatedMaxWidth, minWidth)) || '0';
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_13__.convertToUnit)(Math.min(calculatedMaxWidth, minWidth)) || '0';
     },
 
     calculatedTop() {
-      const top = !this.auto ? this.calcTop() : (0,_util_helpers__WEBPACK_IMPORTED_MODULE_15__.convertToUnit)(this.calcYOverflow(this.calculatedTopAuto));
+      const top = !this.auto ? this.calcTop() : (0,_util_helpers__WEBPACK_IMPORTED_MODULE_13__.convertToUnit)(this.calcYOverflow(this.calculatedTopAuto));
       return top || '0';
     },
 
@@ -4892,7 +6153,7 @@ const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_13__.default)(_mixin
   created() {
     /* istanbul ignore next */
     if (this.$attrs.hasOwnProperty('full-width')) {
-      (0,_util_console__WEBPACK_IMPORTED_MODULE_14__.removed)('full-width', this);
+      (0,_util_console__WEBPACK_IMPORTED_MODULE_12__.removed)('full-width', this);
     }
   },
 
@@ -4952,18 +6213,18 @@ const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_13__.default)(_mixin
 
       if (!this.isActive || !this.hasClickableTiles) {
         return;
-      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_15__.keyCodes.tab) {
+      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_13__.keyCodes.tab) {
         this.isActive = false;
         return;
-      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_15__.keyCodes.down) {
+      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_13__.keyCodes.down) {
         this.nextTile();
-      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_15__.keyCodes.up) {
+      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_13__.keyCodes.up) {
         this.prevTile();
-      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_15__.keyCodes.end) {
+      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_13__.keyCodes.end) {
         this.lastTile();
-      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_15__.keyCodes.home) {
+      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_13__.keyCodes.home) {
         this.firstTile();
-      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_15__.keyCodes.enter && this.listIndex !== -1) {
+      } else if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_13__.keyCodes.enter && this.listIndex !== -1) {
         this.tiles[this.listIndex].click();
       } else {
         return;
@@ -5142,14 +6403,14 @@ const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_13__.default)(_mixin
     },
 
     onKeyDown(e) {
-      if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_15__.keyCodes.esc) {
+      if (e.keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_13__.keyCodes.esc) {
         // Wait for dependent elements to close first
         setTimeout(() => {
           this.isActive = false;
         });
         const activator = this.getActivator();
         this.$nextTick(() => activator && activator.focus());
-      } else if (!this.isActive && [_util_helpers__WEBPACK_IMPORTED_MODULE_15__.keyCodes.up, _util_helpers__WEBPACK_IMPORTED_MODULE_15__.keyCodes.down].includes(e.keyCode)) {
+      } else if (!this.isActive && [_util_helpers__WEBPACK_IMPORTED_MODULE_13__.keyCodes.up, _util_helpers__WEBPACK_IMPORTED_MODULE_13__.keyCodes.down].includes(e.keyCode)) {
         this.isActive = true;
       } // Allow for isActive watcher to generate tile list
 
@@ -6061,18 +7322,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../VCheckbox/VSimpleCheckbox */ "./node_modules/vuetify/lib/components/VCheckbox/VSimpleCheckbox.js");
-/* harmony import */ var _VDivider__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../VDivider */ "./node_modules/vuetify/lib/components/VDivider/index.js");
-/* harmony import */ var _VSubheader__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../VSubheader */ "./node_modules/vuetify/lib/components/VSubheader/index.js");
-/* harmony import */ var _VList__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../VList */ "./node_modules/vuetify/lib/components/VList/VListItem.js");
-/* harmony import */ var _VList__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../VList */ "./node_modules/vuetify/lib/components/VList/VListItemAction.js");
-/* harmony import */ var _VList__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../VList */ "./node_modules/vuetify/lib/components/VList/index.js");
-/* harmony import */ var _VList__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../VList */ "./node_modules/vuetify/lib/components/VList/VList.js");
+/* harmony import */ var _VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../VCheckbox/VSimpleCheckbox */ "./node_modules/vuetify/lib/components/VCheckbox/VSimpleCheckbox.js");
+/* harmony import */ var _VDivider__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../VDivider */ "./node_modules/vuetify/lib/components/VDivider/index.js");
+/* harmony import */ var _VSubheader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../VSubheader */ "./node_modules/vuetify/lib/components/VSubheader/index.js");
+/* harmony import */ var _VList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../VList */ "./node_modules/vuetify/lib/components/VList/index.js");
 /* harmony import */ var _directives_ripple__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../directives/ripple */ "./node_modules/vuetify/lib/directives/ripple/index.js");
-/* harmony import */ var _mixins_colorable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mixins/colorable */ "./node_modules/vuetify/lib/mixins/colorable/index.js");
-/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
-/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
-/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+/* harmony import */ var _mixins_colorable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../mixins/colorable */ "./node_modules/vuetify/lib/mixins/colorable/index.js");
+/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
 // Components
 
 
@@ -6089,7 +7347,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* @vue/component */
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_0__.default)(_mixins_colorable__WEBPACK_IMPORTED_MODULE_1__.default, _mixins_themeable__WEBPACK_IMPORTED_MODULE_2__.default).extend({
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_5__.default)(_mixins_colorable__WEBPACK_IMPORTED_MODULE_6__.default, _mixins_themeable__WEBPACK_IMPORTED_MODULE_7__.default).extend({
   name: 'v-select-list',
   // https://github.com/vuejs/vue/issues/6872
   directives: {
@@ -6141,13 +7399,13 @@ __webpack_require__.r(__webpack_exports__);
           mousedown: e => e.preventDefault()
         }
       };
-      return this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_4__.default, tile, [this.genTileContent(this.noDataText)]);
+      return this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_2__.VListItem, tile, [this.genTileContent(this.noDataText)]);
     }
 
   },
   methods: {
     genAction(item, inputValue) {
-      return this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_5__.default, [this.$createElement(_VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_6__.default, {
+      return this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_2__.VListItemAction, [this.$createElement(_VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_0__.default, {
         props: {
           color: this.color,
           value: inputValue,
@@ -6160,30 +7418,30 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     genDivider(props) {
-      return this.$createElement(_VDivider__WEBPACK_IMPORTED_MODULE_7__.default, {
+      return this.$createElement(_VDivider__WEBPACK_IMPORTED_MODULE_8__.default, {
         props
       });
     },
 
     genFilteredText(text) {
       text = text || '';
-      if (!this.searchInput || this.noFilter) return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_8__.escapeHTML)(text);
+      if (!this.searchInput || this.noFilter) return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.escapeHTML)(text);
       const {
         start,
         middle,
         end
       } = this.getMaskedCharacters(text);
-      return `${(0,_util_helpers__WEBPACK_IMPORTED_MODULE_8__.escapeHTML)(start)}${this.genHighlight(middle)}${(0,_util_helpers__WEBPACK_IMPORTED_MODULE_8__.escapeHTML)(end)}`;
+      return `${(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.escapeHTML)(start)}${this.genHighlight(middle)}${(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.escapeHTML)(end)}`;
     },
 
     genHeader(props) {
-      return this.$createElement(_VSubheader__WEBPACK_IMPORTED_MODULE_9__.default, {
+      return this.$createElement(_VSubheader__WEBPACK_IMPORTED_MODULE_1__.default, {
         props
       }, props.header);
     },
 
     genHighlight(text) {
-      return `<span class="v-list-item__mask">${(0,_util_helpers__WEBPACK_IMPORTED_MODULE_8__.escapeHTML)(text)}</span>`;
+      return `<span class="v-list-item__mask">${(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.escapeHTML)(text)}</span>`;
     },
 
     getMaskedCharacters(text) {
@@ -6240,7 +7498,7 @@ __webpack_require__.r(__webpack_exports__);
       };
 
       if (!this.$scopedSlots.item) {
-        return this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_4__.default, tile, [this.action && !this.hideSelected && this.items.length > 0 ? this.genAction(item, value) : null, this.genTileContent(item, index)]);
+        return this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_2__.VListItem, tile, [this.action && !this.hideSelected && this.items.length > 0 ? this.genAction(item, value) : null, this.genTileContent(item, index)]);
       }
 
       const parent = this;
@@ -6252,12 +7510,12 @@ __webpack_require__.r(__webpack_exports__);
         },
         on: tile.on
       });
-      return this.needsTile(scopedSlot) ? this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_4__.default, tile, scopedSlot) : scopedSlot;
+      return this.needsTile(scopedSlot) ? this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_2__.VListItem, tile, scopedSlot) : scopedSlot;
     },
 
     genTileContent(item, index = 0) {
       const innerHTML = this.genFilteredText(this.getText(item));
-      return this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_10__.VListItemContent, [this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_10__.VListItemTitle, {
+      return this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_2__.VListItemContent, [this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_2__.VListItemTitle, {
         domProps: {
           innerHTML
         }
@@ -6273,15 +7531,15 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     getDisabled(item) {
-      return Boolean((0,_util_helpers__WEBPACK_IMPORTED_MODULE_8__.getPropertyFromItem)(item, this.itemDisabled, false));
+      return Boolean((0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getPropertyFromItem)(item, this.itemDisabled, false));
     },
 
     getText(item) {
-      return String((0,_util_helpers__WEBPACK_IMPORTED_MODULE_8__.getPropertyFromItem)(item, this.itemText, item));
+      return String((0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getPropertyFromItem)(item, this.itemText, item));
     },
 
     getValue(item) {
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_8__.getPropertyFromItem)(item, this.itemValue, this.getText(item));
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getPropertyFromItem)(item, this.itemValue, this.getText(item));
     }
 
   },
@@ -6305,7 +7563,7 @@ __webpack_require__.r(__webpack_exports__);
     children.length || children.push(this.$slots['no-data'] || this.staticNoDataTile);
     this.$slots['prepend-item'] && children.unshift(this.$slots['prepend-item']);
     this.$slots['append-item'] && children.push(this.$slots['append-item']);
-    return this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_11__.default, {
+    return this.$createElement(_VList__WEBPACK_IMPORTED_MODULE_2__.VList, {
       staticClass: 'v-select-list',
       class: this.themeClasses,
       attrs: {
@@ -6322,22 +7580,571 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/vuetify/lib/components/VSubheader/index.js":
-/*!*****************************************************************!*\
-  !*** ./node_modules/vuetify/lib/components/VSubheader/index.js ***!
-  \*****************************************************************/
+/***/ "./node_modules/vuetify/lib/components/VSlider/VSlider.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VSlider/VSlider.js ***!
+  \****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "VSubheader": () => (/* reexport safe */ _VSubheader__WEBPACK_IMPORTED_MODULE_0__.default),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _VSubheader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VSubheader */ "./node_modules/vuetify/lib/components/VSubheader/VSubheader.js");
+/* harmony import */ var _src_components_VSlider_VSlider_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VSlider/VSlider.sass */ "./node_modules/vuetify/src/components/VSlider/VSlider.sass");
+/* harmony import */ var _VInput__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../VInput */ "./node_modules/vuetify/lib/components/VInput/index.js");
+/* harmony import */ var _transitions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../transitions */ "./node_modules/vuetify/lib/components/transitions/index.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+/* harmony import */ var _mixins_loadable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/loadable */ "./node_modules/vuetify/lib/mixins/loadable/index.js");
+/* harmony import */ var _directives_click_outside__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../directives/click-outside */ "./node_modules/vuetify/lib/directives/click-outside/index.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
+ // Components
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_VSubheader__WEBPACK_IMPORTED_MODULE_0__.default);
+ // Mixins
+
+
+ // Directives
+
+ // Helpers
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_3__.default)(_VInput__WEBPACK_IMPORTED_MODULE_1__.default, _mixins_loadable__WEBPACK_IMPORTED_MODULE_4__.default
+/* @vue/component */
+).extend({
+  name: 'v-slider',
+  directives: {
+    ClickOutside: _directives_click_outside__WEBPACK_IMPORTED_MODULE_5__.default
+  },
+  mixins: [_mixins_loadable__WEBPACK_IMPORTED_MODULE_4__.default],
+  props: {
+    disabled: Boolean,
+    inverseLabel: Boolean,
+    max: {
+      type: [Number, String],
+      default: 100
+    },
+    min: {
+      type: [Number, String],
+      default: 0
+    },
+    step: {
+      type: [Number, String],
+      default: 1
+    },
+    thumbColor: String,
+    thumbLabel: {
+      type: [Boolean, String],
+      default: undefined,
+      validator: v => typeof v === 'boolean' || v === 'always'
+    },
+    thumbSize: {
+      type: [Number, String],
+      default: 32
+    },
+    tickLabels: {
+      type: Array,
+      default: () => []
+    },
+    ticks: {
+      type: [Boolean, String],
+      default: false,
+      validator: v => typeof v === 'boolean' || v === 'always'
+    },
+    tickSize: {
+      type: [Number, String],
+      default: 2
+    },
+    trackColor: String,
+    trackFillColor: String,
+    value: [Number, String],
+    vertical: Boolean
+  },
+  data: () => ({
+    app: null,
+    oldValue: null,
+    thumbPressed: false,
+    mouseTimeout: -1,
+    isFocused: false,
+    isActive: false,
+    noClick: false
+  }),
+  computed: {
+    classes() {
+      return { ..._VInput__WEBPACK_IMPORTED_MODULE_1__.default.options.computed.classes.call(this),
+        'v-input__slider': true,
+        'v-input__slider--vertical': this.vertical,
+        'v-input__slider--inverse-label': this.inverseLabel
+      };
+    },
+
+    internalValue: {
+      get() {
+        return this.lazyValue;
+      },
+
+      set(val) {
+        val = isNaN(val) ? this.minValue : val; // Round value to ensure the
+        // entire slider range can
+        // be selected with step
+
+        const value = this.roundValue(Math.min(Math.max(val, this.minValue), this.maxValue));
+        if (value === this.lazyValue) return;
+        this.lazyValue = value;
+        this.$emit('input', value);
+      }
+
+    },
+
+    trackTransition() {
+      return this.thumbPressed ? this.showTicks || this.stepNumeric ? '0.1s cubic-bezier(0.25, 0.8, 0.5, 1)' : 'none' : '';
+    },
+
+    minValue() {
+      return parseFloat(this.min);
+    },
+
+    maxValue() {
+      return parseFloat(this.max);
+    },
+
+    stepNumeric() {
+      return this.step > 0 ? parseFloat(this.step) : 0;
+    },
+
+    inputWidth() {
+      return (this.roundValue(this.internalValue) - this.minValue) / (this.maxValue - this.minValue) * 100;
+    },
+
+    trackFillStyles() {
+      const startDir = this.vertical ? 'bottom' : 'left';
+      const endDir = this.vertical ? 'top' : 'right';
+      const valueDir = this.vertical ? 'height' : 'width';
+      const start = this.$vuetify.rtl ? 'auto' : '0';
+      const end = this.$vuetify.rtl ? '0' : 'auto';
+      const value = this.isDisabled ? `calc(${this.inputWidth}% - 10px)` : `${this.inputWidth}%`;
+      return {
+        transition: this.trackTransition,
+        [startDir]: start,
+        [endDir]: end,
+        [valueDir]: value
+      };
+    },
+
+    trackStyles() {
+      const startDir = this.vertical ? this.$vuetify.rtl ? 'bottom' : 'top' : this.$vuetify.rtl ? 'left' : 'right';
+      const endDir = this.vertical ? 'height' : 'width';
+      const start = '0px';
+      const end = this.isDisabled ? `calc(${100 - this.inputWidth}% - 10px)` : `calc(${100 - this.inputWidth}%)`;
+      return {
+        transition: this.trackTransition,
+        [startDir]: start,
+        [endDir]: end
+      };
+    },
+
+    showTicks() {
+      return this.tickLabels.length > 0 || !!(!this.isDisabled && this.stepNumeric && this.ticks);
+    },
+
+    numTicks() {
+      return Math.ceil((this.maxValue - this.minValue) / this.stepNumeric);
+    },
+
+    showThumbLabel() {
+      return !this.isDisabled && !!(this.thumbLabel || this.$scopedSlots['thumb-label']);
+    },
+
+    computedTrackColor() {
+      if (this.isDisabled) return undefined;
+      if (this.trackColor) return this.trackColor;
+      if (this.isDark) return this.validationState;
+      return this.validationState || 'primary lighten-3';
+    },
+
+    computedTrackFillColor() {
+      if (this.isDisabled) return undefined;
+      if (this.trackFillColor) return this.trackFillColor;
+      return this.validationState || this.computedColor;
+    },
+
+    computedThumbColor() {
+      if (this.thumbColor) return this.thumbColor;
+      return this.validationState || this.computedColor;
+    }
+
+  },
+  watch: {
+    min(val) {
+      const parsed = parseFloat(val);
+      parsed > this.internalValue && this.$emit('input', parsed);
+    },
+
+    max(val) {
+      const parsed = parseFloat(val);
+      parsed < this.internalValue && this.$emit('input', parsed);
+    },
+
+    value: {
+      handler(v) {
+        this.internalValue = v;
+      }
+
+    }
+  },
+
+  // If done in as immediate in
+  // value watcher, causes issues
+  // with vue-test-utils
+  beforeMount() {
+    this.internalValue = this.value;
+  },
+
+  mounted() {
+    // Without a v-app, iOS does not work with body selectors
+    this.app = document.querySelector('[data-app]') || (0,_util_console__WEBPACK_IMPORTED_MODULE_7__.consoleWarn)('Missing v-app or a non-body wrapping element with the [data-app] attribute', this);
+  },
+
+  methods: {
+    genDefaultSlot() {
+      const children = [this.genLabel()];
+      const slider = this.genSlider();
+      this.inverseLabel ? children.unshift(slider) : children.push(slider);
+      children.push(this.genProgress());
+      return children;
+    },
+
+    genSlider() {
+      return this.$createElement('div', {
+        class: {
+          'v-slider': true,
+          'v-slider--horizontal': !this.vertical,
+          'v-slider--vertical': this.vertical,
+          'v-slider--focused': this.isFocused,
+          'v-slider--active': this.isActive,
+          'v-slider--disabled': this.isDisabled,
+          'v-slider--readonly': this.isReadonly,
+          ...this.themeClasses
+        },
+        directives: [{
+          name: 'click-outside',
+          value: this.onBlur
+        }],
+        on: {
+          click: this.onSliderClick,
+          mousedown: this.onSliderMouseDown
+        }
+      }, this.genChildren());
+    },
+
+    genChildren() {
+      return [this.genInput(), this.genTrackContainer(), this.genSteps(), this.genThumbContainer(this.internalValue, this.inputWidth, this.isActive, this.isFocused, this.onFocus, this.onBlur)];
+    },
+
+    genInput() {
+      return this.$createElement('input', {
+        attrs: {
+          value: this.internalValue,
+          id: this.computedId,
+          disabled: true,
+          readonly: true,
+          tabindex: -1,
+          ...this.$attrs
+        }
+      });
+    },
+
+    genTrackContainer() {
+      const children = [this.$createElement('div', this.setBackgroundColor(this.computedTrackColor, {
+        staticClass: 'v-slider__track-background',
+        style: this.trackStyles
+      })), this.$createElement('div', this.setBackgroundColor(this.computedTrackFillColor, {
+        staticClass: 'v-slider__track-fill',
+        style: this.trackFillStyles
+      }))];
+      return this.$createElement('div', {
+        staticClass: 'v-slider__track-container',
+        ref: 'track'
+      }, children);
+    },
+
+    genSteps() {
+      if (!this.step || !this.showTicks) return null;
+      const tickSize = parseFloat(this.tickSize);
+      const range = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_6__.createRange)(this.numTicks + 1);
+      const direction = this.vertical ? 'bottom' : this.$vuetify.rtl ? 'right' : 'left';
+      const offsetDirection = this.vertical ? this.$vuetify.rtl ? 'left' : 'right' : 'top';
+      if (this.vertical) range.reverse();
+      const ticks = range.map(index => {
+        const children = [];
+
+        if (this.tickLabels[index]) {
+          children.push(this.$createElement('div', {
+            staticClass: 'v-slider__tick-label'
+          }, this.tickLabels[index]));
+        }
+
+        const width = index * (100 / this.numTicks);
+        const filled = this.$vuetify.rtl ? 100 - this.inputWidth < width : width < this.inputWidth;
+        return this.$createElement('span', {
+          key: index,
+          staticClass: 'v-slider__tick',
+          class: {
+            'v-slider__tick--filled': filled
+          },
+          style: {
+            width: `${tickSize}px`,
+            height: `${tickSize}px`,
+            [direction]: `calc(${width}% - ${tickSize / 2}px)`,
+            [offsetDirection]: `calc(50% - ${tickSize / 2}px)`
+          }
+        }, children);
+      });
+      return this.$createElement('div', {
+        staticClass: 'v-slider__ticks-container',
+        class: {
+          'v-slider__ticks-container--always-show': this.ticks === 'always' || this.tickLabels.length > 0
+        }
+      }, ticks);
+    },
+
+    genThumbContainer(value, valueWidth, isActive, isFocused, onFocus, onBlur, ref = 'thumb') {
+      const children = [this.genThumb()];
+      const thumbLabelContent = this.genThumbLabelContent(value);
+      this.showThumbLabel && children.push(this.genThumbLabel(thumbLabelContent));
+      return this.$createElement('div', this.setTextColor(this.computedThumbColor, {
+        ref,
+        key: ref,
+        staticClass: 'v-slider__thumb-container',
+        class: {
+          'v-slider__thumb-container--active': isActive,
+          'v-slider__thumb-container--focused': isFocused,
+          'v-slider__thumb-container--show-label': this.showThumbLabel
+        },
+        style: this.getThumbContainerStyles(valueWidth),
+        attrs: {
+          role: 'slider',
+          tabindex: this.isDisabled ? -1 : this.$attrs.tabindex ? this.$attrs.tabindex : 0,
+          'aria-label': this.label,
+          'aria-valuemin': this.min,
+          'aria-valuemax': this.max,
+          'aria-valuenow': this.internalValue,
+          'aria-readonly': String(this.isReadonly),
+          'aria-orientation': this.vertical ? 'vertical' : 'horizontal',
+          ...this.$attrs
+        },
+        on: {
+          focus: onFocus,
+          blur: onBlur,
+          keydown: this.onKeyDown
+        }
+      }), children);
+    },
+
+    genThumbLabelContent(value) {
+      return this.$scopedSlots['thumb-label'] ? this.$scopedSlots['thumb-label']({
+        value
+      }) : [this.$createElement('span', [String(value)])];
+    },
+
+    genThumbLabel(content) {
+      const size = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_6__.convertToUnit)(this.thumbSize);
+      const transform = this.vertical ? `translateY(20%) translateY(${Number(this.thumbSize) / 3 - 1}px) translateX(55%) rotate(135deg)` : `translateY(-20%) translateY(-12px) translateX(-50%) rotate(45deg)`;
+      return this.$createElement(_transitions__WEBPACK_IMPORTED_MODULE_2__.VScaleTransition, {
+        props: {
+          origin: 'bottom center'
+        }
+      }, [this.$createElement('div', {
+        staticClass: 'v-slider__thumb-label-container',
+        directives: [{
+          name: 'show',
+          value: this.isFocused || this.isActive || this.thumbLabel === 'always'
+        }]
+      }, [this.$createElement('div', this.setBackgroundColor(this.computedThumbColor, {
+        staticClass: 'v-slider__thumb-label',
+        style: {
+          height: size,
+          width: size,
+          transform
+        }
+      }), [this.$createElement('div', content)])])]);
+    },
+
+    genThumb() {
+      return this.$createElement('div', this.setBackgroundColor(this.computedThumbColor, {
+        staticClass: 'v-slider__thumb'
+      }));
+    },
+
+    getThumbContainerStyles(width) {
+      const direction = this.vertical ? 'top' : 'left';
+      let value = this.$vuetify.rtl ? 100 - width : width;
+      value = this.vertical ? 100 - value : value;
+      return {
+        transition: this.trackTransition,
+        [direction]: `${value}%`
+      };
+    },
+
+    onSliderMouseDown(e) {
+      var _e$target;
+
+      e.preventDefault();
+      this.oldValue = this.internalValue;
+      this.isActive = true;
+      const mouseUpOptions = _util_helpers__WEBPACK_IMPORTED_MODULE_6__.passiveSupported ? {
+        passive: true,
+        capture: true
+      } : true;
+      const mouseMoveOptions = _util_helpers__WEBPACK_IMPORTED_MODULE_6__.passiveSupported ? {
+        passive: true
+      } : false;
+
+      if ((_e$target = e.target) == null ? void 0 : _e$target.matches('.v-slider__thumb-container, .v-slider__thumb-container *')) {
+        this.thumbPressed = true;
+      } else {
+        window.clearTimeout(this.mouseTimeout);
+        this.mouseTimeout = window.setTimeout(() => {
+          this.thumbPressed = true;
+        }, 300);
+      }
+
+      if ('touches' in e) {
+        this.app.addEventListener('touchmove', this.onMouseMove, mouseMoveOptions);
+        (0,_util_helpers__WEBPACK_IMPORTED_MODULE_6__.addOnceEventListener)(this.app, 'touchend', this.onSliderMouseUp, mouseUpOptions);
+      } else {
+        this.onMouseMove(e);
+        this.app.addEventListener('mousemove', this.onMouseMove, mouseMoveOptions);
+        (0,_util_helpers__WEBPACK_IMPORTED_MODULE_6__.addOnceEventListener)(this.app, 'mouseup', this.onSliderMouseUp, mouseUpOptions);
+      }
+
+      this.$emit('start', this.internalValue);
+    },
+
+    onSliderMouseUp(e) {
+      e.stopPropagation();
+      window.clearTimeout(this.mouseTimeout);
+      this.thumbPressed = false;
+      const mouseMoveOptions = _util_helpers__WEBPACK_IMPORTED_MODULE_6__.passiveSupported ? {
+        passive: true
+      } : false;
+      this.app.removeEventListener('touchmove', this.onMouseMove, mouseMoveOptions);
+      this.app.removeEventListener('mousemove', this.onMouseMove, mouseMoveOptions);
+      this.$emit('mouseup', e);
+      this.$emit('end', this.internalValue);
+
+      if (!(0,_util_helpers__WEBPACK_IMPORTED_MODULE_6__.deepEqual)(this.oldValue, this.internalValue)) {
+        this.$emit('change', this.internalValue);
+        this.noClick = true;
+      }
+
+      this.isActive = false;
+    },
+
+    onMouseMove(e) {
+      if (e.type === 'mousemove') {
+        this.thumbPressed = true;
+      }
+
+      this.internalValue = this.parseMouseMove(e);
+    },
+
+    onKeyDown(e) {
+      if (!this.isInteractive) return;
+      const value = this.parseKeyDown(e, this.internalValue);
+      if (value == null || value < this.minValue || value > this.maxValue) return;
+      this.internalValue = value;
+      this.$emit('change', value);
+    },
+
+    onSliderClick(e) {
+      if (this.noClick) {
+        this.noClick = false;
+        return;
+      }
+
+      const thumb = this.$refs.thumb;
+      thumb.focus();
+      this.onMouseMove(e);
+      this.$emit('change', this.internalValue);
+    },
+
+    onBlur(e) {
+      this.isFocused = false;
+      this.$emit('blur', e);
+    },
+
+    onFocus(e) {
+      this.isFocused = true;
+      this.$emit('focus', e);
+    },
+
+    parseMouseMove(e) {
+      const start = this.vertical ? 'top' : 'left';
+      const length = this.vertical ? 'height' : 'width';
+      const click = this.vertical ? 'clientY' : 'clientX';
+      const {
+        [start]: trackStart,
+        [length]: trackLength
+      } = this.$refs.track.getBoundingClientRect();
+      const clickOffset = 'touches' in e ? e.touches[0][click] : e[click]; // Can we get rid of any here?
+      // It is possible for left to be NaN, force to number
+
+      let clickPos = Math.min(Math.max((clickOffset - trackStart) / trackLength, 0), 1) || 0;
+      if (this.vertical) clickPos = 1 - clickPos;
+      if (this.$vuetify.rtl) clickPos = 1 - clickPos;
+      return parseFloat(this.min) + clickPos * (this.maxValue - this.minValue);
+    },
+
+    parseKeyDown(e, value) {
+      if (!this.isInteractive) return;
+      const {
+        pageup,
+        pagedown,
+        end,
+        home,
+        left,
+        right,
+        down,
+        up
+      } = _util_helpers__WEBPACK_IMPORTED_MODULE_6__.keyCodes;
+      if (![pageup, pagedown, end, home, left, right, down, up].includes(e.keyCode)) return;
+      e.preventDefault();
+      const step = this.stepNumeric || 1;
+      const steps = (this.maxValue - this.minValue) / step;
+
+      if ([left, right, down, up].includes(e.keyCode)) {
+        const increase = this.$vuetify.rtl ? [left, up] : [right, up];
+        const direction = increase.includes(e.keyCode) ? 1 : -1;
+        const multiplier = e.shiftKey ? 3 : e.ctrlKey ? 2 : 1;
+        value = value + direction * step * multiplier;
+      } else if (e.keyCode === home) {
+        value = this.minValue;
+      } else if (e.keyCode === end) {
+        value = this.maxValue;
+      } else {
+        const direction = e.keyCode === pagedown ? 1 : -1;
+        value = value - direction * step * (steps > 100 ? steps / 10 : 10);
+      }
+
+      return value;
+    },
+
+    roundValue(value) {
+      if (!this.stepNumeric) return value; // Format input value using the same number
+      // of decimals places as in the step prop
+
+      const trimmedStep = this.step.toString().trim();
+      const decimals = trimmedStep.indexOf('.') > -1 ? trimmedStep.length - trimmedStep.indexOf('.') - 1 : 0;
+      const offset = this.minValue % this.stepNumeric;
+      const newValue = Math.round((value - offset) / this.stepNumeric) * this.stepNumeric + offset;
+      return parseFloat(Math.min(newValue, this.maxValue).toFixed(decimals));
+    }
+
+  }
+}));
 
 /***/ }),
 
@@ -7139,6 +8946,339 @@ function prevent(e) {
 
 /***/ }),
 
+/***/ "./node_modules/vuetify/lib/util/colors.js":
+/*!*************************************************!*\
+  !*** ./node_modules/vuetify/lib/util/colors.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const red = Object.freeze({
+  base: '#f44336',
+  lighten5: '#ffebee',
+  lighten4: '#ffcdd2',
+  lighten3: '#ef9a9a',
+  lighten2: '#e57373',
+  lighten1: '#ef5350',
+  darken1: '#e53935',
+  darken2: '#d32f2f',
+  darken3: '#c62828',
+  darken4: '#b71c1c',
+  accent1: '#ff8a80',
+  accent2: '#ff5252',
+  accent3: '#ff1744',
+  accent4: '#d50000'
+});
+const pink = Object.freeze({
+  base: '#e91e63',
+  lighten5: '#fce4ec',
+  lighten4: '#f8bbd0',
+  lighten3: '#f48fb1',
+  lighten2: '#f06292',
+  lighten1: '#ec407a',
+  darken1: '#d81b60',
+  darken2: '#c2185b',
+  darken3: '#ad1457',
+  darken4: '#880e4f',
+  accent1: '#ff80ab',
+  accent2: '#ff4081',
+  accent3: '#f50057',
+  accent4: '#c51162'
+});
+const purple = Object.freeze({
+  base: '#9c27b0',
+  lighten5: '#f3e5f5',
+  lighten4: '#e1bee7',
+  lighten3: '#ce93d8',
+  lighten2: '#ba68c8',
+  lighten1: '#ab47bc',
+  darken1: '#8e24aa',
+  darken2: '#7b1fa2',
+  darken3: '#6a1b9a',
+  darken4: '#4a148c',
+  accent1: '#ea80fc',
+  accent2: '#e040fb',
+  accent3: '#d500f9',
+  accent4: '#aa00ff'
+});
+const deepPurple = Object.freeze({
+  base: '#673ab7',
+  lighten5: '#ede7f6',
+  lighten4: '#d1c4e9',
+  lighten3: '#b39ddb',
+  lighten2: '#9575cd',
+  lighten1: '#7e57c2',
+  darken1: '#5e35b1',
+  darken2: '#512da8',
+  darken3: '#4527a0',
+  darken4: '#311b92',
+  accent1: '#b388ff',
+  accent2: '#7c4dff',
+  accent3: '#651fff',
+  accent4: '#6200ea'
+});
+const indigo = Object.freeze({
+  base: '#3f51b5',
+  lighten5: '#e8eaf6',
+  lighten4: '#c5cae9',
+  lighten3: '#9fa8da',
+  lighten2: '#7986cb',
+  lighten1: '#5c6bc0',
+  darken1: '#3949ab',
+  darken2: '#303f9f',
+  darken3: '#283593',
+  darken4: '#1a237e',
+  accent1: '#8c9eff',
+  accent2: '#536dfe',
+  accent3: '#3d5afe',
+  accent4: '#304ffe'
+});
+const blue = Object.freeze({
+  base: '#2196f3',
+  lighten5: '#e3f2fd',
+  lighten4: '#bbdefb',
+  lighten3: '#90caf9',
+  lighten2: '#64b5f6',
+  lighten1: '#42a5f5',
+  darken1: '#1e88e5',
+  darken2: '#1976d2',
+  darken3: '#1565c0',
+  darken4: '#0d47a1',
+  accent1: '#82b1ff',
+  accent2: '#448aff',
+  accent3: '#2979ff',
+  accent4: '#2962ff'
+});
+const lightBlue = Object.freeze({
+  base: '#03a9f4',
+  lighten5: '#e1f5fe',
+  lighten4: '#b3e5fc',
+  lighten3: '#81d4fa',
+  lighten2: '#4fc3f7',
+  lighten1: '#29b6f6',
+  darken1: '#039be5',
+  darken2: '#0288d1',
+  darken3: '#0277bd',
+  darken4: '#01579b',
+  accent1: '#80d8ff',
+  accent2: '#40c4ff',
+  accent3: '#00b0ff',
+  accent4: '#0091ea'
+});
+const cyan = Object.freeze({
+  base: '#00bcd4',
+  lighten5: '#e0f7fa',
+  lighten4: '#b2ebf2',
+  lighten3: '#80deea',
+  lighten2: '#4dd0e1',
+  lighten1: '#26c6da',
+  darken1: '#00acc1',
+  darken2: '#0097a7',
+  darken3: '#00838f',
+  darken4: '#006064',
+  accent1: '#84ffff',
+  accent2: '#18ffff',
+  accent3: '#00e5ff',
+  accent4: '#00b8d4'
+});
+const teal = Object.freeze({
+  base: '#009688',
+  lighten5: '#e0f2f1',
+  lighten4: '#b2dfdb',
+  lighten3: '#80cbc4',
+  lighten2: '#4db6ac',
+  lighten1: '#26a69a',
+  darken1: '#00897b',
+  darken2: '#00796b',
+  darken3: '#00695c',
+  darken4: '#004d40',
+  accent1: '#a7ffeb',
+  accent2: '#64ffda',
+  accent3: '#1de9b6',
+  accent4: '#00bfa5'
+});
+const green = Object.freeze({
+  base: '#4caf50',
+  lighten5: '#e8f5e9',
+  lighten4: '#c8e6c9',
+  lighten3: '#a5d6a7',
+  lighten2: '#81c784',
+  lighten1: '#66bb6a',
+  darken1: '#43a047',
+  darken2: '#388e3c',
+  darken3: '#2e7d32',
+  darken4: '#1b5e20',
+  accent1: '#b9f6ca',
+  accent2: '#69f0ae',
+  accent3: '#00e676',
+  accent4: '#00c853'
+});
+const lightGreen = Object.freeze({
+  base: '#8bc34a',
+  lighten5: '#f1f8e9',
+  lighten4: '#dcedc8',
+  lighten3: '#c5e1a5',
+  lighten2: '#aed581',
+  lighten1: '#9ccc65',
+  darken1: '#7cb342',
+  darken2: '#689f38',
+  darken3: '#558b2f',
+  darken4: '#33691e',
+  accent1: '#ccff90',
+  accent2: '#b2ff59',
+  accent3: '#76ff03',
+  accent4: '#64dd17'
+});
+const lime = Object.freeze({
+  base: '#cddc39',
+  lighten5: '#f9fbe7',
+  lighten4: '#f0f4c3',
+  lighten3: '#e6ee9c',
+  lighten2: '#dce775',
+  lighten1: '#d4e157',
+  darken1: '#c0ca33',
+  darken2: '#afb42b',
+  darken3: '#9e9d24',
+  darken4: '#827717',
+  accent1: '#f4ff81',
+  accent2: '#eeff41',
+  accent3: '#c6ff00',
+  accent4: '#aeea00'
+});
+const yellow = Object.freeze({
+  base: '#ffeb3b',
+  lighten5: '#fffde7',
+  lighten4: '#fff9c4',
+  lighten3: '#fff59d',
+  lighten2: '#fff176',
+  lighten1: '#ffee58',
+  darken1: '#fdd835',
+  darken2: '#fbc02d',
+  darken3: '#f9a825',
+  darken4: '#f57f17',
+  accent1: '#ffff8d',
+  accent2: '#ffff00',
+  accent3: '#ffea00',
+  accent4: '#ffd600'
+});
+const amber = Object.freeze({
+  base: '#ffc107',
+  lighten5: '#fff8e1',
+  lighten4: '#ffecb3',
+  lighten3: '#ffe082',
+  lighten2: '#ffd54f',
+  lighten1: '#ffca28',
+  darken1: '#ffb300',
+  darken2: '#ffa000',
+  darken3: '#ff8f00',
+  darken4: '#ff6f00',
+  accent1: '#ffe57f',
+  accent2: '#ffd740',
+  accent3: '#ffc400',
+  accent4: '#ffab00'
+});
+const orange = Object.freeze({
+  base: '#ff9800',
+  lighten5: '#fff3e0',
+  lighten4: '#ffe0b2',
+  lighten3: '#ffcc80',
+  lighten2: '#ffb74d',
+  lighten1: '#ffa726',
+  darken1: '#fb8c00',
+  darken2: '#f57c00',
+  darken3: '#ef6c00',
+  darken4: '#e65100',
+  accent1: '#ffd180',
+  accent2: '#ffab40',
+  accent3: '#ff9100',
+  accent4: '#ff6d00'
+});
+const deepOrange = Object.freeze({
+  base: '#ff5722',
+  lighten5: '#fbe9e7',
+  lighten4: '#ffccbc',
+  lighten3: '#ffab91',
+  lighten2: '#ff8a65',
+  lighten1: '#ff7043',
+  darken1: '#f4511e',
+  darken2: '#e64a19',
+  darken3: '#d84315',
+  darken4: '#bf360c',
+  accent1: '#ff9e80',
+  accent2: '#ff6e40',
+  accent3: '#ff3d00',
+  accent4: '#dd2c00'
+});
+const brown = Object.freeze({
+  base: '#795548',
+  lighten5: '#efebe9',
+  lighten4: '#d7ccc8',
+  lighten3: '#bcaaa4',
+  lighten2: '#a1887f',
+  lighten1: '#8d6e63',
+  darken1: '#6d4c41',
+  darken2: '#5d4037',
+  darken3: '#4e342e',
+  darken4: '#3e2723'
+});
+const blueGrey = Object.freeze({
+  base: '#607d8b',
+  lighten5: '#eceff1',
+  lighten4: '#cfd8dc',
+  lighten3: '#b0bec5',
+  lighten2: '#90a4ae',
+  lighten1: '#78909c',
+  darken1: '#546e7a',
+  darken2: '#455a64',
+  darken3: '#37474f',
+  darken4: '#263238'
+});
+const grey = Object.freeze({
+  base: '#9e9e9e',
+  lighten5: '#fafafa',
+  lighten4: '#f5f5f5',
+  lighten3: '#eeeeee',
+  lighten2: '#e0e0e0',
+  lighten1: '#bdbdbd',
+  darken1: '#757575',
+  darken2: '#616161',
+  darken3: '#424242',
+  darken4: '#212121'
+});
+const shades = Object.freeze({
+  black: '#000000',
+  white: '#ffffff',
+  transparent: 'transparent'
+});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Object.freeze({
+  red,
+  pink,
+  purple,
+  deepPurple,
+  indigo,
+  blue,
+  lightBlue,
+  cyan,
+  teal,
+  green,
+  lightGreen,
+  lime,
+  yellow,
+  amber,
+  orange,
+  deepOrange,
+  brown,
+  blueGrey,
+  grey,
+  shades
+}));
+
+/***/ }),
+
 /***/ "./node_modules/vuetify/lib/util/dedupeModelListeners.js":
 /*!***************************************************************!*\
   !*** ./node_modules/vuetify/lib/util/dedupeModelListeners.js ***!
@@ -7209,6 +9349,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -7463,6 +9614,126 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".v-chip:not(.v-chip--outlined).primary
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPicker.sass":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPicker.sass ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".theme--light.v-color-picker .v-color-picker__input input {\n  border: thin solid rgba(0, 0, 0, 0.12);\n  color: rgba(0, 0, 0, 0.87);\n}\n.theme--light.v-color-picker span {\n  color: rgba(0, 0, 0, 0.6);\n}\n.theme--light.v-color-picker .v-color-picker__dot, .theme--light.v-color-picker .v-color-picker__color {\n  background-color: rgba(255, 255, 255, 0);\n}\n\n.theme--dark.v-color-picker .v-color-picker__input input {\n  border: thin solid rgba(255, 255, 255, 0.12);\n  color: #FFFFFF;\n}\n.theme--dark.v-color-picker span {\n  color: rgba(255, 255, 255, 0.7);\n}\n.theme--dark.v-color-picker .v-color-picker__dot, .theme--dark.v-color-picker .v-color-picker__color {\n  background-color: rgba(255, 255, 255, 0.12);\n}\n\n.v-color-picker {\n  align-self: flex-start;\n  border-radius: 4px;\n  contain: content;\n  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n}\n\n.v-color-picker__controls {\n  display: flex;\n  flex-direction: column;\n  padding: 16px;\n}\n\n.v-color-picker--flat {\n  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12);\n}\n.v-color-picker--flat .v-color-picker__track:not(.v-input--is-disabled) .v-slider__thumb {\n  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12);\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerCanvas.sass":
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerCanvas.sass ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".v-color-picker__canvas {\n  position: relative;\n  overflow: hidden;\n  contain: strict;\n}\n.v-color-picker__canvas-dot {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 15px;\n  height: 15px;\n  background: transparent;\n  border-radius: 50%;\n  box-shadow: 0px 0px 0px 1.5px white, inset 0px 0px 1px 1.5px rgba(0, 0, 0, 0.3);\n}\n.v-color-picker__canvas-dot--disabled {\n  box-shadow: 0px 0px 0px 1.5px rgba(255, 255, 255, 0.7), inset 0px 0px 1px 1.5px rgba(0, 0, 0, 0.3);\n}\n.v-color-picker__canvas:hover .v-color-picker__canvas-dot {\n  will-change: transform;\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerEdit.sass":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerEdit.sass ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".v-color-picker__edit {\n  margin-top: 24px;\n  display: flex;\n}\n\n.v-color-picker__input {\n  width: 100%;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: center;\n  text-align: center;\n}\n.v-application--is-ltr .v-color-picker__input:not(:last-child) {\n  margin-right: 8px;\n}\n.v-application--is-rtl .v-color-picker__input:not(:last-child) {\n  margin-left: 8px;\n}\n.v-color-picker__input input {\n  border-radius: 4px;\n  margin-bottom: 8px;\n  min-width: 0;\n  outline: none;\n  text-align: center;\n  width: 100%;\n  height: 28px;\n}\n.v-color-picker__input span {\n  font-size: 0.75rem;\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerPreview.sass":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerPreview.sass ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".v-color-picker .v-input__slider {\n  border-radius: 5px;\n}\n.v-color-picker .v-input__slider .v-slider {\n  margin: 0;\n}\n\n.v-color-picker__alpha:not(.v-input--is-disabled) .v-slider {\n  border-radius: 5px;\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVQYlWNgYGCQwoKxgqGgcJA5h3yFAAs8BRWVSwooAAAAAElFTkSuQmCC) repeat;\n}\n\n.v-color-picker__sliders {\n  display: flex;\n  flex: 1 0 auto;\n  flex-direction: column;\n}\n\n.v-color-picker__dot {\n  position: relative;\n  height: 30px;\n  width: 30px;\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVQYlWNgYGCQwoKxgqGgcJA5h3yFAAs8BRWVSwooAAAAAElFTkSuQmCC) repeat;\n  border-radius: 50%;\n  overflow: hidden;\n}\n.v-application--is-ltr .v-color-picker__dot {\n  margin-right: 24px;\n}\n.v-application--is-rtl .v-color-picker__dot {\n  margin-left: 24px;\n}\n.v-color-picker__dot > div {\n  width: 100%;\n  height: 100%;\n}\n\n.v-application--is-ltr .v-color-picker__hue:not(.v-input--is-disabled) {\n  background: linear-gradient(to right, #F00 0%, #FF0 16.66%, #0F0 33.33%, #0FF 50%, #00F 66.66%, #F0F 83.33%, #F00 100%);\n}\n.v-application--is-rtl .v-color-picker__hue:not(.v-input--is-disabled) {\n  background: linear-gradient(to left, #F00 0%, #FF0 16.66%, #0F0 33.33%, #0FF 50%, #00F 66.66%, #F0F 83.33%, #F00 100%);\n}\n\n.v-color-picker__track {\n  position: relative;\n  width: 100%;\n}\n\n.v-color-picker__preview {\n  align-items: center;\n  display: flex;\n}\n.v-color-picker__preview .v-slider {\n  min-height: 10px;\n}\n.v-color-picker__preview .v-slider:not(.v-slider--disabled) .v-slider__thumb {\n  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);\n}\n.v-color-picker__preview .v-slider:not(.v-slider--disabled) .v-slider__track-container {\n  opacity: 0;\n}\n.v-color-picker__preview:not(.v-color-picker__preview--hide-alpha) .v-color-picker__hue {\n  margin-bottom: 24px;\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerSwatches.sass":
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerSwatches.sass ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".v-color-picker__swatches {\n  overflow-y: auto;\n}\n.v-color-picker__swatches > div {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: center;\n  padding: 8px;\n}\n\n.v-color-picker__swatch {\n  display: flex;\n  flex-direction: column;\n  margin-bottom: 10px;\n}\n\n.v-color-picker__color {\n  position: relative;\n  height: 18px;\n  max-height: 18px;\n  width: 45px;\n  margin: 2px 4px;\n  border-radius: 2px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  overflow: hidden;\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVQYlWNgYGCQwoKxgqGgcJA5h3yFAAs8BRWVSwooAAAAAElFTkSuQmCC) repeat;\n  cursor: pointer;\n}\n.v-color-picker__color > div {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VDataIterator/VDataFooter.sass":
 /*!******************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VDataIterator/VDataFooter.sass ***!
@@ -7631,6 +9902,30 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".theme--light.v-select .v-select__sele
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VSlider/VSlider.sass":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VSlider/VSlider.sass ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".theme--light.v-slider .v-slider__track-background,\n.theme--light.v-slider .v-slider__track-fill,\n.theme--light.v-slider .v-slider__thumb {\n  background: rgba(0, 0, 0, 0.26);\n}\n\n.theme--dark.v-slider .v-slider__track-background,\n.theme--dark.v-slider .v-slider__track-fill,\n.theme--dark.v-slider .v-slider__thumb {\n  background: rgba(255, 255, 255, 0.2);\n}\n\n.v-slider {\n  cursor: default;\n  display: flex;\n  align-items: center;\n  position: relative;\n  flex: 1;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.v-slider input {\n  cursor: default;\n  padding: 0;\n  width: 100%;\n  display: none;\n}\n\n.v-slider__track-container {\n  position: absolute;\n  border-radius: 0;\n}\n\n.v-slider__track-background, .v-slider__track-fill {\n  position: absolute;\n  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n}\n\n.v-slider__thumb-container {\n  outline: none;\n  position: absolute;\n  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n  top: 50%;\n}\n.v-slider__thumb-container:hover .v-slider__thumb:before {\n  transform: scale(1);\n}\n\n.v-slider__thumb {\n  position: absolute;\n  width: 12px;\n  height: 12px;\n  left: -6px;\n  top: 50%;\n  border-radius: 50%;\n  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n  transform: translateY(-50%);\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.v-slider__thumb:before {\n  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n  content: \"\";\n  color: inherit;\n  width: 36px;\n  height: 36px;\n  border-radius: 50%;\n  background: currentColor;\n  opacity: 0.3;\n  position: absolute;\n  left: -12px;\n  top: -12px;\n  transform: scale(0.1);\n  pointer-events: none;\n}\n\n.v-slider__ticks-container {\n  position: absolute;\n}\n\n.v-slider__tick {\n  position: absolute;\n  opacity: 0;\n  background-color: rgba(0, 0, 0, 0.5);\n  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);\n  border-radius: 0;\n}\n.v-slider__tick--filled {\n  background-color: rgba(255, 255, 255, 0.5);\n}\n.v-application--is-ltr .v-slider__tick:first-child .v-slider__tick-label {\n  transform: none;\n}\n.v-application--is-rtl .v-slider__tick:first-child .v-slider__tick-label {\n  transform: translateX(100%);\n}\n.v-application--is-ltr .v-slider__tick:last-child .v-slider__tick-label {\n  transform: translateX(-100%);\n}\n.v-application--is-rtl .v-slider__tick:last-child .v-slider__tick-label {\n  transform: none;\n}\n\n.v-slider__tick-label {\n  position: absolute;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  white-space: nowrap;\n}\n\n.v-slider__thumb-label-container {\n  position: absolute;\n  left: 0;\n  top: 0;\n  transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);\n}\n\n.v-slider__thumb-label {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 0.75rem;\n  color: #fff;\n  width: 32px;\n  height: 32px;\n  border-radius: 50% 50% 0;\n  position: absolute;\n  left: 0;\n  bottom: 100%;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);\n}\n\n.v-slider--horizontal {\n  min-height: 32px;\n  margin-left: 8px;\n  margin-right: 8px;\n}\n.v-slider--horizontal .v-slider__track-container {\n  width: 100%;\n  height: 2px;\n  left: 0;\n  top: 50%;\n  transform: translateY(-50%);\n}\n.v-slider--horizontal .v-slider__track-background, .v-slider--horizontal .v-slider__track-fill {\n  height: 100%;\n}\n.v-slider--horizontal .v-slider__ticks-container {\n  left: 0;\n  height: 2px;\n  width: 100%;\n}\n.v-application--is-ltr .v-slider--horizontal .v-slider__tick:first-child .v-slider__tick-label {\n  transform: translateX(0%);\n}\n.v-application--is-rtl .v-slider--horizontal .v-slider__tick:first-child .v-slider__tick-label {\n  transform: translateX(0%);\n}\n.v-application--is-ltr .v-slider--horizontal .v-slider__tick:last-child .v-slider__tick-label {\n  transform: translateX(-100%);\n}\n.v-application--is-rtl .v-slider--horizontal .v-slider__tick:last-child .v-slider__tick-label {\n  transform: translateX(100%);\n}\n.v-slider--horizontal .v-slider__tick .v-slider__tick-label {\n  top: 8px;\n}\n.v-application--is-ltr .v-slider--horizontal .v-slider__tick .v-slider__tick-label {\n  transform: translateX(-50%);\n}\n.v-application--is-rtl .v-slider--horizontal .v-slider__tick .v-slider__tick-label {\n  transform: translateX(50%);\n}\n.v-slider--horizontal .v-slider__thumb-label {\n  transform: translateY(-20%) translateY(-12px) translateX(-50%) rotate(45deg);\n}\n.v-slider--horizontal .v-slider__thumb-label > * {\n  transform: rotate(-45deg);\n}\n\n.v-slider--vertical {\n  min-height: 150px;\n  margin-top: 12px;\n  margin-bottom: 12px;\n}\n.v-slider--vertical .v-slider__track-container {\n  height: 100%;\n  width: 2px;\n  left: 50%;\n  top: 0;\n  transform: translateX(-50%);\n}\n.v-slider--vertical .v-slider__track-background, .v-slider--vertical .v-slider__track-fill {\n  width: 100%;\n}\n.v-slider--vertical .v-slider__thumb-container {\n  left: 50%;\n}\n.v-slider--vertical .v-slider__ticks-container {\n  top: 0;\n  width: 2px;\n  height: 100%;\n  left: 50%;\n  transform: translateX(-50%);\n}\n.v-application--is-ltr .v-slider--vertical .v-slider__tick .v-slider__tick-label, .v-application--is-ltr .v-slider--vertical .v-slider__tick:first-child .v-slider__tick-label, .v-application--is-ltr .v-slider--vertical .v-slider__tick:last-child .v-slider__tick-label {\n  transform: translateY(-50%);\n  left: 12px;\n}\n.v-application--is-rtl .v-slider--vertical .v-slider__tick .v-slider__tick-label, .v-application--is-rtl .v-slider--vertical .v-slider__tick:first-child .v-slider__tick-label, .v-application--is-rtl .v-slider--vertical .v-slider__tick:last-child .v-slider__tick-label {\n  transform: translateY(-50%);\n  right: 12px;\n}\n.v-slider--vertical .v-slider__thumb-label > * {\n  transform: rotate(-135deg);\n}\n\n.v-slider__thumb-container--focused .v-slider__thumb:before {\n  transform: scale(1);\n}\n\n.v-slider--active .v-slider__tick {\n  opacity: 1;\n}\n\n.v-slider__thumb-container--active .v-slider__thumb:before {\n  transform: scale(1.5) !important;\n}\n\n.v-slider--disabled {\n  pointer-events: none;\n}\n.v-slider--disabled .v-slider__thumb {\n  width: 8px;\n  height: 8px;\n  left: -4px;\n}\n.v-slider--disabled .v-slider__thumb:before {\n  display: none;\n}\n\n.v-slider__ticks-container--always-show .v-slider__tick {\n  opacity: 1;\n}\n\n.v-input__slider.v-input--is-readonly > .v-input__control {\n  pointer-events: none;\n}\n.v-application--is-ltr .v-input__slider .v-input__slot .v-label {\n  margin-left: 0;\n  margin-right: 12px;\n}\n.v-application--is-rtl .v-input__slider .v-input__slot .v-label {\n  margin-right: 0;\n  margin-left: 12px;\n}\n\n.v-application--is-ltr .v-input__slider--inverse-label .v-input__slot .v-label {\n  margin-right: 0;\n  margin-left: 12px;\n}\n.v-application--is-rtl .v-input__slider--inverse-label .v-input__slot .v-label {\n  margin-left: 0;\n  margin-right: 12px;\n}\n\n.v-input__slider--vertical {\n  align-items: center;\n}\n.v-application--is-ltr .v-input__slider--vertical {\n  flex-direction: column-reverse;\n}\n.v-application--is-rtl .v-input__slider--vertical {\n  flex-direction: column;\n}\n.v-input__slider--vertical .v-input__slot, .v-input__slider--vertical .v-input__prepend-outer, .v-input__slider--vertical .v-input__append-outer {\n  margin: 0;\n}\n.v-input__slider--vertical .v-messages {\n  display: none;\n}\n\n.v-input--has-state .v-slider__track-background {\n  opacity: 0.4;\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VSwitch/VSwitch.sass":
 /*!********************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VSwitch/VSwitch.sass ***!
@@ -7736,6 +10031,156 @@ var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMP
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VChip_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/src/components/VColorPicker/VColorPicker.sass":
+/*!****************************************************************************!*\
+  !*** ./node_modules/vuetify/src/components/VColorPicker/VColorPicker.sass ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPicker_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!../../../../postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!../../../../sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./VColorPicker.sass */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPicker.sass");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPicker_sass__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPicker_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/src/components/VColorPicker/VColorPickerCanvas.sass":
+/*!**********************************************************************************!*\
+  !*** ./node_modules/vuetify/src/components/VColorPicker/VColorPickerCanvas.sass ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerCanvas_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!../../../../postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!../../../../sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./VColorPickerCanvas.sass */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerCanvas.sass");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerCanvas_sass__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerCanvas_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/src/components/VColorPicker/VColorPickerEdit.sass":
+/*!********************************************************************************!*\
+  !*** ./node_modules/vuetify/src/components/VColorPicker/VColorPickerEdit.sass ***!
+  \********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerEdit_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!../../../../postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!../../../../sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./VColorPickerEdit.sass */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerEdit.sass");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerEdit_sass__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerEdit_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/src/components/VColorPicker/VColorPickerPreview.sass":
+/*!***********************************************************************************!*\
+  !*** ./node_modules/vuetify/src/components/VColorPicker/VColorPickerPreview.sass ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerPreview_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!../../../../postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!../../../../sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./VColorPickerPreview.sass */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerPreview.sass");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerPreview_sass__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerPreview_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/src/components/VColorPicker/VColorPickerSwatches.sass":
+/*!************************************************************************************!*\
+  !*** ./node_modules/vuetify/src/components/VColorPicker/VColorPickerSwatches.sass ***!
+  \************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerSwatches_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!../../../../postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!../../../../sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./VColorPickerSwatches.sass */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VColorPicker/VColorPickerSwatches.sass");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerSwatches_sass__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VColorPickerSwatches_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
 
 /***/ }),
 
@@ -7946,6 +10391,36 @@ var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMP
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VSelect_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/src/components/VSlider/VSlider.sass":
+/*!******************************************************************!*\
+  !*** ./node_modules/vuetify/src/components/VSlider/VSlider.sass ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VSlider_sass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!../../../../postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!../../../../sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./VSlider.sass */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-15[0].rules[0].use[3]!./node_modules/vuetify/src/components/VSlider/VSlider.sass");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VSlider_sass__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_1_postcss_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_2_sass_loader_dist_cjs_js_clonedRuleSet_15_0_rules_0_use_3_VSlider_sass__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
 
 /***/ }),
 
@@ -8175,7 +10650,7 @@ var render = function() {
                                         _vm._v(" "),
                                         _c(
                                           "v-col",
-                                          { attrs: { cols: "6" } },
+                                          { attrs: { cols: "4" } },
                                           [
                                             _c("v-text-field", {
                                               attrs: { label: "Позиция" },
@@ -8190,15 +10665,8 @@ var render = function() {
                                                 },
                                                 expression: "editedItem.order"
                                               }
-                                            })
-                                          ],
-                                          1
-                                        ),
-                                        _vm._v(" "),
-                                        _c(
-                                          "v-col",
-                                          { attrs: { cols: "6" } },
-                                          [
+                                            }),
+                                            _vm._v(" "),
                                             _c("v-switch", {
                                               attrs: { label: "Показывать:" },
                                               model: {
@@ -8215,7 +10683,36 @@ var render = function() {
                                             })
                                           ],
                                           1
-                                        )
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "v-col",
+                                          { attrs: { cols: "8" } },
+                                          [
+                                            _c("v-color-picker", {
+                                              staticClass: "ma-2",
+                                              attrs: {
+                                                "canvas-height": "100",
+                                                mode: "hexa",
+                                                value: "hexa"
+                                              },
+                                              model: {
+                                                value: _vm.editedItem.color,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.editedItem,
+                                                    "color",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "editedItem.color"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        ),
+                                        _vm._v(" "),
+                                        _c("v-col", { attrs: { cols: "4" } })
                                       ],
                                       1
                                     )
@@ -8387,17 +10884,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VBtn */ "./node_modules/vuetify/lib/components/VBtn/index.js");
-/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
-/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/index.js");
-/* harmony import */ var vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VDataTable */ "./node_modules/vuetify/lib/components/VDataTable/VDataTable.js");
-/* harmony import */ var vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VDialog */ "./node_modules/vuetify/lib/components/VDialog/index.js");
-/* harmony import */ var vuetify_lib_components_VDivider__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VDivider */ "./node_modules/vuetify/lib/components/VDivider/VDivider.js");
-/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
-/* harmony import */ var vuetify_lib_components_VSwitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VSwitch */ "./node_modules/vuetify/lib/components/VSwitch/VSwitch.js");
-/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
-/* harmony import */ var vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vuetify/lib/components/VToolbar */ "./node_modules/vuetify/lib/components/VToolbar/VToolbar.js");
-/* harmony import */ var vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! vuetify/lib/components/VToolbar */ "./node_modules/vuetify/lib/components/VToolbar/index.js");
+/* harmony import */ var vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VBtn */ "./node_modules/vuetify/lib/components/VBtn/VBtn.js");
+/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/VCard.js");
+/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VCol.js");
+/* harmony import */ var vuetify_lib_components_VColorPicker__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VColorPicker */ "./node_modules/vuetify/lib/components/VColorPicker/VColorPicker.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VContainer.js");
+/* harmony import */ var vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VDataTable */ "./node_modules/vuetify/lib/components/VDataTable/VDataTable.js");
+/* harmony import */ var vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VDialog */ "./node_modules/vuetify/lib/components/VDialog/index.js");
+/* harmony import */ var vuetify_lib_components_VDivider__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vuetify/lib/components/VDivider */ "./node_modules/vuetify/lib/components/VDivider/VDivider.js");
+/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/VIcon.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VRow.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VSpacer.js");
+/* harmony import */ var vuetify_lib_components_VSwitch__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! vuetify/lib/components/VSwitch */ "./node_modules/vuetify/lib/components/VSwitch/VSwitch.js");
+/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/VTextField.js");
+/* harmony import */ var vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VToolbar */ "./node_modules/vuetify/lib/components/VToolbar/index.js");
 
 
 
@@ -8435,7 +10936,8 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 
 
 
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__.VBtn,VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__.VCard,VCardActions: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__.VCardActions,VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__.VCardText,VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__.VCardTitle,VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__.VCol,VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__.VContainer,VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_10__.default,VDialog: vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_7__.VDialog,VDivider: vuetify_lib_components_VDivider__WEBPACK_IMPORTED_MODULE_11__.default,VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_8__.VIcon,VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__.VRow,VSpacer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__.VSpacer,VSwitch: vuetify_lib_components_VSwitch__WEBPACK_IMPORTED_MODULE_12__.default,VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_9__.VTextField,VToolbar: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_13__.default,VToolbarTitle: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_14__.VToolbarTitle})
+
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_6__.default,VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__.default,VCardActions: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_8__.VCardActions,VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_8__.VCardText,VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_8__.VCardTitle,VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_9__.default,VColorPicker: vuetify_lib_components_VColorPicker__WEBPACK_IMPORTED_MODULE_10__.default,VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_11__.default,VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_12__.default,VDialog: vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_4__.VDialog,VDivider: vuetify_lib_components_VDivider__WEBPACK_IMPORTED_MODULE_13__.default,VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_14__.default,VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_15__.default,VSpacer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_16__.default,VSwitch: vuetify_lib_components_VSwitch__WEBPACK_IMPORTED_MODULE_17__.default,VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_18__.default,VToolbar: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_5__.VToolbar,VToolbarTitle: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_5__.VToolbarTitle})
 
 
 /* hot reload */

@@ -35,18 +35,29 @@
                       label="Наименование"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="6">
+                  <v-col cols="4">
                     <v-text-field
                       v-model="editedItem.order"
                       label="Позиция"
                     ></v-text-field>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-switch
+                     <v-switch
                       v-model="editedItem.active"
                       label="Показывать:"
                     ></v-switch>
                   </v-col>
+                  <v-col cols="8">
+ <v-color-picker
+        class="ma-2"
+        canvas-height="100"
+        mode="hexa"
+        value="hexa"
+        v-model="editedItem.color"
+      ></v-color-picker>
+                  </v-col>
+                  <v-col cols="4">
+                   
+                  </v-col>
+
                 </v-row>
               </v-container>
             </v-card-text>

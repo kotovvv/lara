@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="8">
+      <v-col cols="10">
         <v-row>
           <v-col cols="4">
             <v-card-title>
@@ -25,6 +25,15 @@
               ></v-text-field>
             </v-card-title>
           </v-col>
+                  <v-col cols="4" class="pt-3 mt-4">
+          <v-select
+            v-model="filterStatus"
+            :items="filterstatuses"
+            label="Status"
+            item-text="name"
+            item-value="id"
+          ></v-select>
+        </v-col>
         </v-row>
 
         <v-card>
@@ -39,7 +48,12 @@
             :items="filteredItems"
             ref="datatable"
             :expanded="expanded"
+            :footer-props="{'items-per-page-options':[ 10, 50, 100, 250, 500, -1],'items-per-page-text':'Показать'}"
           >
+             <template v-slot:items="props">
+      <td>{{ props.item.tel }}</td>
+
+   </template>
             <!-- expand -->
             <!-- :expanded="expanded" -->
             <!-- show-expand -->
@@ -70,7 +84,7 @@
           </v-data-table>
         </v-card>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="2">
         <v-card height="100%" class="pa-5">
           <!-- <v-col cols="3" class="pt-3 mt-4">
           <v-select
@@ -111,6 +125,7 @@ import axios from "axios";
 export default {
   props:['user'],
   data: () => ({
+    perpage:[  10, 50, 100, 250, 500,  -1],
     expanded: ["Donut"],
     singleExpand: true,
     datetime: "",
@@ -118,7 +133,9 @@ export default {
     users: [],
     disableuser: 0,
     statuses: [],
+    filterstatuses: [],
     selectedStatus: 0,
+    filterStatus: 0,
     selected: [],
     lids: [],
     search: "",
@@ -128,7 +145,7 @@ export default {
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
       { text: "Статус", value: "status" },
-      { text: "Дата", value: "updated_at" },
+      { text: "Дата", value: "date" },
       // { text: "Message", value: "text" },
     ],
     parse_header: [],
@@ -138,7 +155,7 @@ export default {
   mounted: function () {
     // this.getUsers();
     this.getStatuses();
-    this.getLids(this.$props.user.id);
+    
   
   },
   watch: {
@@ -159,7 +176,9 @@ export default {
     filteredItems() {
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
+        if (this.filterStatus) return !this.filterStatus || i.status_id === this.filterStatus;
         return !this.filtertel || reg.test(i.tel);
+        
       });
     },
   },
@@ -249,10 +268,10 @@ export default {
       axios
         .get("/api/statuses")
         .then((res) => {
-          self.statuses = res.data.map(({ name, id }) => ({
-            name,
-            id,
-          }));
+          self.statuses = res.data.map(({ name, id }) => ({  name,  id, }));
+          self.filterstatuses = self.statuses.map((e)=>(e));
+          self.filterstatuses.unshift({name:''})
+          self.getLids(self.$props.user.id);
         })
         .catch((error) => console.log(error));
     },
@@ -270,9 +289,9 @@ export default {
 
           self.lids.map(function (e) {
             // e.user = self.users.find((u) => u.id === e.user_id).fio;
-            e.status = self.statuses.find((s) => s.id === e.status_id).name || '';
             delete e.provider_id;
-            e.updated_at = e.updated_at.substring(0, 16).replace("T", " ");
+            e.date = e.updated_at.substring(0, 10);
+            e.status = self.statuses.find((s) => s.id === e.status_id).name || '';
           });
         })
         .catch((error) => console.log(error));
@@ -281,3 +300,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.v-data-table__wrapper tbody tr:hover{
+    border: 2px solid #000;
+}
+</style>
