@@ -10,6 +10,14 @@
     class="elevation-1"
     cols="6"
   >
+      <template v-slot:item.name="{ item }">
+      <v-chip
+        :color="item.color"
+        dark
+      >
+        {{ item.name }}
+      </v-chip>
+    </template>
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Статусы</v-toolbar-title>
