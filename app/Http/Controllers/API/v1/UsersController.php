@@ -79,9 +79,15 @@ class UsersController extends Controller
         // Debugbar::info($data);
         if (isset($data['password'])) $password = Hash::make($data['password']);
         if (isset($data['id'])) {
-            // Debugbar::info('update');
-            if ($user = User::where('id', $data['id'])->update($data)) {
+            //  Debugbar::info('update');
+            $arr= [];
+            $arr['name'] = $data['name'];
+            $arr['active'] = $data['active'];
+            $arr['role_id'] = $data['role_id'];
+            $arr['fio'] = $data['fio'];
+            if (User::where('id', $data['id'])->update($arr)) {
                 if (isset($data['password'])) {
+                  $user = User::find($data['id']);
                     $user->password = $password;
                     $user->save();
                 }

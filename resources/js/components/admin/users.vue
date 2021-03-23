@@ -179,10 +179,10 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    saveUsers(user) {
+    saveUsers(u) {
       let self = this;
       axios
-        .post("/api/user/update", user)
+        .post("/api/user/update", u)
         .then((res) => {
           console.log(res);
         })
