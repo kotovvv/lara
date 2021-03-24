@@ -25,15 +25,15 @@
               ></v-text-field>
             </v-card-title>
           </v-col>
-                  <v-col cols="4" class="pt-3 mt-4">
-          <v-select
-            v-model="filterStatus"
-            :items="filterstatuses"
-            label="Status"
-            item-text="name"
-            item-value="id"
-          ></v-select>
-        </v-col>
+          <v-col cols="4" class="pt-3 mt-4">
+            <v-select
+              v-model="filterStatus"
+              :items="filterstatuses"
+              label="Status"
+              item-text="name"
+              item-value="id"
+            ></v-select>
+          </v-col>
         </v-row>
 
         <v-card>
@@ -44,16 +44,21 @@
             :single-select="true"
             item-key="id"
             show-select
-            @click:row="clickrow"
             :items="filteredItems"
             ref="datatable"
             :expanded="expanded"
-            :footer-props="{'items-per-page-options':[ 10, 50, 100, 250, 500, -1],'items-per-page-text':'Показать'}"
+            :footer-props="{
+              'items-per-page-options': [10, 50, 100, 250, 500, -1],
+              'items-per-page-text': 'Показать',
+            }"
+            @click:row="clickrow"
           >
-             <template v-slot:items="props">
-      <td>{{ props.item.tel }}</td>
-
-   </template>
+            <template v-slot:item.tel="{ item }">
+              <td class="tel" @click="call(item.tel)">{{ item.tel }}</td>
+            </template>
+            <template v-slot:item.status="{ item }">
+              <td class="px-1" :style="color(item.status_id)">{{ item.status }}</td>
+            </template>
             <!-- expand -->
             <!-- :expanded="expanded" -->
             <!-- show-expand -->
@@ -86,15 +91,6 @@
       </v-col>
       <v-col cols="2">
         <v-card height="100%" class="pa-5">
-          <!-- <v-col cols="3" class="pt-3 mt-4">
-          <v-select
-            v-model="selectedStatus"
-            :items="statuses"
-            label="Status"
-            item-text="name"
-            item-value="id"
-          ></v-select>
-        </v-col> -->
           <v-list>
             <v-radio-group
               @change="putSelectedLidsDB"
@@ -111,6 +107,9 @@
                 v-for="status in statuses"
                 :key="status.id"
               >
+                <span slot="label" class="px-1" :style="{ background: status.color}">{{
+                  status.name
+                }}</span>
               </v-radio>
             </v-radio-group>
           </v-list>
@@ -123,9 +122,9 @@
 <script>
 import axios from "axios";
 export default {
-  props:['user'],
+  props: ["user"],
   data: () => ({
-    perpage:[  10, 50, 100, 250, 500,  -1],
+    perpage: [10, 50, 100, 250, 500, -1],
     expanded: ["Donut"],
     singleExpand: true,
     datetime: "",
@@ -155,8 +154,6 @@ export default {
   mounted: function () {
     // this.getUsers();
     this.getStatuses();
-    
-  
   },
   watch: {
     selected: function (newval, oldval) {
@@ -176,9 +173,9 @@ export default {
     filteredItems() {
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
-        if (this.filterStatus) return !this.filterStatus || i.status_id === this.filterStatus;
+        if (this.filterStatus)
+          return !this.filterStatus || i.status_id === this.filterStatus;
         return !this.filtertel || reg.test(i.tel);
-        
       });
     },
   },
@@ -243,9 +240,9 @@ export default {
       return user.role_id == 2 ? "green" : "blue";
     },
 
-    clickrow(value) {
-      console.log("You can click on row))");
-      // console.log(value);
+    clickrow(item,row) {
+      row.select(!row.isSelected);
+      if (row.isSelected) console.log(item.tel);
     },
     // getUsers() {
     //   let self = this;
@@ -268,9 +265,13 @@ export default {
       axios
         .get("/api/statuses")
         .then((res) => {
-          self.statuses = res.data.map(({ name, id }) => ({  name,  id, }));
-          self.filterstatuses = self.statuses.map((e)=>(e));
-          self.filterstatuses.unshift({name:''})
+          self.statuses = res.data.map(({ name, id, color }) => ({
+            name,
+            id,
+            color,
+          }));
+          self.filterstatuses = self.statuses.map((e) => e);
+          self.filterstatuses.unshift({ name: "" });
           self.getLids(self.$props.user.id);
         })
         .catch((error) => console.log(error));
@@ -291,17 +292,25 @@ export default {
             // e.user = self.users.find((u) => u.id === e.user_id).fio;
             delete e.provider_id;
             e.date = e.updated_at.substring(0, 10);
-            e.status = self.statuses.find((s) => s.id === e.status_id).name || '';
+            e.status =
+              self.statuses.find((s) => s.id === e.status_id).name || "";
           });
         })
         .catch((error) => console.log(error));
     },
-
+    call(tel) {
+      alert(tel);
+    },
+    color(status_id){
+return 'padding:0 5px 0 5px;background:'+this.statuses.find((e) => e.id === status_id ).color
+    },
   },
 };
 </script>
+
 <style scoped>
-.v-data-table__wrapper tbody tr:hover{
-    border: 2px solid #000;
+.tel:hover {
+  cursor: url(/img/cellphone-sound.svg) 10 10, none;
 }
+
 </style>
