@@ -4,6 +4,7 @@ use App\Http\Controllers\API\v1\loginController;
 use App\Http\Controllers\API\v1\ProvidersController;
 use App\Http\Controllers\API\v1\UsersController;
 use App\Http\Controllers\API\v1\LidsController;
+use App\Http\Controllers\API\v1\LogsController;
 use App\Http\Controllers\API\v1\StatusesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,4 +41,6 @@ Route::get('userlids/{id}', [LidsController::class,'userLids'])->name('userlids'
 
 Route::post('Lid/newlids', [LidsController::class,'newlids'])->name('Lid.newlids');
 Route::post('Lid/updatelids', [LidsController::class,'updatelids'])->name('Lid.updatelids');
+Route::post('log/add', [LogsController::class,'add'])->name('log.add');
+Route::post('log/tellog', [LogsController::class,'tellog'])->name('log.tellog');
 

@@ -32,7 +32,12 @@
               label="Status"
               item-text="name"
               item-value="id"
-            ></v-select>
+            >
+            <template v-slot:item="{item}">
+            <div :style="{background:item.color,width:'100%'}" v-text="item.name"></div>
+
+            </template>
+            </v-select>
           </v-col>
         </v-row>
 
@@ -52,9 +57,10 @@
               'items-per-page-text': 'Показать',
             }"
             @click:row="clickrow"
+            class="tablestyle"
           >
             <template v-slot:item.tel="{ item }">
-              <td class="tel" @click="call(item.tel)">{{ item.tel }}</td>
+              <td class="tel" @click.prevent.stop="call(item.tel)">{{ item.tel }}</td>
             </template>
             <template v-slot:item.status="{ item }">
               <td class="px-1" :style="color(item.status_id)">{{ item.status }}</td>
@@ -82,6 +88,11 @@
                       v-model="datetime"
                     >
                     </v-datetime-picker>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12">
+
                   </v-col>
                 </v-row>
               </td>
@@ -124,7 +135,6 @@ import axios from "axios";
 export default {
   props: ["user"],
   data: () => ({
-    perpage: [10, 50, 100, 250, 500, -1],
     expanded: ["Donut"],
     singleExpand: true,
     datetime: "",
@@ -198,6 +208,7 @@ export default {
       let send_el = {};
       send_el.tel = eli.tel;
       send_el.text = eli.text;
+      send_el.user_id = eli.user_id;
       send.id = eli.id;
       send.data = send_el;
       axios
@@ -208,6 +219,15 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+              axios
+        .post("api/log/add", send_el)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+
     },
     putSelectedLidsDB() {
       const self = this;
@@ -235,6 +255,14 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+      axios
+        .post("api/log/add", send_el)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
@@ -242,7 +270,7 @@ export default {
 
     clickrow(item,row) {
       row.select(!row.isSelected);
-      if (row.isSelected) console.log(item.tel);
+      if (!row.isSelected) console.log(item.tel);
     },
     // getUsers() {
     //   let self = this;
@@ -309,8 +337,9 @@ return 'padding:0 5px 0 5px;background:'+this.statuses.find((e) => e.id === stat
 </script>
 
 <style scoped>
-.tel:hover {
-  cursor: url(/img/cellphone-sound.svg) 10 10, none;
+.tel:hover { cursor: url(/img/cellphone-sound.svg) 10 10, none;
 }
-
+.v-data-table >>> tbody tr:hover {
+    border:2px solid #000
+}
 </style>
