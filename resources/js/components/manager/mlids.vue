@@ -33,17 +33,19 @@
               item-text="name"
               item-value="id"
             >
-            <template v-slot:item="{item}">
-            <div :style="{background:item.color, width:'100%'}" v-text="item.name"></div>
-
-            </template>
+              <template v-slot:item="{ item }">
+                <div
+                  :style="{ background: item.color, width: '100%' }"
+                  v-text="item.name"
+                ></div>
+              </template>
             </v-select>
           </v-col>
         </v-row>
 
         <v-card>
           <v-data-table
-          id="maintable"
+            id="maintable"
             v-model.lazy.trim="selected"
             :headers="headers"
             :search="search"
@@ -58,13 +60,29 @@
               'items-per-page-text': 'Показать',
             }"
             @click:row="clickrow"
-            class="tablestyle"
           >
+            <template v-slot:item.name="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.name }}</div> </template>
+            <template v-slot:item.email="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.email }}</div> </template>
+            <template v-slot:item.date="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.date }}</div> </template>
             <template v-slot:item.tel="{ item }">
-              <div class="tel" @click.prevent.stop="call(item.tel)">{{ item.tel }}</div>
+              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+                {{ item.tel }}
+              </div>
+            </template>
+            <template v-slot:item.tel="{ item }">
+              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+                {{ item.tel }}
+              </div>
+            </template>
+            <template v-slot:item.tel="{ item }">
+              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+                {{ item.tel }}
+              </div>
             </template>
             <template v-slot:item.status="{ item }">
-              <div class="px-1" :style="stylecolor(item.status_id)">{{ item.status }}</div>
+              <div class="px-1" :style="stylecolor(item.status_id)">
+                {{ item.status }}
+              </div>
             </template>
             <!-- expand -->
             <!-- :expanded="expanded" -->
@@ -93,7 +111,7 @@
                 </v-row>
                 <v-row>
                   <v-col cols="12">
-<logtel :tel="tel" />
+                    <logtel :tel="tel" />
                   </v-col>
                 </v-row>
               </td>
@@ -119,9 +137,12 @@
                 v-for="status in statuses"
                 :key="status.id"
               >
-                <span slot="label" class="px-1" :style="{ background: status.color, width:'100%'}">{{
-                  status.name
-                }}</span>
+                <span
+                  slot="label"
+                  class="px-1"
+                  :style="{ background: status.color, width: '100%' }"
+                  >{{ status.name }}</span
+                >
               </v-radio>
             </v-radio-group>
           </v-list>
@@ -133,14 +154,14 @@
 
 <script>
 import axios from "axios";
-import logtel from './logtel'
+import logtel from "./logtel";
 export default {
-   components: {
-     logtel
-   },
+  components: {
+    logtel,
+  },
   props: ["user"],
   data: () => ({
-    tel:'',
+    tel: "",
     expanded: ["Donut"],
     singleExpand: true,
     datetime: "",
@@ -178,7 +199,7 @@ export default {
       if (this.selected.length == 0) {
         this.selectedStatus = null;
         this.expanded = [];
-        this.tel = ''
+        this.tel = "";
       } else {
         this.selectedStatus = newval[0].status_id;
         this.expanded = this.selected;
@@ -226,7 +247,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-              axios
+      axios
         .post("api/log/add", send_el)
         .then(function (response) {
           console.log(response);
@@ -234,7 +255,6 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-
     },
     putSelectedLidsDB() {
       const self = this;
@@ -275,10 +295,10 @@ export default {
       return user.role_id == 2 ? "green" : "blue";
     },
 
-    clickrow(item,row) {
+    clickrow(item, row) {
       row.select(!row.isSelected);
       if (!row.isSelected) this.tel = item.tel;
-      else this.tel = ''
+      else this.tel = "";
     },
     // getUsers() {
     //   let self = this;
@@ -304,7 +324,7 @@ export default {
           self.statuses = res.data.map(({ name, id, color }) => ({
             name,
             id,
-            color
+            color,
           }));
           self.filterstatuses = self.statuses.map((e) => e);
           self.filterstatuses.unshift({ name: "" });
@@ -328,10 +348,10 @@ export default {
             // e.user = self.users.find((u) => u.id === e.user_id).fio;
             delete e.provider_id;
             e.date = e.updated_at.substring(0, 10);
-            if(e.status_id){
-                e.status = self.statuses.find((s) => s.id === e.status_id).name || "";
+            if (e.status_id) {
+              e.status =
+                self.statuses.find((s) => s.id === e.status_id).name || "";
             }
-
           });
         })
         .catch((error) => console.log(error));
@@ -339,25 +359,36 @@ export default {
     call(tel) {
       alert(tel);
     },
-    stylecolor(status_id){
+    stylecolor(status_id) {
       // console.log(status_id)
-       if (status_id == null) return
-return 'width:100%;padding:0 5px;background:'+this.statuses.find((e) => e.id === status_id ).color
+      if (status_id == null) return;
+      return (
+        "padding:5px;background:" +
+        this.statuses.find((e) => e.id === status_id).color
+      );
     },
   },
 };
 </script>
 
 <style scoped>
-.tel:hover { cursor: url(/img/cellphone-sound.svg) 10 10, none;
+.tel:hover {
+  cursor: url(/img/cellphone-sound.svg) 10 10, none;
 }
+#maintable.v-data-table >>> tr{
+  outline: 2px solid transparent;
+}
+
 #maintable.v-data-table >>> tr:hover,
 #maintable.v-data-table >>> tr.v-data-table__selected,
 #maintable.v-data-table >>> tr.v-data-table__selected > tr {
-    border:2px solid #000;
-    cursor:pointer
+  outline: 2px solid #000;
+  cursor: pointer;
 }
-#maintable.v-data-table >>> tr.v-data-table__expanded tr:hover{
-border:none
+#maintable.v-data-table >>> tr.v-data-table__expanded tr:hover {
+  outline: none;
+}
+#maintable >>>.text-start{
+  padding:0 !important
 }
 </style>
