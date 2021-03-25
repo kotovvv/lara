@@ -90,9 +90,11 @@
 </template>
 
 <script>
-
 import axios from "axios";
+
 export default {
+
+  props: ["user"],
   data: () => ({
     datetime:'',
     userid: null,
@@ -118,7 +120,7 @@ export default {
   mounted: function () {
     this.getUsers();
     this.getStatuses();
-    this.getLids(2);
+
   },
   computed: {
     filteredItems() {
@@ -225,6 +227,7 @@ export default {
             name,
             id,
           }));
+          self.getLids(self.$props.user.id);
         })
         .catch((error) => console.log(error));
     },
@@ -244,7 +247,7 @@ export default {
 
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id === e.user_id).fio;
-            e.status = self.statuses.find((s) => s.id === e.status_id).name;
+            if(e.status_id) e.status = self.statuses.find((s) => s.id === e.status_id).name;
             delete e.provider_id;
           });
         })

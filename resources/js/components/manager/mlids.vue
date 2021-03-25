@@ -34,7 +34,7 @@
               item-value="id"
             >
             <template v-slot:item="{item}">
-            <div :style="{background:item.color,width:'100%'}" v-text="item.name"></div>
+            <div :style="{background:item.color, width:'100%'}" v-text="item.name"></div>
 
             </template>
             </v-select>
@@ -43,6 +43,7 @@
 
         <v-card>
           <v-data-table
+          id="maintable"
             v-model.lazy.trim="selected"
             :headers="headers"
             :search="search"
@@ -60,10 +61,10 @@
             class="tablestyle"
           >
             <template v-slot:item.tel="{ item }">
-              <td class="tel" @click.prevent.stop="call(item.tel)">{{ item.tel }}</td>
+              <div class="tel" @click.prevent.stop="call(item.tel)">{{ item.tel }}</div>
             </template>
             <template v-slot:item.status="{ item }">
-              <td class="px-1" :style="color(item.status_id)">{{ item.status }}</td>
+              <div class="px-1" :style="stylecolor(item.status_id)">{{ item.status }}</div>
             </template>
             <!-- expand -->
             <!-- :expanded="expanded" -->
@@ -92,7 +93,7 @@
                 </v-row>
                 <v-row>
                   <v-col cols="12">
-
+<logtel :tel="tel" />
                   </v-col>
                 </v-row>
               </td>
@@ -118,7 +119,7 @@
                 v-for="status in statuses"
                 :key="status.id"
               >
-                <span slot="label" class="px-1" :style="{ background: status.color}">{{
+                <span slot="label" class="px-1" :style="{ background: status.color, width:'100%'}">{{
                   status.name
                 }}</span>
               </v-radio>
@@ -132,9 +133,14 @@
 
 <script>
 import axios from "axios";
+import logtel from './logtel'
 export default {
+   components: {
+     logtel
+   },
   props: ["user"],
   data: () => ({
+    tel:'',
     expanded: ["Donut"],
     singleExpand: true,
     datetime: "",
@@ -172,6 +178,7 @@ export default {
       if (this.selected.length == 0) {
         this.selectedStatus = null;
         this.expanded = [];
+        this.tel = ''
       } else {
         this.selectedStatus = newval[0].status_id;
         this.expanded = this.selected;
@@ -270,7 +277,8 @@ export default {
 
     clickrow(item,row) {
       row.select(!row.isSelected);
-      if (!row.isSelected) console.log(item.tel);
+      if (!row.isSelected) this.tel = item.tel;
+      else this.tel = ''
     },
     // getUsers() {
     //   let self = this;
@@ -296,7 +304,7 @@ export default {
           self.statuses = res.data.map(({ name, id, color }) => ({
             name,
             id,
-            color,
+            color
           }));
           self.filterstatuses = self.statuses.map((e) => e);
           self.filterstatuses.unshift({ name: "" });
@@ -320,8 +328,10 @@ export default {
             // e.user = self.users.find((u) => u.id === e.user_id).fio;
             delete e.provider_id;
             e.date = e.updated_at.substring(0, 10);
-            e.status =
-              self.statuses.find((s) => s.id === e.status_id).name || "";
+            if(e.status_id){
+                e.status = self.statuses.find((s) => s.id === e.status_id).name || "";
+            }
+
           });
         })
         .catch((error) => console.log(error));
@@ -329,8 +339,10 @@ export default {
     call(tel) {
       alert(tel);
     },
-    color(status_id){
-return 'padding:0 5px 0 5px;background:'+this.statuses.find((e) => e.id === status_id ).color
+    stylecolor(status_id){
+      // console.log(status_id)
+       if (status_id == null) return
+return 'width:100%;padding:0 5px;background:'+this.statuses.find((e) => e.id === status_id ).color
     },
   },
 };
@@ -339,7 +351,13 @@ return 'padding:0 5px 0 5px;background:'+this.statuses.find((e) => e.id === stat
 <style scoped>
 .tel:hover { cursor: url(/img/cellphone-sound.svg) 10 10, none;
 }
-.v-data-table >>> tbody tr:hover {
-    border:2px solid #000
+#maintable.v-data-table >>> tr:hover,
+#maintable.v-data-table >>> tr.v-data-table__selected,
+#maintable.v-data-table >>> tr.v-data-table__selected > tr {
+    border:2px solid #000;
+    cursor:pointer
+}
+#maintable.v-data-table >>> tr.v-data-table__expanded tr:hover{
+border:none
 }
 </style>

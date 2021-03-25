@@ -50,7 +50,7 @@
       <v-container fluid>
         <!-- <v-row> -->
         <!-- table -->
-        <component :is="managerComponent" />
+        <component :user="$props.user" :is="managerComponent" />
         <!-- <tablenewlid></tablenewlid> -->
         <!-- </v-row> -->
       </v-container>
@@ -60,6 +60,7 @@
 
 <script>
 const lids = () => import("../crmanager/lids.vue");
+const mlids = () => import("../manager/mlids.vue");
 
 export default {
   props:['user'],
@@ -68,12 +69,14 @@ export default {
     selectedItem: 0,
     managerMenu: "lids",
     items: [
-      { text: "Lids", name: "lids", icon: "mdi-account-arrow-left" },
+      { text: "Распределение", name: "lids", icon: "mdi-account-arrow-left" },
+      { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
     ],
   }),
   computed: {
     managerComponent() {
       if (this.managerMenu == "lids") return lids;
+      if (this.managerMenu == "mlids") return mlids;
     },
   },
   methods: {},

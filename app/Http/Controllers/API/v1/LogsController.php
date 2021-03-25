@@ -43,8 +43,8 @@ class LogsController extends Controller
     {
 
         $logs =  DB::table('logs')
-            ->select('users.fio', 'statuses.name', 'statuses.color', 'logs.text', 'logs.created_at')
-            ->join('statuses', 'logs.status_id', '=', 'statuses.id')
+            ->select('users.fio', 'statuses.name', 'statuses.color', 'logs.text', 'logs.created_at')//,'logs.tel'
+            ->leftJoin('statuses', 'logs.status_id', '=', 'statuses.id')
             ->join('users', 'logs.user_id', '=', 'users.id')
             ->where('logs.tel', $request->tel)
             ->reorder('logs.created_at', 'desc')
