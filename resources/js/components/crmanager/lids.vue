@@ -10,6 +10,14 @@
             item-text="name"
             item-value="id"
           ></v-select>
+          <v-btn
+            v-if="selectedStatus && selected.length"
+            class="ma-2"
+            outlined
+            @click="changeStatus"
+          >
+            Сменить статусы
+          </v-btn>
         </v-col>
         <v-col cols="3">
           <v-card-title>
@@ -34,58 +42,59 @@
           </v-card-title>
         </v-col>
       </v-row>
-
-
-
     </v-container>
 
-      <v-row>
-        <v-col cols="8">
-          <v-card>
-            <v-data-table
-              v-model.lazy.trim="selected"
-              :headers="headers"
-              :search="search"
-              :single-select="false"
-              item-key="id"
-              show-select
-              @click:row="clickrow"
-              :items="filteredItems"
-              ref="datatable"
-            ></v-data-table>
-          </v-card>
-        </v-col>
-        <v-col cols="4">
-          <v-card height="100%" class="pa-5">
-            Select user for filtered lids
+    <v-row>
+      <v-col cols="8">
+        <v-card>
+          <v-data-table
+            v-model.lazy.trim="selected"
+            :headers="headers"
+            :search="search"
+            :single-select="false"
+            item-key="id"
+            show-select
+            @click:row="clickrow"
+            :items="filteredItems"
+            ref="datatable"
+          ></v-data-table>
+        </v-card>
+      </v-col>
+      <v-col cols="4">
+        <v-card height="100%" class="pa-5">
+          Select user for filtered lids
 
-            <v-list>
-              <v-radio-group
-                @change="putSelectedLidsDB"
-                ref="radiogroup"
-                v-model="userid"
-                v-bind="users"
-                id="usersradiogroup"
-              >
-                <v-row v-for="user in users" :key="user.id">
-                  <v-radio :label="user.fio" :value="user.id" :disabled="disableuser == user.id"> </v-radio>
+          <v-list>
+            <v-radio-group
+              @change="changeLidsUser"
+              ref="radiogroup"
+              v-model="userid"
+              v-bind="users"
+              id="usersradiogroup"
+            >
+              <v-row v-for="user in users" :key="user.id">
+                <v-radio
+                  :label="user.fio"
+                  :value="user.id"
+                  :disabled="disableuser == user.id"
+                >
+                </v-radio>
 
-                  <v-btn
-                    class="ml-3"
-                    small
-                    :color="usercolor(user)"
-                    @click="getLids(user.id)"
-                    :value="user.hmlids"
-                    :disabled="disableuser == user.id"
-                    >{{ user.hmlids }}</v-btn
-                  >
-                </v-row>
-              </v-radio-group>
-            </v-list>
-          </v-card>
-        </v-col>
-      </v-row>
-
+                <v-btn
+                  class="ml-3"
+                  small
+                  :color="usercolor(user)"
+                  @click="getLids(user.id)"
+                  :value="user.hmlids"
+                  :disabled="disableuser == user.id"
+                  >{{ user.hmlids }}</v-btn
+                >
+              </v-row>
+            </v-radio-group>
+          </v-list>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -93,10 +102,9 @@
 import axios from "axios";
 
 export default {
-
   props: ["user"],
   data: () => ({
-    datetime:'',
+    datetime: "",
     userid: null,
     users: [],
     disableuser: 0,
@@ -120,7 +128,6 @@ export default {
   mounted: function () {
     this.getUsers();
     this.getStatuses();
-
   },
   computed: {
     filteredItems() {
@@ -131,6 +138,37 @@ export default {
     },
   },
   methods: {
+    changeLidsUser() {
+      const self = this;
+      let send = {};
+      send.user_id = this.userid;
+
+      if (this.selectedStatus !== 0) {
+        send.status_id = this.selectedStatus;
+      }
+      if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
+        send.data = this.selected;
+      } else if (
+        (this.search !== "" || this.filtertel !== "") &&
+        this.$refs.datatable.$children[0].filteredItems.length > 0
+      ) {
+        send.data = this.$refs.datatable.$children[0].filteredItems;
+      }
+      axios
+        .post("api/Lid/changelidsuser", send)
+        .then(function (response) {
+          self.search = "";
+          self.filtertel = "";
+          self.userid = null;
+          self.$refs.radiogroup.lazyValue = null;
+          self.selected = [];
+          self.getUsers();
+          self.getLids(send.user_id);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     putSelectedLidsDB() {
       const self = this;
       let send = {};
@@ -141,20 +179,6 @@ export default {
       }
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
         send.data = this.selected;
-        axios
-          .post("api/Lid/newlids", send)
-          .then(function (response) {
-            // console.log(response);
-            self.lids = self.lids.filter(
-              (ar) => !self.selected.find((rm) => rm.tel === ar.tel)
-            );
-            self.selected = [];
-            self.getUsers();
-
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
       } else if (
         (this.search !== "" || this.filtertel !== "") &&
         this.$refs.datatable.$children[0].filteredItems.length > 0
@@ -172,17 +196,9 @@ export default {
         axios
           .post("api/Lid/newlids", send)
           .then(function (response) {
-            // console.log(response);
-            self.lids = self.lids.filter(
-              (ar) =>
-                !self.$refs.datatable.$children[0].filteredItems.find(
-                  (rm) => rm.tel === ar.tel
-                )
-            );
-             self.getUsers();
+            self.getUsers();
             self.search = "";
             self.filtertel = "";
-
           })
           .catch(function (error) {
             console.log(error);
@@ -223,23 +239,24 @@ export default {
       axios
         .get("/api/statuses")
         .then((res) => {
-          self.statuses = res.data.map(({ name, id }) => ({
+          self.statuses = res.data.map(({ name, id, color }) => ({
             name,
             id,
+            color,
           }));
+          self.statuses.unshift({ name: "" });
           self.getLids(self.$props.user.id);
         })
         .catch((error) => console.log(error));
     },
 
     getLids(id) {
-      console.log(id)
       let self = this;
       let a_temp = [];
       self.search = "";
       self.filtertel = "";
-       self.disableuser = id
-       axios
+      self.disableuser = id;
+      axios
         .get("/api/userlids/" + id)
         .then((res) => {
           // console.log(res.data);
@@ -247,11 +264,41 @@ export default {
 
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id === e.user_id).fio;
-            if(e.status_id) e.status = self.statuses.find((s) => s.id === e.status_id).name;
+            if (e.status_id)
+              e.status = self.statuses.find((s) => s.id === e.status_id).name;
             delete e.provider_id;
           });
         })
         .catch((error) => console.log(error));
+    },
+    changeStatus() {
+      const self = this;
+      let send = {};
+      if (this.selected.length && this.selectedStatus) {
+        this.selected.map(function (e) {
+          e.status_id = self.selectedStatus;
+          e.status = self.statuses.find((s) => s.id === e.status_id).name;
+        });
+        send.data = this.selected.map((e) => e);
+        this.changeLids(send);
+      }
+    },
+    changeLids(send) {
+      const self = this;
+      axios
+        .post("api/Lid/updatelids", send)
+        .then(function (response) {
+          self.afterUpdateLids();
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    afterUpdateLids() {
+      const self = this;
+      self.selected = [];
+      self.selectedStatus = 0;
+      self.getLids(self.disableuser);
     },
   },
 };

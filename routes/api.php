@@ -41,6 +41,7 @@ Route::get('userlids/{id}', [LidsController::class,'userLids'])->name('userlids'
 
 Route::post('Lid/newlids', [LidsController::class,'newlids'])->name('Lid.newlids');
 Route::post('Lid/updatelids', [LidsController::class,'updatelids'])->name('Lid.updatelids');
+Route::post('Lid/changelidsuser', [LidsController::class,'changelidsuser'])->name('Lid.changelidsuser');
 Route::post('log/add', [LogsController::class,'add'])->name('log.add');
 Route::post('log/tellog', [LogsController::class,'tellog'])->name('log.tellog');
 

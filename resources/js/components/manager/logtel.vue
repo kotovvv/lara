@@ -13,10 +13,11 @@
         <tr
           v-for="(item,ix) in logs"
           :key="ix"
+           :style="{background:item.color}"
         >
           <td>{{ item.created_at }}</td>
           <td>{{ item.fio }}</td>
-          <td :style="{background:item.color}">{{ item.name }}</td>
+          <td>{{ item.name }}</td>
           <td>{{ item.text }}</td>
         </tr>
       </tbody>

@@ -84,11 +84,9 @@
                 {{ item.status }}
               </div>
             </template>
-            <!-- expand -->
-            <!-- :expanded="expanded" -->
-            <!-- show-expand -->
+
             <template v-slot:expanded-item="{ headers, item }">
-              <td :colspan="headers.length">
+              <td :colspan="headers.length" class="blackborder">
                 <v-row>
                   <v-col cols="8">
                     <v-textarea
@@ -380,15 +378,21 @@ export default {
 }
 
 #maintable.v-data-table >>> tr:hover,
-#maintable.v-data-table >>> tr.v-data-table__selected,
-#maintable.v-data-table >>> tr.v-data-table__selected > tr {
-  outline: 2px solid #000;
+#maintable.v-data-table >>> tr.v-data-table__selected {
+  border: 2px solid #000;
   cursor: pointer;
 }
-#maintable.v-data-table >>> tr.v-data-table__expanded tr:hover {
-  outline: none;
+#maintable.v-data-table >>> tr.v-data-table__selected {
+    border-bottom: transparent !important;
+}
+#maintable.v-data-table >>> tr.v-data-table__expanded tr:hover{
+  border: none;
 }
 #maintable >>>.text-start{
   padding:0 !important
+}
+.blackborder{
+  border: 2px solid #000;
+border-top: transparent !important;
 }
 </style>
