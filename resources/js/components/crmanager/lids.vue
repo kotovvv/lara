@@ -220,8 +220,9 @@ export default {
     },
     getUsers() {
       let self = this;
+      let get = self.$props.user.role_id === 1? '/api/users':'/api/getusers'
       axios
-        .get("/api/getusers")
+        .get(get)
         .then((res) => {
           self.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({
             name,

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Provider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use DB;
 
 class ProvidersController extends Controller
 {
@@ -29,9 +30,33 @@ class ProvidersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function status_provider(Request $request)
     {
-        //
+        // $request->validate([
+        //     'provider_id' => 'required',
+        // ]);
+        $data = $request->all();
+
+$req = [];
+        $statuses =  DB::select(DB::raw("SELECT
+        `statuses`.`name`
+        , COUNT(`statuses`.`name`) AS `hm`
+    FROM
+        `providers`
+        LEFT JOIN `lids` 
+            ON (`providers`.`id` = `lids`.`provider_id`)
+        LEFT JOIN `logs` 
+            ON (`lids`.`tel` = `logs`.`tel`)
+        LEFT JOIN `statuses` 
+            ON (`logs`.`status_id` = `statuses`.`id`)
+    WHERE (`providers`.`id` = ".$data['provider_id'].")
+    GROUP BY `statuses`.`name`, `providers`.`id`
+    ORDER BY `hm` DESC"));
+    $req['hm'] = DB::select(DB::raw("SELECT DATE(`created_at`) dateadd,COUNT(*) hm FROM `lids` WHERE `provider_id` = ".$data['provider_id']));
+    $req['statuses'] = $statuses;
+
+    return $req;
+
     }
 
     /**
@@ -44,7 +69,6 @@ class ProvidersController extends Controller
     {
         $request->validate([
             'name' => 'required|max:255',
-            
         ]);
 
         $data = $request->all();

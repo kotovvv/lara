@@ -6,9 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Lid;
-
-
 use DB;
+use Debugbar;
 
 class LidsController extends Controller
 {
@@ -65,19 +64,20 @@ class LidsController extends Controller
     $data = $request->all();
     // $data['data']['updated_at'] = Now();
     $res = 0;
-    foreach ($data['data'] as $lid) {
+    // foreach ($data['data'] as $lid) {
+      // Debugbar::info($data['data']);
       $a_lid = [
-        'status_id' => $lid['status_id'],
-        'user_id' => $lid['user_id'],
+        'status_id' => $data['data']['status_id'],
+        'user_id' => $data['data']['user_id'],
         'updated_at' => Now()
       ];
-      $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
+      $res =  DB::table('lids')->where('id', $data['id'])->update($a_lid);
 
-      $a_lid['tel'] = $lid['tel'];
+      $a_lid['tel'] = $data['data']['tel'];
       $a_lid['created_at'] = Now();
 
       DB::table('logs')->insert($a_lid);
-    }
+    // }
     if ($res) {
 
       return response('Lids updated', 200);
@@ -91,7 +91,7 @@ class LidsController extends Controller
     //     'user_id' => 'requered',
     //     'data' => 'requered'
     //    ]);
-    Log::alert($request->all());
+    // Log::alert($request->all());
     $data = $request->all();
 
 
@@ -100,6 +100,7 @@ class LidsController extends Controller
         'name' => $lid['name'],
         'email' => $lid['email'],
         'user_id' => $data['user_id'],
+        'created_at' => Now()
       ];
       if (isset($data['provider_id']))  $a_lid['provider_id'] = $data['provider_id'];
       if (isset($data['status_id']))  $a_lid['status_id'] = $data['status_id'];

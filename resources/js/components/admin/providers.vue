@@ -1,8 +1,7 @@
 <template>
-<v-card
-    class="mx-auto"
-    max-width="600"
-  >
+<v-row>
+  <v-col cols="6">
+<v-card >
   <v-data-table
     :headers="headers"
     :items="providers"
@@ -78,24 +77,36 @@
       <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
       <!-- <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon> -->
     </template>
+    <template v-slot:item.report="{ item }">
+      <v-icon small class="mr-2" @click="report(item)"> mdi-file-chart-outline </v-icon>
+      <!-- <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon> -->
+    </template>
     <template v-slot:no-data>
       <v-btn color="primary" @click="getProvider"> Reset </v-btn>
     </template>
   </v-data-table>
 </v-card>
+</v-col>
+<v-col cols="6" v-if="provider.id">
+<statusesProvider :provider="provider" />
+</v-col>
+</v-row>
 </template>
 
 <script>
+import statusesProvider from './statusProvider'
 import axios from "axios";
 export default {
   data: () => ({
+    provider:{},
     dialog: false,
     dialogDelete: false,
     providers: [],
     headers: [
       { text: "Наименование", value: "name" },
       { text: "Показывать", value: "active" },
-      { text: "Действия", value: "actions", sortable: false },
+      { text: "Редактировать", value: "actions", sortable: false },
+      { text: "Отчёт", value: "report", sortable: false },
     ],
 
     editedIndex: -1,
@@ -130,6 +141,10 @@ export default {
   },
 
   methods: {
+    report(item){
+      if (this.provider === item) {this.provider = {}; return}
+      this.provider = item
+    },
     getProvider() {
       let self = this;
       axios
@@ -193,5 +208,8 @@ export default {
       this.close();
     },
   },
+  components:{
+    statusesProvider
+  }
 };
 </script>

@@ -33,6 +33,8 @@ Route::resource('lids', LidsController::class);
 
 Route::get('statusall', [StatusesController::class,'getall'])->name('stasusall');
 Route::get('providerall', [ProvidersController::class,'getall'])->name('providerall');
+Route::post('status_provider', [ProvidersController::class,'status_provider'])->name('status_provider');
+Route::post('status_users', [UsersController::class,'status_users'])->name('status_users');
 
 Route::get('getusers', [UsersController::class,'getusers'])->name('getusers');
 Route::get('users/getroles', [UsersController::class,'getroless'])->name('user.getroles');
