@@ -59,8 +59,8 @@ export default {
       shouldStayLoggedIn: true,
     },
     fields: {
-      name: "lara",
-      password: "lara",
+      name: "",
+      password: "",
     },
     errors: {},
   }),

@@ -5,7 +5,7 @@
         <v-select
           v-model="selectedProvider"
           :items="providers"
-          label="Provider"
+          label="Провайдер"
           item-text="name"
           item-value="id"
         ></v-select>
@@ -14,7 +14,7 @@
         <v-file-input
           v-model="files"
           ref="fileupload"
-          label="Upload CSV"
+          label="загрузить CSV"
           show-size
           truncate-length="24"
           @change="onFileChange"
@@ -24,7 +24,7 @@
         <v-select
           v-model="selectedStatus"
           :items="statuses"
-          label="Status"
+          label="Статус"
           item-text="name"
           item-value="id"
         ></v-select>
@@ -42,7 +42,7 @@
                     <v-text-field
                       v-model="search"
                       append-icon="mdi-magnify"
-                      label="Search"
+                      label="Поиск"
                       single-line
                       hide-details
                     ></v-text-field>
@@ -53,7 +53,7 @@
                     <v-text-field
                       v-model.lazy.trim="filtertel"
                       append-icon="mdi-phone"
-                      label="Start number"
+                      label="Начальные цыфры"
                       single-line
                       hide-details
                     ></v-text-field>
@@ -76,7 +76,7 @@
         </v-col>
         <v-col cols="4">
           <v-card height="100%" class="pa-5">
-            Select user for filtered lids
+            Укажите пользователя для лидов
 
             <v-list>
               <v-radio-group
@@ -126,9 +126,9 @@ export default {
     search: "",
     filtertel: "",
     headers: [
-      { text: "Name", value: "name" },
+      { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
-      { text: "Tel.", align: "start", value: "tel" },
+      { text: "Тел.", align: "start", value: "tel" },
     ],
     parse_header: [],
     parse_csv: [],

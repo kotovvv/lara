@@ -72,7 +72,7 @@ export default {
   data: () => ({
     drawer: null,
     selectedItem: 0,
-  
+
     items: [
       { text: "Импорт CSV", name: "importcsv", icon: "mdi-progress-upload" },
       { text: "Пользователи", name: "users", icon: "mdi-account" },

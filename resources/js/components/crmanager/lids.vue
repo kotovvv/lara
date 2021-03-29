@@ -220,7 +220,7 @@ export default {
     },
     getUsers() {
       let self = this;
-      let get = self.$props.user.role_id === 1? '/api/users':'/api/getusers'
+       let get = self.$props.user.role_id === "1"? '/api/users':'/api/getusers'
       axios
         .get(get)
         .then((res) => {

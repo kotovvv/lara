@@ -1,13 +1,13 @@
 <template>
-<v-row>
-  <v-col cols="6">
-<v-card >
+<v-card
+ class="mx-auto"
+ max-width="500"
+>
   <v-data-table
     :headers="headers"
     :items="providers"
     sort-by="role_id"
     class="elevation-1"
-    cols="6"
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -77,20 +77,19 @@
       <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
       <!-- <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon> -->
     </template>
-    <template v-slot:item.report="{ item }">
+      <template v-slot:item.report="{ item }">
+    <statusesProvider :provider="item" />
+      </template>
+      <!-- <template v-slot:item.report="{ item }">
       <v-icon small class="mr-2" @click="report(item)"> mdi-file-chart-outline </v-icon>
-      <!-- <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon> -->
-    </template>
+      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+    </template> -->
     <template v-slot:no-data>
       <v-btn color="primary" @click="getProvider"> Reset </v-btn>
     </template>
   </v-data-table>
 </v-card>
-</v-col>
-<v-col cols="6" v-if="provider.id">
-<statusesProvider :provider="provider" />
-</v-col>
-</v-row>
+
 </template>
 
 <script>
