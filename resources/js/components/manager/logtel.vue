@@ -3,7 +3,7 @@
     <template v-slot:default>
       <thead>
         <tr>
-          <th class="text-left"> Дата </th>
+          <th class="text-left">Дата</th>
           <th class="text-left">Менеджер</th>
           <th class="text-left">Статус</th>
           <th class="text-left">Сообщение</th>

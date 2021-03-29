@@ -8,7 +8,7 @@
               <v-text-field
                 v-model="search"
                 append-icon="mdi-magnify"
-                label="Search"
+                label="Поиск"
                 single-line
                 hide-details
               ></v-text-field>
@@ -19,7 +19,7 @@
               <v-text-field
                 v-model.lazy.trim="filtertel"
                 append-icon="mdi-phone"
-                label="Start number"
+                label="Первые цыфры номера"
                 single-line
                 hide-details
               ></v-text-field>
@@ -29,7 +29,7 @@
             <v-select
               v-model="filterStatus"
               :items="filterstatuses"
-              label="Status"
+              label="Статус"
               item-text="name"
               item-value="id"
             >
@@ -91,7 +91,7 @@
                   <v-col cols="8">
                     <v-textarea
                       class="mx-2"
-                      label="message"
+                      label="Сообщение"
                       rows="1"
                       prepend-icon="mdi-comment"
                       v-model="item.text"
@@ -101,7 +101,7 @@
                   </v-col>
                   <v-col cols="4">
                     <v-datetime-picker
-                      label="Select Datetime"
+                      label="Дата/время"
                       v-model="datetime"
                     >
                     </v-datetime-picker>

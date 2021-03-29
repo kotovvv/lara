@@ -6,7 +6,7 @@
           <v-select
             v-model="selectedStatus"
             :items="statuses"
-            label="Status"
+            label="Статус"
             item-text="name"
             item-value="id"
           ></v-select>
@@ -24,7 +24,7 @@
             <v-text-field
               v-model="search"
               append-icon="mdi-magnify"
-              label="Search"
+              label="Поиск"
               single-line
               hide-details
             ></v-text-field>
@@ -35,7 +35,7 @@
             <v-text-field
               v-model.lazy.trim="filtertel"
               append-icon="mdi-phone"
-              label="Start number"
+              label="Первые цыфры телефона"
               single-line
               hide-details
             ></v-text-field>
@@ -62,8 +62,7 @@
       </v-col>
       <v-col cols="4">
         <v-card height="100%" class="pa-5">
-          Select user for filtered lids
-
+          Укажите пользователя
           <v-list>
             <v-radio-group
               @change="changeLidsUser"
@@ -115,11 +114,11 @@ export default {
     search: "",
     filtertel: "",
     headers: [
-      { text: "Name", value: "name" },
+      { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
-      { text: "Tel.", align: "start", value: "tel" },
-      { text: "Status", value: "status" },
-      { text: "Manager", value: "user" },
+      { text: "Тел.", align: "start", value: "tel" },
+      { text: "Статус", value: "status" },
+      { text: "Менеджер", value: "user" },
     ],
     parse_header: [],
     sortOrders: {},
@@ -184,15 +183,6 @@ export default {
         this.$refs.datatable.$children[0].filteredItems.length > 0
       ) {
         send.data = this.$refs.datatable.$children[0].filteredItems;
-        // add user and provider to array
-
-        // send = send.map(function (el) {
-        //   let o = Object.assign({}, el);
-        //   o.user_id = user_id;
-        //   o.provider_id = provider_id;
-        //   return o;
-        // });
-
         axios
           .post("api/Lid/newlids", send)
           .then(function (response) {
