@@ -89,9 +89,9 @@
                       label="Сообщение"
                       rows="1"
                       prepend-icon="mdi-comment"
-                      v-model="item.text"
-                      :value="item.text"
-                      @change="changemes(item)"
+                     v-model="text"
+                      :value="text"
+                      @keyup.enter.native="changemes(item)"
                     ></v-textarea>
                   </v-col>
                   <v-col cols="4">
@@ -161,12 +161,13 @@
                     <v-textarea
                       class="mx-2"
                       label="Сообщение"
-                      rows="1"
+                      rows="2"
                       prepend-icon="mdi-comment"
-                      v-model="item.text"
-                      :value="item.text"
-                      @change="changemes(item)"
+                      v-model="text"
+                      :value="text"
+                      @keyup.enter.native="changemes(item)"
                     ></v-textarea>
+                      <!-- @change="changemes(item)" -->
                   </v-col>
                   <v-col cols="4">
                     <v-datetime-picker
@@ -180,7 +181,7 @@
                 </v-row>
                 <v-row>
                   <v-col cols="12">
-                    <logtel :tel="tel" />
+                    <logtel :tel="tel" :key="componentKey"/>
                   </v-col>
                 </v-row>
               </td>
@@ -230,6 +231,8 @@ export default {
   },
   props: ["user"],
   data: () => ({
+    componentKey: 0,
+    text:null,
     tel: "",
     expanded: ["Donut"],
     singleExpand: true,
@@ -289,6 +292,9 @@ export default {
     },
   },
   methods: {
+    forceRerender() {
+      this.componentKey += 1;
+    },
      setTime(){
        let send={}
        send.ontime = this.$refs.datetime.formattedDatetime
@@ -320,22 +326,24 @@ export default {
       let send = {};
       let send_el = {};
       send_el.tel = eli.tel;
-      send_el.text = eli.text;
+      send_el.text = self.text;
       send_el.user_id = eli.user_id;
       send.id = eli.id;
       send.data = send_el;
-      axios
-        .post("api/Lid/updatelids", send)
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      // axios
+      //   .post("api/Lid/updatelids", send)
+      //   .then(function (response) {
+      //     console.log(response);
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   });
       axios
         .post("api/log/add", send_el)
         .then(function (response) {
-          console.log(response);
+          // console.log(response);
+          self.forceRerender()
+          self.text=null
         })
         .catch(function (error) {
           console.log(error);
@@ -355,26 +363,30 @@ export default {
       eli.status_id = self.selectedStatus;
       eli.updated_at = self.currentDateTime();
       send.id = eli.id;
+      send_el.id = eli.id;
       send_el.tel = eli.tel;
       send_el.status_id = self.selectedStatus;
       send_el.user_id = eli.user_id;
-      send.data = send_el;
+      send.data = []
+      send.data.push(send_el);
       axios
         .post("api/Lid/updatelids", send)
         .then(function (response) {
-          console.log(response);
+          self.forceRerender()
+          // console.log(response);
         })
         .catch(function (error) {
           console.log(error);
         });
-      axios
-        .post("api/log/add", send_el)
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      // axios
+      //   .post("api/log/add", send_el)
+      //   .then(function (response) {
+          
+      //     console.log(response);
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   });
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
@@ -449,8 +461,7 @@ export default {
       // console.log(status_id)
       if (status_id == null) return;
       return (
-        "padding:5px;background:grey"
-        //+ this.statuses.find((e) => e.id === status_id).color ?????????
+        "padding:5px;background:" + this.statuses.find((e) => e.id === status_id).color 
       );
     },
   },

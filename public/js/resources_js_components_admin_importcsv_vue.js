@@ -2750,13 +2750,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _VData__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../VData */ "./node_modules/vuetify/lib/components/VData/VData.js");
-/* harmony import */ var _VDataFooter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./VDataFooter */ "./node_modules/vuetify/lib/components/VDataIterator/VDataFooter.js");
-/* harmony import */ var _mixins_mobile__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mixins/mobile */ "./node_modules/vuetify/lib/mixins/mobile/index.js");
-/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
-/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
-/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
-/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
+/* harmony import */ var _VData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../VData */ "./node_modules/vuetify/lib/components/VData/index.js");
+/* harmony import */ var _VDataFooter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./VDataFooter */ "./node_modules/vuetify/lib/components/VDataIterator/VDataFooter.js");
+/* harmony import */ var _mixins_mobile__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mixins/mobile */ "./node_modules/vuetify/lib/mixins/mobile/index.js");
+/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
 // Components
 
  // Mixins
@@ -2769,9 +2769,9 @@ __webpack_require__.r(__webpack_exports__);
 
 /* @vue/component */
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_0__.default)(_mixins_mobile__WEBPACK_IMPORTED_MODULE_1__.default, _mixins_themeable__WEBPACK_IMPORTED_MODULE_2__.default).extend({
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_5__.default)(_mixins_mobile__WEBPACK_IMPORTED_MODULE_2__.default, _mixins_themeable__WEBPACK_IMPORTED_MODULE_6__.default).extend({
   name: 'v-data-iterator',
-  props: { ..._VData__WEBPACK_IMPORTED_MODULE_3__.default.options.props,
+  props: { ..._VData__WEBPACK_IMPORTED_MODULE_0__.VData.options.props,
     itemKey: {
       type: String,
       default: 'id'
@@ -2785,7 +2785,7 @@ __webpack_require__.r(__webpack_exports__);
       type: Array,
       default: () => []
     },
-    mobileBreakpoint: { ..._mixins_mobile__WEBPACK_IMPORTED_MODULE_1__.default.options.props.mobileBreakpoint,
+    mobileBreakpoint: { ..._mixins_mobile__WEBPACK_IMPORTED_MODULE_2__.default.options.props.mobileBreakpoint,
       default: 600
     },
     singleExpand: Boolean,
@@ -2824,7 +2824,7 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     sanitizedFooterProps() {
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.camelizeObjectKeys)(this.footerProps);
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.camelizeObjectKeys)(this.footerProps);
     },
 
     selectableItems() {
@@ -2836,7 +2836,7 @@ __webpack_require__.r(__webpack_exports__);
     value: {
       handler(value) {
         this.selection = value.reduce((selection, item) => {
-          selection[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey)] = item;
+          selection[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey)] = item;
           return selection;
         }, {});
       },
@@ -2845,14 +2845,14 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     selection(value, old) {
-      if ((0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.deepEqual)(Object.keys(value), Object.keys(old))) return;
+      if ((0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.deepEqual)(Object.keys(value), Object.keys(old))) return;
       this.$emit('input', Object.values(value));
     },
 
     expanded: {
       handler(value) {
         this.expansion = value.reduce((expansion, item) => {
-          expansion[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey)] = true;
+          expansion[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey)] = true;
           return expansion;
         }, {});
       },
@@ -2861,9 +2861,9 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     expansion(value, old) {
-      if ((0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.deepEqual)(value, old)) return;
+      if ((0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.deepEqual)(value, old)) return;
       const keys = Object.keys(value).filter(k => value[k]);
-      const expanded = !keys.length ? [] : this.items.filter(i => keys.includes(String((0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(i, this.itemKey))));
+      const expanded = !keys.length ? [] : this.items.filter(i => keys.includes(String((0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(i, this.itemKey))));
       this.$emit('update:expanded', expanded);
     }
 
@@ -2874,13 +2874,13 @@ __webpack_require__.r(__webpack_exports__);
     /* istanbul ignore next */
 
     breakingProps.forEach(([original, replacement]) => {
-      if (this.$attrs.hasOwnProperty(original)) (0,_util_console__WEBPACK_IMPORTED_MODULE_5__.breaking)(original, replacement, this);
+      if (this.$attrs.hasOwnProperty(original)) (0,_util_console__WEBPACK_IMPORTED_MODULE_4__.breaking)(original, replacement, this);
     });
     const removedProps = ['expand', 'content-class', 'content-props', 'content-tag'];
     /* istanbul ignore next */
 
     removedProps.forEach(prop => {
-      if (this.$attrs.hasOwnProperty(prop)) (0,_util_console__WEBPACK_IMPORTED_MODULE_5__.removed)(prop);
+      if (this.$attrs.hasOwnProperty(prop)) (0,_util_console__WEBPACK_IMPORTED_MODULE_4__.removed)(prop);
     });
   },
 
@@ -2891,7 +2891,7 @@ __webpack_require__.r(__webpack_exports__);
       for (let i = 0; i < this.selectableItems.length; i++) {
         const item = this.selectableItems[i];
         if (!this.isSelectable(item)) continue;
-        const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey);
+        const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey);
         if (value) selection[key] = item;else delete selection[key];
       }
 
@@ -2903,22 +2903,22 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     isSelectable(item) {
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.selectableKey) !== false;
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.selectableKey) !== false;
     },
 
     isSelected(item) {
-      return !!this.selection[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey)] || false;
+      return !!this.selection[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey)] || false;
     },
 
     select(item, value = true, emit = true) {
       if (!this.isSelectable(item)) return;
       const selection = this.singleSelect ? {} : Object.assign({}, this.selection);
-      const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey);
+      const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey);
       if (value) selection[key] = item;else delete selection[key];
 
       if (this.singleSelect && emit) {
         const keys = Object.keys(this.selection);
-        const old = keys.length && (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(this.selection[keys[0]], this.itemKey);
+        const old = keys.length && (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(this.selection[keys[0]], this.itemKey);
         old && old !== key && this.$emit('item-selected', {
           item: this.selection[old],
           value: false
@@ -2933,12 +2933,12 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     isExpanded(item) {
-      return this.expansion[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey)] || false;
+      return this.expansion[(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey)] || false;
     },
 
     expand(item, value = true) {
       const expansion = this.singleExpand ? {} : Object.assign({}, this.expansion);
-      const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getObjectValueByPath)(item, this.itemKey);
+      const key = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getObjectValueByPath)(item, this.itemKey);
       if (value) expansion[key] = true;else delete expansion[key];
       this.expansion = expansion;
       this.$emit('item-expanded', {
@@ -3010,8 +3010,8 @@ __webpack_require__.r(__webpack_exports__);
           'update:options': value => props.updateOptions(value)
         }
       };
-      const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getPrefixedScopedSlots)('footer.', this.$scopedSlots);
-      return this.$createElement(_VDataFooter__WEBPACK_IMPORTED_MODULE_6__.default, {
+      const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getPrefixedScopedSlots)('footer.', this.$scopedSlots);
+      return this.$createElement(_VDataFooter__WEBPACK_IMPORTED_MODULE_1__.default, {
         scopedSlots,
         ...data
       });
@@ -3025,23 +3025,23 @@ __webpack_require__.r(__webpack_exports__);
       };
       return this.$createElement('div', {
         staticClass: 'v-data-iterator'
-      }, [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getSlot)(this, 'header', outerProps, true), this.genItems(props), this.genFooter(props), (0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.getSlot)(this, 'footer', outerProps, true)]);
+      }, [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getSlot)(this, 'header', outerProps, true), this.genItems(props), this.genFooter(props), (0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.getSlot)(this, 'footer', outerProps, true)]);
     }
 
   },
 
   render() {
-    return this.$createElement(_VData__WEBPACK_IMPORTED_MODULE_3__.default, {
+    return this.$createElement(_VData__WEBPACK_IMPORTED_MODULE_0__.VData, {
       props: this.$props,
       on: {
-        'update:options': (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.deepEqual)(v, old) && this.$emit('update:options', v),
+        'update:options': (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.deepEqual)(v, old) && this.$emit('update:options', v),
         'update:page': v => this.$emit('update:page', v),
         'update:items-per-page': v => this.$emit('update:items-per-page', v),
         'update:sort-by': v => this.$emit('update:sort-by', v),
         'update:sort-desc': v => this.$emit('update:sort-desc', v),
         'update:group-by': v => this.$emit('update:group-by', v),
         'update:group-desc': v => this.$emit('update:group-desc', v),
-        pagination: (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_4__.deepEqual)(v, old) && this.$emit('pagination', v),
+        pagination: (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_3__.deepEqual)(v, old) && this.$emit('pagination', v),
         'current-items': v => {
           this.internalCurrentItems = v;
           this.$emit('current-items', v);
@@ -3055,6 +3055,33 @@ __webpack_require__.r(__webpack_exports__);
   }
 
 }));
+
+/***/ }),
+
+/***/ "./node_modules/vuetify/lib/components/VDataIterator/index.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VDataIterator/index.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "VDataIterator": () => (/* reexport safe */ _VDataIterator__WEBPACK_IMPORTED_MODULE_0__.default),
+/* harmony export */   "VDataFooter": () => (/* reexport safe */ _VDataFooter__WEBPACK_IMPORTED_MODULE_1__.default),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _VDataIterator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VDataIterator */ "./node_modules/vuetify/lib/components/VDataIterator/VDataIterator.js");
+/* harmony import */ var _VDataFooter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./VDataFooter */ "./node_modules/vuetify/lib/components/VDataIterator/VDataFooter.js");
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  $_vuetify_subcomponents: {
+    VDataIterator: _VDataIterator__WEBPACK_IMPORTED_MODULE_0__.default,
+    VDataFooter: _VDataFooter__WEBPACK_IMPORTED_MODULE_1__.default
+  }
+});
 
 /***/ }),
 
@@ -3281,23 +3308,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _src_components_VDataTable_VDataTable_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VDataTable/VDataTable.sass */ "./node_modules/vuetify/src/components/VDataTable/VDataTable.sass");
-/* harmony import */ var _VData__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../VData */ "./node_modules/vuetify/lib/components/VData/VData.js");
-/* harmony import */ var _VDataIterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../VDataIterator */ "./node_modules/vuetify/lib/components/VDataIterator/VDataIterator.js");
-/* harmony import */ var _VDataIterator__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../VDataIterator */ "./node_modules/vuetify/lib/components/VDataIterator/VDataFooter.js");
-/* harmony import */ var _VBtn__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../VBtn */ "./node_modules/vuetify/lib/components/VBtn/index.js");
-/* harmony import */ var _VDataTableHeader__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./VDataTableHeader */ "./node_modules/vuetify/lib/components/VDataTable/VDataTableHeader.js");
-/* harmony import */ var _VIcon__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
-/* harmony import */ var _Row__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Row */ "./node_modules/vuetify/lib/components/VDataTable/Row.js");
-/* harmony import */ var _RowGroup__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./RowGroup */ "./node_modules/vuetify/lib/components/VDataTable/RowGroup.js");
-/* harmony import */ var _VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../VCheckbox/VSimpleCheckbox */ "./node_modules/vuetify/lib/components/VCheckbox/VSimpleCheckbox.js");
-/* harmony import */ var _VSimpleTable__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./VSimpleTable */ "./node_modules/vuetify/lib/components/VDataTable/VSimpleTable.js");
-/* harmony import */ var _MobileRow__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./MobileRow */ "./node_modules/vuetify/lib/components/VDataTable/MobileRow.js");
-/* harmony import */ var _mixins_loadable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/loadable */ "./node_modules/vuetify/lib/mixins/loadable/index.js");
-/* harmony import */ var _directives_ripple__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../directives/ripple */ "./node_modules/vuetify/lib/directives/ripple/index.js");
-/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
-/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
-/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
-/* harmony import */ var _util_mergeData__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../util/mergeData */ "./node_modules/vuetify/lib/util/mergeData.js");
+/* harmony import */ var _VData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../VData */ "./node_modules/vuetify/lib/components/VData/index.js");
+/* harmony import */ var _VDataIterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../VDataIterator */ "./node_modules/vuetify/lib/components/VDataIterator/index.js");
+/* harmony import */ var _VBtn__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../VBtn */ "./node_modules/vuetify/lib/components/VBtn/index.js");
+/* harmony import */ var _VDataTableHeader__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./VDataTableHeader */ "./node_modules/vuetify/lib/components/VDataTable/VDataTableHeader.js");
+/* harmony import */ var _VIcon__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
+/* harmony import */ var _Row__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Row */ "./node_modules/vuetify/lib/components/VDataTable/Row.js");
+/* harmony import */ var _RowGroup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./RowGroup */ "./node_modules/vuetify/lib/components/VDataTable/RowGroup.js");
+/* harmony import */ var _VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../VCheckbox/VSimpleCheckbox */ "./node_modules/vuetify/lib/components/VCheckbox/VSimpleCheckbox.js");
+/* harmony import */ var _VSimpleTable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./VSimpleTable */ "./node_modules/vuetify/lib/components/VDataTable/VSimpleTable.js");
+/* harmony import */ var _MobileRow__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./MobileRow */ "./node_modules/vuetify/lib/components/VDataTable/MobileRow.js");
+/* harmony import */ var _mixins_loadable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../mixins/loadable */ "./node_modules/vuetify/lib/mixins/loadable/index.js");
+/* harmony import */ var _directives_ripple__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../directives/ripple */ "./node_modules/vuetify/lib/directives/ripple/index.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+/* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
+/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
+/* harmony import */ var _util_mergeData__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../util/mergeData */ "./node_modules/vuetify/lib/util/mergeData.js");
  // Components
 
 
@@ -3323,7 +3349,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function filterFn(item, search, filter) {
   return header => {
-    const value = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getObjectValueByPath)(item, header.value);
+    const value = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getObjectValueByPath)(item, header.value);
     return header.filter ? header.filter(value, search, item) : filter(value, search, item);
   };
 }
@@ -3333,7 +3359,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
   return items.filter(item => {
     // Headers with custom filters are evaluated whether or not a search term has been provided.
     // We need to match every filter to be included in the results.
-    const matchesColumnFilters = headersWithCustomFilters.every(filterFn(item, search, _util_helpers__WEBPACK_IMPORTED_MODULE_1__.defaultFilter)); // Headers without custom filters are only filtered by the `search` property if it is defined.
+    const matchesColumnFilters = headersWithCustomFilters.every(filterFn(item, search, _util_helpers__WEBPACK_IMPORTED_MODULE_11__.defaultFilter)); // Headers without custom filters are only filtered by the `search` property if it is defined.
     // We only need a single column to match the search term to be included in the results.
 
     const matchesSearchTerm = !search || headersWithoutCustomFilters.some(filterFn(item, search, customFilter));
@@ -3343,11 +3369,11 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
 /* @vue/component */
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_2__.default)(_VDataIterator__WEBPACK_IMPORTED_MODULE_3__.default, _mixins_loadable__WEBPACK_IMPORTED_MODULE_4__.default).extend({
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_util_mixins__WEBPACK_IMPORTED_MODULE_13__.default)(_VDataIterator__WEBPACK_IMPORTED_MODULE_2__.VDataIterator, _mixins_loadable__WEBPACK_IMPORTED_MODULE_9__.default).extend({
   name: 'v-data-table',
   // https://github.com/vuejs/vue/issues/6872
   directives: {
-    ripple: _directives_ripple__WEBPACK_IMPORTED_MODULE_5__.default
+    ripple: _directives_ripple__WEBPACK_IMPORTED_MODULE_10__.default
   },
   props: {
     headers: {
@@ -3373,7 +3399,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
     },
     customFilter: {
       type: Function,
-      default: _util_helpers__WEBPACK_IMPORTED_MODULE_1__.defaultFilter
+      default: _util_helpers__WEBPACK_IMPORTED_MODULE_11__.defaultFilter
     },
     itemClass: {
       type: [String, Function],
@@ -3446,7 +3472,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
     },
 
     sanitizedHeaderProps() {
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.camelizeObjectKeys)(this.headerProps);
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.camelizeObjectKeys)(this.headerProps);
     },
 
     computedItemsPerPage() {
@@ -3468,7 +3494,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
     /* istanbul ignore next */
 
     breakingProps.forEach(([original, replacement]) => {
-      if (this.$attrs.hasOwnProperty(original)) (0,_util_console__WEBPACK_IMPORTED_MODULE_6__.breaking)(original, replacement, this);
+      if (this.$attrs.hasOwnProperty(original)) (0,_util_console__WEBPACK_IMPORTED_MODULE_12__.breaking)(original, replacement, this);
     });
   },
 
@@ -3503,7 +3529,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
     },
 
     createItemProps(item, index) {
-      const props = _VDataIterator__WEBPACK_IMPORTED_MODULE_3__.default.options.methods.createItemProps.call(this, item, index);
+      const props = _VDataIterator__WEBPACK_IMPORTED_MODULE_2__.VDataIterator.options.methods.createItemProps.call(this, item, index);
       return Object.assign(props, {
         headers: this.computedHeaders
       });
@@ -3511,7 +3537,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
 
     genCaption(props) {
       if (this.caption) return [this.$createElement('caption', [this.caption])];
-      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getSlot)(this, 'caption', props, true);
+      return (0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getSlot)(this, 'caption', props, true);
     },
 
     genColgroup(props) {
@@ -3553,13 +3579,13 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
           'toggle-select-all': this.toggleSelectAll
         }
       };
-      const children = [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getSlot)(this, 'header', { ...data,
+      const children = [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getSlot)(this, 'header', { ...data,
         isMobile: this.isMobile
       })];
 
       if (!this.hideDefaultHeader) {
-        const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getPrefixedScopedSlots)('header.', this.$scopedSlots);
-        children.push(this.$createElement(_VDataTableHeader__WEBPACK_IMPORTED_MODULE_7__.default, { ...data,
+        const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getPrefixedScopedSlots)('header.', this.$scopedSlots);
+        children.push(this.$createElement(_VDataTableHeader__WEBPACK_IMPORTED_MODULE_3__.default, { ...data,
           scopedSlots
         }));
       }
@@ -3627,7 +3653,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
           remove: removeFn
         })]));
       } else {
-        const toggle = this.$createElement(_VBtn__WEBPACK_IMPORTED_MODULE_8__.default, {
+        const toggle = this.$createElement(_VBtn__WEBPACK_IMPORTED_MODULE_14__.default, {
           staticClass: 'ma-0',
           props: {
             icon: true,
@@ -3636,8 +3662,8 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
           on: {
             click: toggleFn
           }
-        }, [this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_9__.default, [isOpen ? '$minus' : '$plus'])]);
-        const remove = this.$createElement(_VBtn__WEBPACK_IMPORTED_MODULE_8__.default, {
+        }, [this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_15__.default, [isOpen ? '$minus' : '$plus'])]);
+        const remove = this.$createElement(_VBtn__WEBPACK_IMPORTED_MODULE_14__.default, {
           staticClass: 'ma-0',
           props: {
             icon: true,
@@ -3646,7 +3672,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
           on: {
             click: removeFn
           }
-        }, [this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_9__.default, ['$close'])]);
+        }, [this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_15__.default, ['$close'])]);
         const column = this.$createElement('td', {
           staticClass: 'text-start',
           attrs: this.colspanAttrs
@@ -3670,7 +3696,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         })]));
       }
 
-      return this.$createElement(_RowGroup__WEBPACK_IMPORTED_MODULE_10__.default, {
+      return this.$createElement(_RowGroup__WEBPACK_IMPORTED_MODULE_5__.default, {
         key: group,
         props: {
           value: isOpen
@@ -3721,7 +3747,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         isMobile: this.isMobile,
         item
       })]);
-      return this.$createElement(_RowGroup__WEBPACK_IMPORTED_MODULE_10__.default, {
+      return this.$createElement(_RowGroup__WEBPACK_IMPORTED_MODULE_5__.default, {
         props: {
           value: isExpanded
         }
@@ -3733,14 +3759,14 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
     },
 
     genDefaultSimpleRow(item, index, classes = {}) {
-      const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getPrefixedScopedSlots)('item.', this.$scopedSlots);
+      const scopedSlots = (0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getPrefixedScopedSlots)('item.', this.$scopedSlots);
       const data = this.createItemProps(item, index);
 
       if (this.showSelect) {
         const slot = scopedSlots['data-table-select'];
         scopedSlots['data-table-select'] = slot ? () => slot({ ...data,
           isMobile: this.isMobile
-        }) : () => this.$createElement(_VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_11__.default, {
+        }) : () => this.$createElement(_VCheckbox_VSimpleCheckbox__WEBPACK_IMPORTED_MODULE_6__.default, {
           staticClass: 'v-data-table__checkbox',
           props: {
             value: data.isSelected,
@@ -3754,7 +3780,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
 
       if (this.showExpand) {
         const slot = scopedSlots['data-table-expand'];
-        scopedSlots['data-table-expand'] = slot ? () => slot(data) : () => this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_9__.default, {
+        scopedSlots['data-table-expand'] = slot ? () => slot(data) : () => this.$createElement(_VIcon__WEBPACK_IMPORTED_MODULE_15__.default, {
           staticClass: 'v-data-table__expand-icon',
           class: {
             'v-data-table__expand-icon--active': data.isExpanded
@@ -3768,11 +3794,11 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         }, [this.expandIcon]);
       }
 
-      return this.$createElement(this.isMobile ? _MobileRow__WEBPACK_IMPORTED_MODULE_12__.default : _Row__WEBPACK_IMPORTED_MODULE_13__.default, {
-        key: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getObjectValueByPath)(item, this.itemKey),
-        class: (0,_util_mergeData__WEBPACK_IMPORTED_MODULE_14__.mergeClasses)({ ...classes,
+      return this.$createElement(this.isMobile ? _MobileRow__WEBPACK_IMPORTED_MODULE_8__.default : _Row__WEBPACK_IMPORTED_MODULE_4__.default, {
+        key: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getObjectValueByPath)(item, this.itemKey),
+        class: (0,_util_mergeData__WEBPACK_IMPORTED_MODULE_16__.mergeClasses)({ ...classes,
           'v-data-table__selected': data.isSelected
-        }, (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getPropertyFromItem)(item, this.itemClass)),
+        }, (0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getPropertyFromItem)(item, this.itemClass)),
         props: {
           headers: this.computedHeaders,
           hideDefaultHeader: this.hideDefaultHeader,
@@ -3805,7 +3831,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         return this.$scopedSlots.body(data);
       }
 
-      return this.$createElement('tbody', [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getSlot)(this, 'body.prepend', data, true), this.genItems(props.items, props), (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getSlot)(this, 'body.append', data, true)]);
+      return this.$createElement('tbody', [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getSlot)(this, 'body.prepend', data, true), this.genItems(props.items, props), (0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getSlot)(this, 'body.append', data, true)]);
     },
 
     genFooters(props) {
@@ -3822,11 +3848,11 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         widths: this.widths,
         headers: this.computedHeaders
       };
-      const children = [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getSlot)(this, 'footer', data, true)];
+      const children = [(0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getSlot)(this, 'footer', data, true)];
 
       if (!this.hideDefaultFooter) {
-        children.push(this.$createElement(_VDataIterator__WEBPACK_IMPORTED_MODULE_15__.default, { ...data,
-          scopedSlots: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getPrefixedScopedSlots)('footer.', this.$scopedSlots)
+        children.push(this.$createElement(_VDataIterator__WEBPACK_IMPORTED_MODULE_2__.VDataFooter, { ...data,
+          scopedSlots: (0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getPrefixedScopedSlots)('footer.', this.$scopedSlots)
         }));
       }
 
@@ -3856,9 +3882,9 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
       //   ])
       // }
 
-      return this.$createElement(_VSimpleTable__WEBPACK_IMPORTED_MODULE_16__.default, {
+      return this.$createElement(_VSimpleTable__WEBPACK_IMPORTED_MODULE_7__.default, {
         props: simpleProps
-      }, [this.proxySlot('top', (0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.getSlot)(this, 'top', { ...props,
+      }, [this.proxySlot('top', (0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.getSlot)(this, 'top', { ...props,
         isMobile: this.isMobile
       }, true)), this.genCaption(props), this.genColgroup(props), this.genHeaders(props), this.genBody(props), this.proxySlot('bottom', this.genFooters(props))]);
     },
@@ -3872,7 +3898,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
   },
 
   render() {
-    return this.$createElement(_VData__WEBPACK_IMPORTED_MODULE_17__.default, {
+    return this.$createElement(_VData__WEBPACK_IMPORTED_MODULE_1__.VData, {
       props: { ...this.$props,
         customFilter: this.customFilterWithColumns,
         customSort: this.customSortWithHeaders,
@@ -3881,7 +3907,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
       on: {
         'update:options': (v, old) => {
           this.internalGroupBy = v.groupBy || [];
-          !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.deepEqual)(v, old) && this.$emit('update:options', v);
+          !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.deepEqual)(v, old) && this.$emit('update:options', v);
         },
         'update:page': v => this.$emit('update:page', v),
         'update:items-per-page': v => this.$emit('update:items-per-page', v),
@@ -3889,7 +3915,7 @@ function searchTableItems(items, search, headersWithCustomFilters, headersWithou
         'update:sort-desc': v => this.$emit('update:sort-desc', v),
         'update:group-by': v => this.$emit('update:group-by', v),
         'update:group-desc': v => this.$emit('update:group-desc', v),
-        pagination: (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_1__.deepEqual)(v, old) && this.$emit('pagination', v),
+        pagination: (v, old) => !(0,_util_helpers__WEBPACK_IMPORTED_MODULE_11__.deepEqual)(v, old) && this.$emit('pagination', v),
         'current-items': v => {
           this.internalCurrentItems = v;
           this.$emit('current-items', v);
@@ -4798,6 +4824,25 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/vuetify/lib/components/VData/index.js":
+/*!************************************************************!*\
+  !*** ./node_modules/vuetify/lib/components/VData/index.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "VData": () => (/* reexport safe */ _VData__WEBPACK_IMPORTED_MODULE_0__.default),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _VData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VData */ "./node_modules/vuetify/lib/components/VData/VData.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_VData__WEBPACK_IMPORTED_MODULE_0__.default);
+
+/***/ }),
+
 /***/ "./node_modules/vuetify/lib/components/VDivider/VDivider.js":
 /*!******************************************************************!*\
   !*** ./node_modules/vuetify/lib/components/VDivider/VDivider.js ***!
@@ -4881,8 +4926,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _src_components_VFileInput_VFileInput_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VFileInput/VFileInput.sass */ "./node_modules/vuetify/src/components/VFileInput/VFileInput.sass");
-/* harmony import */ var _VTextField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
-/* harmony import */ var _VChip__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../VChip */ "./node_modules/vuetify/lib/components/VChip/VChip.js");
+/* harmony import */ var _VTextField__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
+/* harmony import */ var _VChip__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../VChip */ "./node_modules/vuetify/lib/components/VChip/index.js");
 /* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
 /* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
 /* harmony import */ var _util_mergeData__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../util/mergeData */ "./node_modules/vuetify/lib/util/mergeData.js");
@@ -4896,7 +4941,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_VTextField__WEBPACK_IMPORTED_MODULE_1__.default.extend({
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_VTextField__WEBPACK_IMPORTED_MODULE_4__.default.extend({
   name: 'v-file-input',
   model: {
     prop: 'value',
@@ -4951,7 +4996,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     classes() {
-      return { ..._VTextField__WEBPACK_IMPORTED_MODULE_1__.default.options.computed.classes.call(this),
+      return { ..._VTextField__WEBPACK_IMPORTED_MODULE_4__.default.options.computed.classes.call(this),
         'v-file-input': true
       };
     },
@@ -5047,7 +5092,7 @@ __webpack_require__.r(__webpack_exports__);
 
     genChips() {
       if (!this.isDirty) return [];
-      return this.text.map((text, index) => this.$createElement(_VChip__WEBPACK_IMPORTED_MODULE_4__.default, {
+      return this.text.map((text, index) => this.$createElement(_VChip__WEBPACK_IMPORTED_MODULE_1__.VChip, {
         props: {
           small: this.smallChips
         },
@@ -5062,7 +5107,7 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     genControl() {
-      const render = _VTextField__WEBPACK_IMPORTED_MODULE_1__.default.options.methods.genControl.call(this);
+      const render = _VTextField__WEBPACK_IMPORTED_MODULE_4__.default.options.methods.genControl.call(this);
 
       if (this.hideInput) {
         render.data.style = (0,_util_mergeData__WEBPACK_IMPORTED_MODULE_5__.mergeStyles)(render.data.style, {
@@ -5074,7 +5119,7 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     genInput() {
-      const input = _VTextField__WEBPACK_IMPORTED_MODULE_1__.default.options.methods.genInput.call(this); // We should not be setting value
+      const input = _VTextField__WEBPACK_IMPORTED_MODULE_4__.default.options.methods.genInput.call(this); // We should not be setting value
       // programmatically on the input
       // when it is using type="file"
 
@@ -5129,7 +5174,7 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     genTextFieldSlot() {
-      const node = _VTextField__WEBPACK_IMPORTED_MODULE_1__.default.options.methods.genTextFieldSlot.call(this);
+      const node = _VTextField__WEBPACK_IMPORTED_MODULE_4__.default.options.methods.genTextFieldSlot.call(this);
       node.data.on = { ...(node.data.on || {}),
         click: () => this.$refs.input.click()
       };
@@ -5495,20 +5540,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _src_components_VMenu_VMenu_sass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../src/components/VMenu/VMenu.sass */ "./node_modules/vuetify/src/components/VMenu/VMenu.sass");
-/* harmony import */ var _VThemeProvider__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../VThemeProvider */ "./node_modules/vuetify/lib/components/VThemeProvider/VThemeProvider.js");
-/* harmony import */ var _mixins_activatable__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../mixins/activatable */ "./node_modules/vuetify/lib/mixins/activatable/index.js");
+/* harmony import */ var _VThemeProvider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../VThemeProvider */ "./node_modules/vuetify/lib/components/VThemeProvider/index.js");
+/* harmony import */ var _mixins_activatable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mixins/activatable */ "./node_modules/vuetify/lib/mixins/activatable/index.js");
 /* harmony import */ var _mixins_delayable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/delayable */ "./node_modules/vuetify/lib/mixins/delayable/index.js");
-/* harmony import */ var _mixins_dependent__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mixins/dependent */ "./node_modules/vuetify/lib/mixins/dependent/index.js");
-/* harmony import */ var _mixins_detachable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/detachable */ "./node_modules/vuetify/lib/mixins/detachable/index.js");
-/* harmony import */ var _mixins_menuable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/menuable */ "./node_modules/vuetify/lib/mixins/menuable/index.js");
-/* harmony import */ var _mixins_returnable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../mixins/returnable */ "./node_modules/vuetify/lib/mixins/returnable/index.js");
-/* harmony import */ var _mixins_roundable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../mixins/roundable */ "./node_modules/vuetify/lib/mixins/roundable/index.js");
-/* harmony import */ var _mixins_toggleable__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../mixins/toggleable */ "./node_modules/vuetify/lib/mixins/toggleable/index.js");
-/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
+/* harmony import */ var _mixins_dependent__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/dependent */ "./node_modules/vuetify/lib/mixins/dependent/index.js");
+/* harmony import */ var _mixins_detachable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/detachable */ "./node_modules/vuetify/lib/mixins/detachable/index.js");
+/* harmony import */ var _mixins_menuable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../mixins/menuable */ "./node_modules/vuetify/lib/mixins/menuable/index.js");
+/* harmony import */ var _mixins_returnable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../mixins/returnable */ "./node_modules/vuetify/lib/mixins/returnable/index.js");
+/* harmony import */ var _mixins_roundable__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../mixins/roundable */ "./node_modules/vuetify/lib/mixins/roundable/index.js");
+/* harmony import */ var _mixins_toggleable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../mixins/toggleable */ "./node_modules/vuetify/lib/mixins/toggleable/index.js");
+/* harmony import */ var _mixins_themeable__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../mixins/themeable */ "./node_modules/vuetify/lib/mixins/themeable/index.js");
 /* harmony import */ var _directives_click_outside__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../directives/click-outside */ "./node_modules/vuetify/lib/directives/click-outside/index.js");
-/* harmony import */ var _directives_resize__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../directives/resize */ "./node_modules/vuetify/lib/directives/resize/index.js");
-/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
-/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
+/* harmony import */ var _directives_resize__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../directives/resize */ "./node_modules/vuetify/lib/directives/resize/index.js");
+/* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../util/mixins */ "./node_modules/vuetify/lib/util/mixins.js");
+/* harmony import */ var _util_console__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../util/console */ "./node_modules/vuetify/lib/util/console.js");
 /* harmony import */ var _util_helpers__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../util/helpers */ "./node_modules/vuetify/lib/util/helpers.js");
 // Styles
  // Components
@@ -5531,14 +5576,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_1__.default)(_mixins_dependent__WEBPACK_IMPORTED_MODULE_2__.default, _mixins_delayable__WEBPACK_IMPORTED_MODULE_3__.default, _mixins_detachable__WEBPACK_IMPORTED_MODULE_4__.default, _mixins_menuable__WEBPACK_IMPORTED_MODULE_5__.default, _mixins_returnable__WEBPACK_IMPORTED_MODULE_6__.default, _mixins_roundable__WEBPACK_IMPORTED_MODULE_7__.default, _mixins_toggleable__WEBPACK_IMPORTED_MODULE_8__.default, _mixins_themeable__WEBPACK_IMPORTED_MODULE_9__.default);
+const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_13__.default)(_mixins_dependent__WEBPACK_IMPORTED_MODULE_4__.default, _mixins_delayable__WEBPACK_IMPORTED_MODULE_3__.default, _mixins_detachable__WEBPACK_IMPORTED_MODULE_5__.default, _mixins_menuable__WEBPACK_IMPORTED_MODULE_6__.default, _mixins_returnable__WEBPACK_IMPORTED_MODULE_7__.default, _mixins_roundable__WEBPACK_IMPORTED_MODULE_8__.default, _mixins_toggleable__WEBPACK_IMPORTED_MODULE_9__.default, _mixins_themeable__WEBPACK_IMPORTED_MODULE_14__.default);
 /* @vue/component */
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (baseMixins.extend({
   name: 'v-menu',
   directives: {
     ClickOutside: _directives_click_outside__WEBPACK_IMPORTED_MODULE_10__.default,
-    Resize: _directives_resize__WEBPACK_IMPORTED_MODULE_11__.default
+    Resize: _directives_resize__WEBPACK_IMPORTED_MODULE_15__.default
   },
 
   provide() {
@@ -5670,7 +5715,7 @@ const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_1__.default)(_mixins
   created() {
     /* istanbul ignore next */
     if (this.$attrs.hasOwnProperty('full-width')) {
-      (0,_util_console__WEBPACK_IMPORTED_MODULE_13__.removed)('full-width', this);
+      (0,_util_console__WEBPACK_IMPORTED_MODULE_11__.removed)('full-width', this);
     }
   },
 
@@ -5757,7 +5802,7 @@ const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_1__.default)(_mixins
     },
 
     genActivatorAttributes() {
-      const attributes = _mixins_activatable__WEBPACK_IMPORTED_MODULE_14__.default.options.methods.genActivatorAttributes.call(this);
+      const attributes = _mixins_activatable__WEBPACK_IMPORTED_MODULE_2__.default.options.methods.genActivatorAttributes.call(this);
 
       if (this.activeTile && this.activeTile.id) {
         return { ...attributes,
@@ -5769,7 +5814,7 @@ const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_1__.default)(_mixins
     },
 
     genActivatorListeners() {
-      const listeners = _mixins_menuable__WEBPACK_IMPORTED_MODULE_5__.default.options.methods.genActivatorListeners.call(this);
+      const listeners = _mixins_menuable__WEBPACK_IMPORTED_MODULE_6__.default.options.methods.genActivatorListeners.call(this);
 
       if (!this.disableKeys) {
         listeners.keydown = this.onKeyDown;
@@ -5965,7 +6010,7 @@ const baseMixins = (0,_util_mixins__WEBPACK_IMPORTED_MODULE_1__.default)(_mixins
         value: this.onResize
       }]
     };
-    return h('div', data, [!this.activator && this.genActivator(), this.showLazyContent(() => [this.$createElement(_VThemeProvider__WEBPACK_IMPORTED_MODULE_15__.default, {
+    return h('div', data, [!this.activator && this.genActivator(), this.showLazyContent(() => [this.$createElement(_VThemeProvider__WEBPACK_IMPORTED_MODULE_1__.VThemeProvider, {
       props: {
         root: true,
         light: this.light,
@@ -8295,10 +8340,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      loading: false,
       userid: null,
       users: [],
       providers: [],
@@ -8347,6 +8394,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     putSelectedLidsDB: function putSelectedLidsDB() {
       var self = this;
+      self.loading = true;
       var send = {};
       send.user_id = this.userid;
       send.provider_id = this.selectedProvider;
@@ -8355,17 +8403,23 @@ __webpack_require__.r(__webpack_exports__);
         send.status_id = this.selectedStatus;
       }
 
-      if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-        send.data = this.selected;
+      if (this.$refs.datatable.items.length > 0) {
+        if (this.selected.legth) send.data = this.selected;else send.data = this.$refs.datatable.items;
         axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/Lid/newlids", send).then(function (response) {
           // console.log(response);
-          self.parse_csv = self.parse_csv.filter(function (ar) {
-            return !self.selected.find(function (rm) {
-              return rm.tel === ar.tel;
+          if (self.selected.length) {
+            self.parse_csv = self.parse_csv.filter(function (ar) {
+              return !self.selected.find(function (rm) {
+                return rm.tel === ar.tel;
+              });
             });
-          });
+          } else {
+            self.parse_csv = [];
+          }
+
           self.selected = [];
           self.getUsers();
+          self.loading = false;
         })["catch"](function (error) {
           console.log(error);
         });
@@ -8388,6 +8442,7 @@ __webpack_require__.r(__webpack_exports__);
           self.getUsers();
           self.search = "";
           self.filtertel = "";
+          self.loading = false;
         })["catch"](function (error) {
           console.log(error);
         });
@@ -9473,7 +9528,7 @@ var render = function() {
                                           _c("v-text-field", {
                                             attrs: {
                                               "append-icon": "mdi-phone",
-                                              label: "Начальные цыфры",
+                                              label: "Начальные цифры",
                                               "single-line": "",
                                               "hide-details": ""
                                             },
@@ -9509,7 +9564,8 @@ var render = function() {
                               "single-select": false,
                               "item-key": "tel",
                               "show-select": "",
-                              items: _vm.filteredItems
+                              items: _vm.filteredItems,
+                              loading: _vm.loading
                             },
                             on: { "click:row": _vm.clickrow },
                             model: {
@@ -9668,16 +9724,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var vuetify_lib_components_VBadge__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VBadge */ "./node_modules/vuetify/lib/components/VBadge/VBadge.js");
-/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/VCard.js");
-/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
-/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VCol.js");
-/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VContainer.js");
-/* harmony import */ var vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VDataTable */ "./node_modules/vuetify/lib/components/VDataTable/VDataTable.js");
-/* harmony import */ var vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VFileInput */ "./node_modules/vuetify/lib/components/VFileInput/VFileInput.js");
-/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/VIcon.js");
-/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/VList.js");
-/* harmony import */ var vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vuetify/lib/components/VMain */ "./node_modules/vuetify/lib/components/VMain/VMain.js");
+/* harmony import */ var vuetify_lib_components_VBadge__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VBadge */ "./node_modules/vuetify/lib/components/VBadge/VBadge.js");
+/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/VCard.js");
+/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VCol.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VContainer.js");
+/* harmony import */ var vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VDataTable */ "./node_modules/vuetify/lib/components/VDataTable/VDataTable.js");
+/* harmony import */ var vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VFileInput */ "./node_modules/vuetify/lib/components/VFileInput/VFileInput.js");
+/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/VIcon.js");
+/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/VList.js");
+/* harmony import */ var vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VMain */ "./node_modules/vuetify/lib/components/VMain/index.js");
 /* harmony import */ var vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! vuetify/lib/components/VRadioGroup */ "./node_modules/vuetify/lib/components/VRadioGroup/VRadio.js");
 /* harmony import */ var vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! vuetify/lib/components/VRadioGroup */ "./node_modules/vuetify/lib/components/VRadioGroup/VRadioGroup.js");
 /* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/VRow.js");
@@ -9718,7 +9774,7 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 
 
 
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBadge: vuetify_lib_components_VBadge__WEBPACK_IMPORTED_MODULE_4__.default,VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__.default,VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__.VCardTitle,VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_7__.default,VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__.default,VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_9__.default,VFileInput: vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_10__.default,VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_11__.default,VList: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_12__.default,VMain: vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_13__.default,VRadio: vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_14__.default,VRadioGroup: vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_15__.default,VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_16__.default,VSelect: vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_17__.default,VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_18__.default})
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBadge: vuetify_lib_components_VBadge__WEBPACK_IMPORTED_MODULE_5__.default,VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__.default,VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__.VCardTitle,VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__.default,VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_9__.default,VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_10__.default,VFileInput: vuetify_lib_components_VFileInput__WEBPACK_IMPORTED_MODULE_11__.default,VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_12__.default,VList: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__.default,VMain: vuetify_lib_components_VMain__WEBPACK_IMPORTED_MODULE_4__.VMain,VRadio: vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_14__.default,VRadioGroup: vuetify_lib_components_VRadioGroup__WEBPACK_IMPORTED_MODULE_15__.default,VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_16__.default,VSelect: vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_17__.default,VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_18__.default})
 
 
 /* hot reload */

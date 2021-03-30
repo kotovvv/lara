@@ -53,7 +53,7 @@
                     <v-text-field
                       v-model.lazy.trim="filtertel"
                       append-icon="mdi-phone"
-                      label="Начальные цыфры"
+                      label="Начальные цифры"
                       single-line
                       hide-details
                     ></v-text-field>
@@ -71,6 +71,7 @@
               @click:row="clickrow"
               :items="filteredItems"
               ref="datatable"
+              :loading="loading"
             ></v-data-table>
           </v-card>
         </v-col>
@@ -115,6 +116,7 @@
 import axios from "axios";
 export default {
   data: () => ({
+    loading: false,
     userid: null,
     users: [],
     providers: [],
@@ -154,23 +156,30 @@ export default {
     },
     putSelectedLidsDB() {
       let self = this;
+      self.loading = true;
       let send = {};
       send.user_id = this.userid;
       send.provider_id = this.selectedProvider;
       if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
       }
-      if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-        send.data = this.selected;
+      if (this.$refs.datatable.items.length > 0) {
+        if (this.selected.legth) send.data = this.selected;
+        else send.data = this.$refs.datatable.items;
         axios
           .post("api/Lid/newlids", send)
           .then(function (response) {
             // console.log(response);
-            self.parse_csv = self.parse_csv.filter(
-              (ar) => !self.selected.find((rm) => rm.tel === ar.tel)
-            );
+            if (self.selected.length) {
+              self.parse_csv = self.parse_csv.filter(
+                (ar) => !self.selected.find((rm) => rm.tel === ar.tel)
+              );
+            } else {
+              self.parse_csv = [];
+            }
             self.selected = [];
             self.getUsers();
+            self.loading = false;
           })
           .catch(function (error) {
             console.log(error);
@@ -202,6 +211,7 @@ export default {
             self.getUsers();
             self.search = "";
             self.filtertel = "";
+            self.loading = false;
           })
           .catch(function (error) {
             console.log(error);

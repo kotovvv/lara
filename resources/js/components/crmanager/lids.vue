@@ -2,11 +2,43 @@
   <div>
     <v-container fluid>
       <v-row>
-        <v-col cols="3" class="pt-3 mt-4">
+                <v-col cols="4" class="pt-3 mt-4">
+          <v-select
+            v-model="filterStatus"
+            :items="statuses"
+            label="Фильтр по статусам"
+            item-text="name"
+            item-value="id"
+          ></v-select>
+        </v-col>
+
+        <v-col cols="2">
+          <v-card-title>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Поиск"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-card-title>
+        </v-col>
+        <v-col cols="2">
+          <v-card-title>
+            <v-text-field
+              v-model.lazy.trim="filtertel"
+              append-icon="mdi-phone"
+              label="Первые цифры телефона"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-card-title>
+        </v-col>
+        <v-col cols="4" class="pt-3 mt-4">
           <v-select
             v-model="selectedStatus"
             :items="statuses"
-            label="Статус"
+            label="Назначение статусов"
             item-text="name"
             item-value="id"
           ></v-select>
@@ -18,28 +50,6 @@
           >
             Сменить статусы
           </v-btn>
-        </v-col>
-        <v-col cols="3">
-          <v-card-title>
-            <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="Поиск"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-card-title>
-        </v-col>
-        <v-col cols="3">
-          <v-card-title>
-            <v-text-field
-              v-model.lazy.trim="filtertel"
-              append-icon="mdi-phone"
-              label="Первые цифры телефона"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-card-title>
         </v-col>
       </v-row>
     </v-container>
@@ -57,7 +67,7 @@
             @click:row="clickrow"
             :items="filteredItems"
             ref="datatable"
-                        :footer-props="{
+            :footer-props="{
               'items-per-page-options': [10, 50, 100, 250, 500, -1],
               'items-per-page-text': 'Показать',
             }"
@@ -113,6 +123,7 @@ export default {
     disableuser: 0,
     statuses: [],
     selectedStatus: 0,
+    filterStatus: 0,
     selected: [],
     lids: [],
     search: "",
@@ -136,6 +147,8 @@ export default {
     filteredItems() {
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
+        if (this.filterStatus)
+          return !this.filterStatus || i.status_id === this.filterStatus;
         return !this.filtertel || reg.test(i.tel);
       });
     },
@@ -152,12 +165,12 @@ export default {
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
         send.data = this.selected;
       } else if (
-        (this.search !== "" || this.filtertel !== "") &&
+        (this.search !== "" || this.filtertel !== "" || this.filterStatus !== 0) &&
         this.$refs.datatable.$children[0].filteredItems.length > 0
       ) {
         send.data = this.$refs.datatable.$children[0].filteredItems;
       }
-      axios
+            axios
         .post("api/Lid/changelidsuser", send)
         .then(function (response) {
           self.search = "";
@@ -165,6 +178,7 @@ export default {
           self.userid = null;
           self.$refs.radiogroup.lazyValue = null;
           self.selected = [];
+          self.filterStatus = 0
           self.getUsers();
           self.getLids(send.user_id);
         })
@@ -214,7 +228,10 @@ export default {
     },
     getUsers() {
       let self = this;
-       let get = (self.$props.user.role_id === 1 || self.$props.user.role_id === "1")? '/api/users':'/api/getusers'
+      let get =
+        self.$props.user.role_id === 1 || self.$props.user.role_id === "1"
+          ? "/api/users"
+          : "/api/getusers";
       axios
         .get(get)
         .then((res) => {
@@ -247,7 +264,7 @@ export default {
 
     getLids(id) {
       let self = this;
-      let a_temp = [];
+      self.filterStatus = 0
       self.search = "";
       self.filtertel = "";
       self.disableuser = id;
@@ -270,7 +287,7 @@ export default {
       const self = this;
       let send = {};
       if (this.selected.length && this.selectedStatus) {
-        this.selected = this.selected.map(function (e) {
+        this.selected.map(function (e) {
           e.status_id = self.selectedStatus;
           e.status = self.statuses.find((s) => s.id === e.status_id).name;
         });
