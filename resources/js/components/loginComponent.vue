@@ -10,12 +10,15 @@
               </v-toolbar>
               <form>
                 <v-card-text>
-                  <v-form>
+                  <v-form ref="form">
                     <v-text-field
                       label="Логин"
                       name="name"
                       type="text"
                       v-model="fields.name"
+                      :rules="userNameRequired"
+                      required
+                      @keyup.enter.native="onSubmit"
                     >
                       <v-icon slot="prepend" color="blue">
                         mdi-account-outline
@@ -26,8 +29,13 @@
                       id="password"
                       label="Пароль"
                       name="password"
-                      type="password"
+                      :type="showPassword ? 'text' : 'password'"
                       v-model="fields.password"
+                      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                      @click:append="showPassword = !showPassword"
+                      :rules="passwordRequired"
+                      required
+                      @keyup.enter.native="onSubmit"
                     >
                       <v-icon slot="prepend" color="blue">
                         mdi-textbox-password
@@ -63,6 +71,9 @@ export default {
       password: "",
     },
     errors: {},
+    showPassword: false,
+    userNameRequired: [(v) => !!v || "без логина?"],
+    passwordRequired: [(v) => !!v || "А Пароль?"],
   }),
   methods: {
     onSubmit() {

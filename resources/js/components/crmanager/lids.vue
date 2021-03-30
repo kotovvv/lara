@@ -35,7 +35,7 @@
             <v-text-field
               v-model.lazy.trim="filtertel"
               append-icon="mdi-phone"
-              label="Первые цыфры телефона"
+              label="Первые цифры телефона"
               single-line
               hide-details
             ></v-text-field>
@@ -57,6 +57,10 @@
             @click:row="clickrow"
             :items="filteredItems"
             ref="datatable"
+                        :footer-props="{
+              'items-per-page-options': [10, 50, 100, 250, 500, -1],
+              'items-per-page-text': 'Показать',
+            }"
           ></v-data-table>
         </v-card>
       </v-col>
@@ -210,7 +214,7 @@ export default {
     },
     getUsers() {
       let self = this;
-       let get = self.$props.user.role_id === "1"? '/api/users':'/api/getusers'
+       let get = (self.$props.user.role_id === 1 || self.$props.user.role_id === "1")? '/api/users':'/api/getusers'
       axios
         .get(get)
         .then((res) => {
@@ -266,7 +270,7 @@ export default {
       const self = this;
       let send = {};
       if (this.selected.length && this.selectedStatus) {
-        this.selected.map(function (e) {
+        this.selected = this.selected.map(function (e) {
           e.status_id = self.selectedStatus;
           e.status = self.statuses.find((s) => s.id === e.status_id).name;
         });

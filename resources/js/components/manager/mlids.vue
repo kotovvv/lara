@@ -19,7 +19,7 @@
               <v-text-field
                 v-model.lazy.trim="filtertel"
                 append-icon="mdi-phone"
-                label="Первые цыфры номера"
+                label="Первые цифры номера"
                 single-line
                 hide-details
               ></v-text-field>
@@ -42,7 +42,76 @@
             </v-select>
           </v-col>
         </v-row>
+        <v-card>
+          <v-data-table
+            id="maintable"
+            v-model.lazy.trim="selected"
+            :headers="headers"
 
+            :single-select="true"
+            item-key="id"
+            show-select
+            :items="todayItems"
+            ref="todaytable"
+            :expanded="expanded"
+            @click:row="clickrow"
+          >
+            <template v-slot:item.name="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.name }}</div> </template>
+            <template v-slot:item.email="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.email }}</div> </template>
+            <template v-slot:item.date="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.date }}</div> </template>
+            <template v-slot:item.tel="{ item }">
+              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+                {{ item.tel }}
+              </div>
+            </template>
+            <template v-slot:item.tel="{ item }">
+              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+                {{ item.tel }}
+              </div>
+            </template>
+            <template v-slot:item.tel="{ item }">
+              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+                {{ item.tel }}
+              </div>
+            </template>
+            <template v-slot:item.status="{ item }">
+              <div class="px-1" :style="stylecolor(item.status_id)">
+                {{ item.status }}
+              </div>
+            </template>
+
+            <template v-slot:expanded-item="{ headers, item }">
+              <td :colspan="headers.length" class="blackborder">
+                <v-row>
+                  <v-col cols="8">
+                    <v-textarea
+                      class="mx-2"
+                      label="Сообщение"
+                      rows="1"
+                      prepend-icon="mdi-comment"
+                      v-model="item.text"
+                      :value="item.text"
+                      @change="changemes(item)"
+                    ></v-textarea>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-datetime-picker
+
+                      label="Дата/время"
+                      v-model="datetime"
+                    >
+                    </v-datetime-picker>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12">
+                    <logtel :tel="tel" />
+                  </v-col>
+                </v-row>
+              </td>
+            </template>
+          </v-data-table>
+        </v-card>
         <v-card>
           <v-data-table
             id="maintable"
@@ -101,9 +170,11 @@
                   </v-col>
                   <v-col cols="4">
                     <v-datetime-picker
+                    ref="datetime"
                       label="Дата/время"
-                      v-model="datetime"
+                      @input="setTime"
                     >
+                      <!-- v-model="datetime" -->
                     </v-datetime-picker>
                   </v-col>
                 </v-row>
@@ -171,6 +242,7 @@ export default {
     selectedStatus: 0,
     filterStatus: 0,
     selected: [],
+    todayItems: [],
     lids: [],
     search: "",
     filtertel: "",
@@ -186,6 +258,7 @@ export default {
     sortOrders: {},
     sortKey: "tel",
   }),
+
   mounted: function () {
     // this.getUsers();
     this.getStatuses();
@@ -216,6 +289,20 @@ export default {
     },
   },
   methods: {
+     setTime(){
+       let send={}
+       send.ontime = this.$refs.datetime.formattedDatetime
+       send.id = this.selected[0].id
+             axios
+        .post("api/Lid/ontime", send)
+        .then(function (response) {
+          console.log(response);
+
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+     },
     currentDateTime() {
       const date = new Date();
       // 01, 02, 03, ... 29, 30, 31
@@ -355,14 +442,15 @@ export default {
         .catch((error) => console.log(error));
     },
     call(tel) {
-      alert(tel);
+      // alert(tel);
+      window.location.href ="sip:"+tel
     },
     stylecolor(status_id) {
       // console.log(status_id)
       if (status_id == null) return;
       return (
-        "padding:5px;background:" +
-        this.statuses.find((e) => e.id === status_id).color
+        "padding:5px;background:grey"
+        //+ this.statuses.find((e) => e.id === status_id).color ?????????
       );
     },
   },

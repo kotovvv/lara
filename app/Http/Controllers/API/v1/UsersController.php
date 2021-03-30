@@ -25,9 +25,9 @@ class UsersController extends Controller
 
       // ->where('users.role_id', '>', 1)
       // ->where('users.active', 1)
-      ->leftJoin('lids', 'users.id', '=', 'lids.user_id')
+      // ->leftJoin('lids', 'users.id', '=', 'lids.user_id')
       ->orderBy('users.role_id', 'asc')
-      ->groupBy('users.id')
+      // ->groupBy('users.id')
       ->get();
   }
 
@@ -142,7 +142,7 @@ $dateto = $req['dateto'];
     // SELECT id, NAME,color FROM `statuses` WHERE `active` = 1 ORDER BY `order`
     $statuses = DB::select(DB::raw("SELECT id, `name`, color FROM `statuses` WHERE `active` = 1 ORDER BY `order` ASC"));
     foreach ($statuses as $status) {
-      
+
       $sql = "SELECT '".$status->color."' color,'". $status->name ."'  text ";
       foreach ($a_users as $user_id) {
           $sql .= ",(SELECT COUNT(*) FROM `logs` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '".$datefrom."' AND '".$dateto."' AND `status_id` = " . $status->id . ") u" . $user_id;
@@ -152,7 +152,7 @@ $dateto = $req['dateto'];
       }
       return $repoprt;
     // SELECT 'Пользователи',(SELECT fio FROM `users` WHERE id = 1) n1 ,(SELECT fio FROM `users` WHERE id = 3) n3
-    // SELECT 'Всего лидов', (SELECT COUNT(*) FROM `lids` WHERE `user_id` = 3) n3, (SELECT COUNT(*) FROM `lids` WHERE `user_id` = 4) n4 
+    // SELECT 'Всего лидов', (SELECT COUNT(*) FROM `lids` WHERE `user_id` = 3) n3, (SELECT COUNT(*) FROM `lids` WHERE `user_id` = 4) n4
     // SELECT COUNT(*) FROM `logs` WHERE `user_id` = 2 AND `status_id` = 4
 
   }
@@ -165,9 +165,9 @@ $dateto = $req['dateto'];
 
       ->where('users.role_id', '>', 1)
       ->where('users.active', 1)
-      ->leftJoin('lids', 'users.id', '=', 'lids.user_id')
+      // ->leftJoin('lids', 'users.id', '=', 'lids.user_id')
       ->orderBy('users.role_id', 'asc')
-      ->groupBy('users.id')
+      // ->groupBy('users.id')
       ->get();
   }
 

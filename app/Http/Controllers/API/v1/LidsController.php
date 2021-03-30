@@ -85,15 +85,7 @@ class LidsController extends Controller
   }
   public function newlids(Request $request)
   {
-    //  Log::alert($request);
-    // $data = $this->validate($request, [
-    //     'provider_id' => 'requered',
-    //     'user_id' => 'requered',
-    //     'data' => 'requered'
-    //    ]);
-    // Log::alert($request->all());
     $data = $request->all();
-
 
     foreach ($data['data'] as $lid) {
       $a_lid = [
@@ -121,9 +113,19 @@ class LidsController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function show($id)
+  public function ontime(Request $request)
   {
-    //
+    $data = $request->all();
+    // Debugbar::info($data);
+
+      $a_lid = [
+        'ontime' => $data['ontime'],
+         'updated_at' => Now()
+      ];
+
+      DB::table('lids')->where('id', $data['id'])->update($a_lid);
+
+    return response('Lids add ontime', 200);
   }
 
   /**
