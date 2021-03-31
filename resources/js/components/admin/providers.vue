@@ -141,7 +141,7 @@ export default {
 
   methods: {
     report(item){
-      if (this.provider === item) {this.provider = {}; return}
+      if (this.provider == item) {this.provider = {}; return}
       this.provider = item
     },
     getProvider() {

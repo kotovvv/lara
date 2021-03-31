@@ -329,7 +329,7 @@ export default {
           // arr.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
           vm.parse_csv = vm
             .csvJSON(this.fileinput)
-            .filter((v, i, a) => a.findIndex((t) => t.tel === v.tel) === i);
+            .filter((v, i, a) => a.findIndex((t) => t.tel == v.tel) === i);
           // console.log(vm.parse_csv);
 
           // };

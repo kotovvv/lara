@@ -148,7 +148,7 @@ export default {
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
         if (this.filterStatus)
-          return !this.filterStatus || i.status_id === this.filterStatus;
+          return !this.filterStatus || i.status_id == this.filterStatus;
         return !this.filtertel || reg.test(i.tel);
       });
     },
@@ -229,7 +229,7 @@ export default {
     getUsers() {
       let self = this;
       let get =
-        self.$props.user.role_id === 1 || self.$props.user.role_id === "1"
+        self.$props.user.role_id == 1
           ? "/api/users"
           : "/api/getusers";
       axios
@@ -256,7 +256,7 @@ export default {
             id,
             color,
           }));
-          self.statuses.unshift({ name: "" });
+          self.statuses.unshift({ name: "Без статуса", id: 0 });
           self.getLids(self.$props.user.id);
         })
         .catch((error) => console.log(error));
@@ -275,9 +275,9 @@ export default {
           self.lids = Object.entries(res.data).map((e) => e[1]);
 
           self.lids.map(function (e) {
-            e.user = self.users.find((u) => u.id === e.user_id).fio;
+            e.user = self.users.find((u) => u.id == e.user_id).fio;
             if (e.status_id)
-              e.status = self.statuses.find((s) => s.id === e.status_id).name;
+              e.status = self.statuses.find((s) => s.id == e.status_id).name;
             delete e.provider_id;
           });
         })
@@ -289,7 +289,7 @@ export default {
       if (this.selected.length && this.selectedStatus) {
         this.selected.map(function (e) {
           e.status_id = self.selectedStatus;
-          e.status = self.statuses.find((s) => s.id === e.status_id).name;
+          e.status = self.statuses.find((s) => s.id == e.status_id).name;
         });
         send.data = this.selected.map((e) => e);
         this.changeLids(send);

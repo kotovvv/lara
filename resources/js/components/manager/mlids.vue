@@ -29,7 +29,7 @@
             <v-select
               v-model="filterStatus"
               :items="filterstatuses"
-              label="Статус"
+              label="Фильтр по статусу"
               item-text="name"
               item-value="id"
             >
@@ -42,12 +42,13 @@
             </v-select>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col>
         <v-card>
           <v-data-table
-            id="maintable"
+            id="ontime"
             v-model.lazy.trim="selected"
             :headers="headers"
-
             :single-select="true"
             item-key="id"
             show-select
@@ -55,22 +56,42 @@
             ref="todaytable"
             :expanded="expanded"
             @click:row="clickrow"
+            hide-default-header
+            hide-default-footer
           >
-            <template v-slot:item.name="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.name }}</div> </template>
-            <template v-slot:item.email="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.email }}</div> </template>
-            <template v-slot:item.date="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.date }}</div> </template>
+            <template v-slot:item.name="{ item }">
+              <div :style="stylecolor(item.status_id)">{{ item.name }}</div>
+            </template>
+            <template v-slot:item.email="{ item }">
+              <div :style="stylecolor(item.status_id)">{{ item.email }}</div>
+            </template>
+            <template v-slot:item.date="{ item }">
+              <div :style="stylecolor(item.status_id)">{{ item.date }}</div>
+            </template>
             <template v-slot:item.tel="{ item }">
-              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+              <div
+                class="tel"
+                @click.prevent.stop="call(item.tel)"
+                :style="stylecolor(item.status_id)"
+              >
                 {{ item.tel }}
               </div>
             </template>
             <template v-slot:item.tel="{ item }">
-              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+              <div
+                class="tel"
+                @click.prevent.stop="call(item.tel)"
+                :style="stylecolor(item.status_id)"
+              >
                 {{ item.tel }}
               </div>
             </template>
             <template v-slot:item.tel="{ item }">
-              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+              <div
+                class="tel"
+                @click.prevent.stop="call(item.tel)"
+                :style="stylecolor(item.status_id)"
+              >
                 {{ item.tel }}
               </div>
             </template>
@@ -89,17 +110,13 @@
                       label="Сообщение"
                       rows="1"
                       prepend-icon="mdi-comment"
-                     v-model="text"
+                      v-model="text"
                       :value="text"
                       @keyup.enter.native="changemes(item)"
                     ></v-textarea>
                   </v-col>
                   <v-col cols="4">
-                    <v-datetime-picker
-
-                      label="Дата/время"
-                      v-model="datetime"
-                    >
+                    <v-datetime-picker label="Дата/время" v-model="item.ontime">
                     </v-datetime-picker>
                   </v-col>
                 </v-row>
@@ -130,21 +147,39 @@
             }"
             @click:row="clickrow"
           >
-            <template v-slot:item.name="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.name }}</div> </template>
-            <template v-slot:item.email="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.email }}</div> </template>
-            <template v-slot:item.date="{ item }"> <div :style="stylecolor(item.status_id)">{{ item.date }}</div> </template>
+            <template v-slot:item.name="{ item }">
+              <div :style="stylecolor(item.status_id)">{{ item.name }}</div>
+            </template>
+            <template v-slot:item.email="{ item }">
+              <div :style="stylecolor(item.status_id)">{{ item.email }}</div>
+            </template>
+            <template v-slot:item.date="{ item }">
+              <div :style="stylecolor(item.status_id)">{{ item.date }}</div>
+            </template>
             <template v-slot:item.tel="{ item }">
-              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+              <div
+                class="tel"
+                @click.prevent.stop="call(item.tel)"
+                :style="stylecolor(item.status_id)"
+              >
                 {{ item.tel }}
               </div>
             </template>
             <template v-slot:item.tel="{ item }">
-              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+              <div
+                class="tel"
+                @click.prevent.stop="call(item.tel)"
+                :style="stylecolor(item.status_id)"
+              >
                 {{ item.tel }}
               </div>
             </template>
             <template v-slot:item.tel="{ item }">
-              <div class="tel" @click.prevent.stop="call(item.tel)" :style="stylecolor(item.status_id)">
+              <div
+                class="tel"
+                @click.prevent.stop="call(item.tel)"
+                :style="stylecolor(item.status_id)"
+              >
                 {{ item.tel }}
               </div>
             </template>
@@ -167,11 +202,11 @@
                       :value="text"
                       @keyup.enter.native="changemes(item)"
                     ></v-textarea>
-                      <!-- @change="changemes(item)" -->
+                    <!-- @change="changemes(item)" -->
                   </v-col>
                   <v-col cols="4">
                     <v-datetime-picker
-                    ref="datetime"
+                      ref="datetime"
                       label="Дата/время"
                       @input="setTime"
                     >
@@ -181,13 +216,16 @@
                 </v-row>
                 <v-row>
                   <v-col cols="12">
-                    <logtel :tel="tel" :key="componentKey"/>
+                    <logtel :tel="tel" :key="componentKey" />
                   </v-col>
                 </v-row>
               </td>
             </template>
           </v-data-table>
         </v-card>
+          </v-col>
+        </v-row>
+
       </v-col>
       <v-col cols="2">
         <v-card height="100%" class="pa-5">
@@ -232,7 +270,7 @@ export default {
   props: ["user"],
   data: () => ({
     componentKey: 0,
-    text:null,
+    text: null,
     tel: "",
     expanded: ["Donut"],
     singleExpand: true,
@@ -286,7 +324,7 @@ export default {
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
         if (this.filterStatus)
-          return !this.filterStatus || i.status_id === this.filterStatus;
+          return !this.filterStatus || i.status_id == this.filterStatus;
         return !this.filtertel || reg.test(i.tel);
       });
     },
@@ -295,20 +333,19 @@ export default {
     forceRerender() {
       this.componentKey += 1;
     },
-     setTime(){
-       let send={}
-       send.ontime = this.$refs.datetime.formattedDatetime
-       send.id = this.selected[0].id
-             axios
+    setTime() {
+      let send = {};
+      send.ontime = this.$refs.datetime.formattedDatetime;
+      send.id = this.selected[0].id;
+      axios
         .post("api/Lid/ontime", send)
         .then(function (response) {
           console.log(response);
-
         })
         .catch(function (error) {
           console.log(error);
         });
-     },
+    },
     currentDateTime() {
       const date = new Date();
       // 01, 02, 03, ... 29, 30, 31
@@ -342,8 +379,8 @@ export default {
         .post("api/log/add", send_el)
         .then(function (response) {
           // console.log(response);
-          self.forceRerender()
-          self.text=null
+          self.forceRerender();
+          self.text = null;
         })
         .catch(function (error) {
           console.log(error);
@@ -359,7 +396,7 @@ export default {
 
       let eli = self.lids.find((obj) => obj.id == self.selected[0].id);
 
-      eli.status = self.statuses.find((s) => s.id === self.selectedStatus).name;
+      eli.status = self.statuses.find((s) => s.id == self.selectedStatus).name;
       eli.status_id = self.selectedStatus;
       eli.updated_at = self.currentDateTime();
       send.id = eli.id;
@@ -367,12 +404,12 @@ export default {
       send_el.tel = eli.tel;
       send_el.status_id = self.selectedStatus;
       send_el.user_id = eli.user_id;
-      send.data = []
+      send.data = [];
       send.data.push(send_el);
       axios
         .post("api/Lid/updatelids", send)
         .then(function (response) {
-          self.forceRerender()
+          self.forceRerender();
           // console.log(response);
         })
         .catch(function (error) {
@@ -381,7 +418,7 @@ export default {
       // axios
       //   .post("api/log/add", send_el)
       //   .then(function (response) {
-          
+
       //     console.log(response);
       //   })
       //   .catch(function (error) {
@@ -424,7 +461,7 @@ export default {
             color,
           }));
           self.filterstatuses = self.statuses.map((e) => e);
-          self.filterstatuses.unshift({ name: "" });
+          self.filterstatuses.unshift({ name: "Без статуса", id: 0 });
           self.getLids(self.$props.user.id);
         })
         .catch((error) => console.log(error));
@@ -447,7 +484,7 @@ export default {
             e.date = e.updated_at.substring(0, 10);
             if (e.status_id) {
               e.status =
-                self.statuses.find((s) => s.id === e.status_id).name || "";
+                self.statuses.find((s) => s.id == e.status_id).name || "";
             }
           });
         })
@@ -455,13 +492,14 @@ export default {
     },
     call(tel) {
       // alert(tel);
-      window.location.href ="sip:"+tel
+      window.location.href = "sip:" + tel;
     },
     stylecolor(status_id) {
       // console.log(status_id)
       if (status_id == null) return;
       return (
-        "padding:5px;background:" + this.statuses.find((e) => e.id === status_id).color 
+        "padding:5px;background:" +
+        this.statuses.find((e) => e.id == status_id).color
       );
     },
   },
@@ -470,9 +508,9 @@ export default {
 
 <style scoped>
 .tel:hover {
-  cursor: url(/img/cellphone-sound.svg) 10 10, none;
+  cursor: url(/img/phone-forward.svg) 10 10, none;
 }
-#maintable.v-data-table >>> tr{
+#maintable.v-data-table >>> tr {
   outline: 2px solid transparent;
 }
 
@@ -482,16 +520,16 @@ export default {
   cursor: pointer;
 }
 #maintable.v-data-table >>> tr.v-data-table__selected {
-    border-bottom: transparent !important;
+  border-bottom: transparent !important;
 }
-#maintable.v-data-table >>> tr.v-data-table__expanded tr:hover{
+#maintable.v-data-table >>> tr.v-data-table__expanded tr:hover {
   border: none;
 }
-#maintable >>>.text-start{
-  padding:0 !important
+#maintable >>> .text-start {
+  padding: 0 !important;
 }
-.blackborder{
+.blackborder {
   border: 2px solid #000;
-border-top: transparent !important;
+  border-top: transparent !important;
 }
 </style>

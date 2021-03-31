@@ -199,17 +199,16 @@ export default {
     //   }
     // },
     rolename(user) {
-      user.role = this.roles.find((r) => r.id === user.role_id).name;
+      user.role = (this.roles.find((r) => r.id == user.role_id)).name;
     },
     getUsers() {
       let self = this;
       axios
         .get("/api/users")
         .then((res) => {
-          // console.log(self.roles.find((r) => r.id === 1).name)
           self.users = res.data;
           self.users.map(function (u) {
-            u.role = self.roles.find((r) => r.id === u.role_id).name;
+            u.role = (self.roles.find((r) => r.id == u.role_id)).name;
           });
         })
         .catch((error) => console.log(error));
