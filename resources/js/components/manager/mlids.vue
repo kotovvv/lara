@@ -301,7 +301,6 @@ export default {
   }),
 
   mounted: function () {
-    // this.getUsers();
     this.getStatuses();
   },
   watch: {
@@ -367,14 +366,7 @@ export default {
       send_el.user_id = eli.user_id;
       send.id = eli.id;
       send.data = send_el;
-      // axios
-      //   .post("api/Lid/updatelids", send)
-      //   .then(function (response) {
-      //     console.log(response);
-      //   })
-      //   .catch(function (error) {
-      //     console.log(error);
-      //   });
+
       axios
         .post("api/log/add", send_el)
         .then(function (response) {
@@ -415,15 +407,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-      // axios
-      //   .post("api/log/add", send_el)
-      //   .then(function (response) {
 
-      //     console.log(response);
-      //   })
-      //   .catch(function (error) {
-      //     console.log(error);
-      //   });
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
@@ -434,21 +418,6 @@ export default {
       if (!row.isSelected) this.tel = item.tel;
       else this.tel = "";
     },
-    // getUsers() {
-    //   let self = this;
-    //   axios
-    //     .get("/api/users/getusers")
-    //     .then((res) => {
-    //       self.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({
-    //         name,
-    //         id,
-    //         role_id,
-    //         fio,
-    //         hmlids,
-    //       }));
-    //     })
-    //     .catch((error) => console.log(error));
-    // },
 
     getStatuses() {
       let self = this;

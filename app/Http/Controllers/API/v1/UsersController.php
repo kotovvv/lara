@@ -94,6 +94,7 @@ class UsersController extends Controller
       $arr['active'] = $data['active'];
       $arr['role_id'] = $data['role_id'];
       $arr['fio'] = $data['fio'];
+      $arr['group_id'] = $data['group_id'];
       if (User::where('id', $data['id'])->update($arr)) {
         if (isset($data['password'])) {
           $user = User::find($data['id']);

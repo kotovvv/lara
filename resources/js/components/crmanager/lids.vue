@@ -235,13 +235,17 @@ export default {
       axios
         .get(get)
         .then((res) => {
-          self.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({
+          self.users = res.data.map(({ name, id, role_id, fio, hmlids,group_id }) => ({
             name,
             id,
             role_id,
             fio,
             hmlids,
+            group_id
           }));
+          if(self.$props.user.role_id !== 1){
+            self.users = self.users.filter((f)=> f.group_id == self.$props.user.group_id)
+          }
         })
         .catch((error) => console.log(error));
     },

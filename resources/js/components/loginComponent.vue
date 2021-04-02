@@ -82,6 +82,7 @@ export default {
         .post("/api/login", this.fields)
         .then((response) => {
           this.$emit("login", response.data.user);
+          localStorage.user = JSON.stringify(response.data.user)
         })
         .catch((error) => {
           if (error.response.status === 422) {

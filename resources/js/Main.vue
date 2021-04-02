@@ -5,7 +5,6 @@
 </template>
 
 <script>
-// import login from './components/loginComponent'
 const logincomponent = () => import("./components/loginComponent");
 const admincomponent = () => import("./components/admin/adminComponent");
 const crmcomponent = () => import("./components/crmanager/crmComponent");
@@ -22,14 +21,19 @@ export default {
       if (this.user.role_id == 1) return admincomponent;
       if (this.user.role_id == 2) return crmcomponent;
       if (this.user.role_id == 3) return managercomponent;
-
     },
   },
   methods: {
 onLogin (data) {
   this.user = data
-    // console.log('child component said login', this.user)
-  }
+  if(this.user.role_id == undefined) localStorage.clear()
   },
+  isExist(user) {
+    return (!!localStorage[user])
+}
+  },
+mounted: function () {
+  if (this.isExist('user')) this.user = JSON.parse(localStorage.user)
+}
 };
 </script>

@@ -121,7 +121,7 @@ export default {
     users: [],
     providers: [],
     statuses: [],
-    selectedStatus: 0,
+    selectedStatus: 8,
     selectedProvider: 0,
     selected: [],
     files: [],

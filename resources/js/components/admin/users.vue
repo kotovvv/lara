@@ -1,8 +1,8 @@
 <template>
 <v-card
     class="mx-auto"
-    max-width="900"
   >
+    <!-- max-width="900" -->
       <v-data-table
       v-model="selected"
         :headers="headers"
@@ -58,7 +58,7 @@
                           label="Пароль"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="8">
+                      <v-col cols="6">
                         <v-select
                           :items="roles"
                           v-model="editedItem.role_id"
@@ -67,11 +67,17 @@
                           label="Роль"
                         ></v-select>
                       </v-col>
+                      <v-col cols="6">
+                        <v-select
+                          :items="group"
+                          v-model="editedItem.group_id"
+                          item-text="fio"
+                          item-value="id"
+                          label="Группа"
+                        ></v-select>
+                      </v-col>
                       <v-col cols="4">
-                        <!-- <v-text-field
-                      v-model="editedItem.active"
-                      label="Показывать"
-                    ></v-text-field> -->
+
                         <v-switch
                           v-model="editedItem.active"
                           label="Показывать:"
@@ -133,6 +139,7 @@ export default {
     dialog: false,
     dialogDelete: false,
     users: [],
+    group:[{fio:'Без группы', id:0}],
     roles: [
       { id: 1, name: "Administrator" },
       { id: 2, name: "CRM Manager" },
@@ -142,6 +149,7 @@ export default {
       { text: "Логин", value: "name" },
       { text: "ФИО", value: "fio" },
       { text: "Роль", value: "role" },
+      { text: "Группа", value: "group_id" },
       { text: "Показывать", value: "active" },
       { text: "Действия", value: "actions", sortable: false },
     ],
@@ -209,6 +217,7 @@ export default {
           self.users = res.data;
           self.users.map(function (u) {
             u.role = (self.roles.find((r) => r.id == u.role_id)).name;
+            if (u.role_id == 2) self.group.push(u) 
           });
         })
         .catch((error) => console.log(error));
