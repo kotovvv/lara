@@ -44,188 +44,188 @@
         </v-row>
         <v-row>
           <v-col>
-        <v-card>
-          <v-data-table
-            id="ontime"
-            v-model.lazy.trim="selected"
-            :headers="headers"
-            :single-select="true"
-            item-key="id"
-            show-select
-            :items="todayItems"
-            ref="todaytable"
-            :expanded="expanded"
-            @click:row="clickrow"
-            hide-default-header
-            hide-default-footer
-          >
-            <template v-slot:item.name="{ item }">
-              <div :style="stylecolor(item.status_id)">{{ item.name }}</div>
-            </template>
-            <template v-slot:item.email="{ item }">
-              <div :style="stylecolor(item.status_id)">{{ item.email }}</div>
-            </template>
-            <template v-slot:item.date="{ item }">
-              <div :style="stylecolor(item.status_id)">{{ item.date }}</div>
-            </template>
-            <template v-slot:item.tel="{ item }">
-              <div
+            <v-card>
+              <v-data-table
+                id="ontime"
+                v-model.lazy.trim="selected"
+                :headers="headers"
+                :single-select="true"
+                item-key="id"
+                show-select
+                :items="todayItems"
+                ref="todaytable"
+                :expanded="expanded"
+                @click:row="clickrow"
+                hide-default-header
+                hide-default-footer
+              >
+                <template v-slot:item.name="{ item }">
+                  <div :style="stylecolor(item.status_id)">{{ item.name }}</div>
+                </template>
+                <template v-slot:item.email="{ item }">
+                  <div :style="stylecolor(item.status_id)">
+                    {{ item.email }}
+                  </div>
+                </template>
+                <template v-slot:item.date="{ item }">
+                  <div :style="stylecolor(item.status_id)">{{ item.date }}</div>
+                </template>
+                <template v-slot:item.tel="{ item }">
+                  <a
+                    class="tel"
+                    @click.stop
+                    :href="'sip:' + item.tel"
+                    :style="stylecolor(item.status_id)"
+                    >{{ item.tel }}</a
+                  >
+                  <!-- <div
                 class="tel"
                 @click.prevent.stop="call(item.tel)"
                 :style="stylecolor(item.status_id)"
               >
                 {{ item.tel }}
-              </div>
-            </template>
-            <template v-slot:item.tel="{ item }">
-              <div
-                class="tel"
-                @click.prevent.stop="call(item.tel)"
-                :style="stylecolor(item.status_id)"
-              >
-                {{ item.tel }}
-              </div>
-            </template>
-            <template v-slot:item.tel="{ item }">
-              <div
-                class="tel"
-                @click.prevent.stop="call(item.tel)"
-                :style="stylecolor(item.status_id)"
-              >
-                {{ item.tel }}
-              </div>
-            </template>
-            <template v-slot:item.status="{ item }">
-              <div class="px-1" :style="stylecolor(item.status_id)">
-                {{ item.status }}
-              </div>
-            </template>
+              </div> -->
+                </template>
 
-            <template v-slot:expanded-item="{ headers, item }">
-              <td :colspan="headers.length" class="blackborder">
-                <v-row>
-                  <v-col cols="8">
-                    <v-textarea
-                      class="mx-2"
-                      label="Сообщение"
-                      rows="1"
-                      prepend-icon="mdi-comment"
-                      v-model="text"
-                      :value="text"
-                      @keyup.enter.native="changemes(item)"
-                    ></v-textarea>
-                  </v-col>
-                  <v-col cols="4">
-                    <v-datetime-picker label="Дата/время" v-model="item.ontime">
-                    </v-datetime-picker>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="12">
-                    <logtel :tel="tel" />
-                  </v-col>
-                </v-row>
-              </td>
-            </template>
-          </v-data-table>
-        </v-card>
-        <v-card>
-          <v-data-table
-            id="maintable"
-            v-model.lazy.trim="selected"
-            :headers="headers"
-            :search="search"
-            :single-select="true"
-            item-key="id"
-            show-select
-            :items="filteredItems"
-            ref="datatable"
-            :expanded="expanded"
-            :footer-props="{
-              'items-per-page-options': [10, 50, 100, 250, 500, -1],
-              'items-per-page-text': 'Показать',
-            }"
-            @click:row="clickrow"
-          >
-            <template v-slot:item.name="{ item }">
-              <div :style="stylecolor(item.status_id)">{{ item.name }}</div>
-            </template>
-            <template v-slot:item.email="{ item }">
-              <div :style="stylecolor(item.status_id)">{{ item.email }}</div>
-            </template>
-            <template v-slot:item.date="{ item }">
-              <div :style="stylecolor(item.status_id)">{{ item.date }}</div>
-            </template>
-            <template v-slot:item.tel="{ item }">
-              <div
-                class="tel"
-                @click.prevent.stop="call(item.tel)"
-                :style="stylecolor(item.status_id)"
-              >
-                {{ item.tel }}
-              </div>
-            </template>
-            <template v-slot:item.tel="{ item }">
-              <div
-                class="tel"
-                @click.prevent.stop="call(item.tel)"
-                :style="stylecolor(item.status_id)"
-              >
-                {{ item.tel }}
-              </div>
-            </template>
-            <template v-slot:item.tel="{ item }">
-              <div
-                class="tel"
-                @click.prevent.stop="call(item.tel)"
-                :style="stylecolor(item.status_id)"
-              >
-                {{ item.tel }}
-              </div>
-            </template>
-            <template v-slot:item.status="{ item }">
-              <div class="px-1" :style="stylecolor(item.status_id)">
-                {{ item.status }}
-              </div>
-            </template>
+                <template v-slot:item.status="{ item }">
+                  <div class="px-1" :style="stylecolor(item.status_id)">
+                    {{ item.status }}
+                  </div>
+                </template>
 
-            <template v-slot:expanded-item="{ headers, item }">
-              <td :colspan="headers.length" class="blackborder">
-                <v-row>
-                  <v-col cols="8">
-                    <v-textarea
-                      class="mx-2"
-                      label="Сообщение"
-                      rows="2"
-                      prepend-icon="mdi-comment"
-                      v-model="text"
-                      :value="text"
-                      @keyup.enter.native="changemes(item)"
-                    ></v-textarea>
-                    <!-- @change="changemes(item)" -->
-                  </v-col>
-                  <v-col cols="4">
-                    <v-datetime-picker
-                      ref="datetime"
-                      label="Дата/время"
-                      @input="setTime"
-                    >
-                      <!-- v-model="datetime" -->
-                    </v-datetime-picker>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="12">
-                    <logtel :tel="tel" :key="componentKey" />
-                  </v-col>
-                </v-row>
-              </td>
-            </template>
-          </v-data-table>
-        </v-card>
+                <template v-slot:expanded-item="{ headers, item }">
+                  <td :colspan="headers.length" class="blackborder">
+                    <v-row>
+                      <v-col cols="8">
+                        <v-textarea
+                          class="mx-2"
+                          label="Сообщение"
+                          rows="1"
+                          prepend-icon="mdi-comment"
+                          v-model="text"
+                          :value="text"
+                          @keyup.enter.native="changemes(item)"
+                        ></v-textarea>
+                      </v-col>
+                      <v-col cols="4">
+                        <v-datetime-picker
+                          label="Дата/время"
+                          v-model="item.ontime"
+                        >
+                        </v-datetime-picker>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12">
+                        <logtel :tel="tel" />
+                      </v-col>
+                    </v-row>
+                  </td>
+                </template>
+              </v-data-table>
+            </v-card>
+            <v-card>
+              <v-data-table
+                id="maintable"
+                v-model.lazy.trim="selected"
+                :headers="headers"
+                :search="search"
+                :single-select="true"
+                item-key="id"
+                show-select
+                :items="filteredItems"
+                ref="datatable"
+                :expanded="expanded"
+                :footer-props="{
+                  'items-per-page-options': [10, 50, 100, 250, 500, -1],
+                  'items-per-page-text': 'Показать',
+                }"
+                @click:row="clickrow"
+              >
+      <template v-slot:top="{ pagination, options, updateOptions }"
+      :footer-props="{
+                'items-per-page-options': [10, 50, 100, 250, 500, -1],
+ 'items-per-page-text': 'Показать',
+    }">
+        <v-data-footer 
+          :pagination="pagination" 
+          :options="options"
+          @update:options="updateOptions"
+:items-per-page-options= "[10, 50, 100, 250, 500, -1]"
+:items-per-page-text = '"Показать"'
+/>
+      </template>
+                <template v-slot:item.name="{ item }">
+                  <div :style="stylecolor(item.status_id)">{{ item.name }}</div>
+                </template>
+                <template v-slot:item.email="{ item }">
+                  <div :style="stylecolor(item.status_id)">
+                    {{ item.email }}
+                  </div>
+                </template>
+                <template v-slot:item.date="{ item }">
+                  <div :style="stylecolor(item.status_id)">{{ item.date }}</div>
+                </template>
+                <template v-slot:item.tel="{ item }">
+                  <a
+                    class="tel"
+                    @click.stop
+                    :href="'sip:' + item.tel"
+                    :style="stylecolor(item.status_id)"
+                    >{{ item.tel }}</a
+                  >
+
+                  <!-- <div
+                class="tel"
+                @click.prevent.stop="call(item.tel)"
+                :style="stylecolor(item.status_id)"
+              >
+                {{ item.tel }}
+              </div> -->
+                </template>
+                
+                <template v-slot:item.status="{ item }">
+                  <div class="px-1" :style="stylecolor(item.status_id)">
+                    {{ item.status }}
+                  </div>
+                </template>
+
+                <template v-slot:expanded-item="{ headers, item }">
+                  <td :colspan="headers.length" class="blackborder">
+                    <v-row>
+                      <v-col cols="8">
+                        <v-textarea
+                          class="mx-2"
+                          label="Сообщение"
+                          rows="2"
+                          prepend-icon="mdi-comment"
+                          v-model="text"
+                          :value="text"
+                          @keyup.enter.native="changemes(item)"
+                        ></v-textarea>
+                        <!-- @change="changemes(item)" -->
+                      </v-col>
+                      <v-col cols="4">
+                        <v-datetime-picker
+                          ref="datetime"
+                          label="Дата/время"
+                          @input="setTime"
+                        >
+                          <!-- v-model="datetime" -->
+                        </v-datetime-picker>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12">
+                        <logtel :tel="tel" :key="componentKey" />
+                      </v-col>
+                    </v-row>
+                  </td>
+                </template>
+              </v-data-table>
+            </v-card>
           </v-col>
         </v-row>
-
       </v-col>
       <v-col cols="2">
         <v-card height="100%" class="pa-5">
@@ -407,7 +407,6 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
@@ -459,10 +458,10 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    call(tel) {
-      // alert(tel);
-      window.location.href = "sip:" + tel;
-    },
+    // call(tel) {
+    //   // alert(tel);
+    //   window.location.href = "sip:" + tel;
+    // },
     stylecolor(status_id) {
       // console.log(status_id)
       if (status_id == null) return;
@@ -478,6 +477,11 @@ export default {
 <style scoped>
 .tel:hover {
   cursor: url(/img/phone-forward.svg) 10 10, none;
+  text-decoration: none;
+}
+.tel{
+  display: block;
+  color:#000
 }
 #maintable.v-data-table >>> tr {
   outline: 2px solid transparent;
