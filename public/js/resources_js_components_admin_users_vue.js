@@ -16241,9 +16241,9 @@ var render = function() {
                                 delimiter: ";",
                                 name:
                                   "Статусы (" +
-                                  new Date()
-                                    .toLocaleDateString()
-                                    .replace(".", "-") +
+                                  _vm.datefrom.replace(".", "-") +
+                                  " - " +
+                                  _vm.dateto.replace(".", "-") +
                                   ").csv"
                               }
                             },

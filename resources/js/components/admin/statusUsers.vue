@@ -98,7 +98,7 @@
                       <download-csv
             :data="users"
             delimiter=";"
-            :name="'Статусы (' + new Date().toLocaleDateString().replace('.','-') + ').csv'"
+            :name="'Статусы (' + datefrom.replace('.','-') + ' - '+dateto.replace('.','-')+').csv'"
           >
             <v-btn depressed> Сохранить CSV </v-btn>
             <v-icon> mdi-download-circle </v-icon>
