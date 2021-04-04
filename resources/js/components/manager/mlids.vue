@@ -110,7 +110,8 @@
                       <v-col cols="4">
                         <v-datetime-picker
                           label="Дата/время"
-                          v-model="item.ontime"
+                          v-model="datetime"
+                          :datetime="datetime" 
                         >
                         </v-datetime-picker>
                       </v-col>
@@ -142,19 +143,21 @@
                 }"
                 @click:row="clickrow"
               >
-      <template v-slot:top="{ pagination, options, updateOptions }"
-      :footer-props="{
-                'items-per-page-options': [10, 50, 100, 250, 500, -1],
- 'items-per-page-text': 'Показать',
-    }">
-        <v-data-footer 
-          :pagination="pagination" 
-          :options="options"
-          @update:options="updateOptions"
-:items-per-page-options= "[10, 50, 100, 250, 500, -1]"
-:items-per-page-text = '"Показать"'
-/>
-      </template>
+                <template
+                  v-slot:top="{ pagination, options, updateOptions }"
+                  :footer-props="{
+                    'items-per-page-options': [10, 50, 100, 250, 500, -1],
+                    'items-per-page-text': 'Показать',
+                  }"
+                >
+                  <v-data-footer
+                    :pagination="pagination"
+                    :options="options"
+                    @update:options="updateOptions"
+                    :items-per-page-options="[10, 50, 100, 250, 500, -1]"
+                    :items-per-page-text="'Показать'"
+                  />
+                </template>
                 <template v-slot:item.name="{ item }">
                   <div :style="stylecolor(item.status_id)">{{ item.name }}</div>
                 </template>
@@ -174,16 +177,8 @@
                     :style="stylecolor(item.status_id)"
                     >{{ item.tel }}</a
                   >
-
-                  <!-- <div
-                class="tel"
-                @click.prevent.stop="call(item.tel)"
-                :style="stylecolor(item.status_id)"
-              >
-                {{ item.tel }}
-              </div> -->
                 </template>
-                
+
                 <template v-slot:item.status="{ item }">
                   <div class="px-1" :style="stylecolor(item.status_id)">
                     {{ item.status }}
@@ -210,8 +205,8 @@
                           ref="datetime"
                           label="Дата/время"
                           @input="setTime"
-                        >
-                          <!-- v-model="datetime" -->
+                          v-model="datetime"
+                          :datetime="datetime" >
                         </v-datetime-picker>
                       </v-col>
                     </v-row>
@@ -314,6 +309,7 @@ export default {
       } else {
         this.selectedStatus = newval[0].status_id;
         this.expanded = this.selected;
+        this.datetime = newval[0].ontime.substring(0,16)
         // props.expanded = !props.expanded
       }
     },
@@ -437,7 +433,6 @@ export default {
 
     getLids(id) {
       let self = this;
-      let a_temp = [];
       self.search = "";
       self.filtertel = "";
       self.disableuser = id;
@@ -451,17 +446,20 @@ export default {
             delete e.provider_id;
             e.date = e.updated_at.substring(0, 10);
             if (e.status_id) {
-              e.status =
-                self.statuses.find((s) => s.id == e.status_id).name || "";
+              e.status = self.statuses.find((s) => s.id == e.status_id).name || "";
             }
+          });
+          self.todayItems = self.lids.filter(function (l) {
+            return (
+              new Date(l.ontime).toLocaleDateString() == new Date().toLocaleDateString()
+            );
+          });
+          self.todayItems.map(function (t) {
+            t.date = new Date(t.ontime).toLocaleTimeString().substring(0,5);
           });
         })
         .catch((error) => console.log(error));
     },
-    // call(tel) {
-    //   // alert(tel);
-    //   window.location.href = "sip:" + tel;
-    // },
     stylecolor(status_id) {
       // console.log(status_id)
       if (status_id == null) return;
@@ -479,9 +477,9 @@ export default {
   cursor: url(/img/phone-forward.svg) 10 10, none;
   text-decoration: none;
 }
-.tel{
+.tel {
   display: block;
-  color:#000
+  color: #000;
 }
 #maintable.v-data-table >>> tr {
   outline: 2px solid transparent;

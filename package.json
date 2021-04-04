@@ -30,6 +30,7 @@
         "livereload": "^0.9.3",
         "material-design-icons-iconfont": "^6.1.0",
         "vue-axios": "^3.2.4",
+        "vue-json-csv": "^1.2.12",
         "vuetify": "^2.4.8",
         "vuetify-datetime-picker": "^2.1.1",
         "vuetify-loader": "^1.7.2",

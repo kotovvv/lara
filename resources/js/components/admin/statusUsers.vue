@@ -95,6 +95,14 @@
                 </tbody>
               </template>
             </v-simple-table>
+                      <download-csv
+            :data="users"
+            delimiter=";"
+            :name="'Статусы (' + new Date().toLocaleDateString().replace('.','-') + ').csv'"
+          >
+            <v-btn depressed> Сохранить CSV </v-btn>
+            <v-icon> mdi-download-circle </v-icon>
+          </download-csv>
           </v-col>
         </v-row>
         </v-container>
@@ -105,6 +113,7 @@
 
 <script>
 import axios from "axios";
+import JsonCSV from "vue-json-csv";
 export default {
   props: ["o_users"],
   data() {
@@ -138,6 +147,9 @@ export default {
           .catch((error) => console.log(error));
       }
     },
+  },
+    components: {
+    downloadCsv: JsonCSV,
   },
 };
 </script>
