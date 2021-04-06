@@ -2,11 +2,21 @@
   <div>
     <v-container fluid>
       <v-row>
-                <v-col cols="4" class="pt-3 mt-4">
+        <v-col cols="3" class="pt-3 mt-4">
           <v-select
             v-model="filterStatus"
             :items="statuses"
             label="Фильтр по статусам"
+            item-text="name"
+            item-value="id"
+          ></v-select>
+        </v-col>
+
+        <v-col cols="2" class="pt-3 mt-4">
+          <v-select
+            v-model="filterProviders"
+            :items="providers"
+            label="Фильтр по поставщикам"
             item-text="name"
             item-value="id"
           ></v-select>
@@ -34,7 +44,7 @@
             ></v-text-field>
           </v-card-title>
         </v-col>
-        <v-col cols="4" class="pt-3 mt-4">
+        <v-col cols="3" class="pt-3 mt-4">
           <v-select
             v-model="selectedStatus"
             :items="statuses"
@@ -55,7 +65,7 @@
     </v-container>
 
     <v-row>
-      <v-col cols="8">
+      <v-col cols="9">
         <v-card>
           <v-data-table
             v-model.lazy.trim="selected"
@@ -74,7 +84,7 @@
           ></v-data-table>
         </v-card>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="3">
         <v-card height="100%" class="pa-5">
           Укажите пользователя
           <v-list>
@@ -124,6 +134,7 @@ export default {
     statuses: [],
     selectedStatus: 0,
     filterStatus: 0,
+    filterProviders: 0,
     selected: [],
     lids: [],
     search: "",
@@ -132,14 +143,18 @@ export default {
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Тел.", align: "start", value: "tel" },
+      { text: "Провайдер",  value: "provider" },
+      { text: "Афилятор", value: "afilyator" },
       { text: "Статус", value: "status" },
       { text: "Менеджер", value: "user" },
     ],
     parse_header: [],
     sortOrders: {},
     sortKey: "tel",
+    providers: [],
   }),
   mounted: function () {
+    this.getProviders();
     this.getUsers();
     this.getStatuses();
   },
@@ -147,9 +162,9 @@ export default {
     filteredItems() {
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
-        if (this.filterStatus)
-          return !this.filterStatus || i.status_id == this.filterStatus;
-        return !this.filtertel || reg.test(i.tel);
+
+return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filterProviders || i.provider_id == this.filterProviders) && (!this.filtertel || reg.test(i.tel));
+
       });
     },
   },
@@ -165,12 +180,14 @@ export default {
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
         send.data = this.selected;
       } else if (
-        (this.search !== "" || this.filtertel !== "" || this.filterStatus !== 0) &&
+        (this.search !== "" ||
+          this.filtertel !== "" ||
+          this.filterStatus !== 0) &&
         this.$refs.datatable.$children[0].filteredItems.length > 0
       ) {
         send.data = this.$refs.datatable.$children[0].filteredItems;
       }
-            axios
+      axios
         .post("api/Lid/changelidsuser", send)
         .then(function (response) {
           self.search = "";
@@ -178,7 +195,7 @@ export default {
           self.userid = null;
           self.$refs.radiogroup.lazyValue = null;
           self.selected = [];
-          self.filterStatus = 0
+          self.filterStatus = 0;
           self.getUsers();
           self.getLids(send.user_id);
         })
@@ -228,23 +245,24 @@ export default {
     },
     getUsers() {
       let self = this;
-      let get =
-        self.$props.user.role_id == 1
-          ? "/api/users"
-          : "/api/getusers";
+      let get = self.$props.user.role_id == 1 ? "/api/users" : "/api/getusers";
       axios
         .get(get)
         .then((res) => {
-          self.users = res.data.map(({ name, id, role_id, fio, hmlids,group_id }) => ({
-            name,
-            id,
-            role_id,
-            fio,
-            hmlids,
-            group_id
-          }));
-          if(self.$props.user.role_id !== 1){
-            self.users = self.users.filter((f)=> f.group_id == self.$props.user.group_id)
+          self.users = res.data.map(
+            ({ name, id, role_id, fio, hmlids, group_id }) => ({
+              name,
+              id,
+              role_id,
+              fio,
+              hmlids,
+              group_id,
+            })
+          );
+          if (self.$props.user.role_id !== 1) {
+            self.users = self.users.filter(
+              (f) => f.group_id == self.$props.user.group_id
+            );
           }
         })
         .catch((error) => console.log(error));
@@ -268,7 +286,7 @@ export default {
 
     getLids(id) {
       let self = this;
-      self.filterStatus = 0
+      self.filterStatus = 0;
       self.search = "";
       self.filtertel = "";
       self.disableuser = id;
@@ -280,9 +298,9 @@ export default {
 
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
+            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
-            delete e.provider_id;
           });
         })
         .catch((error) => console.log(error));
@@ -315,6 +333,16 @@ export default {
       self.selected = [];
       self.selectedStatus = 0;
       self.getLids(self.disableuser);
+    },
+    getProviders() {
+      let self = this;
+      axios
+        .get("/api/provider")
+        .then((res) => {
+          self.providers = res.data.map(({ name, id }) => ({ name, id }));
+          self.providers.unshift({ name: "выбор", id: 0 });
+        })
+        .catch((error) => console.log(error));
     },
   },
 };

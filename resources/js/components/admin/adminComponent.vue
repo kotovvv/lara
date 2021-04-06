@@ -62,7 +62,7 @@
 const users = () => import("./users");
 const importcsv = () => import("./importcsv");
 const statusLid = () => import("./statusLid");
-const workPlaces = () => import("./workPlaces");
+// const workPlaces = () => import("./workPlaces");
 const providers = () => import("./providers");
 const mlids = () => import("../manager/mlids");
 const lids = () => import("../crmanager/lids");
@@ -78,7 +78,7 @@ export default {
       { text: "Пользователи", name: "users", icon: "mdi-account" },
       { text: "Статусы лидов", name: "statusLid", icon: "mdi-format-list-checks" },
       { text: "Поставщики", name: "providers", icon: "mdi-contact-phone-outline" },
-      { text: "Рабочие места", name: "workPlaces", icon: "mdi-sitemap" },
+      // { text: "Рабочие места", name: "workPlaces", icon: "mdi-sitemap" },
       { text: "Распределение", name: "lids", icon: "mdi-account-arrow-left" },
       { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
     ],
@@ -89,7 +89,7 @@ export default {
       if (this.adminMenu == "importcsv") return importcsv;
       if (this.adminMenu == "users") return users;
       if (this.adminMenu == "statusLid") return statusLid;
-      if (this.adminMenu == "workPlaces") return workPlaces;
+      // if (this.adminMenu == "workPlaces") return workPlaces;
       if (this.adminMenu == "providers") return providers;
       if (this.adminMenu == "mlids") return mlids;
       if (this.adminMenu == "lids") return lids;

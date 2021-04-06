@@ -65,38 +65,43 @@ class LidsController extends Controller
     // $data['data']['updated_at'] = Now();
     $res = 0;
       foreach ($data['data'] as $lid) {
-     Debugbar::info($data['data']);
- 
+
+
     $a_lid = [
       'status_id' => $lid['status_id'],
       'user_id' => $lid['user_id'],
       'updated_at' => Now()
     ];
     $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
- 
+
 
     $a_lid['tel'] = $lid['tel'];
     $a_lid['created_at'] = Now();
 
   DB::table('logs')->insert($a_lid);
-  
+
       }
     if ($res) {
 
       return response('Lids updated', 200);
     }
   }
+
+
   public function newlids(Request $request)
   {
     $data = $request->all();
-
+    // Debugbar::info($data['data']);
     foreach ($data['data'] as $lid) {
+
       $a_lid = [
-        'name' => $lid['name'],
+        'name' => strval ($lid['name']),
         'email' => $lid['email'],
+        'afilyator' => strval ($lid['afilyator']),
         'user_id' => $data['user_id'],
         'created_at' => Now()
       ];
+      Debugbar::info($a_lid);
       if (isset($data['provider_id']))  $a_lid['provider_id'] = $data['provider_id'];
       if (isset($data['status_id']))  $a_lid['status_id'] = $data['status_id'];
 

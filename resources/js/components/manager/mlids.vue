@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="10">
         <v-row>
-          <v-col cols="4">
+          <v-col cols="3">
             <v-card-title>
               <v-text-field
                 v-model="search"
@@ -14,7 +14,16 @@
               ></v-text-field>
             </v-card-title>
           </v-col>
-          <v-col cols="4">
+          <v-col cols="3" class="pt-3 mt-4">
+          <v-select
+            v-model="filterProviders"
+            :items="providers"
+            label="Фильтр по поставщикам"
+            item-text="name"
+            item-value="id"
+          ></v-select>
+        </v-col>
+          <v-col cols="3">
             <v-card-title>
               <v-text-field
                 v-model.lazy.trim="filtertel"
@@ -25,7 +34,7 @@
               ></v-text-field>
             </v-card-title>
           </v-col>
-          <v-col cols="4" class="pt-3 mt-4">
+          <v-col cols="3" class="pt-3 mt-4">
             <v-select
               v-model="filterStatus"
               :items="filterstatuses"
@@ -78,15 +87,18 @@
                     :style="stylecolor(item.status_id)"
                     >{{ item.tel }}</a
                   >
-                  <!-- <div
-                class="tel"
-                @click.prevent.stop="call(item.tel)"
-                :style="stylecolor(item.status_id)"
-              >
-                {{ item.tel }}
-              </div> -->
                 </template>
 
+                <template v-slot:item.afilyator="{ item }">
+                  <div class="px-1" :style="stylecolor(item.status_id)">
+                    {{ item.afilyator }}
+                  </div>
+                </template>
+                <template v-slot:item.provider="{ item }">
+                  <div class="px-1" :style="stylecolor(item.status_id)">
+                    {{ item.provider }}
+                  </div>
+                </template>
                 <template v-slot:item.status="{ item }">
                   <div class="px-1" :style="stylecolor(item.status_id)">
                     {{ item.status }}
@@ -111,7 +123,7 @@
                         <v-datetime-picker
                           label="Дата/время"
                           v-model="datetime"
-                          :datetime="datetime" 
+                          :datetime="datetime"
                         >
                         </v-datetime-picker>
                       </v-col>
@@ -178,7 +190,16 @@
                     >{{ item.tel }}</a
                   >
                 </template>
-
+                <template v-slot:item.afilyator="{ item }">
+                  <div class="px-1" :style="stylecolor(item.status_id)">
+                    {{ item.afilyator }}
+                  </div>
+                </template>
+                <template v-slot:item.provider="{ item }">
+                  <div class="px-1" :style="stylecolor(item.status_id)">
+                    {{ item.provider }}
+                  </div>
+                </template>
                 <template v-slot:item.status="{ item }">
                   <div class="px-1" :style="stylecolor(item.status_id)">
                     {{ item.status }}
@@ -277,6 +298,8 @@ export default {
     filterstatuses: [],
     selectedStatus: 0,
     filterStatus: 0,
+    filterProviders: 0,
+    providers: [],
     selected: [],
     todayItems: [],
     lids: [],
@@ -286,6 +309,8 @@ export default {
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
+       { text: "Афилятор", value: "afilyator" },
+       { text: "Поставщик", value: "provider" },
       { text: "Статус", value: "status" },
       { text: "Дата", value: "date" },
       // { text: "Message", value: "text" },
@@ -296,6 +321,7 @@ export default {
   }),
 
   mounted: function () {
+    this.getProviders();
     this.getStatuses();
   },
   watch: {
@@ -318,9 +344,7 @@ export default {
     filteredItems() {
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
-        if (this.filterStatus)
-          return !this.filterStatus || i.status_id == this.filterStatus;
-        return !this.filtertel || reg.test(i.tel);
+return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filterProviders || i.provider_id == this.filterProviders) && (!this.filtertel || reg.test(i.tel));
       });
     },
   },
@@ -443,8 +467,9 @@ export default {
 
           self.lids.map(function (e) {
             // e.user = self.users.find((u) => u.id === e.user_id).fio;
-            delete e.provider_id;
+            // delete e.provider_id;
             e.date = e.updated_at.substring(0, 10);
+             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
             if (e.status_id) {
               e.status = self.statuses.find((s) => s.id == e.status_id).name || "";
             }
@@ -467,6 +492,16 @@ export default {
         "padding:5px;background:" +
         this.statuses.find((e) => e.id == status_id).color
       );
+    },
+        getProviders() {
+      let self = this;
+      axios
+        .get("/api/provider")
+        .then((res) => {
+          self.providers = res.data.map(({ name, id }) => ({ name, id }));
+          self.providers.unshift({ name: "выбор", id: 0 });
+        })
+        .catch((error) => console.log(error));
     },
   },
 };

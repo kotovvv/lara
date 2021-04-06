@@ -131,6 +131,7 @@ export default {
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Тел.", align: "start", value: "tel" },
+      { text: "Афилятор", value: "afilyator" },
     ],
     parse_header: [],
     parse_csv: [],
@@ -180,6 +181,7 @@ export default {
             self.selected = [];
             self.getUsers();
             self.loading = false;
+            self.files= [];
           })
           .catch(function (error) {
             console.log(error);
@@ -189,15 +191,6 @@ export default {
         this.$refs.datatable.$children[0].filteredItems.length > 0
       ) {
         send.data = this.$refs.datatable.$children[0].filteredItems;
-        // add user and provider to array
-
-        // send = send.map(function (el) {
-        //   let o = Object.assign({}, el);
-        //   o.user_id = user_id;
-        //   o.provider_id = provider_id;
-        //   return o;
-        // });
-
         axios
           .post("api/Lid/newlids", send)
           .then(function (response) {
@@ -286,7 +279,7 @@ export default {
       var lines = csv.split("\n");
       var result = [];
       var headers = lines[0].split(";");
-      headers = ["name", "email", "tel"];
+      headers = ["name", "email", "tel","afilyator"];
       // vm.parse_header = lines[0].split(",");
       // lines[0].split(",").forEach(function (key) {
       //   vm.sortOrders[key] = 1;

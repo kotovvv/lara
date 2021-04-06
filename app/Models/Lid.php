@@ -12,6 +12,7 @@ class Lid extends Model
         'name',
         'tel',
         'email',
+        'afilyator',
         'status_id',
         'provider_id',
         'user_id',
