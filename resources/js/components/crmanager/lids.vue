@@ -278,7 +278,7 @@ return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filter
             id,
             color,
           }));
-          self.statuses.unshift({ name: "Без статуса", id: 0 });
+          self.statuses.unshift({ name: "Default", id: 0 });
           self.getLids(self.$props.user.id);
         })
         .catch((error) => console.log(error));

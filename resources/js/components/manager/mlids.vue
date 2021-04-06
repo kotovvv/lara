@@ -499,7 +499,7 @@ return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filter
         .get("/api/provider")
         .then((res) => {
           self.providers = res.data.map(({ name, id }) => ({ name, id }));
-          self.providers.unshift({ name: "выбор", id: 0 });
+          self.providers.unshift({ name: "Все", id: 0 });
         })
         .catch((error) => console.log(error));
     },
