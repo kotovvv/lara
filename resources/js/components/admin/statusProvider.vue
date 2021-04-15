@@ -74,9 +74,9 @@ export default {
   mounted: function () {
     this.getStatuses();
   },
-  beforeUpdate: function () {
-    this.getStatuses();
-  },
+  // beforeUpdate: function () {
+  //   this.getStatuses();
+  // },
   components: {
     downloadCsv: JsonCSV,
   },

@@ -259,7 +259,7 @@ return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filter
               group_id,
             })
           );
-          if (self.$props.user.role_id !== 1) {
+          if (self.$props.user.role_id != 1) {
             self.users = self.users.filter(
               (f) => f.group_id == self.$props.user.group_id
             );
