@@ -57,15 +57,15 @@
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="headline"
-              >Are you sure you want to delete this item?</v-card-title
+              >Удалить поставщика?</v-card-title
             >
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="closeDelete"
-                >Cancel</v-btn
+                >Нет</v-btn
               >
               <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                >OK</v-btn
+                >Да</v-btn
               >
               <v-spacer></v-spacer>
             </v-card-actions>
@@ -75,7 +75,7 @@
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <!-- <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon> -->
+      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
       <template v-slot:item.report="{ item }">
     <statusesProvider :provider="item" />
@@ -176,6 +176,12 @@ export default {
     },
 
     deleteItemConfirm() {
+      axios
+      .delete("/api/provider/"+ this.editedItem.id)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => console.log(error));
       this.providers.splice(this.editedIndex, 1);
       this.closeDelete();
     },

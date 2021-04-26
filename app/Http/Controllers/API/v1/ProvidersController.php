@@ -7,6 +7,8 @@ use App\Models\Provider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use DB;
+use App\Models\Lid;
+use App\Models\Log;
 
 class ProvidersController extends Controller
 {
@@ -43,11 +45,11 @@ $req = [];
         , COUNT(`statuses`.`name`) AS `hm`
     FROM
         `providers`
-        LEFT JOIN `lids` 
+        LEFT JOIN `lids`
             ON (`providers`.`id` = `lids`.`provider_id`)
-        LEFT JOIN `logs` 
+        LEFT JOIN `logs`
             ON (`lids`.`tel` = `logs`.`tel`)
-        LEFT JOIN `statuses` 
+        LEFT JOIN `statuses`
             ON (`logs`.`status_id` = `statuses`.`id`)
     WHERE (`providers`.`id` = ".$data['provider_id'].")
     GROUP BY `statuses`.`name`, `providers`.`id`
@@ -137,6 +139,10 @@ $req = [];
      */
     public function destroy($id)
     {
-        //
+
+       $tels =  Lid::select('tel')->where('provider_id', '=', $id);
+        Log::whereIn('tel', $tels)->delete();
+        Lid::where('provider_id', '=', $id)->delete();
+
     }
 }

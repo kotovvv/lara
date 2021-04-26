@@ -101,15 +101,15 @@
             <v-dialog v-model="dialogDelete" max-width="500px">
               <v-card>
                 <v-card-title class="headline"
-                  >Are you sure you want to delete this item?</v-card-title
+                  >Уверены в удалении пользователя?</v-card-title
                 >
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click="closeDelete"
-                    >Cancel</v-btn
+                    >Нет</v-btn
                   >
                   <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                    >OK</v-btn
+                    >Да</v-btn
                   >
                   <v-spacer></v-spacer>
                 </v-card-actions>
@@ -121,7 +121,7 @@
           <v-icon small class="mr-2" @click="editItem(item)">
             mdi-pencil
           </v-icon>
-          <!-- <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon> -->
+          <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
         </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="getUsers"> Reset </v-btn>
@@ -217,7 +217,7 @@ export default {
           self.users = res.data;
           self.users.map(function (u) {
             u.role = (self.roles.find((r) => r.id == u.role_id)).name;
-            if (u.role_id == 2) self.group.push(u) 
+            if (u.role_id == 2) self.group.push(u)
           });
         })
         .catch((error) => console.log(error));
@@ -245,9 +245,15 @@ export default {
     },
 
     deleteItemConfirm() {
+      axios
+      .delete("/api/user/"+ this.editedItem.id)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => console.log(error));
       this.users.splice(this.editedIndex, 1);
-      this.closeDelete();
-    },
+        this.closeDelete();
+       },
 
     close() {
       this.dialog = false;

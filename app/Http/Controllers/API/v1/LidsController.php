@@ -4,8 +4,9 @@ namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\Log;
 use App\Models\Lid;
+use App\Models\Log;
 use DB;
 use Debugbar;
 
@@ -157,6 +158,15 @@ class LidsController extends Controller
   public function update(Request $request, $id)
   {
     //
+  }
+
+  public function deletelids(Request $request)
+  {
+    $tels = $request->all();
+    // Debugbar::info($data);
+
+    Lid::whereIn('tel', $tels)->delete();
+    Log::whereIn('tel', $tels)->delete();
   }
 
   /**

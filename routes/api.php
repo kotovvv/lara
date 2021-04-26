@@ -40,11 +40,13 @@ Route::get('getusers', [UsersController::class,'getusers'])->name('getusers');
 Route::get('users/getroles', [UsersController::class,'getroless'])->name('user.getroles');
 Route::post('user/update', [UsersController::class,'update'])->name('user.update');
 Route::get('userlids/{id}', [LidsController::class,'userLids'])->name('userlids');
+Route::delete('provider/{id}', [ProvidersController::class,'destroy']);
 
 Route::post('Lid/newlids', [LidsController::class,'newlids'])->name('Lid.newlids');
 Route::post('Lid/updatelids', [LidsController::class,'updatelids'])->name('Lid.updatelids');
 Route::post('Lid/changelidsuser', [LidsController::class,'changelidsuser'])->name('Lid.changelidsuser');
 Route::post('Lid/ontime', [LidsController::class,'ontime'])->name('Lid.ontime');
+Route::post('Lid/deletelids', [LidsController::class,'deletelids'])->name('Lid.deletelids');
 Route::post('log/add', [LogsController::class,'add'])->name('log.add');
 Route::post('log/tellog', [LogsController::class,'tellog'])->name('log.tellog');
 

@@ -10,6 +10,15 @@
             item-text="name"
             item-value="id"
           ></v-select>
+          <v-btn
+            v-if="
+              filterStatus &&
+              $props.user.role_id == 1 &&
+              filteredItems.length > 0
+            "
+          >
+            <v-icon small @click="deleteItem()"> mdi-delete </v-icon>
+          </v-btn>
         </v-col>
 
         <v-col cols="2" class="pt-3 mt-4">
@@ -143,7 +152,7 @@ export default {
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Тел.", align: "start", value: "tel" },
-      { text: "Провайдер",  value: "provider" },
+      { text: "Провайдер", value: "provider" },
       { text: "Афилятор", value: "afilyator" },
       { text: "Статус", value: "status" },
       { text: "Менеджер", value: "user" },
@@ -162,13 +171,37 @@ export default {
     filteredItems() {
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
-
-return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filterProviders || i.provider_id == this.filterProviders) && (!this.filtertel || reg.test(i.tel));
-
+        return (
+          (!this.filterStatus || i.status_id == this.filterStatus) &&
+          (!this.filterProviders || i.provider_id == this.filterProviders) &&
+          (!this.filtertel || reg.test(i.tel))
+        );
       });
     },
   },
   methods: {
+    deleteItem() {
+      const self = this;
+      let tels = [];
+      this.filteredItems.forEach(function (el) {
+        tels.push(el.tel);
+        self.lids.splice(
+          self.lids.indexOf(self.lids.find((l) => l.tel == el.tel)),
+          1
+        );
+      });
+
+        axios
+          .post("api/Lid/deletelids", tels)
+          .then(function (response) {
+self.getUsers();
+          // self.getLids(send.user_id);
+         self.filterStatus = 0
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    },
     changeLidsUser() {
       const self = this;
       let send = {};

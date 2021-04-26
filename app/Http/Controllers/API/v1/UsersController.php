@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Lid;
+use App\Models\Log;
 use DB;
 use Debugbar;
 use Hash;
@@ -121,8 +123,8 @@ class UsersController extends Controller
     $repoprt = [];
     $req = $request->All();
     $a_users = $req['users'];
-$datefrom = $req['datefrom'];
-$dateto = $req['dateto'];
+    $datefrom = $req['datefrom'];
+    $dateto = $req['dateto'];
 
     $sql = "SELECT '' color,'Пользователи' text ";
     foreach ($a_users as $user_id) {
@@ -144,14 +146,14 @@ $dateto = $req['dateto'];
     $statuses = DB::select(DB::raw("SELECT id, `name`, color FROM `statuses` WHERE `active` = 1 ORDER BY `order` ASC"));
     foreach ($statuses as $status) {
 
-      $sql = "SELECT '".$status->color."' color,'". $status->name ."'  text ";
+      $sql = "SELECT '" . $status->color . "' color,'" . $status->name . "'  text ";
       foreach ($a_users as $user_id) {
-          $sql .= ",(SELECT COUNT(*) FROM `logs` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '".$datefrom."' AND '".$dateto."' AND `status_id` = " . $status->id . ") u" . $user_id;
-        }
-        $sts = DB::select(DB::raw($sql));
-        $repoprt[] =  $sts[0];
+        $sql .= ",(SELECT COUNT(*) FROM `logs` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `status_id` = " . $status->id . ") u" . $user_id;
       }
-      return $repoprt;
+      $sts = DB::select(DB::raw($sql));
+      $repoprt[] =  $sts[0];
+    }
+    return $repoprt;
     // SELECT 'Пользователи',(SELECT fio FROM `users` WHERE id = 1) n1 ,(SELECT fio FROM `users` WHERE id = 3) n3
     // SELECT 'Всего лидов', (SELECT COUNT(*) FROM `lids` WHERE `user_id` = 3) n3, (SELECT COUNT(*) FROM `lids` WHERE `user_id` = 4) n4
     // SELECT COUNT(*) FROM `logs` WHERE `user_id` = 2 AND `status_id` = 4
@@ -175,6 +177,14 @@ $dateto = $req['dateto'];
   public function getroles()
   {
     return Role::All();
+  }
+
+  public function deleteuser($id)
+  {
+    Lid::where('user_id', '=', $id)->delete();
+    Log::where('user_id', '=', $id)->delete();
+    $user = User::find($id);
+    $user->delete();
   }
 
   /**
