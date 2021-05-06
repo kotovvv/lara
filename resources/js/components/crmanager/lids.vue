@@ -90,7 +90,23 @@
               'items-per-page-options': [10, 50, 100, 250, 500, -1],
               'items-per-page-text': 'Показать',
             }"
-          ></v-data-table>
+          >
+                <template
+                  v-slot:top="{ pagination, options, updateOptions }"
+                  :footer-props="{
+                    'items-per-page-options': [10, 50, 100, 250, 500, -1],
+                    'items-per-page-text': 'Показать',
+                  }"
+                >
+                  <v-data-footer
+                    :pagination="pagination"
+                    :options="options"
+                    @update:options="updateOptions"
+                    :items-per-page-options="[10, 50, 100, 250, 500, -1]"
+                    :items-per-page-text="'Показать'"
+                  />
+                </template>
+          </v-data-table>
         </v-card>
       </v-col>
       <v-col cols="3">
@@ -191,19 +207,20 @@ export default {
         );
       });
 
-        axios
-          .post("api/Lid/deletelids", tels)
-          .then(function (response) {
-self.getUsers();
+      axios
+        .post("api/Lid/deletelids", tels)
+        .then(function (response) {
+          self.getUsers();
           // self.getLids(send.user_id);
-         self.filterStatus = 0
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+          self.filterStatus = 0;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     changeLidsUser() {
       const self = this;
+      let cur_user_id = this.disableuser;
       let send = {};
       send.user_id = this.userid;
 
@@ -230,7 +247,7 @@ self.getUsers();
           self.selected = [];
           self.filterStatus = 0;
           self.getUsers();
-          self.getLids(send.user_id);
+          self.getLids(cur_user_id);
         })
         .catch(function (error) {
           console.log(error);
