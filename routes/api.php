@@ -6,6 +6,7 @@ use App\Http\Controllers\API\v1\UsersController;
 use App\Http\Controllers\API\v1\LidsController;
 use App\Http\Controllers\API\v1\LogsController;
 use App\Http\Controllers\API\v1\StatusesController;
+use App\Http\Controllers\API\v1\ImportsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,7 @@ Route::resource('provider', ProvidersController::class);
 Route::resource('statuses', StatusesController::class);
 Route::resource('users', UsersController::class);
 Route::resource('lids', LidsController::class);
+Route::resource('imports', ImportsController::class);
 
 Route::get('statusall', [StatusesController::class,'getall'])->name('stasusall');
 Route::get('providerall', [ProvidersController::class,'getall'])->name('providerall');

@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-select
           v-model="selectedProvider"
           :items="providers"
@@ -20,7 +20,7 @@
           @change="onFileChange"
         ></v-file-input>
       </v-col>
-      <v-col cols="5" v-if="parse_csv.length">
+      <v-col cols="3" v-if="parse_csv.length">
         <v-select
           v-model="selectedStatus"
           :items="statuses"
@@ -28,6 +28,13 @@
           item-text="name"
           item-value="id"
         ></v-select>
+      </v-col>
+            <v-col cols="4" v-if="parse_csv.length">
+        <v-textarea
+          v-model="message"
+          label="Сообщение"
+rows="1"
+        ></v-textarea>
       </v-col>
     </v-row>
 
@@ -116,6 +123,7 @@
 import axios from "axios";
 export default {
   data: () => ({
+    message:'',
     loading: false,
     userid: null,
     users: [],
@@ -156,6 +164,7 @@ export default {
       return user.role_id == 2 ? "green" : "blue";
     },
     putSelectedLidsDB() {
+      let start = new Date().toJSON().slice(0, 19).replace('T', ' ')
       let self = this;
       self.loading = true;
       let send = {};
@@ -182,6 +191,27 @@ export default {
             self.getUsers();
             self.loading = false;
             self.files= [];
+                        // save to imports db
+            //======================
+let info = {};
+
+info.start = start
+info.end = new Date().toJSON().slice(0, 19).replace('T', ' ')
+info.provider_id = self.selectedProvider
+info.user_id = self.$attrs.user.id
+info.message = self.message
+
+          axios
+          .post("api/imports", info)
+          .then(function (response) {
+            // console.log(response);
+          
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+          //====================
+
           })
           .catch(function (error) {
             console.log(error);
@@ -205,6 +235,26 @@ export default {
             self.search = "";
             self.filtertel = "";
             self.loading = false;
+            // save to imports db
+            //======================
+let info = {};
+
+info.start = start
+info.end = new Date().toJSON().slice(0, 19).replace('T', ' ')
+info.provider_id = self.selectedProvider
+info.user_id = self.$attrs.user.id
+info.message = self.message
+
+          axios
+          .post("api/imports", info)
+          .then(function (response) {
+            // console.log(response);
+          
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+          //====================
           })
           .catch(function (error) {
             console.log(error);
