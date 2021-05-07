@@ -29,12 +29,8 @@
           item-value="id"
         ></v-select>
       </v-col>
-            <v-col cols="4" v-if="parse_csv.length">
-        <v-textarea
-          v-model="message"
-          label="Сообщение"
-rows="1"
-        ></v-textarea>
+      <v-col cols="4" v-if="parse_csv.length">
+        <v-textarea v-model="message" label="Сообщение" rows="1"></v-textarea>
       </v-col>
     </v-row>
 
@@ -85,7 +81,6 @@ rows="1"
         <v-col cols="4">
           <v-card height="100%" class="pa-5">
             Укажите пользователя для лидов
-
             <v-list>
               <v-radio-group
                 @change="putSelectedLidsDB"
@@ -116,6 +111,18 @@ rows="1"
         </v-col>
       </v-row>
     </v-main>
+    <v-row v-else>
+      <v-col>
+        <v-data-table
+          :headers="import_headers"
+          item-key="id"
+          :items="imports"
+          ref="importtable"
+        >
+          <template v-slot:item.id="{ item }"> </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -123,12 +130,13 @@ rows="1"
 import axios from "axios";
 export default {
   data: () => ({
-    message:'',
+    message: "",
     loading: false,
     userid: null,
     users: [],
     providers: [],
     statuses: [],
+    imports: [],
     selectedStatus: 8,
     selectedProvider: 0,
     selected: [],
@@ -141,12 +149,21 @@ export default {
       { text: "Тел.", align: "start", value: "tel" },
       { text: "Афилятор", value: "afilyator" },
     ],
+    import_headers: [
+      { text: "", value: "id" },
+      { text: "Дата час початку", value: "start" },
+      { text: "Дата час закінчення", value: "end" },
+      { text: "Поставщик", value: "provider" },
+      { text: "Хто імпортував", value: "user" },
+      { text: "Коментар", value: "message" },
+    ],
     parse_header: [],
     parse_csv: [],
     sortOrders: {},
     sortKey: "tel",
   }),
   mounted() {
+    this.getImports();
     this.getProviders();
     this.getUsers();
     this.getStatuses();
@@ -164,7 +181,7 @@ export default {
       return user.role_id == 2 ? "green" : "blue";
     },
     putSelectedLidsDB() {
-      let start = new Date().toJSON().slice(0, 19).replace('T', ' ')
+      let start = new Date().toJSON().slice(0, 19).replace("T", " ");
       let self = this;
       self.loading = true;
       let send = {};
@@ -190,28 +207,26 @@ export default {
             self.selected = [];
             self.getUsers();
             self.loading = false;
-            self.files= [];
-                        // save to imports db
+            self.files = [];
+            // save to imports db
             //======================
-let info = {};
+            let info = {};
 
-info.start = start
-info.end = new Date().toJSON().slice(0, 19).replace('T', ' ')
-info.provider_id = self.selectedProvider
-info.user_id = self.$attrs.user.id
-info.message = self.message
+            info.start = start;
+            info.end = new Date().toJSON().slice(0, 19).replace("T", " ");
+            info.provider_id = self.selectedProvider;
+            info.user_id = self.$attrs.user.id;
+            info.message = self.message;
 
-          axios
-          .post("api/imports", info)
-          .then(function (response) {
-            // console.log(response);
-          
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-          //====================
-
+            axios
+              .post("api/imports", info)
+              .then(function (response) {
+                // console.log(response);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+            //====================
           })
           .catch(function (error) {
             console.log(error);
@@ -237,24 +252,23 @@ info.message = self.message
             self.loading = false;
             // save to imports db
             //======================
-let info = {};
+            let info = {};
 
-info.start = start
-info.end = new Date().toJSON().slice(0, 19).replace('T', ' ')
-info.provider_id = self.selectedProvider
-info.user_id = self.$attrs.user.id
-info.message = self.message
+            info.start = start;
+            info.end = new Date().toJSON().slice(0, 19).replace("T", " ");
+            info.provider_id = self.selectedProvider;
+            info.user_id = self.$attrs.user.id;
+            info.message = self.message;
 
-          axios
-          .post("api/imports", info)
-          .then(function (response) {
-            // console.log(response);
-          
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-          //====================
+            axios
+              .post("api/imports", info)
+              .then(function (response) {
+                // console.log(response);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+            //====================
           })
           .catch(function (error) {
             console.log(error);
@@ -277,6 +291,24 @@ info.message = self.message
         .get("/api/provider")
         .then((res) => {
           self.providers = res.data.map(({ name, id }) => ({ name, id }));
+        })
+        .catch((error) => console.log(error));
+    },
+    getImports() {
+      let self = this;
+      axios
+        .get("/api/imports")
+        .then((res) => {
+          self.imports = res.data.map(
+            ({ id, start, end, provider, user, message }) => ({
+              id,
+              start,
+              end,
+              provider,
+              user,
+              message,
+            })
+          );
         })
         .catch((error) => console.log(error));
     },
@@ -329,7 +361,7 @@ info.message = self.message
       var lines = csv.split("\n");
       var result = [];
       var headers = lines[0].split(";");
-      headers = ["name", "email", "tel","afilyator"];
+      headers = ["name", "email", "tel", "afilyator"];
       // vm.parse_header = lines[0].split(",");
       // lines[0].split(",").forEach(function (key) {
       //   vm.sortOrders[key] = 1;

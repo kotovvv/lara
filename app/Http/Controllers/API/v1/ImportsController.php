@@ -17,7 +17,7 @@ class ImportsController extends Controller
      */
     public function index()
     {
-        return DB::table('imports')->orderByDesc('end')->get();
+        return Import::select(['imports.*', DB::raw('(SELECT `name` FROM `providers` WHERE `id` = `provider_id`) AS provider'), DB::raw('(SELECT `name` FROM `users` WHERE `id` = `user_id`) AS user')])->orderByDesc('end')->get();
     }
 
     /**

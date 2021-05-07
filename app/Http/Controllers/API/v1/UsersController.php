@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Lid;
 use App\Models\Log;
+use App\Models\Import;
 use DB;
 use Debugbar;
 use Hash;
@@ -183,6 +184,7 @@ class UsersController extends Controller
   {
     Lid::where('user_id', '=', $id)->delete();
     Log::where('user_id', '=', $id)->delete();
+    Import::where('user_id', '=', $id)->delete();
     $user = User::find($id);
     $user->delete();
   }

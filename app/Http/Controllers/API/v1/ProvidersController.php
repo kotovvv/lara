@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use DB;
 use App\Models\Lid;
 use App\Models\Log;
+use App\Models\Import;
 
 class ProvidersController extends Controller
 {
@@ -39,7 +40,7 @@ class ProvidersController extends Controller
         // ]);
         $data = $request->all();
 
-$req = [];
+        $req = [];
         $statuses =  DB::select(DB::raw("SELECT
         `statuses`.`name`
         , COUNT(`statuses`.`name`) AS `hm`
@@ -51,14 +52,13 @@ $req = [];
             ON (`lids`.`tel` = `logs`.`tel`)
         LEFT JOIN `statuses`
             ON (`logs`.`status_id` = `statuses`.`id`)
-    WHERE (`providers`.`id` = ".$data['provider_id'].")
+    WHERE (`providers`.`id` = " . $data['provider_id'] . ")
     GROUP BY `statuses`.`name`, `providers`.`id`
     ORDER BY `hm` DESC"));
-    $req['hm'] = DB::select(DB::raw("SELECT DATE(`created_at`) dateadd,COUNT(*) hm FROM `lids` WHERE `provider_id` = ".$data['provider_id']));
-    $req['statuses'] = $statuses;
+        $req['hm'] = DB::select(DB::raw("SELECT DATE(`created_at`) dateadd,COUNT(*) hm FROM `lids` WHERE `provider_id` = " . $data['provider_id']));
+        $req['statuses'] = $statuses;
 
-    return $req;
-
+        return $req;
     }
 
     /**
@@ -86,7 +86,6 @@ $req = [];
                 return response('Provider added', 200);
             } else return response('Provider add error', 301);
         }
-
     }
 
     /**
@@ -140,9 +139,9 @@ $req = [];
     public function destroy($id)
     {
 
-       $tels =  Lid::select('tel')->where('provider_id', '=', $id);
+        $tels =  Lid::select('tel')->where('provider_id', '=', $id);
         Log::whereIn('tel', $tels)->delete();
         Lid::where('provider_id', '=', $id)->delete();
-
+        Import::where('provider_id', '=', $id)->delete();
     }
 }
