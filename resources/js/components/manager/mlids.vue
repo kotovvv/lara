@@ -200,9 +200,19 @@
                     {{ item.provider }}
                   </div>
                 </template>
+                <template v-slot:item.date_created="{ item }">
+                  <div class="px-1" :style="stylecolor(item.status_id)">
+                    {{ item.date_created }}
+                  </div>
+                </template>
                 <template v-slot:item.status="{ item }">
                   <div class="px-1" :style="stylecolor(item.status_id)">
                     {{ item.status }}
+                  </div>
+                </template>
+                <template v-slot:item.text="{ item }">
+                  <div class="px-1" :style="stylecolor(item.status_id)">
+                    {{ item.text }}
                   </div>
                 </template>
 
@@ -311,9 +321,10 @@ export default {
       { text: "Телефон.", align: "start", value: "tel" },
        { text: "Афилятор", value: "afilyator" },
        { text: "Поставщик", value: "provider" },
+       { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status" },
       { text: "Дата", value: "date" },
-      // { text: "Message", value: "text" },
+      { text: "Сообщение", value: "text" },
     ],
     parse_header: [],
     sortOrders: {},
@@ -335,7 +346,7 @@ export default {
       } else {
         this.selectedStatus = newval[0].status_id;
         this.expanded = this.selected;
-        this.datetime = newval[0].ontime.substring(0,16)
+        this.datetime = newval[0].ontime? newval[0].ontime.substring(0,16): ''
         // props.expanded = !props.expanded
       }
     },
@@ -469,6 +480,8 @@ return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filter
             // e.user = self.users.find((u) => u.id === e.user_id).fio;
             // delete e.provider_id;
             e.date = e.updated_at.substring(0, 10);
+            e.date_created = e.created_at.substring(0, 10);
+            // e.mess = e.text;
              e.provider = self.providers.find((p) => p.id == e.provider_id).name;
             if (e.status_id) {
               e.status = self.statuses.find((s) => s.id == e.status_id).name || "";

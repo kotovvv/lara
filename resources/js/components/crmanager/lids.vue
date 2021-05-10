@@ -167,11 +167,12 @@ export default {
     headers: [
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
-      { text: "Тел.", align: "start", value: "tel" },
-      { text: "Провайдер", value: "provider" },
-      { text: "Афилятор", value: "afilyator" },
+      { text: "Телефон.", align: "start", value: "tel" },
+       { text: "Афилятор", value: "afilyator" },
+       { text: "Поставщик", value: "provider" },
+       { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status" },
-      { text: "Менеджер", value: "user" },
+      { text: "Сообщение", value: "text" },
     ],
     parse_header: [],
     sortOrders: {},
@@ -348,6 +349,7 @@ export default {
 
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
+            e.date_created = e.created_at.substring(0, 10);
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;

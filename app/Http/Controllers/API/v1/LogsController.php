@@ -34,6 +34,11 @@ class LogsController extends Controller
         }
         if (isset($request->text)) {
             $log->text = $request->text;
+            $a_lid = [
+                'text' => $request->text,
+                'updated_at' => Now()
+              ];
+            DB::table('lids')->where('tel', $request->tel)->update($a_lid);
         }
 
         $log->save();
