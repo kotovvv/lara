@@ -20,6 +20,19 @@ class LidsController extends Controller
   public function index()
   {
   }
+  public function searchlids(Request $request)
+  {
+    $searchTerm = $request->all();
+    //  Debugbar::info($searchTerm);
+    //SELECT * FROM lids WHERE `tel` LIKE '%488%' OR `name` LIKE '%488%' OR email LIKE '%488%' OR `text` LIKE '%488%'
+  
+    return Lid::select('*')
+    ->where('name','like',"%{$searchTerm['search']}%")
+    ->orwhere('tel','like',"%{$searchTerm['search']}%")
+    ->orwhere('email','like',"%{$searchTerm['search']}%")
+    ->orwhere('text','like',"%{$searchTerm['search']}%")
+  ->get();
+  }
 
   /**
    * Show the form for creating a new resource.

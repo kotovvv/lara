@@ -34,9 +34,10 @@
         <v-col cols="2">
           <v-card-title>
             <v-text-field
-              v-model="search"
+              v-model="searchAll"
               append-icon="mdi-magnify"
-              label="Поиск"
+              label="Глобальный поиск"
+              @click:append="searchInDB"
               single-line
               hide-details
             ></v-text-field>
@@ -91,13 +92,25 @@
               'items-per-page-text': 'Показать',
             }"
           >
-                <template
-                  v-slot:top="{ pagination, options, updateOptions }"
-                  :footer-props="{
-                    'items-per-page-options': [10, 50, 100, 250, 500, -1],
-                    'items-per-page-text': 'Показать',
-                  }"
-                >
+            <template
+              v-slot:top="{ pagination, options, updateOptions }"
+              :footer-props="{
+                'items-per-page-options': [10, 50, 100, 250, 500, -1],
+                'items-per-page-text': 'Показать',
+              }"
+            >
+              <v-row>
+                <v-col cols="6" >
+                  <v-text-field
+                    v-model="search"
+                    append-icon="mdi-magnify"
+                    label="Поиск"
+                    single-line
+                    hide-details
+                    class="ml-3"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6">
                   <v-data-footer
                     :pagination="pagination"
                     :options="options"
@@ -105,7 +118,9 @@
                     :items-per-page-options="[10, 50, 100, 250, 500, -1]"
                     :items-per-page-text="'Показать'"
                   />
-                </template>
+                </v-col>
+              </v-row>
+            </template>
           </v-data-table>
         </v-card>
       </v-col>
@@ -163,14 +178,15 @@ export default {
     selected: [],
     lids: [],
     search: "",
+    searchAll: "",
     filtertel: "",
     headers: [
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
-       { text: "Афилятор", value: "afilyator" },
-       { text: "Поставщик", value: "provider" },
-       { text: "Создан", value: "date_created" },
+      { text: "Афилятор", value: "afilyator" },
+      { text: "Поставщик", value: "provider" },
+      { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status" },
       { text: "Сообщение", value: "text" },
     ],
@@ -197,6 +213,28 @@ export default {
     },
   },
   methods: {
+    searchInDB(){
+      
+      let self= this;
+            axios
+        .get("api/Lid/searchlids?search="+self.searchAll)
+        .then((res) => {
+          // console.log(res.data);
+          self.lids = Object.entries(res.data).map((e) => e[1]);
+
+          self.lids.map(function (e) {
+            e.user = self.users.find((u) => u.id == e.user_id).fio;
+            e.date_created = e.created_at.substring(0, 10);
+            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
+            if (e.status_id)
+              e.status = self.statuses.find((s) => s.id == e.status_id).name;
+          });
+          self.disableuser = 0
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     deleteItem() {
       const self = this;
       let tels = [];
@@ -253,6 +291,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+        self.searchAll = ''
     },
     putSelectedLidsDB() {
       const self = this;
@@ -354,6 +393,7 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
+          self.searchAll = ''
         })
         .catch((error) => console.log(error));
     },

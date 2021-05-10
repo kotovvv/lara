@@ -47,6 +47,7 @@ Route::delete('user/{id}', [UsersController::class,'deleteuser']);
 
 Route::post('Lid/newlids', [LidsController::class,'newlids'])->name('Lid.newlids');
 Route::post('Lid/updatelids', [LidsController::class,'updatelids'])->name('Lid.updatelids');
+Route::get('Lid/searchlids', [LidsController::class,'searchlids'])->name('Lid.searchlids');
 Route::post('Lid/changelidsuser', [LidsController::class,'changelidsuser'])->name('Lid.changelidsuser');
 Route::post('Lid/ontime', [LidsController::class,'ontime'])->name('Lid.ontime');
 Route::post('Lid/deletelids', [LidsController::class,'deletelids'])->name('Lid.deletelids');
