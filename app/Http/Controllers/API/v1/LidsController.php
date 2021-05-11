@@ -20,12 +20,41 @@ class LidsController extends Controller
   public function index()
   {
   }
+
+  public function importlid(Request $request)
+  {
+    $insertItem = $request->all();
+    //  Debugbar::info($insertItem);
+    //https://Lovecrm.net/backend/formapi/set_data?afilat_id=29&user_id=49&api_key=15359020085fa4fd4ec8e8a3.63353083&umcfields[email]={1}&umcfields[name]={0}&umcfields[phone]={2}&umcfields[affiliate_user]={3}
+    //{"afilat_id":"29","user_id":"49","api_key":"15359020085fa4fd4ec8e8a3.63353083","umcfields":{"email":"test@test.com","name":"test","phone":"9876543201","affiliate_user":"1"}}
+    //`tel``name``email``provider_id``user_id``afilyator`
+    if ($insertItem['api_key'] != env('API_KEY')) return response('Lid key incorect', 403);
+    $a_lid = [
+      'tel' => $insertItem['umcfields']['phone'],
+      'name' => $insertItem['umcfields']['name'],
+      'email' => $insertItem['umcfields']['email'],
+      'afilyator' => $insertItem['umcfields']['affiliate_user'],
+      'provider_id' => $insertItem['afilat_id'],
+      'user_id' => $insertItem['user_id'],
+      'created_at' => Now(),
+      'updated_at' => Now(),
+      'status_id' => 8,
+      'active' => 1,
+    ];
+
+    $res= DB::table('lids')->insert($a_lid);
+    if ($res) {
+      return response('Lid inserted', 200);
+    }
+  }
+
+
   public function searchlids(Request $request)
   {
     $searchTerm = $request->all();
     //  Debugbar::info($searchTerm);
     //SELECT * FROM lids WHERE `tel` LIKE '%488%' OR `name` LIKE '%488%' OR email LIKE '%488%' OR `text` LIKE '%488%'
-  
+
     return Lid::select('*')
     ->where('name','like',"%{$searchTerm['search']}%")
     ->orwhere('tel','like',"%{$searchTerm['search']}%")
