@@ -370,7 +370,8 @@ return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filter
       axios
         .post("api/Lid/ontime", send)
         .then(function (response) {
-          console.log(response);
+          //console.log(response);
+          todaylids()
         })
         .catch(function (error) {
           console.log(error);
@@ -487,6 +488,12 @@ return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filter
               e.status = self.statuses.find((s) => s.id == e.status_id).name || "";
             }
           });
+todaylids()
+        })
+        .catch((error) => console.log(error));
+    },
+    todaylids(){
+const self = this
           self.todayItems = self.lids.filter(function (l) {
             return (
               new Date(l.ontime).toLocaleDateString() == new Date().toLocaleDateString()
@@ -495,8 +502,6 @@ return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filter
           self.todayItems.map(function (t) {
             t.date = new Date(t.ontime).toLocaleTimeString().substring(0,5);
           });
-        })
-        .catch((error) => console.log(error));
     },
     stylecolor(status_id) {
       // console.log(status_id)
