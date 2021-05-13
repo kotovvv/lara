@@ -346,10 +346,15 @@ export default {
       } else {
         this.selectedStatus = newval[0].status_id;
         this.expanded = this.selected;
-        this.datetime = newval[0].ontime? newval[0].ontime.substring(0,16): ''
+        this.datetime = newval[0].ontime != '0000-00-00 00:00:00'? newval[0].ontime.substring(0,16): ''
         // props.expanded = !props.expanded
       }
     },
+    datetime: function (newval, oldval) {
+      if (newval == null)  {
+        this.setTime()
+      }
+    }
   },
   computed: {
     filteredItems() {
@@ -364,18 +369,23 @@ return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filter
       this.componentKey += 1;
     },
     setTime() {
+      const self = this
       let send = {};
       send.ontime = this.$refs.datetime.formattedDatetime;
+      if (this.datetime == null)  send.ontime = ''
       send.id = this.selected[0].id;
+      self.selected = []
       axios
         .post("api/Lid/ontime", send)
         .then(function (response) {
           //console.log(response);
-          todaylids()
+self.getLids(self.$props.user.id);
+
         })
         .catch(function (error) {
           console.log(error);
         });
+
     },
     currentDateTime() {
       const date = new Date();
@@ -488,7 +498,7 @@ return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filter
               e.status = self.statuses.find((s) => s.id == e.status_id).name || "";
             }
           });
-todaylids()
+self.todaylids()
         })
         .catch((error) => console.log(error));
     },
