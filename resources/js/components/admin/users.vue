@@ -76,14 +76,13 @@
                           label="Группа"
                         ></v-select>
                       </v-col>
-                      <v-col cols="4">
-
+                      <v-col cols="6">
                         <v-switch
                           v-model="editedItem.active"
                           label="Показывать:"
                         ></v-switch>
                       </v-col>
-                    </v-row>
+                       </v-row>
                   </v-container>
                 </v-card-text>
 

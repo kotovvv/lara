@@ -139,6 +139,7 @@ export default {
     imports: [],
     selectedStatus: 8,
     selectedProvider: 0,
+    related_user: [],
     selected: [],
     files: [],
     search: "",
@@ -162,10 +163,21 @@ export default {
     sortOrders: {},
     sortKey: "tel",
   }),
+  watch:{
+    selectedProvider: function(newval){
+      this.users = []
+      this.related_user = []
+      let related_user = this.providers.find((p) => p.id == newval).related_users_id
+      if (related_user.length > 2 ) {
+this.related_user = JSON.parse(related_user)
+this.getUsers();
+      }
+    },
+  },
   mounted() {
     this.getImports();
     this.getProviders();
-    this.getUsers();
+    // this.getUsers();
     this.getStatuses();
   },
   computed: {
@@ -290,7 +302,7 @@ export default {
       axios
         .get("/api/provider")
         .then((res) => {
-          self.providers = res.data.map(({ name, id }) => ({ name, id }));
+          self.providers = res.data.map(({ name, id, related_users_id}) => ({ name, id, related_users_id }));
         })
         .catch((error) => console.log(error));
     },
@@ -314,8 +326,9 @@ export default {
     },
     getUsers() {
       let self = this;
+
       axios
-        .get("/api/getusers")
+        .post("/api/getusers",self.related_user)
         .then((res) => {
           self.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({
             name,

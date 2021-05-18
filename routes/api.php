@@ -39,6 +39,7 @@ Route::post('status_provider', [ProvidersController::class,'status_provider'])->
 Route::post('status_users', [UsersController::class,'status_users'])->name('status_users');
 
 Route::get('getusers', [UsersController::class,'getusers'])->name('getusers');
+Route::post('getusers', [UsersController::class,'getrelatedusers'])->name('getrelatedusers');
 Route::get('users/getroles', [UsersController::class,'getroless'])->name('user.getroles');
 Route::post('user/update', [UsersController::class,'update'])->name('user.update');
 Route::get('userlids/{id}', [LidsController::class,'userLids'])->name('userlids');

@@ -174,6 +174,21 @@ class UsersController extends Controller
       // ->groupBy('users.id')
       ->get();
   }
+  public function getrelatedusers(Request $request)
+  {
+$related_users = $request->All();
+if (count($related_users) == 0) return false;
+
+    return User::select(['users.*', DB::raw('(SELECT COUNT(user_id) FROM lids WHERE lids.user_id = users.id) as hmlids ')])
+
+      ->where('users.role_id', '>', 1)
+      ->where('users.active', 1)
+      ->whereIn('id', $related_users)
+      // ->leftJoin('lids', 'users.id', '=', 'lids.user_id')
+      ->orderBy('users.role_id', 'asc')
+      // ->groupBy('users.id')
+      ->get();
+  }
 
   public function getroles()
   {

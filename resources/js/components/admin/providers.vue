@@ -35,12 +35,22 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="6">
+                  <!-- <v-col cols="6">
                     <v-switch
                       v-model="editedItem.active"
                       label="Показывать:"
                     ></v-switch>
-                  </v-col>
+                  </v-col> -->
+                  <v-col cols="12">
+                        <v-select
+                        multiple
+                          :items="users"
+                          v-model="editedItem.related_users_id"
+                          item-text="name"
+                          item-value="id"
+                          label="Связанные пользователи"
+                        ></v-select>
+                      </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -101,6 +111,7 @@ export default {
     dialog: false,
     dialogDelete: false,
     providers: [],
+    users: [],
     headers: [
       { text: "Наименование", value: "name" },
       { text: "Показывать", value: "active" },
@@ -137,9 +148,19 @@ export default {
   created() {
     // this.initialize(),
     this.getProvider();
+    this.getUsers();
   },
 
   methods: {
+        getUsers() {
+      let self = this;
+      axios
+        .get("/api/users")
+        .then((res) => {
+          self.users = res.data;
+        })
+        .catch((error) => console.log(error));
+    },
     report(item){
       if (this.provider == item) {this.provider = {}; return}
       this.provider = item
@@ -150,6 +171,12 @@ export default {
         .get("/api/providerall")
         .then((res) => {
           self.providers = res.data;
+          console.log(res.data)
+          self.providers = self.providers.map(function(p) {
+            if(p.related_users_id.length > 0) p.related_users_id = JSON.parse(p.related_users_id);
+            return p;
+            })
+          console.log(self.providers)
         })
         .catch((error) => console.log(error));
     },
