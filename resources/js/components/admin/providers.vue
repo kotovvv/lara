@@ -171,12 +171,10 @@ export default {
         .get("/api/providerall")
         .then((res) => {
           self.providers = res.data;
-          console.log(res.data)
           self.providers = self.providers.map(function(p) {
             if(p.related_users_id.length > 0) p.related_users_id = JSON.parse(p.related_users_id);
             return p;
             })
-          console.log(self.providers)
         })
         .catch((error) => console.log(error));
     },

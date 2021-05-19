@@ -167,9 +167,9 @@ export default {
     selectedProvider: function(newval){
       this.users = []
       this.related_user = []
-      let related_user = this.providers.find((p) => p.id == newval).related_users_id
-      if (related_user.length > 2 ) {
-this.related_user = JSON.parse(related_user)
+      let rel_user = this.providers.find((p) => p.id == newval).related_users_id
+      if (rel_user.length > 2 ) {
+this.related_user = JSON.parse(rel_user)
 this.getUsers();
       }
     },
