@@ -276,6 +276,10 @@ export default {
       ) {
         send.data = this.$refs.datatable.$children[0].filteredItems;
       }
+      if(self.$props.user.role_id == 2){
+        //CallBack user not change
+        send.data = send.data.filter((f) => f.status_id != 9) 
+      }
       axios
         .post("api/Lid/changelidsuser", send)
         .then(function (response) {
