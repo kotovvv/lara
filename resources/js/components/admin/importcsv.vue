@@ -69,7 +69,7 @@
               :headers="headers"
               :search="search"
               :single-select="false"
-              item-key="tel"
+              item-key="tel+afilyator"
               show-select
               @click:row="clickrow"
               :items="filteredItems"
@@ -412,12 +412,12 @@ this.getUsers();
         (result) => {
           let vm = this;
           /* handle a successful result */
-          // console.log(this.fileinput);
+          // console.log(vm.csvJSON(this.fileinput));
           // reader.onload = function(event) {
           // arr.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
           vm.parse_csv = vm
             .csvJSON(this.fileinput)
-            .filter((v, i, a) => a.findIndex((t) => t.tel == v.tel) === i);
+            .filter((v, i, a) => a.findIndex((t) => t.afilyator+t.tel == v.afilyator+v.tel) === i);
           // console.log(vm.parse_csv);
 
           // };

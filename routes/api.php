@@ -43,16 +43,20 @@ Route::post('getusers', [UsersController::class,'getrelatedusers'])->name('getre
 Route::get('users/getroles', [UsersController::class,'getroless'])->name('user.getroles');
 Route::post('user/update', [UsersController::class,'update'])->name('user.update');
 Route::get('userlids/{id}', [LidsController::class,'userLids'])->name('userlids');
+Route::get('getuserlids/{id}', [LidsController::class,'getuserLids'])->name('getuserlids');
 Route::delete('provider/{id}', [ProvidersController::class,'destroy']);
 Route::delete('user/{id}', [UsersController::class,'deleteuser']);
 
 Route::post('Lid/newlids', [LidsController::class,'newlids'])->name('Lid.newlids');
 Route::post('Lid/updatelids', [LidsController::class,'updatelids'])->name('Lid.updatelids');
 Route::get('Lid/searchlids', [LidsController::class,'searchlids'])->name('Lid.searchlids');
+Route::get('getlidid', [LidsController::class,'getlidid'])->name('getlidid');
+Route::get('getlidonid/{id}', [LidsController::class,'getlidonid'])->name('getlidonid');
 Route::get('set_data', [LidsController::class,'importlid'])->name('Lid.importlid');
 Route::post('Lid/changelidsuser', [LidsController::class,'changelidsuser'])->name('Lid.changelidsuser');
 Route::post('Lid/ontime', [LidsController::class,'ontime'])->name('Lid.ontime');
 Route::post('Lid/deletelids', [LidsController::class,'deletelids'])->name('Lid.deletelids');
 Route::post('log/add', [LogsController::class,'add'])->name('log.add');
 Route::post('log/tellog', [LogsController::class,'tellog'])->name('log.tellog');
+Route::get('getlogonid/{id}', [LogsController::class,'getlogonid'])->name('getlogonid');
 

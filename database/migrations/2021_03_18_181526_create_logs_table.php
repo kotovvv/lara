@@ -18,6 +18,7 @@ class CreateLogsTable extends Migration
             $table->char('tel', 13);
             $table->foreignId('status_id')->nullable()->constrained('statuses');
             $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('lid_id')->constrained('lids');
             $table->string('text');
             $table->timestamps();
         });

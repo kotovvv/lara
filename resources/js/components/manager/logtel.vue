@@ -28,29 +28,29 @@
 <script>
 import axios from "axios";
 export default {
-  props: ['tel'],
+  props: ['lid_id'],
  data: () => ({
    logs:[],
 
  }),
  watch: {
-  tel: {
+  lid_id: {
 
     immediate: true,
     handler (val, oldVal) {
 
-      this.tellog(this.$props.tel)
+      this.tellog(this.$props.id)
     }
   }
 },
 mounted: function () {
-this.tellog(this.$props.tel)
+this.tellog(this.$props.lid_id)
 },
  methods: {
-   tellog(tel){
+   tellog(lid_id){
 const self = this;
       axios
-        .post("api/log/tellog", {tel:tel})
+        .post("api/log/tellog", {lid_id:lid_id})
         .then(function (res) {
 
           if(res.data.length)  self.logs = res.data

@@ -15,6 +15,7 @@ class AddAfilatorLid extends Migration
     {
       Schema::table('lids', function (Blueprint $table) {
         $table->string('afilyator',200);
+        $table->unique(['tel', 'providers','afilyator']);
 });
     }
 

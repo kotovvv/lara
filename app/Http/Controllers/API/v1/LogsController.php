@@ -21,6 +21,16 @@ class LogsController extends Controller
         //
     }
 
+    public function getlogonid(Request $request,$lid_id)
+    {
+        $getlog = $request->all();
+    //  Debugbar::info($insertItem);
+
+    if ($getlog['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    return Log::where('lid_id',$lid_id)->get();
+
+    }
+
 
     public function add(Request $request)
     {
@@ -28,6 +38,7 @@ class LogsController extends Controller
         $log = new Log;
 
         $log->tel = $request->tel;
+        $log->lid_id = $request->lid_id;
         $log->user_id = $request->user_id;
         if (isset($request->status_id)) {
             $log->status_id = $request->status_id;
@@ -38,7 +49,7 @@ class LogsController extends Controller
                 'text' => $request->text,
                 'updated_at' => Now()
               ];
-            DB::table('lids')->where('tel', $request->tel)->update($a_lid);
+            DB::table('lids')->where('id', $request->id)->update($a_lid);
         }
 
         $log->save();
@@ -51,7 +62,7 @@ class LogsController extends Controller
             ->select('users.fio', 'statuses.name', 'statuses.color', 'logs.text', 'logs.created_at')//,'logs.tel'
             ->leftJoin('statuses', 'logs.status_id', '=', 'statuses.id')
             ->join('users', 'logs.user_id', '=', 'users.id')
-            ->where('logs.tel', $request->tel)
+            ->where('logs.lid_id', $request->lid_id)
             ->reorder('logs.created_at', 'desc')
             ->get();
         return $logs;

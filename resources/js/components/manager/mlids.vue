@@ -15,14 +15,14 @@
             </v-card-title>
           </v-col>
           <v-col cols="3" class="pt-3 mt-4">
-          <v-select
-            v-model="filterProviders"
-            :items="providers"
-            label="Фильтр по поставщикам"
-            item-text="name"
-            item-value="id"
-          ></v-select>
-        </v-col>
+            <v-select
+              v-model="filterProviders"
+              :items="providers"
+              label="Фильтр по поставщикам"
+              item-text="name"
+              item-value="id"
+            ></v-select>
+          </v-col>
           <v-col cols="3">
             <v-card-title>
               <v-text-field
@@ -237,7 +237,8 @@
                           label="Дата/время"
                           @input="setTime"
                           v-model="datetime"
-                          :datetime="datetime" >
+                          :datetime="datetime"
+                        >
                         </v-datetime-picker>
                       </v-col>
                     </v-row>
@@ -319,9 +320,9 @@ export default {
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
-       { text: "Афилятор", value: "afilyator" },
-       { text: "Поставщик", value: "provider" },
-       { text: "Создан", value: "date_created" },
+      { text: "Афилятор", value: "afilyator" },
+      { text: "Поставщик", value: "provider" },
+      { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status" },
       { text: "Дата", value: "date" },
       { text: "Сообщение", value: "text" },
@@ -346,21 +347,28 @@ export default {
       } else {
         this.selectedStatus = newval[0].status_id;
         this.expanded = this.selected;
-        this.datetime = newval[0].ontime != '0000-00-00 00:00:00'? newval[0].ontime.substring(0,16): ''
+        this.datetime =
+          newval[0].ontime != "0000-00-00 00:00:00"
+            ? newval[0].ontime.substring(0, 16)
+            : "";
         // props.expanded = !props.expanded
       }
     },
     datetime: function (newval, oldval) {
-      if (newval == null)  {
-        this.setTime()
+      if (newval == null) {
+        this.setTime();
       }
-    }
+    },
   },
   computed: {
     filteredItems() {
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
-return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filterProviders || i.provider_id == this.filterProviders) && (!this.filtertel || reg.test(i.tel));
+        return (
+          (!this.filterStatus || i.status_id == this.filterStatus) &&
+          (!this.filterProviders || i.provider_id == this.filterProviders) &&
+          (!this.filtertel || reg.test(i.tel))
+        );
       });
     },
   },
@@ -369,23 +377,21 @@ return (!this.filterStatus || i.status_id == this.filterStatus) && (!this.filter
       this.componentKey += 1;
     },
     setTime() {
-      const self = this
+      const self = this;
       let send = {};
       send.ontime = this.$refs.datetime.formattedDatetime;
-      if (this.datetime == null)  send.ontime = ''
+      if (this.datetime == null) send.ontime = "";
       send.id = this.selected[0].id;
-      self.selected = []
+      self.selected = [];
       axios
         .post("api/Lid/ontime", send)
         .then(function (response) {
           //console.log(response);
-self.getLids(self.$props.user.id);
-
+          self.getLids(self.$props.user.id);
         })
         .catch(function (error) {
           console.log(error);
         });
-
     },
     currentDateTime() {
       const date = new Date();
@@ -404,9 +410,10 @@ self.getLids(self.$props.user.id);
       let send = {};
       let send_el = {};
       send_el.tel = eli.tel;
+      send_el.lid_id = eli.id;
       send_el.text = self.text;
       send_el.user_id = eli.user_id;
-      send.id = eli.id;
+      send.lid_id = eli.id;
       send.data = send_el;
 
       axios
@@ -493,25 +500,27 @@ self.getLids(self.$props.user.id);
             e.date = e.updated_at.substring(0, 10);
             e.date_created = e.created_at.substring(0, 10);
             // e.mess = e.text;
-             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
+            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
             if (e.status_id) {
-              e.status = self.statuses.find((s) => s.id == e.status_id).name || "";
+              e.status =
+                self.statuses.find((s) => s.id == e.status_id).name || "";
             }
           });
-self.todaylids()
+          self.todaylids();
         })
         .catch((error) => console.log(error));
     },
-    todaylids(){
-const self = this
-          self.todayItems = self.lids.filter(function (l) {
-            return (
-              new Date(l.ontime).toLocaleDateString() == new Date().toLocaleDateString()
-            );
-          });
-          self.todayItems.map(function (t) {
-            t.date = new Date(t.ontime).toLocaleTimeString().substring(0,5);
-          });
+    todaylids() {
+      const self = this;
+      self.todayItems = self.lids.filter(function (l) {
+        return (
+          new Date(l.ontime).toLocaleDateString() ==
+          new Date().toLocaleDateString()
+        );
+      });
+      self.todayItems.map(function (t) {
+        t.date = new Date(t.ontime).toLocaleTimeString().substring(0, 5);
+      });
     },
     stylecolor(status_id) {
       // console.log(status_id)
@@ -521,7 +530,7 @@ const self = this
         this.statuses.find((e) => e.id == status_id).color
       );
     },
-        getProviders() {
+    getProviders() {
       let self = this;
       axios
         .get("/api/provider")

@@ -15,7 +15,7 @@ class CreateLidsTable extends Migration
     {
         Schema::create('lids', function (Blueprint $table) {
             $table->id();
-            $table->char('tel', 13)->unique();
+            $table->char('tel', 13);
             $table->string('name',60);
             $table->string('email',60);
             $table->foreignId('provider_id')->constrained('providers');

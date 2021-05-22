@@ -28,7 +28,7 @@ class LidsController extends Controller
     //https://Lovecrm.net/backend/formapi/set_data?afilat_id=29&user_id=49&api_key=15359020085fa4fd4ec8e8a3.63353083&umcfields[email]={1}&umcfields[name]={0}&umcfields[phone]={2}&umcfields[affiliate_user]={3}
     //{"afilat_id":"29","user_id":"49","api_key":"15359020085fa4fd4ec8e8a3.63353083","umcfields":{"email":"test@test.com","name":"test","phone":"9876543201","affiliate_user":"1"}}
     //`tel``name``email``provider_id``user_id``afilyator`
-    if ($insertItem['api_key'] != env('API_KEY')) return response('Lid key incorect', 403);
+    if ($insertItem['api_key'] != env('API_KEY')) return response('Key incorect', 403);
     $a_lid = [
       'tel' => $insertItem['umcfields']['phone'],
       'name' => $insertItem['umcfields']['name'],
@@ -42,7 +42,9 @@ class LidsController extends Controller
       'active' => 1,
     ];
 
-    $res= DB::table('lids')->insert($a_lid);
+    // $res= DB::table('lids')->insert($a_lid);
+   $res= Lid::updateOrCreate(['tel' => $a_lid['tel'],'provider_id'=> $a_lid['provider_id'],'afilyator'=>  $a_lid['afilyator']], $a_lid);
+
     if ($res) {
       return response('Lid inserted', 200);
     }
@@ -118,6 +120,7 @@ class LidsController extends Controller
     $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
 
 
+    $a_lid['lid_id'] = $lid['id'];
     $a_lid['tel'] = $lid['tel'];
     $a_lid['created_at'] = Now();
 
@@ -144,20 +147,50 @@ class LidsController extends Controller
         'user_id' => $data['user_id'],
         'created_at' => Now()
       ];
-      Debugbar::info($a_lid);
+      // Debugbar::info($a_lid);
       if (isset($data['provider_id']))  $a_lid['provider_id'] = $data['provider_id'];
       if (isset($data['status_id']))  $a_lid['status_id'] = $data['status_id'];
 
       // $status_id = !empty($data['status_id']) ? $data['status_id'] : null;
-      Lid::updateOrCreate(['tel' => $lid['tel']], $a_lid);
+      Lid::updateOrCreate(['tel' => $lid['tel'],'provider_id'=> $a_lid['provider_id'],'afilyator'=>  $a_lid['afilyator']], $a_lid);
     }
     return response('Lids imported', 200);
   }
 
   public function userLids($id)
   {
-    return Lid::all()->where('active', 1)->where('user_id', $id);
+    return Lid::all()->where('user_id', $id);
   }
+
+  public function getuserLids(Request $request,$id)
+  {
+    $getlid = $request->all();
+    if ($getlid['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    return Lid::all()->where('user_id', $id);
+  }
+
+  public function getlidid(Request $request)
+  {
+
+    $getlidid = $request->all();
+    if ($getlidid['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    $a_lid = [
+      'tel' => $getlidid['umcfields']['phone'],
+      'afilyator' => $getlidid['umcfields']['affiliate_user'],
+      'provider_id' => $getlidid['provider_id'],
+    ];
+    return Lid::select('id')->where($a_lid)->get();
+
+  }
+
+  public function getlidonid(Request $request,$id)
+  {
+    $req = $request->all();
+    if ($req['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+
+    return Lid::where('id',$id)->get();
+  }
+
   /**
    * Display the specified resource.
    *
@@ -204,11 +237,11 @@ class LidsController extends Controller
 
   public function deletelids(Request $request)
   {
-    $tels = $request->all();
+    $lids = $request->all();
     // Debugbar::info($data);
 
-    Lid::whereIn('tel', $tels)->delete();
-    Log::whereIn('tel', $tels)->delete();
+    Lid::whereIn('id', $lids)->delete();
+    Log::whereIn('lid_id', $lids)->delete();
   }
 
   /**

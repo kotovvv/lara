@@ -15,6 +15,7 @@ class AddIdndexTelLog extends Migration
     {
         Schema::table('logs', function (Blueprint $table) {
             $table->index('tel');
+            $table->index('lid_id');
         });
     }
 

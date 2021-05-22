@@ -237,17 +237,17 @@ export default {
     },
     deleteItem() {
       const self = this;
-      let tels = [];
+      let ids = [];
       this.filteredItems.forEach(function (el) {
-        tels.push(el.tel);
+        ids.push(el.id);
         self.lids.splice(
-          self.lids.indexOf(self.lids.find((l) => l.tel == el.tel)),
+          self.lids.indexOf(self.lids.find((l) => l.id == el.id)),
           1
         );
       });
 
       axios
-        .post("api/Lid/deletelids", tels)
+        .post("api/Lid/deletelids", ids)
         .then(function (response) {
           self.getUsers();
           // self.getLids(send.user_id);
