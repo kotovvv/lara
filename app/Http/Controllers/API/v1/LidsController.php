@@ -183,12 +183,20 @@ class LidsController extends Controller
 
   }
 
+  public function getlidsontime(Request $request)
+  {
+    $req = $request->all();
+    if ($req['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+return Lid::select('id')->whereBetween('created_at', [$req['start'], $req['end']])->get();
+   
+  }
+
   public function getlidonid(Request $request,$id)
   {
     $req = $request->all();
     if ($req['api_key'] != env('API_KEY')) return response('Key incorect', 403);
 
-    return Lid::where('id',$id)->get();
+     return Lid::where('id',$id)->get();
   }
 
   /**
