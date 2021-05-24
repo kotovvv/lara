@@ -49,7 +49,7 @@ class LogsController extends Controller
                 'text' => $request->text,
                 'updated_at' => Now()
               ];
-            DB::table('lids')->where('id', $request->id)->update($a_lid);
+            DB::table('lids')->where('id', $log->lid_id)->update($a_lid);
         }
 
         $log->save();

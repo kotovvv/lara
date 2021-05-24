@@ -130,7 +130,7 @@
                     </v-row>
                     <v-row>
                       <v-col cols="12">
-                        <logtel :tel="tel" />
+                        <logtel :lid_id="lid_id" />
                       </v-col>
                     </v-row>
                   </td>
@@ -244,7 +244,7 @@
                     </v-row>
                     <v-row>
                       <v-col cols="12">
-                        <logtel :tel="tel" :key="componentKey" />
+                        <logtel :lid_id="lid_id" :key="componentKey" />
                       </v-col>
                     </v-row>
                   </td>
@@ -299,6 +299,7 @@ export default {
     componentKey: 0,
     text: null,
     tel: "",
+    lid_id:'',
     expanded: ["Donut"],
     singleExpand: true,
     datetime: "",
@@ -348,7 +349,7 @@ export default {
         this.selectedStatus = newval[0].status_id;
         this.expanded = this.selected;
         this.datetime =
-          newval[0].ontime != "0000-00-00 00:00:00"
+          newval[0].ontime != "0000-00-00 00:00:00" && newval[0].ontime != null 
             ? newval[0].ontime.substring(0, 16)
             : "";
         // props.expanded = !props.expanded
@@ -463,7 +464,7 @@ export default {
 
     clickrow(item, row) {
       row.select(!row.isSelected);
-      if (!row.isSelected) this.tel = item.tel;
+      if (!row.isSelected) {this.tel = item.tel;this.lid_id = item.id; }
       else this.tel = "";
     },
 
