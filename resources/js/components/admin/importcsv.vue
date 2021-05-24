@@ -353,6 +353,7 @@ this.getUsers();
         .catch((error) => console.log(error));
     },
     onFileChange(f) {
+      if (f == null) return
       const ftype = [
         "text/comma-separated-values",
         "text/csv",
