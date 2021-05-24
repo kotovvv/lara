@@ -423,6 +423,7 @@ export default {
           // console.log(response);
           self.forceRerender();
           self.text = null;
+          self.lids.find((f) => f.id == send_el.lid_id).text = send_el.text
         })
         .catch(function (error) {
           console.log(error);
