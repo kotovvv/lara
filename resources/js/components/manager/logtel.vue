@@ -35,11 +35,9 @@ export default {
  }),
  watch: {
   lid_id: {
-
     immediate: true,
     handler (val, oldVal) {
-
-      this.tellog(this.$props.id)
+      this.tellog(this.$props.lid_id)
     }
   }
 },
