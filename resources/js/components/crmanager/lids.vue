@@ -54,6 +54,7 @@
             ></v-text-field>
           </v-card-title>
         </v-col>
+
         <v-col cols="3" class="pt-3 mt-4">
           <v-select
             v-model="selectedStatus"
@@ -100,7 +101,7 @@
               }"
             >
               <v-row>
-                <v-col cols="6" >
+                <v-col cols="4">
                   <v-text-field
                     v-model="search"
                     append-icon="mdi-magnify"
@@ -109,6 +110,18 @@
                     hide-details
                     class="ml-3"
                   ></v-text-field>
+                </v-col>
+                <!-- v-if="telsDuplicates.length > 0" -->
+                <v-col cols="2"  >
+                  <v-card-title>
+                    <v-checkbox v-model="showDuplicates" class="mt-0" @click="getDuplicates">
+                      <template v-slot:label>
+                        <v-icon small> mdi-phone </v-icon>
+                        <v-icon small> mdi-phone </v-icon>
+                      </template>
+                      ></v-checkbox
+                    >
+                  </v-card-title>
                 </v-col>
                 <v-col cols="6">
                   <v-data-footer
@@ -194,30 +207,46 @@ export default {
     sortOrders: {},
     sortKey: "tel",
     providers: [],
+    showDuplicates: false,
+    telsDuplicates: [],
   }),
   mounted: function () {
     this.getProviders();
     this.getUsers();
     this.getStatuses();
+    
   },
   computed: {
     filteredItems() {
+      // if (this.showDuplicates && this.telsDuplicates.length > 0)
+      //   return this.telsDuplicates;
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
         return (
           (!this.filterStatus || i.status_id == this.filterStatus) &&
           (!this.filterProviders || i.provider_id == this.filterProviders) &&
-          (!this.filtertel || reg.test(i.tel))
+          (!this.filtertel || reg.test(i.tel)) &&
+          (!this.showDuplicates || this.telsDuplicates.includes(i.id))
         );
       });
     },
   },
   methods: {
-    searchInDB(){
-      
-      let self= this;
-            axios
-        .get("api/Lid/searchlids?search="+self.searchAll)
+    getDuplicates() {
+      this.telsDuplicates = this.lids.filter(this.duplicatesOnly).map((f) => f.id );
+    },
+    duplicatesOnly(v1, i1, self) {
+      let ndx = self.findIndex(function (v2, i2) {
+        // make sure not looking at the same object (using index to verify)
+        // use JSON.stringify for object comparison
+        return i1 != i2 && v1.tel == v2.tel;
+      });
+      return i1 != ndx && ndx != -1;
+    },
+    searchInDB() {
+      let self = this;
+      axios
+        .get("api/Lid/searchlids?search=" + self.searchAll)
         .then((res) => {
           // console.log(res.data);
           self.lids = Object.entries(res.data).map((e) => e[1]);
@@ -229,7 +258,7 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
-          self.disableuser = 0
+          self.disableuser = 0;
         })
         .catch(function (error) {
           console.log(error);
@@ -276,9 +305,9 @@ export default {
       ) {
         send.data = this.$refs.datatable.$children[0].filteredItems;
       }
-      if(self.$props.user.role_id == 2){
+      if (self.$props.user.role_id == 2) {
         //CallBack user not change
-        send.data = send.data.filter((f) => f.status_id != 9) 
+        send.data = send.data.filter((f) => f.status_id != 9);
       }
       axios
         .post("api/Lid/changelidsuser", send)
@@ -295,7 +324,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-        self.searchAll = ''
+      self.searchAll = "";
     },
     putSelectedLidsDB() {
       const self = this;
@@ -397,7 +426,8 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
-          self.searchAll = ''
+          self.searchAll = "";
+          // self.getDuplicates();
         })
         .catch((error) => console.log(error));
     },
