@@ -143,11 +143,16 @@ class LidsController extends Controller
       $a_lid = [
         'name' => strval ($lid['name']),
         'email' => $lid['email'],
-        'afilyator' => strval ($lid['afilyator']),
+        // 'afilyator' => strval ($lid['afilyator']),
         'user_id' => $data['user_id'],
         'created_at' => Now()
       ];
       // Debugbar::info($a_lid);
+      if (isset($data['afilyator']))  {
+        $a_lid['afilyator'] = $data['afilyator'];
+      } else{
+        $a_lid['afilyator'] = '';
+      }
       if (isset($data['provider_id']))  $a_lid['provider_id'] = $data['provider_id'];
       if (isset($data['status_id']))  $a_lid['status_id'] = $data['status_id'];
 
@@ -159,7 +164,7 @@ class LidsController extends Controller
 
   public function userLids($id)
   {
-    return Lid::all()->where('user_id', $id);
+    return Lid::all()->where('user_id', $id)->orderBy('created_at', 'desc')->get();
   }
 
   public function getuserLids(Request $request,$id)
