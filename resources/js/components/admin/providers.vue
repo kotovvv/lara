@@ -114,7 +114,7 @@ export default {
     users: [],
     headers: [
       { text: "Наименование", value: "name" },
-      { text: "Показывать", value: "active" },
+
       { text: "Редактировать", value: "actions", sortable: false },
       { text: "Отчёт", value: "report", sortable: false },
     ],

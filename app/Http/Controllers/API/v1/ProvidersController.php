@@ -20,7 +20,7 @@ class ProvidersController extends Controller
      */
     public function index()
     {
-        return Provider::all()->where('active', 1);
+        return Provider::all();
     }
 
     public function getall()

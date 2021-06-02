@@ -148,8 +148,8 @@ class LidsController extends Controller
         'created_at' => Now()
       ];
       // Debugbar::info($a_lid);
-      if (isset($data['afilyator']))  {
-        $a_lid['afilyator'] = $data['afilyator'];
+      if (isset($lid['afilyator']))  {
+        $a_lid['afilyator'] = $lid['afilyator'];
       } else{
         $a_lid['afilyator'] = '';
       }
@@ -164,7 +164,7 @@ class LidsController extends Controller
 
   public function userLids($id)
   {
-    return Lid::all()->where('user_id', $id)->orderBy('created_at', 'desc')->get();
+    return Lid::where('user_id', $id)->orderBy('created_at', 'desc')->get();
   }
 
   public function getuserLids(Request $request,$id)
