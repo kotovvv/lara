@@ -146,10 +146,15 @@ class UsersController extends Controller
     // SELECT id, NAME,color FROM `statuses` WHERE `active` = 1 ORDER BY `order`
     $statuses = DB::select(DB::raw("SELECT id, `name`, color FROM `statuses` WHERE `active` = 1 ORDER BY `order` ASC"));
     foreach ($statuses as $status) {
-
       $sql = "SELECT '" . $status->color . "' color,'" . $status->name . "'  text ";
-      foreach ($a_users as $user_id) {
-        $sql .= ",(SELECT COUNT(*) FROM `logs` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `status_id` = " . $status->id . ") u" . $user_id;
+      if ($status->id == 8) {
+        foreach ($a_users as $user_id) {
+          $sql .= ",(SELECT COUNT(*) FROM `lids` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `status_id` = 8) u" . $user_id;
+        }
+      } else {
+        foreach ($a_users as $user_id) {
+          $sql .= ",(SELECT COUNT(*) FROM `logs` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `status_id` = " . $status->id . ") u" . $user_id;
+        }
       }
       $sts = DB::select(DB::raw($sql));
       $repoprt[] =  $sts[0];
@@ -176,8 +181,8 @@ class UsersController extends Controller
   }
   public function getrelatedusers(Request $request)
   {
-$related_users = $request->All();
-if (count($related_users) == 0) return false;
+    $related_users = $request->All();
+    if (count($related_users) == 0) return false;
 
     return User::select(['users.*', DB::raw('(SELECT COUNT(user_id) FROM lids WHERE lids.user_id = users.id) as hmlids ')])
 
