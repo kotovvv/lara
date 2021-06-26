@@ -65,8 +65,10 @@ export default {
       axios
         .post("/api/status_provider", { provider_id: self.provider.id })
         .then((res) => {
+          if(res.data.length > 0){
           self.statuses = res.data.statuses;
           self.hm = res.data.hm[0].hm;
+          }
         })
         .catch((error) => console.log(error));
     },

@@ -11,6 +11,7 @@ class Provider extends Model
     protected $fillable = [
       'name',
       'tel',
-      'active'
+      'active',
+      'related_users_id'
   ];
 }

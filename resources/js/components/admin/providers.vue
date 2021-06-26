@@ -180,6 +180,7 @@ export default {
     },
     saveProvider(provider) {
       let self = this;
+      if(Array.isArray(provider.related_users_id)) provider.related_users_id = JSON.parse(provider.related_users_id)
       axios
         .post("/api/provider", provider)
         .then((res) => {
@@ -204,7 +205,7 @@ export default {
       axios
       .delete("/api/provider/"+ this.editedItem.id)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
       })
       .catch((error) => console.log(error));
       this.providers.splice(this.editedIndex, 1);

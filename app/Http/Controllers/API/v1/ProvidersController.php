@@ -41,6 +41,7 @@ class ProvidersController extends Controller
         $data = $request->all();
 
         $req = [];
+        if(isset($data['provider_id'])){
         $statuses =  DB::select(DB::raw("SELECT
         `statuses`.`name`
         , COUNT(`statuses`.`name`) AS `hm`
@@ -57,7 +58,7 @@ class ProvidersController extends Controller
     ORDER BY `hm` DESC"));
         $req['hm'] = DB::select(DB::raw("SELECT DATE(`created_at`) dateadd,COUNT(*) hm FROM `lids` WHERE `provider_id` = " . $data['provider_id']));
         $req['statuses'] = $statuses;
-
+}
         return $req;
     }
 
@@ -138,7 +139,7 @@ class ProvidersController extends Controller
      */
     public function destroy($id)
     {
-
+Provider::where('id',$id)->delete();
         $tels =  Lid::select('tel')->where('provider_id', '=', $id);
         Log::whereIn('tel', $tels)->delete();
         Lid::where('provider_id', '=', $id)->delete();
