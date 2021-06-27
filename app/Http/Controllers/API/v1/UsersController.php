@@ -120,49 +120,76 @@ class UsersController extends Controller
 
   public function status_users(Request $request)
   {
-    // Debugbar::info($sql);
     $repoprt = [];
     $req = $request->All();
+    // Debugbar::info($req);
     $a_users = $req['users'];
     $datefrom = $req['datefrom'];
     $dateto = $req['dateto'];
 
-    $sql = "SELECT '' color,'Пользователи' text ";
+   
     foreach ($a_users as $user_id) {
-      $sql .= ",(SELECT fio FROM `users` WHERE id = " . $user_id . ") u" . $user_id;
+      $sql = "SELECT fio FROM `users` WHERE id = " . $user_id;
     }
     $fio = DB::select(DB::raw($sql));
-    $repoprt[] =  $fio[0];
 
-    $sql = "SELECT '' color,'Всего лидов' text ";
     foreach ($a_users as $user_id) {
-      $sql .= ",(SELECT COUNT(*) FROM `lids` WHERE `user_id` =  " . $user_id . ") u" . $user_id;
+      $sql = "SELECT COUNT(*) n FROM `lids` WHERE `user_id` =  " . $user_id ;
     }
     $all = DB::select(DB::raw($sql));
-    $repoprt[] =  $all[0];
 
-
-
-    // SELECT id, NAME,color FROM `statuses` WHERE `active` = 1 ORDER BY `order`
-    $statuses = DB::select(DB::raw("SELECT id, `name`, color FROM `statuses` WHERE `active` = 1 ORDER BY `order` ASC"));
-    foreach ($statuses as $status) {
-      $sql = "SELECT '" . $status->color . "' color,'" . $status->name . "'  text ";
-      if ($status->id == 8) {
-        foreach ($a_users as $user_id) {
-          $sql .= ",(SELECT COUNT(*) FROM `lids` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `status_id` = 8) u" . $user_id;
-        }
-      } else {
-        foreach ($a_users as $user_id) {
-          $sql .= ",(SELECT COUNT(*) FROM `logs` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `status_id` = " . $status->id . ") u" . $user_id;
-        }
-      }
-      $sts = DB::select(DB::raw($sql));
-      $repoprt[] =  $sts[0];
+    $current_date = $datefrom;
+    // write dates 
+    
+    $repoprt[] =  ['color' => '', 'col' => ['Пользователь', $fio[0]->fio]];
+    $repoprt[] =['color' => '', 'col' => ['Всего лидов', $all[0]->n]];
+    $row_dates = ['color' => '', 'col' => ['Даты']];
+    $row_added = ['color' => '', 'col' => ['Добавлено']];
+    $row_status = [];
+    while (strtotime($current_date) <= strtotime($dateto)) {
+      $row_dates['col'][] = $current_date;
+      $sql = "SELECT COUNT(*) n FROM `lids` WHERE `user_id` = " . $a_users[0] . " AND CAST(created_at AS DATE) = '" . $current_date . "'";
+      $new = DB::select(DB::raw($sql));
+      $row_added['col'][] = $new[0]->n;
+      // 
+      $current_date = date("Y-m-d", strtotime("+1 day", strtotime($current_date)));
     }
+    $repoprt[] = $row_dates;
+    $repoprt[] = $row_added;
+    // Debugbar::info($new);
+    $statuses = DB::select(DB::raw("SELECT id, `name`, color FROM `statuses` WHERE `active` = 1 ORDER BY `order` ASC"));
+
+    foreach ($statuses as $status) {
+      $current_date = $datefrom;
+      $col = [$status->name];
+       while (strtotime($current_date) <= strtotime($dateto)) {
+         $sql = "SELECT COUNT(*) n FROM `logs` WHERE `user_id` = " . $a_users[0] . " AND CAST(created_at AS DATE) = '" . $current_date . "'  AND `status_id` = " . $status->id ;
+         $sts = DB::select(DB::raw($sql));
+         $col[] =  $sts[0]->n;
+        //  Debugbar::info($sql);
+      $current_date = date("Y-m-d", strtotime("+1 day", strtotime($current_date)));
+       }
+       $repoprt[] = ['color' => $status->color,'col'=> $col ];
+    }
+    // $repoprt[] = $row_status;
+   
+    // SELECT id, NAME,color FROM `statuses` WHERE `active` = 1 ORDER BY `order`
+    // $statuses = DB::select(DB::raw("SELECT id, `name`, color FROM `statuses` WHERE `active` = 1 ORDER BY `order` ASC"));
+    // foreach ($statuses as $status) {
+    //   $sql = "SELECT '" . $status->color . "' color,'" . $status->name . "'  text ";
+    //   if ($status->id == 8) {
+    //     foreach ($a_users as $user_id) {
+    //       $sql .= ",(SELECT COUNT(*) FROM `lids` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `status_id` = 8) u" . $user_id;
+    //     }
+    //   } else {
+    //     foreach ($a_users as $user_id) {
+    //       $sql .= ",(SELECT COUNT(*) FROM `logs` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `status_id` = " . $status->id . ") u" . $user_id;
+    //     }
+    //   }
+    //   $sts = DB::select(DB::raw($sql));
+    //   $repoprt['status'] =  $sts[0];
+    // }
     return $repoprt;
-    // SELECT 'Пользователи',(SELECT fio FROM `users` WHERE id = 1) n1 ,(SELECT fio FROM `users` WHERE id = 3) n3
-    // SELECT 'Всего лидов', (SELECT COUNT(*) FROM `lids` WHERE `user_id` = 3) n3, (SELECT COUNT(*) FROM `lids` WHERE `user_id` = 4) n4
-    // SELECT COUNT(*) FROM `logs` WHERE `user_id` = 2 AND `status_id` = 4
 
   }
 

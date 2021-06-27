@@ -10,6 +10,7 @@
         sort-by="role_id"
         show-select
         class="elevation-1"
+        :single-select=true
       >
         <template v-slot:top>
           <v-toolbar flat>

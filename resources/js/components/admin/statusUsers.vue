@@ -87,8 +87,8 @@
             <v-simple-table>
               <template v-slot:default>
                 <tbody>
-                  <tr class="item" v-for="(item, ix) in users" :key="ix" :style="{'background':item.color}">
-                    <td  v-for="(i, ix) in item" :key="ix">
+                  <tr class="item" v-for="(item, ix) in dates" :key="ix" :style="{'background':item.color}">
+                    <td  v-for="(i, ix) in item.col" :key="ix">
                       {{ i }}
                     </td>
                   </tr>
@@ -96,7 +96,7 @@
               </template>
             </v-simple-table>
                       <download-csv
-            :data="users"
+            :data="dates"
             delimiter=";"
             :name="'Статусы (' + datefrom.replace('.','-') + ' - '+dateto.replace('.','-')+').csv'"
           >
@@ -127,6 +127,7 @@ export default {
 
       dialog: false,
       users: [],
+      dates: [],
     };
   },
   mounted: function () {},
@@ -142,7 +143,7 @@ export default {
         axios
           .post("/api/status_users",send)
           .then((res) => {
-            self.users = res.data;
+            self.dates = res.data;
           })
           .catch((error) => console.log(error));
       }
@@ -155,9 +156,10 @@ export default {
 </script>
 <style scoped>
 tr.item td:first-child {
-    display: none;
+    /* display: none; */
+    width: 200px;
 }
 tr.item td:nth-child(2) {
-    width: 200px;
+    /* width: 200px; */
 }
 </style>
