@@ -38,28 +38,43 @@ class ProvidersController extends Controller
         // $request->validate([
         //     'provider_id' => 'required',
         // ]);
-        $data = $request->all();
+        $req = $request->all();
+        $provider_id = $req['provider_id'];
+        $datefrom = $req['datefrom'];
+        $dateto = $req['dateto'];
 
-        $req = [];
-        if(isset($data['provider_id'])){
-        $statuses =  DB::select(DB::raw("SELECT
-        `statuses`.`name`
-        , COUNT(`statuses`.`name`) AS `hm`
-    FROM
-        `providers`
-        LEFT JOIN `lids`
-            ON (`providers`.`id` = `lids`.`provider_id`)
-        LEFT JOIN `logs`
-            ON (`lids`.`tel` = `logs`.`tel`)
-        LEFT JOIN `statuses`
-            ON (`logs`.`status_id` = `statuses`.`id`)
-    WHERE (`providers`.`id` = " . $data['provider_id'] . ")
-    GROUP BY `statuses`.`name`, `providers`.`id`
-    ORDER BY `hm` DESC"));
-        $req['hm'] = DB::select(DB::raw("SELECT DATE(`created_at`) dateadd,COUNT(*) hm FROM `lids` WHERE `provider_id` = " . $data['provider_id']));
-        $req['statuses'] = $statuses;
-}
-        return $req;
+        $return = [];
+        if (isset($provider_id)) {
+            $sql = "SELECT CAST(`start` AS DATE) 'start' FROM `imports` WHERE `provider_id` = " . $provider_id . " AND (CAST(`start` AS DATE) BETWEEN '" . $datefrom . "' AND '" . $dateto . "')";
+            $a_dateadd = DB::select(DB::raw($sql));
+
+            if ($a_dateadd) {
+                foreach ($a_dateadd as $dateadd) {
+                    $sql = "SELECT s.`color`,s.`name`, COUNT(`status_id`) n FROM `logs` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `status_id` > 0 AND `lid_id` IN (SELECT id FROM `lids` WHERE `provider_id` = " . $provider_id . " AND CAST(`created_at` AS DATE ) = '" . $dateadd->start . "') GROUP BY `status_id` ORDER BY s.`order` ASC ";
+                    
+                    $a_statuses = DB::select(DB::raw($sql));
+                    $return[] = ['date' => $dateadd->start, 'statuses' => $a_statuses];
+                }
+            }
+        }
+        //     $statuses =  DB::select(DB::raw("SELECT
+        //     `statuses`.`name`
+        //     , COUNT(`statuses`.`name`) AS `hm`
+        // FROM
+        //     `providers`
+        //     LEFT JOIN `lids`
+        //         ON (`providers`.`id` = `lids`.`provider_id`)
+        //     LEFT JOIN `logs`
+        //         ON (`lids`.`tel` = `logs`.`tel`)
+        //     LEFT JOIN `statuses`
+        //         ON (`logs`.`status_id` = `statuses`.`id`)
+        // WHERE (`providers`.`id` = " . $data['provider_id'] . ")
+        // GROUP BY `statuses`.`name`, `providers`.`id`
+        // ORDER BY `hm` DESC"));
+        //     $req['hm'] = DB::select(DB::raw("SELECT DATE(`created_at`) dateadd,COUNT(*) hm FROM `lids` WHERE `provider_id` = " . $data['provider_id']));
+        //     $req['statuses'] = $statuses;
+
+        return $return;
     }
 
     /**
@@ -139,7 +154,7 @@ class ProvidersController extends Controller
      */
     public function destroy($id)
     {
-Provider::where('id',$id)->delete();
+        Provider::where('id', $id)->delete();
         $tels =  Lid::select('tel')->where('provider_id', '=', $id);
         Log::whereIn('tel', $tels)->delete();
         Lid::where('provider_id', '=', $id)->delete();
