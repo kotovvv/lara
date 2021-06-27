@@ -80,7 +80,7 @@
                 <tr v-for="(item,i) in statuses" :key="i">
                   <td>{{ item.date }}</td>
                   <td  v-for="(it, ix) in item.statuses" :key="ix" :style="{'background':it.color}">
-                      {{ it.name }} {{ it.n }}
+                      <small>{{ it.name }}</small> {{ it.n }}
                     </td>
                 </tr>
               </tbody>
