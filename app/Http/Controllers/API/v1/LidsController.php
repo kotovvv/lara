@@ -167,6 +167,11 @@ class LidsController extends Controller
     return Lid::where('user_id', $id)->orderBy('created_at', 'desc')->get();
   }
 
+  public function statusLids($id)
+  {
+    return Lid::where('status_id', $id)->orderBy('created_at', 'desc')->get();
+  }
+
   public function getuserLids(Request $request,$id)
   {
     $getlid = $request->all();

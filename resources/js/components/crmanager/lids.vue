@@ -2,7 +2,7 @@
   <div>
     <v-container fluid>
       <v-row>
-        <v-col cols="3" class="pt-3 mt-4">
+        <v-col cols="1" class="pt-3 mt-4">
           <v-select
             v-model="filterStatus"
             :items="statuses"
@@ -19,6 +19,15 @@
           >
             <v-icon small @click="deleteItem()"> mdi-delete </v-icon>
           </v-btn>
+        </v-col>
+        <v-col cols="2" class="pt-3 mt-4">
+          <v-select
+            v-model="filterGStatus"
+            :items="statuses"
+            label="Глобальный фильтр по статусам"
+            item-text="name"
+            item-value="id"
+          ></v-select>
         </v-col>
 
         <v-col cols="2" class="pt-3 mt-4">
@@ -112,9 +121,13 @@
                   ></v-text-field>
                 </v-col>
                 <!-- v-if="telsDuplicates.length > 0" -->
-                <v-col cols="2"  >
+                <v-col cols="2">
                   <v-card-title>
-                    <v-checkbox v-model="showDuplicates" class="mt-0" @click="getDuplicates">
+                    <v-checkbox
+                      v-model="showDuplicates"
+                      class="mt-0"
+                      @click="getDuplicates"
+                    >
                       <template v-slot:label>
                         <v-icon small> mdi-phone </v-icon>
                         <v-icon small> mdi-phone </v-icon>
@@ -187,6 +200,7 @@ export default {
     statuses: [],
     selectedStatus: 0,
     filterStatus: 0,
+    filterGStatus: 0,
     filterProviders: 0,
     selected: [],
     lids: [],
@@ -214,7 +228,15 @@ export default {
     this.getProviders();
     this.getUsers();
     this.getStatuses();
-    
+  },
+  watch: {
+    filterGStatus: function (newval, oldval) {
+       if (newval == 0) {
+        this.getLids(this.$props.user.id);
+      } else {
+        this.getStatusLids(newval);
+      }
+    },
   },
   computed: {
     filteredItems() {
@@ -233,7 +255,9 @@ export default {
   },
   methods: {
     getDuplicates() {
-      this.telsDuplicates = this.lids.filter(this.duplicatesOnly).map((f) => f.id );
+      this.telsDuplicates = this.lids
+        .filter(this.duplicatesOnly)
+        .map((f) => f.id);
     },
     duplicatesOnly(v1, i1, self) {
       let ndx = self.findIndex(function (v2, i2) {
@@ -300,7 +324,8 @@ export default {
       } else if (
         (this.search !== "" ||
           this.filtertel !== "" ||
-          this.filterStatus !== 0) &&
+          this.filterStatus !== 0 ||
+          this.filterGStatus !== 0) &&
         this.$refs.datatable.$children[0].filteredItems.length > 0
       ) {
         send.data = this.$refs.datatable.$children[0].filteredItems;
@@ -407,6 +432,29 @@ export default {
         .catch((error) => console.log(error));
     },
 
+    getStatusLids(id) {
+      let self = this;
+      self.filterStatus = 0;
+      self.search = "";
+      self.filtertel = "";
+      axios
+        .get("/api/statuslids/" + id)
+        .then((res) => {
+          // console.log(res.data);
+          self.lids = Object.entries(res.data).map((e) => e[1]);
+
+          self.lids.map(function (e) {
+            e.user = self.users.find((u) => u.id == e.user_id).fio;
+            e.date_created = e.created_at.substring(0, 10);
+            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
+            if (e.status_id)
+              e.status = self.statuses.find((s) => s.id == e.status_id).name;
+          });
+          self.searchAll = "";
+          // self.getDuplicates();
+        })
+        .catch((error) => console.log(error));
+    },
     getLids(id) {
       let self = this;
       self.filterStatus = 0;
