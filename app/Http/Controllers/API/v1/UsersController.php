@@ -127,7 +127,7 @@ class UsersController extends Controller
     $datefrom = $req['datefrom'];
     $dateto = $req['dateto'];
 
-   
+
     foreach ($a_users as $user_id) {
       $sql = "SELECT fio FROM `users` WHERE id = " . $user_id;
     }
@@ -139,21 +139,24 @@ class UsersController extends Controller
     $all = DB::select(DB::raw($sql));
 
     $current_date = $datefrom;
-    // write dates 
-    
+    // write dates
+
     $repoprt[] =  ['color' => '', 'col' => ['Пользователь', $fio[0]->fio]];
     $repoprt[] =['color' => '', 'col' => ['Всего лидов', $all[0]->n]];
     $row_dates = ['color' => '', 'col' => ['Даты']];
     $row_added = ['color' => '', 'col' => ['Добавлено']];
     $row_status = [];
+    $count_status = 0;
     while (strtotime($current_date) <= strtotime($dateto)) {
       $row_dates['col'][] = $current_date;
       $sql = "SELECT COUNT(*) n FROM `lids` WHERE `user_id` = " . $a_users[0] . " AND CAST(created_at AS DATE) = '" . $current_date . "'";
       $new = DB::select(DB::raw($sql));
       $row_added['col'][] = $new[0]->n;
-      // 
+
+      //
       $current_date = date("Y-m-d", strtotime("+1 day", strtotime($current_date)));
     }
+
     $repoprt[] = $row_dates;
     $repoprt[] = $row_added;
     // Debugbar::info($new);
@@ -162,17 +165,20 @@ class UsersController extends Controller
     foreach ($statuses as $status) {
       $current_date = $datefrom;
       $col = [$status->name];
+      $count_status = 0;
        while (strtotime($current_date) <= strtotime($dateto)) {
          $sql = "SELECT COUNT(*) n FROM `logs` WHERE `user_id` = " . $a_users[0] . " AND CAST(created_at AS DATE) = '" . $current_date . "'  AND `status_id` = " . $status->id ;
          $sts = DB::select(DB::raw($sql));
          $col[] =  $sts[0]->n;
+         $count_status += $sts[0]->n;
         //  Debugbar::info($sql);
       $current_date = date("Y-m-d", strtotime("+1 day", strtotime($current_date)));
        }
+       $col[] = $count_status;
        $repoprt[] = ['color' => $status->color,'col'=> $col ];
     }
     // $repoprt[] = $row_status;
-   
+
     // SELECT id, NAME,color FROM `statuses` WHERE `active` = 1 ORDER BY `order`
     // $statuses = DB::select(DB::raw("SELECT id, `name`, color FROM `statuses` WHERE `active` = 1 ORDER BY `order` ASC"));
     // foreach ($statuses as $status) {

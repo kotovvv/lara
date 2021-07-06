@@ -42,19 +42,26 @@ class ProvidersController extends Controller
         $provider_id = $req['provider_id'];
         $datefrom = $req['datefrom'];
         $dateto = $req['dateto'];
-
+$cur_date = date('Y-m-d');
         $return = [];
         if (isset($provider_id)) {
             $sql = "SELECT CAST(`start` AS DATE) 'start' FROM `imports` WHERE `provider_id` = " . $provider_id . " AND (CAST(`start` AS DATE) BETWEEN '" . $datefrom . "' AND '" . $dateto . "')";
             $a_dateadd = DB::select(DB::raw($sql));
 
             if ($a_dateadd) {
+
                 foreach ($a_dateadd as $dateadd) {
                     $sql = "SELECT s.`color`,s.`name`, COUNT(`status_id`) n FROM `logs` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `status_id` > 0 AND `lid_id` IN (SELECT id FROM `lids` WHERE `provider_id` = " . $provider_id . " AND CAST(`created_at` AS DATE ) = '" . $dateadd->start . "') GROUP BY `status_id` ORDER BY s.`order` ASC ";
-                    
+
                     $a_statuses = DB::select(DB::raw($sql));
                     $return[] = ['date' => $dateadd->start, 'statuses' => $a_statuses];
+
                 }
+                $sql = "SELECT s.`color`,s.`name`, COUNT(`status_id`) n FROM `logs` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `status_id` > 0 AND CAST(l.`created_at` AS DATE ) = '" . $cur_date . "' AND `lid_id` IN (SELECT id FROM `lids` WHERE `provider_id` = " . $provider_id . " ) GROUP BY `status_id` ORDER BY s.`order` ASC ";
+
+                    $a_statuses = DB::select(DB::raw($sql));
+                    $return[] = ['date' => $cur_date, 'statuses' => $a_statuses];
+
             }
         }
         //     $statuses =  DB::select(DB::raw("SELECT

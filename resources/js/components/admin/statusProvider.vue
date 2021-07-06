@@ -121,6 +121,7 @@ export default {
   methods: {
     report() {
       let self = this;
+      self.statuses =[];
 let send = {};
 send.provider_id = self.provider.id;
         send.datefrom = self.datefrom
