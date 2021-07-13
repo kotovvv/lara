@@ -213,6 +213,7 @@ export default {
       { text: "Телефон.", align: "start", value: "tel" },
       { text: "Афилятор", value: "afilyator" },
       { text: "Поставщик", value: "provider" },
+      { text: "Пользователь", value: "user" },
       { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status" },
       { text: "Сообщение", value: "text" },

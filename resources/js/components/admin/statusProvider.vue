@@ -6,7 +6,8 @@
       </template>
       <v-card>
         <v-card-title>
-          <span class="headline">Поставщик: {{ provider.name }}</span>
+          <span class="headline">Поставщик: {{ provider.name }} </span>
+          <span v-if="hm">&nbsp;Лидов ({{hm}})</span>
           <v-spacer></v-spacer>
           <v-col cols="2">
             <v-menu
@@ -129,9 +130,11 @@ send.provider_id = self.provider.id;
       axios
         .post("/api/status_provider", send)
         .then((res) => {
-          if(res.data.length > 0){
-          self.statuses = res.data;
-          // self.hm = res.data.hm[0].hm;
+          console.log(res.data.length)
+          if(res.data){
+          self.statuses = res.data.allstatuses;
+          self.hm = res.data.all[0].n;
+
           }
         })
         .catch((error) => console.log(error));
