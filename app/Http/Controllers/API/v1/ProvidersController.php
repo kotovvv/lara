@@ -59,8 +59,10 @@ class ProvidersController extends Controller
                     $a_statuses = DB::select(DB::raw($sql));
                     $return['allstatuses'][] = ['date' => $dateadd->start, 'statuses' => $a_statuses];
                 }
-               // $sql = "SELECT s.`color`,s.`name`, COUNT(`status_id`) n FROM `logs` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `status_id` > 0 AND CAST(l.`created_at` AS DATE ) = '" . $cur_date . "' AND `lid_id` IN (SELECT id FROM `lids` WHERE `provider_id` = " . $provider_id . " ) GROUP BY `status_id` ORDER BY s.`order` ASC ";
-                $sql = "select *,count(*) n from (SELECT DISTINCT  s.`color`,s.`name`,tel FROM `logs` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `status_id` > 0 AND CAST(l.`created_at` AS DATE ) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `lid_id` IN (SELECT id FROM `lids` WHERE `provider_id` = ". $provider_id . " )  ORDER BY s.`order` ASC ) t1 group by name";
+
+                //$sql = "select *,count(*) n from (SELECT DISTINCT  s.`color`,s.`name`,tel FROM `logs` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `status_id` > 0 AND CAST(l.`created_at` AS DATE ) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `lid_id` IN (SELECT id FROM `lids` WHERE `provider_id` = ". $provider_id . " )  ORDER BY s.`order` ASC ) t1 group by name";
+                $sql = "SELECT *,COUNT(*) n FROM (SELECT * FROM (SELECT DISTINCT  s.`color`,s.`name`,tel FROM `logs` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `status_id` > 0 AND CAST(l.`created_at` AS DATE )  BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `lid_id` IN (SELECT id FROM `lids` WHERE `provider_id` = ". $provider_id ." ) ORDER BY l.`created_at` DESC) t1 GROUP BY t1.tel) t2 GROUP BY t2.name";
+
 
                 $a_statuses = DB::select(DB::raw($sql));
                 $return['allstatuses'][] = ['date' => 'Итог', 'statuses' => $a_statuses];
