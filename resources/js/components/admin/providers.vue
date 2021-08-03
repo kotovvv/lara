@@ -24,7 +24,13 @@
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
             </v-card-title>
-
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="close"> Отмена </v-btn>
+              <v-btn color="blue darken-1" text @click="save">
+                Сохранить
+              </v-btn>
+            </v-card-actions>
             <v-card-text>
               <v-container>
                 <v-row>
@@ -55,13 +61,7 @@
               </v-container>
             </v-card-text>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close"> Отмена </v-btn>
-              <v-btn color="blue darken-1" text @click="save">
-                Сохранить
-              </v-btn>
-            </v-card-actions>
+
           </v-card>
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
@@ -123,10 +123,12 @@ export default {
     editedItem: {
       name: "",
       active: 0,
+
     },
     defaultItem: {
       name: "",
       active: 1,
+
     },
   }),
 
@@ -180,7 +182,7 @@ export default {
     },
     saveProvider(provider) {
       let self = this;
-      if(Array.isArray(provider.related_users_id)) provider.related_users_id = JSON.parse(provider.related_users_id)
+      // if(Array.isArray(provider.related_users_id)) provider.related_users_id = JSON.parse(provider.related_users_id)
       axios
         .post("/api/provider", provider)
         .then((res) => {
@@ -192,9 +194,9 @@ export default {
     editItem(item) {
       this.editedIndex = this.providers.indexOf(item);
       this.editedItem = Object.assign({}, item);
+      if(!Array.isArray(item.related_users_id)) this.editedItem.related_users_id = [];
       this.dialog = true;
     },
-
     deleteItem(item) {
       this.editedIndex = this.providers.indexOf(item);
       this.editedItem = Object.assign({}, item);
