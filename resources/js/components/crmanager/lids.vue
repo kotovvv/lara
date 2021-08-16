@@ -98,14 +98,14 @@
             :items="filteredItems"
             ref="datatable"
             :footer-props="{
-              'items-per-page-options': [10, 50, 100, 250, 500, -1],
+              'items-per-page-options': [250, 500, -1],
               'items-per-page-text': 'Показать',
             }"
           >
             <template
               v-slot:top="{ pagination, options, updateOptions }"
               :footer-props="{
-                'items-per-page-options': [10, 50, 100, 250, 500, -1],
+                'items-per-page-options': [250, 500, -1],
                 'items-per-page-text': 'Показать',
               }"
             >
@@ -141,7 +141,7 @@
                     :pagination="pagination"
                     :options="options"
                     @update:options="updateOptions"
-                    :items-per-page-options="[10, 50, 100, 250, 500, -1]"
+                    :items-per-page-options="[250, 500, -1]"
                     :items-per-page-text="'Показать'"
                   />
                 </v-col>
@@ -151,8 +151,10 @@
         </v-card>
       </v-col>
       <v-col cols="3">
-        <v-card height="100%" class="pa-5">
-          Укажите пользователя
+        <div class="row">
+        <v-card class="pa-5 w-100">
+Укажите пользователя
+         <v-card-text :height="350" class="scroll-y">
           <v-list>
             <v-radio-group
               @change="changeLidsUser"
@@ -181,7 +183,29 @@
               </v-row>
             </v-radio-group>
           </v-list>
+</v-card-text>
         </v-card>
+        <v-card class="pa-5 mt-1 w-100">
+
+        <div class="tel">Тел: {{clickedItemTel}}</div>
+            <v-list dense>
+      <v-subheader>Статусы лида</v-subheader>
+      <v-list-item-group
+
+        color="primary"
+      >
+        <v-list-item
+          v-for="(item, i) in clickedItemStatuses"
+          :key="i"
+        >
+          <v-list-item-content :style="{background:item.color}">
+            <v-list-item-title v-text="item.name + ' ' + item.cdate" ></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-item-group>
+    </v-list>
+        </v-card>
+        </div>
       </v-col>
     </v-row>
   </div>
@@ -224,6 +248,8 @@ export default {
     providers: [],
     showDuplicates: false,
     telsDuplicates: [],
+    clickedItemStatuses:[],
+    clickedItemTel:''
   }),
   mounted: function () {
     this.getProviders();
@@ -389,8 +415,17 @@ export default {
       return user.role_id == 2 ? "green" : "blue";
     },
 
-    clickrow() {
-      console.log("You can click on row))");
+    clickrow(value) {
+      // console.log(value.id,value.tel);
+      let self = this
+      this.clickedItemTel = value.tel
+      this.clickedItemStatuses = []
+            axios
+        .get('/api/StasusesOfId/'+value.id)
+        .then((res) => {
+          self.clickedItemStatuses = res.data;
+        })
+        .catch((error) => console.log(error));
     },
     getUsers() {
       let self = this;
@@ -522,3 +557,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.v-card__text.scroll-y {
+    overflow-y: auto;
+    height: 350px;
+}
+</style>

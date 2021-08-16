@@ -61,4 +61,4 @@ Route::post('Lid/deletelids', [LidsController::class,'deletelids'])->name('Lid.d
 Route::post('log/add', [LogsController::class,'add'])->name('log.add');
 Route::post('log/tellog', [LogsController::class,'tellog'])->name('log.tellog');
 Route::get('getlogonid/{id}', [LogsController::class,'getlogonid'])->name('getlogonid');
-
+Route::get('StasusesOfId/{id}', [LogsController::class,'StasusesOfId'])->name('StasusesOfId');
