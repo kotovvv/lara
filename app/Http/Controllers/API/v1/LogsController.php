@@ -96,7 +96,7 @@ class LogsController extends Controller
     }
 public function StasusesOfId($id)
     {
-      $statuses = DB::select(DB::raw("SELECT CAST(l.created_at AS DATE) cdate, s.`color`,s.`name` FROM `logs` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id` ) WHERE l.`lid_id` = '$id' AND l.`status_id` > 0 ORDER BY l.`created_at` DESC"));
+      $statuses = DB::select(DB::raw("SELECT CAST(l.created_at AS DATE) cdate, s.`color`,s.`name`,u.`name` uname FROM `logs` l LEFT JOIN `users` u ON (u.`id` = l.`user_id`)  LEFT JOIN `statuses` s ON (s.`id` = l.`status_id` ) WHERE l.`lid_id` = '$id' AND l.`status_id` > 0 ORDER BY l.`created_at` DESC"));
       return  $statuses;
     }
 

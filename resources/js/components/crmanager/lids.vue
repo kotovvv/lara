@@ -98,14 +98,14 @@
             :items="filteredItems"
             ref="datatable"
             :footer-props="{
-              'items-per-page-options': [250, 500, -1],
+              'items-per-page-options': [50,10,100,250, 500, -1],
               'items-per-page-text': 'Показать',
             }"
           >
             <template
               v-slot:top="{ pagination, options, updateOptions }"
               :footer-props="{
-                'items-per-page-options': [250, 500, -1],
+                'items-per-page-options': [50,10,100,250, 500, -1],
                 'items-per-page-text': 'Показать',
               }"
             >
@@ -141,7 +141,7 @@
                     :pagination="pagination"
                     :options="options"
                     @update:options="updateOptions"
-                    :items-per-page-options="[250, 500, -1]"
+                    :items-per-page-options="[50,10,100,250, 500, -1]"
                     :items-per-page-text="'Показать'"
                   />
                 </v-col>
@@ -199,7 +199,7 @@
           :key="i"
         >
           <v-list-item-content :style="{background:item.color}">
-            <v-list-item-title v-text="item.name + ' ' + item.cdate" ></v-list-item-title>
+            <v-list-item-title v-text="item.name  + ' ' + item.uname + ' ' + item.cdate" ></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-item-group>
@@ -457,8 +457,8 @@ export default {
       axios
         .get("/api/statuses")
         .then((res) => {
-          self.statuses = res.data.map(({ name, id, color }) => ({
-            name,
+          self.statuses = res.data.map(({ uname, name, id, color }) => ({
+            uname,name,
             id,
             color,
           }));
@@ -561,6 +561,6 @@ export default {
 <style scoped>
 .v-card__text.scroll-y {
     overflow-y: auto;
-    height: 350px;
+    height: 450px;
 }
 </style>
