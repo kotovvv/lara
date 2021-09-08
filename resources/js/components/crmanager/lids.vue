@@ -154,7 +154,7 @@
         <div class="row">
         <v-card class="pa-5 w-100">
 Укажите пользователя
-         <v-card-text :height="450" class="scroll-y">
+         <v-card-text class="scroll-y">
           <v-list>
             <v-radio-group
               @change="changeLidsUser"
@@ -561,6 +561,6 @@ export default {
 <style scoped>
 .v-card__text.scroll-y {
     overflow-y: auto;
-    height: 350px;
+    height: 60vh;
 }
 </style>
