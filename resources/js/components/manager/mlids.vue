@@ -349,14 +349,13 @@ export default {
         this.selectedStatus = newval[0].status_id;
         this.expanded = this.selected;
         this.datetime =
-          newval[0].ontime != "0000-00-00 00:00:00" && newval[0].ontime != null 
+          newval[0].ontime != "0000-00-00 00:00:00" && newval[0].ontime != null
             ? newval[0].ontime.substring(0, 16)
             : "";
-        // props.expanded = !props.expanded
       }
     },
     datetime: function (newval, oldval) {
-      if (newval == null) {
+      if (newval == null || newval != oldval) {
         this.setTime();
       }
     },
@@ -380,9 +379,11 @@ export default {
     setTime() {
       const self = this;
       let send = {};
-      send.ontime = this.$refs.datetime.formattedDatetime;
-      if (this.datetime == null) send.ontime = "";
-      send.id = this.selected[0].id;
+      // console.log('set',this.datetime,'lidid', this.lid_id)
+      send.ontime =  (this.datetime == null)? "" :this.datetime.length > 0 && this.datetime.length > 20? this.datetime.formattedDatetime : this.datetime;
+
+      // if (this.datetime == null) send.ontime = "";
+      send.id = this.lid_id;
       self.selected = [];
       axios
         .post("api/Lid/ontime", send)
