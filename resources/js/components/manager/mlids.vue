@@ -379,8 +379,8 @@ export default {
     setTime() {
       const self = this;
       let send = {};
-      // console.log('set',this.datetime,'lidid', this.lid_id)
-      send.ontime =  (this.datetime == null)? "" :this.datetime.length > 0 && this.datetime.length > 20? this.datetime.formattedDatetime : this.datetime;
+
+      send.ontime =  (this.datetime == null)? "" :this.datetime.toString().length > 0 && this.datetime.toString().length > 20? new Date((this.datetime).getTime()- ((this.datetime).getTimezoneOffset()*60000)).toISOString() : this.datetime;
 
       // if (this.datetime == null) send.ontime = "";
       send.id = this.lid_id;
