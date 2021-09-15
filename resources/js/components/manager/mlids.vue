@@ -300,7 +300,7 @@ export default {
     text: null,
     tel: "",
     lid_id:'',
-    expanded: ["Donut"],
+    expanded: [],
     singleExpand: true,
     datetime: "",
     userid: null,
@@ -339,8 +339,8 @@ export default {
   },
   watch: {
     selected: function (newval, oldval) {
-      // console.log(newval)
-      // console.log(oldval)
+      //  console.log(newval)
+      //  console.log(oldval)
       if (this.selected.length == 0) {
         this.selectedStatus = null;
         this.expanded = [];
@@ -355,7 +355,7 @@ export default {
       }
     },
     datetime: function (newval, oldval) {
-      if (newval == null || newval != oldval) {
+      if ((newval == null || newval != oldval) && this.tel !='') {
         this.setTime();
       }
     },
@@ -465,9 +465,10 @@ export default {
     },
 
     clickrow(item, row) {
-      row.select(!row.isSelected);
+
       if (!row.isSelected) {this.tel = item.tel;this.lid_id = item.id; }
       else this.tel = "";
+      row.select(!row.isSelected);
     },
 
     getStatuses() {
