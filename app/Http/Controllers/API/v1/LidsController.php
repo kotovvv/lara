@@ -157,8 +157,8 @@ class LidsController extends Controller
       if (isset($data['status_id']))  $a_lid['status_id'] = $data['status_id'];
 
       // $status_id = !empty($data['status_id']) ? $data['status_id'] : null;
-      // Lid::updateOrCreate(['tel' => $lid['tel'],'provider_id'=> $a_lid['provider_id'],'afilyator'=>  $a_lid['afilyator']], $a_lid);
-      Lid::сreate( $a_lid);
+      Lid::updateOrCreate(['tel' => $lid['tel'],'provider_id'=> $a_lid['provider_id'],'afilyator'=>  $a_lid['afilyator'],'status_id' => 8], $a_lid);
+      // Lid::create( $a_lid);
     }
     return response('Lids imported', 200);
   }
