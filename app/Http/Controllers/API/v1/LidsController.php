@@ -43,7 +43,7 @@ class LidsController extends Controller
     ];
 
     // $res= DB::table('lids')->insert($a_lid);
-   $res= Lid::updateOrCreate(['tel' => $a_lid['tel'],'provider_id'=> $a_lid['provider_id'],'afilyator'=>  $a_lid['afilyator']], $a_lid);
+    $res = Lid::updateOrCreate(['tel' => $a_lid['tel'], 'provider_id' => $a_lid['provider_id'], 'afilyator' =>  $a_lid['afilyator']], $a_lid);
 
     if ($res) {
       return response('Lid inserted', 200);
@@ -58,11 +58,11 @@ class LidsController extends Controller
     //SELECT * FROM lids WHERE `tel` LIKE '%488%' OR `name` LIKE '%488%' OR email LIKE '%488%' OR `text` LIKE '%488%'
 
     return Lid::select('*')
-    ->where('name','like',"%{$searchTerm['search']}%")
-    ->orwhere('tel','like',"%{$searchTerm['search']}%")
-    ->orwhere('email','like',"%{$searchTerm['search']}%")
-    ->orwhere('text','like',"%{$searchTerm['search']}%")
-  ->get();
+      ->where('name', 'like', "%{$searchTerm['search']}%")
+      ->orwhere('tel', 'like', "%{$searchTerm['search']}%")
+      ->orwhere('email', 'like', "%{$searchTerm['search']}%")
+      ->orwhere('text', 'like', "%{$searchTerm['search']}%")
+      ->get();
   }
 
   /**
@@ -109,24 +109,23 @@ class LidsController extends Controller
     $data = $request->all();
     // $data['data']['updated_at'] = Now();
     $res = 0;
-      foreach ($data['data'] as $lid) {
+    foreach ($data['data'] as $lid) {
 
 
-    $a_lid = [
-      'status_id' => $lid['status_id'],
-      'user_id' => $lid['user_id'],
-      'updated_at' => Now()
-    ];
-    $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
+      $a_lid = [
+        'status_id' => $lid['status_id'],
+        'user_id' => $lid['user_id'],
+        'updated_at' => Now()
+      ];
+      $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
 
 
-    $a_lid['lid_id'] = $lid['id'];
-    $a_lid['tel'] = $lid['tel'];
-    $a_lid['created_at'] = Now();
+      $a_lid['lid_id'] = $lid['id'];
+      $a_lid['tel'] = $lid['tel'];
+      $a_lid['created_at'] = Now();
 
-  DB::table('logs')->insert($a_lid);
-
-      }
+      DB::table('logs')->insert($a_lid);
+    }
     if ($res) {
 
       return response('Lids updated', 200);
@@ -139,26 +138,27 @@ class LidsController extends Controller
     $data = $request->all();
     // Debugbar::info($data['data']);
     foreach ($data['data'] as $lid) {
+      $n_lid = new Lid;
 
-      $a_lid = [
-        'name' => strval ($lid['name']),
-        'email' => $lid['email'],
-        // 'afilyator' => strval ($lid['afilyator']),
-        'user_id' => $data['user_id'],
-        'created_at' => Now()
-      ];
-      // Debugbar::info($a_lid);
-      if (isset($lid['afilyator']))  {
-        $a_lid['afilyator'] = $lid['afilyator'];
-      } else{
-        $a_lid['afilyator'] = '';
+      $n_lid->name =  strval ($lid['name']);
+      $n_lid->tel =  $lid['tel'];
+      $n_lid->email = $lid['email'];
+      $n_lid->user_id = $data['user_id'];
+      $n_lid->created_at = Now();
+
+      if (isset($lid['afilyator'])) {
+        $n_lid->afilyator = $lid['afilyator'];
+      } else {
+        $n_lid->afilyator = '';
       }
-      if (isset($data['provider_id']))  $a_lid['provider_id'] = $data['provider_id'];
-      if (isset($data['status_id']))  $a_lid['status_id'] = $data['status_id'];
+      if (isset($data['provider_id'])) $n_lid->provider_id = $data['provider_id'];
+      if (isset($data['status_id']))  $n_lid->status_id = $data['status_id'];
+      $f_lid =  Lid::where('tel', '=', $lid['tel'])->get();
 
-      // $status_id = !empty($data['status_id']) ? $data['status_id'] : null;
-      Lid::updateOrCreate(['tel' => $lid['tel'],'provider_id'=> $a_lid['provider_id'],'afilyator'=>  $a_lid['afilyator'],'status_id' => 8], $a_lid);
-      // Lid::create( $a_lid);
+      if (!$f_lid->isEmpty()) {
+        $n_lid->status_id = 22;
+      }
+      $n_lid->save();
     }
     return response('Lids imported', 200);
   }
@@ -173,7 +173,7 @@ class LidsController extends Controller
     return Lid::where('status_id', $id)->orderBy('created_at', 'desc')->get();
   }
 
-  public function getuserLids(Request $request,$id)
+  public function getuserLids(Request $request, $id)
   {
     $getlid = $request->all();
     if ($getlid['api_key'] != env('API_KEY')) return response('Key incorect', 403);
@@ -191,23 +191,21 @@ class LidsController extends Controller
       'provider_id' => $getlidid['provider_id'],
     ];
     return Lid::select('id')->where($a_lid)->get();
-
   }
 
   public function getlidsontime(Request $request)
   {
     $req = $request->all();
     if ($req['api_key'] != env('API_KEY')) return response('Key incorect', 403);
-return Lid::select('id')->whereBetween('created_at', [$req['start'], $req['end']])->get();
-
+    return Lid::select('id')->whereBetween('created_at', [$req['start'], $req['end']])->get();
   }
 
-  public function getlidonid(Request $request,$id)
+  public function getlidonid(Request $request, $id)
   {
     $req = $request->all();
     if ($req['api_key'] != env('API_KEY')) return response('Key incorect', 403);
 
-     return Lid::where('id',$id)->get();
+    return Lid::where('id', $id)->get();
   }
 
   /**
