@@ -25,30 +25,29 @@ class LidsController extends Controller
   {
     $insertItem = $request->all();
     if ($insertItem['api_key'] != env('API_KEY')) return response('Key incorect', 403);
-	$n_lid = new Lid;
-      $n_lid->tel = $insertItem['umcfields']['phone'];
-      $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
-      if (!$f_lid->isEmpty()) {
-        $n_lid->status_id = 22;
-      } else {
-        $n_lid->status_id = 8;
-	  }
-      $n_lid->name = $insertItem['umcfields']['name'];
-      $n_lid->email = $insertItem['umcfields']['email'];
-      $n_lid->afilyator = $insertItem['umcfields']['affiliate_user'];
-      $n_lid->provider_id = $insertItem['afilat_id'];
-      $n_lid->user_id = $insertItem['user_id'];
-      $n_lid->created_at = Now();
-      $n_lid->updated_at = Now();
-      $n_lid->active = 1;
-   $n_lid->save();
+    $n_lid = new Lid;
+    $n_lid->tel = $insertItem['umcfields']['phone'];
+    $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
+    if (!$f_lid->isEmpty()) {
+      $n_lid->status_id = 22;
+    } else {
+      $n_lid->status_id = 8;
+    }
+    $n_lid->name = $insertItem['umcfields']['name'];
+    $n_lid->email = $insertItem['umcfields']['email'];
+    $n_lid->afilyator = $insertItem['umcfields']['affiliate_user'];
+    $n_lid->provider_id = $insertItem['afilat_id'];
+    $n_lid->user_id = $insertItem['user_id'];
+    $n_lid->created_at = Now();
+    $n_lid->updated_at = Now();
+    $n_lid->active = 1;
+    $n_lid->save();
 
     // $res= DB::table('lids')->insert($a_lid);
     //$res = Lid::updateOrCreate(['tel' => $a_lid['tel'], 'provider_id' => $a_lid['provider_id'], 'afilyator' =>  $a_lid['afilyator']], $a_lid);
 
 
-      return response('Lid inserted', 200);
-
+    return response('Lid inserted', 200);
   }
 
 
@@ -141,7 +140,7 @@ class LidsController extends Controller
     foreach ($data['data'] as $lid) {
       $n_lid = new Lid;
 
-      $n_lid->name =  strval ($lid['name']);
+      $n_lid->name =  strval($lid['name']);
       $n_lid->tel =  $lid['tel'];
       $n_lid->email = $lid['email'];
       $n_lid->user_id = $data['user_id'];
@@ -260,6 +259,55 @@ class LidsController extends Controller
 
     Lid::whereIn('id', $lids)->delete();
     Log::whereIn('lid_id', $lids)->delete();
+  }
+
+
+  public function set_zaliv(Request $request)
+  {
+    $req = $request->all();
+    $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+
+    if (!$f_key) return response('Key incorect', 403);
+
+    $n_lid = new Lid;
+
+    $n_lid->name =  $req['umcfields']['name'];
+    $n_lid->tel =  $req['umcfields']['phone'];
+    $n_lid->email = $req['umcfields']['email'];
+    $n_lid->afilyator = $req['umcfields']['affiliate_user'];
+    $n_lid->provider_id = $req['afilat_id'];
+    $n_lid->user_id = $req['user_id'];
+    $n_lid->created_at = Now();
+
+    $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
+
+    if (!$f_lid->isEmpty()) {
+      return response('дублікат');
+    }
+
+    $n_lid->save();
+    $id = $n_lid->id;
+    DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
+
+
+    $res['status'] = 'OK';
+    $res['id'] = $id;
+    return response($res);
+  }
+
+  public function get_zaliv(Request $request)
+  {
+    $req = $request->all();
+    $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+
+    if (!$f_key) return response('Key incorect', 403);
+
+    $sql = "SELECT `name` FROM `statuses` WHERE `id` IN ( SELECT `status_id` FROM `lids` WHERE `id` = ".$req['lead_id'].")";
+
+    $all_lids = DB::select(DB::raw($sql));
+
+    $res['status'] = $all_lids;
+    return response($res);
   }
 
   /**

@@ -62,3 +62,5 @@ Route::post('log/add', [LogsController::class,'add'])->name('log.add');
 Route::post('log/tellog', [LogsController::class,'tellog'])->name('log.tellog');
 Route::get('getlogonid/{id}', [LogsController::class,'getlogonid'])->name('getlogonid');
 Route::get('StasusesOfId/{id}', [LogsController::class,'StasusesOfId'])->name('StasusesOfId');
+Route::get('set_zaliv', [LidsController::class,'set_zaliv'])->name('set_zaliv');
+Route::get('get_zaliv', [LidsController::class,'get_zaliv'])->name('get_zaliv');
