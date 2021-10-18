@@ -98,14 +98,14 @@
             :items="filteredItems"
             ref="datatable"
             :footer-props="{
-              'items-per-page-options': [50,10,100,250, 500, -1],
+              'items-per-page-options': [50, 10, 100, 250, 500, -1],
               'items-per-page-text': 'Показать',
             }"
           >
             <template
               v-slot:top="{ pagination, options, updateOptions }"
               :footer-props="{
-                'items-per-page-options': [50,10,100,250, 500, -1],
+                'items-per-page-options': [50, 10, 100, 250, 500, -1],
                 'items-per-page-text': 'Показать',
               }"
             >
@@ -141,7 +141,7 @@
                     :pagination="pagination"
                     :options="options"
                     @update:options="updateOptions"
-                    :items-per-page-options="[50,10,100,250, 500, -1]"
+                    :items-per-page-options="[50, 10, 100, 250, 500, -1]"
                     :items-per-page-text="'Показать'"
                   />
                 </v-col>
@@ -152,59 +152,67 @@
       </v-col>
       <v-col cols="3">
         <div class="row">
-        <v-card class="pa-5 w-100">
-Укажите пользователя
-         <v-card-text class="scroll-y">
-          <v-list>
-            <v-radio-group
-              @change="changeLidsUser"
-              ref="radiogroup"
-              v-model="userid"
-              v-bind="users"
-              id="usersradiogroup"
-            >
-              <v-row v-for="user in users" :key="user.id">
-                <v-radio
-                  :label="user.fio"
-                  :value="user.id"
-                  :disabled="disableuser == user.id"
+          <v-card class="pa-5 w-100">
+            Укажите пользователя
+            <v-card-text class="scroll-y">
+              <v-list>
+                <v-radio-group
+                  @change="changeLidsUser"
+                  ref="radiogroup"
+                  v-model="userid"
+                  v-bind="users"
+                  id="usersradiogroup"
                 >
-                </v-radio>
+                  <v-expansion-panels>
+                    <v-expansion-panel
+                      v-for="(item, i) in group"
+                      :key="i"
+                    >
+                      <v-expansion-panel-header>
+                    {{item.fio}}
+                      </v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                       {{item.group_id}}
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                  <v-row v-for="user in users" :key="user.id">
+                    <v-radio
+                      :label="user.fio"
+                      :value="user.id"
+                      :disabled="disableuser == user.id"
+                    >
+                    </v-radio>
 
-                <v-btn
-                  class="ml-3"
-                  small
-                  :color="usercolor(user)"
-                  @click="getLids(user.id)"
-                  :value="user.hmlids"
-                  :disabled="disableuser == user.id"
-                  >{{ user.hmlids }}</v-btn
-                >
-              </v-row>
-            </v-radio-group>
-          </v-list>
-</v-card-text>
-        </v-card>
-        <v-card class="pa-5 mt-1 w-100">
-
-        <div class="tel">Тел: {{clickedItemTel}}</div>
+                    <v-btn
+                      class="ml-3"
+                      small
+                      :color="usercolor(user)"
+                      @click="getLids(user.id)"
+                      :value="user.hmlids"
+                      :disabled="disableuser == user.id"
+                      >{{ user.hmlids }}</v-btn
+                    >
+                  </v-row>
+                </v-radio-group>
+              </v-list>
+            </v-card-text>
+          </v-card>
+          <v-card class="pa-5 mt-1 w-100">
+            <div class="tel">Тел: {{ clickedItemTel }}</div>
             <v-list dense>
-      <v-subheader>Статусы лида</v-subheader>
-      <v-list-item-group
-
-        color="primary"
-      >
-        <v-list-item
-          v-for="(item, i) in clickedItemStatuses"
-          :key="i"
-        >
-          <v-list-item-content :style="{background:item.color}">
-            <v-list-item-title v-text="item.name  + ' ' + item.uname + ' ' + item.cdate" ></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
-        </v-card>
+              <v-subheader>Статусы лида</v-subheader>
+              <v-list-item-group color="primary">
+                <v-list-item v-for="(item, i) in clickedItemStatuses" :key="i">
+                  <v-list-item-content :style="{ background: item.color }">
+                    <v-list-item-title
+                      v-text="item.name + ' ' + item.uname + ' ' + item.cdate"
+                    ></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-card>
         </div>
       </v-col>
     </v-row>
@@ -213,6 +221,7 @@
 
 <script>
 import axios from "axios";
+import _ from 'lodash';
 
 export default {
   props: ["user"],
@@ -248,8 +257,8 @@ export default {
     providers: [],
     showDuplicates: false,
     telsDuplicates: [],
-    clickedItemStatuses:[],
-    clickedItemTel:''
+    clickedItemStatuses: [],
+    clickedItemTel: "",
   }),
   mounted: function () {
     this.getProviders();
@@ -258,7 +267,7 @@ export default {
   },
   watch: {
     filterGStatus: function (newval, oldval) {
-       if (newval == 0) {
+      if (newval == 0) {
         this.getLids(this.$props.user.id);
       } else {
         this.getStatusLids(newval);
@@ -266,6 +275,9 @@ export default {
     },
   },
   computed: {
+    group(){
+      return _.uniqBy(this.users, 'group_id')
+    },
     filteredItems() {
       // if (this.showDuplicates && this.telsDuplicates.length > 0)
       //   return this.telsDuplicates;
@@ -417,11 +429,11 @@ export default {
 
     clickrow(value) {
       // console.log(value.id,value.tel);
-      let self = this
-      this.clickedItemTel = value.tel
-      this.clickedItemStatuses = []
-            axios
-        .get('/api/StasusesOfId/'+value.id)
+      let self = this;
+      this.clickedItemTel = value.tel;
+      this.clickedItemStatuses = [];
+      axios
+        .get("/api/StasusesOfId/" + value.id)
         .then((res) => {
           self.clickedItemStatuses = res.data;
         })
@@ -458,7 +470,8 @@ export default {
         .get("/api/statuses")
         .then((res) => {
           self.statuses = res.data.map(({ uname, name, id, color }) => ({
-            uname,name,
+            uname,
+            name,
             id,
             color,
           }));
@@ -560,7 +573,7 @@ export default {
 
 <style scoped>
 .v-card__text.scroll-y {
-    overflow-y: auto;
-    height: 60vh;
+  overflow-y: auto;
+  height: 60vh;
 }
 </style>
