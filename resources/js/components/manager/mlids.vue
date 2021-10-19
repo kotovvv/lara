@@ -284,6 +284,46 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row justify="center">
+    <v-dialog
+      v-model="depozit"
+      persistent
+      max-width="600px"
+    >
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Введіть суму депозиту</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col
+                cols="12"
+              >
+                <v-text-field
+                  label="Сума депозиту*"
+                  required
+                  v-model=depozit_val
+                ></v-text-field>
+              </v-col>
+
+            </v-row>
+          </v-container>
+          <small>*Заповніть обов'язкове поле</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+              <v-btn
+            color="blue darken-1"
+            text
+            @click="depozit = false"
+          >
+            Зберегти
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
   </div>
 </template>
 
@@ -296,6 +336,8 @@ export default {
   },
   props: ["user"],
   data: () => ({
+    depozit:0,
+    depozit_val:0,
     componentKey: 0,
     text: null,
     tel: "",
@@ -459,6 +501,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+        if( send_el.status_id == '10')  self.depozit = true
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
