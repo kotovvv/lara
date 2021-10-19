@@ -164,36 +164,35 @@
                   id="usersradiogroup"
                 >
                   <v-expansion-panels>
-                    <v-expansion-panel
-                      v-for="(item, i) in group"
-                      :key="i"
-                    >
+                    <v-expansion-panel v-for="(item, i) in group" :key="i">
                       <v-expansion-panel-header>
-                    {{item.fio}}
+                        {{ item.fio }}
                       </v-expansion-panel-header>
                       <v-expansion-panel-content>
-                       {{item.group_id}}
+                        <v-row
+                          v-for="user in users.filter(function(i){return i.group_id == item.group_id})"
+                          :key="user.id"
+                        >
+                          <v-radio
+                            :label="user.fio"
+                            :value="user.id"
+                            :disabled="disableuser == user.id"
+                          >
+                          </v-radio>
+
+                          <v-btn
+                            class="ml-3"
+                            small
+                            :color="usercolor(user)"
+                            @click="getLids(user.id)"
+                            :value="user.hmlids"
+                            :disabled="disableuser == user.id"
+                            >{{ user.hmlids }}</v-btn
+                          >
+                        </v-row>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
                   </v-expansion-panels>
-                  <v-row v-for="user in users" :key="user.id">
-                    <v-radio
-                      :label="user.fio"
-                      :value="user.id"
-                      :disabled="disableuser == user.id"
-                    >
-                    </v-radio>
-
-                    <v-btn
-                      class="ml-3"
-                      small
-                      :color="usercolor(user)"
-                      @click="getLids(user.id)"
-                      :value="user.hmlids"
-                      :disabled="disableuser == user.id"
-                      >{{ user.hmlids }}</v-btn
-                    >
-                  </v-row>
                 </v-radio-group>
               </v-list>
             </v-card-text>
@@ -221,7 +220,7 @@
 
 <script>
 import axios from "axios";
-import _ from 'lodash';
+import _ from "lodash";
 
 export default {
   props: ["user"],
@@ -275,8 +274,8 @@ export default {
     },
   },
   computed: {
-    group(){
-      return _.uniqBy(this.users, 'group_id')
+    group() {
+      return _.uniqBy(this.users, "group_id");
     },
     filteredItems() {
       // if (this.showDuplicates && this.telsDuplicates.length > 0)
