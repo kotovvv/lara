@@ -316,7 +316,7 @@
               <v-btn
             color="blue darken-1"
             text
-            @click="depozit = false"
+            @click="setDepozit();depozit = false"
           >
             Зберегти
           </v-btn>
@@ -337,7 +337,7 @@ export default {
   props: ["user"],
   data: () => ({
     depozit:0,
-    depozit_val:0,
+    depozit_val:'',
     componentKey: 0,
     text: null,
     tel: "",
@@ -501,7 +501,26 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-        if( send_el.status_id == '10')  self.depozit = true
+        if( send_el.status_id == '10')  {
+          self.depozit = true
+          }
+    },
+    setDepozit(){
+      let self = this
+      let send ={}
+      send.lid_id = this.selected[0].id
+      send.user_id = this.selected[0].user_id
+      send.depozit = this.depozit_val
+      axios
+        .post("api/setDepozit", send)
+        .then(function (response) {
+          self.depozit_val = '';
+          // console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";

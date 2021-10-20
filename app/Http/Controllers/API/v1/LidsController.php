@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 // use Illuminate\Support\Facades\Log;
 use App\Models\Lid;
 use App\Models\Log;
+use App\Models\Depozit;
 use DB;
 use Debugbar;
 
@@ -308,6 +309,16 @@ class LidsController extends Controller
 
     $res['status'] = $all_lids;
     return response($res);
+  }
+
+
+  public function setDepozit(Request $request)
+  {
+    $req = $request->all();
+    $req['created_at'] = Now();
+$res = Depozit::create($req);
+
+return response($res);
   }
 
   /**
