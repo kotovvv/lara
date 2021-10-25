@@ -57,6 +57,12 @@
                           label="Связанные пользователи"
                         ></v-select>
                       </v-col>
+                                        <v-col cols="12">
+                    <v-text-field
+                      v-model="editedItem.tel"
+                      label="ApiKey"
+                    ></v-text-field>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>

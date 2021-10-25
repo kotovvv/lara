@@ -105,14 +105,25 @@ class ProvidersController extends Controller
         if (isset($data['id'])) {
             // Debugbar::info('update');
             if (Provider::where('id', $data['id'])->update($data)) {
-                return response('Provider updated', 200);
-            } else return response('Provider updated error', 301);
+                //return response('Provider updated', 200);
+            } //else //return response('Provider updated error', 301);
         } else {
             // Debugbar::info('save');
             if (Provider::create($data)) {
-                return response('Provider added', 200);
-            } else return response('Provider add error', 301);
+                //return response('Provider added', 200);
+            } //else //return response('Provider add error', 301);
         }
+        $name_key = Provider::select('name','tel')->get();
+        $sql = 'TRUNCATE TABLE `apikeys`';
+        DB::select(DB::raw($sql));
+        $sql = "INSERT INTO `apikeys` (`name`,`api_key`) VALUES ";
+        $i=0;
+        foreach($name_key as $key){
+$z = $i==0?'':',';
+          $sql .= $z."('".$key['name']."','".$key['tel']."')";
+          $i++;
+        }
+        DB::select(DB::raw($sql));
     }
 
     /**
