@@ -282,7 +282,7 @@ class LidsController extends Controller
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
 
     if (!$f_lid->isEmpty()) {
-      return response('дублікат');
+      return response('duplicate');
     }
 
     $n_lid->save();
