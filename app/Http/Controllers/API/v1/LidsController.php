@@ -307,7 +307,7 @@ class LidsController extends Controller
     $all_lids = DB::select(DB::raw($sql));
 
     $res['status'] = $all_lids;
-    return response($res);
+    return response('OK');
   }
 
   /**
