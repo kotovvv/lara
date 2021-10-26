@@ -301,13 +301,15 @@ class LidsController extends Controller
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response('Key incorect', 403);
-
+$sql = "SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = '".$req['api_key']."' AND `lead_id` = '".$req['lead_id']."'";
+$res['status'] = 'Error';
+if( DB::select(DB::raw($sql))){
     $sql = "SELECT `name` FROM `statuses` WHERE `id` IN ( SELECT `status_id` FROM `lids` WHERE `id` = ".$req['lead_id'].")";
-
-    $all_lids = DB::select(DB::raw($sql));
-
-    $res['status'] = $all_lids;
-    return response('OK');
+    $lid_status = DB::select(DB::raw($sql));
+    $res['status'] = $lid_status;
+    $res['id'] = $req['lead_id'];
+}
+    return response( $res);
   }
 
   /**
