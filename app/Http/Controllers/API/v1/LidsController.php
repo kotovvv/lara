@@ -287,11 +287,12 @@ class LidsController extends Controller
 
     $n_lid->save();
     $id = $n_lid->id;
-    DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
+    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
 
 
     $res['status'] = 'OK';
     $res['id'] = $id;
+    $res['insart'] = $insert;
     return response($res);
   }
 
@@ -301,7 +302,7 @@ class LidsController extends Controller
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response('Key incorect', 403);
-$sql = "SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = '".$req['api_key']."' AND `lead_id` = '".$req['lead_id']."'";
+$sql = "SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = '".$f_key->id."' AND `lead_id` = '".$req['lead_id']."'";
 $res['status'] = 'Error';
 if( DB::select(DB::raw($sql))){
     $sql = "SELECT `name` FROM `statuses` WHERE `id` IN ( SELECT `status_id` FROM `lids` WHERE `id` = ".$req['lead_id'].")";
