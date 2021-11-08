@@ -66,6 +66,7 @@ const statusLid = () => import("./statusLid");
 const providers = () => import("./providers");
 const mlids = () => import("../manager/mlids");
 const lids = () => import("../crmanager/lids");
+const lidsplus = () => import("../crmanager/lidsplus");
 
 export default {
   props:['user'],
@@ -80,6 +81,7 @@ export default {
       { text: "Поставщики", name: "providers", icon: "mdi-contact-phone-outline" },
       // { text: "Рабочие места", name: "workPlaces", icon: "mdi-sitemap" },
       { text: "Распределение", name: "lids", icon: "mdi-account-arrow-left" },
+      { text: "Распределение2", name: "lidsplus", icon: "mdi-filter-outline" },
       { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
     ],
     adminMenu: "users",
@@ -93,6 +95,7 @@ export default {
       if (this.adminMenu == "providers") return providers;
       if (this.adminMenu == "mlids") return mlids;
       if (this.adminMenu == "lids") return lids;
+      if (this.adminMenu == "lidsplus") return lidsplus;
     },
   },
   mounted:function (){
