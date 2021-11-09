@@ -271,6 +271,7 @@
                 :value="status.id"
                 v-for="status in statuses"
                 :key="status.id"
+                @click="nextdep(status.id)"
               >
                 <span
                   slot="label"
@@ -415,6 +416,9 @@ export default {
     },
   },
   methods: {
+    nextdep(id){
+      console.log(id)
+    },
     forceRerender() {
       this.componentKey += 1;
     },

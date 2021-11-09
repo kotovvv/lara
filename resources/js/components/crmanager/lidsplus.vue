@@ -14,7 +14,6 @@
               <v-text-field
                 v-model="dates"
                 label="Период"
-                prepend-icon="mdi-calendar"
                 readonly
                 v-bind="attrs"
                 v-on="on"
@@ -38,7 +37,7 @@
             </v-date-picker>
           </v-dialog>
         </v-col>
-        <v-col cols="1" class="pt-3 mt-4">
+        <v-col cols="2" class="pt-3 mt-4">
           <v-select
             v-model="filterStatus"
             :items="statuses"
@@ -88,7 +87,7 @@
             ></v-text-field>
           </v-card-title>
         </v-col>
-        <v-col cols="2">
+        <v-col cols="1">
           <v-card-title>
             <v-text-field
               v-model.lazy.trim="filtertel"
@@ -146,7 +145,16 @@
               }"
             >
               <v-row>
-                <v-col cols="4">
+                <v-col cols="2" class="ml-5">
+                  <v-select
+                    v-model="filterGroups"
+                    :items="group"
+                    label="По группам"
+                    item-text="fio"
+                    item-value="id"
+                  ></v-select>
+                </v-col>
+                <v-col cols="2">
                   <v-text-field
                     v-model="search"
                     append-icon="mdi-magnify"
@@ -172,7 +180,7 @@
                     >
                   </v-card-title>
                 </v-col>
-                <v-col cols="6">
+                <v-col cols="5">
                   <v-data-footer
                     :pagination="pagination"
                     :options="options"
@@ -213,6 +221,7 @@ export default {
     filterStatus: 0,
     filterGStatus: 0,
     filterProviders: 0,
+    filterGroups: 0,
     selected: [],
     lids: [],
     search: "",
@@ -255,7 +264,7 @@ export default {
   },
   computed: {
     group() {
-      return _.uniqBy(this.users, "group_id").filter(i=>i.group_id>0 );
+      return _.uniqBy(this.users, "group_id").filter((i) => i.group_id > 0);
     },
     filteredItems() {
       // if (this.showDuplicates && this.telsDuplicates.length > 0)
@@ -266,7 +275,8 @@ export default {
           (!this.filterStatus || i.status_id == this.filterStatus) &&
           (!this.filterProviders || i.provider_id == this.filterProviders) &&
           (!this.filtertel || reg.test(i.tel)) &&
-          (!this.showDuplicates || this.telsDuplicates.includes(i.id))
+          (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
+          (!this.filterGroups || i.group_id == this.filterGroups)
         );
       });
     },
@@ -455,7 +465,7 @@ export default {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
-            e.group_id = self.users.find((u) => u.id == e.user_id).group_id
+            e.group_id = self.users.find((u) => u.id == e.user_id).group_id;
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
