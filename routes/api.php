@@ -53,6 +53,7 @@ Route::post('Lid/updatelids', [LidsController::class,'updatelids'])->name('Lid.u
 Route::get('Lid/searchlids', [LidsController::class,'searchlids'])->name('Lid.searchlids');
 Route::get('getlidid', [LidsController::class,'getlidid'])->name('getlidid');
 Route::get('getlidsontime', [LidsController::class,'getlidsontime'])->name('getlidsontime');
+Route::get('getLidsOnDate/{date}', [LidsController::class,'getLidsOnDate'])->name('getLidsOnDate');
 Route::get('getlidonid/{id}', [LidsController::class,'getlidonid'])->name('getlidonid');
 Route::get('set_data', [LidsController::class,'importlid'])->name('Lid.importlid');
 Route::post('Lid/changelidsuser', [LidsController::class,'changelidsuser'])->name('Lid.changelidsuser');

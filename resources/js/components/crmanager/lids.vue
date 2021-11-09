@@ -275,7 +275,7 @@ export default {
   },
   computed: {
     group() {
-      return _.uniqBy(this.users, "group_id");
+      return _.uniqBy(this.users, "group_id").filter(i=>i.group_id>0 );
     },
     filteredItems() {
       // if (this.showDuplicates && this.telsDuplicates.length > 0)

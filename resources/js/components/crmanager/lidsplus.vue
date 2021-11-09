@@ -2,6 +2,42 @@
   <div>
     <v-container fluid>
       <v-row>
+        <v-col cols="2" class="pt-3 mt-4">
+          <v-dialog
+            ref="dialog"
+            v-model="modal"
+            :return-value.sync="dates"
+            persistent
+            width="290px"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="dates"
+                label="Период"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="dates" scrollable range locale="ru-RU">
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="modal = false">
+                Отменить
+              </v-btn>
+              <v-btn
+                text
+                color="primary"
+                @click="
+                  $refs.dialog.save(dates);
+                  getLidsOnDate();
+                "
+              >
+                Выбрать
+              </v-btn>
+            </v-date-picker>
+          </v-dialog>
+        </v-col>
         <v-col cols="1" class="pt-3 mt-4">
           <v-select
             v-model="filterStatus"
@@ -64,7 +100,7 @@
           </v-card-title>
         </v-col>
 
-        <v-col cols="3" class="pt-3 mt-4">
+        <v-col cols="1" class="pt-3 mt-4">
           <v-select
             v-model="selectedStatus"
             :items="statuses"
@@ -161,6 +197,13 @@ import _ from "lodash";
 export default {
   props: ["user"],
   data: () => ({
+    modal: false,
+    dates: [
+      new Date(new Date().setDate(new Date().getDate() - 30))
+        .toISOString()
+        .substr(0, 10),
+      new Date().toISOString().substr(0, 10),
+    ],
     datetime: "",
     userid: null,
     users: [],
@@ -199,11 +242,12 @@ export default {
     this.getProviders();
     this.getUsers();
     this.getStatuses();
+    this.getLidsOnDate();
   },
   watch: {
     filterGStatus: function (newval, oldval) {
       if (newval == 0) {
-        this.getLids(this.$props.user.id);
+        //this.getLids(this.$props.user.id);
       } else {
         this.getStatusLids(newval);
       }
@@ -211,7 +255,7 @@ export default {
   },
   computed: {
     group() {
-      return _.uniqBy(this.users, "group_id");
+      return _.uniqBy(this.users, "group_id").filter(i=>i.group_id>0 );
     },
     filteredItems() {
       // if (this.showDuplicates && this.telsDuplicates.length > 0)
@@ -284,47 +328,7 @@ export default {
           console.log(error);
         });
     },
-    changeLidsUser() {
-      const self = this;
-      let cur_user_id = this.disableuser;
-      let send = {};
-      send.user_id = this.userid;
 
-      if (this.selectedStatus !== 0) {
-        send.status_id = this.selectedStatus;
-      }
-      if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-        send.data = this.selected;
-      } else if (
-        (this.search !== "" ||
-          this.filtertel !== "" ||
-          this.filterStatus !== 0 ||
-          this.filterGStatus !== 0) &&
-        this.$refs.datatable.$children[0].filteredItems.length > 0
-      ) {
-        send.data = this.$refs.datatable.$children[0].filteredItems;
-      }
-      if (self.$props.user.role_id == 2) {
-        //CallBack user not change
-        send.data = send.data.filter((f) => f.status_id != 9);
-      }
-      axios
-        .post("api/Lid/changelidsuser", send)
-        .then(function (response) {
-          self.search = "";
-          self.filtertel = "";
-          self.userid = null;
-          self.$refs.radiogroup.lazyValue = null;
-          self.selected = [];
-          self.filterStatus = 0;
-          self.getUsers();
-          self.getLids(cur_user_id);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      self.searchAll = "";
-    },
     putSelectedLidsDB() {
       const self = this;
       let send = {};
@@ -411,7 +415,6 @@ export default {
             color,
           }));
           self.statuses.unshift({ name: "Default", id: 0 });
-          self.getLids(self.$props.user.id);
         })
         .catch((error) => console.log(error));
     },
@@ -431,6 +434,28 @@ export default {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
+            if (e.status_id)
+              e.status = self.statuses.find((s) => s.id == e.status_id).name;
+          });
+          self.searchAll = "";
+          // self.getDuplicates();
+        })
+        .catch((error) => console.log(error));
+    },
+    getLidsOnDate() {
+      let self = this;
+
+      axios
+        .get("/api/getLidsOnDate/" + this.dates)
+        .then((res) => {
+          // console.log(res.data);
+          self.lids = Object.entries(res.data).map((e) => e[1]);
+
+          self.lids.map(function (e) {
+            e.user = self.users.find((u) => u.id == e.user_id).fio;
+            e.date_created = e.created_at.substring(0, 10);
+            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
+            e.group_id = self.users.find((u) => u.id == e.user_id).group_id
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
@@ -490,7 +515,7 @@ export default {
       const self = this;
       self.selected = [];
       self.selectedStatus = 0;
-      self.getLids(self.disableuser);
+      // self.getLids(self.disableuser);
     },
     getProviders() {
       let self = this;

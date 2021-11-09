@@ -200,6 +200,18 @@ class LidsController extends Controller
     return Lid::select('id')->whereBetween('created_at', [$req['start'], $req['end']])->get();
   }
 
+
+  public function getLidsOnDate($date)
+  {
+    $date = explode(',',$date);
+    DebugBar::info(count($date));
+    if(count($date) == 2){
+      return Lid::whereBetween('created_at', [$date[0], $date[1]])->get();
+    } else {
+      return Lid::where(DATE_FORMAT(`created_at`,'%Y-%m-%d'), $date[0])->get();
+    }
+  }
+
   public function getlidonid(Request $request, $id)
   {
     $req = $request->all();
