@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 // use Illuminate\Support\Facades\Log;
 use App\Models\Lid;
 use App\Models\Log;
+use App\Models\Depozit;
 use DB;
 use Debugbar;
 
@@ -203,9 +204,9 @@ class LidsController extends Controller
 
   public function getLidsOnDate($date)
   {
-    $date = explode(',',$date);
+    $date = explode(',', $date);
 
-    if(count($date) == 2){
+    if (count($date) == 2) {
       return Lid::whereBetween('created_at', [$date[0], $date[1]])->get();
     } else {
       return Lid::whereDate('created_at', $date[0])->get();
@@ -314,15 +315,25 @@ class LidsController extends Controller
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response('Key incorect', 403);
-$sql = "SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = '".$f_key->id."' AND `lead_id` = '".$req['lead_id']."'";
-$res['status'] = 'Error';
-if( DB::select(DB::raw($sql))){
-    $sql = "SELECT `name` FROM `statuses` WHERE `id` IN ( SELECT `status_id` FROM `lids` WHERE `id` = ".$req['lead_id'].")";
-    $lid_status = DB::select(DB::raw($sql));
-    $res['status'] = $lid_status;
-    $res['id'] = $req['lead_id'];
-}
-    return response( $res);
+    $sql = "SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = '" . $f_key->id . "' AND `lead_id` = '" . $req['lead_id'] . "'";
+    $res['status'] = 'Error';
+    if (DB::select(DB::raw($sql))) {
+      $sql = "SELECT `name` FROM `statuses` WHERE `id` IN ( SELECT `status_id` FROM `lids` WHERE `id` = " . $req['lead_id'] . ")";
+      $lid_status = DB::select(DB::raw($sql));
+      $res['status'] = $lid_status;
+      $res['id'] = $req['lead_id'];
+    }
+    return response($res);
+  }
+
+
+  public function setDepozit(Request $request)
+  {
+    $req = $request->all();
+    $req['created_at'] = Now();
+    $res = Depozit::create($req);
+
+    return response($res);
   }
 
   /**
