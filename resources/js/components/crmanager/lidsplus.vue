@@ -154,7 +154,7 @@
                     item-value="id"
                   ></v-select>
                 </v-col>
-                <v-col cols="2">
+                <!-- <v-col cols="2">
                   <v-text-field
                     v-model="search"
                     append-icon="mdi-magnify"
@@ -163,7 +163,7 @@
                     hide-details
                     class="ml-3"
                   ></v-text-field>
-                </v-col>
+                </v-col> -->
                 <!-- v-if="telsDuplicates.length > 0" -->
                 <v-col cols="2">
                   <v-card-title>
