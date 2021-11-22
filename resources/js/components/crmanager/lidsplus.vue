@@ -120,7 +120,7 @@
     </v-container>
 
     <v-row>
-      <v-col cols="12">
+      <v-col cols="9">
         <v-card>
           <v-data-table
             v-model.lazy.trim="selected"
@@ -193,6 +193,70 @@
             </template>
           </v-data-table>
         </v-card>
+      </v-col>
+            <v-col cols="3">
+        <div class="row">
+          <v-card class="pa-5 w-100">
+            Укажите пользователя
+            <v-card-text class="scroll-y">
+              <v-list>
+                <v-radio-group
+                  @change="changeLidsUser"
+                  ref="radiogroup"
+                  v-model="userid"
+                  v-bind="users"
+                  id="usersradiogroup"
+                >
+                  <v-expansion-panels>
+                    <v-expansion-panel v-for="(item, i) in group" :key="i">
+                      <v-expansion-panel-header>
+                        {{ item.fio }}
+                      </v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        <v-row
+                          v-for="user in users.filter(function(i){return i.group_id == item.group_id})"
+                          :key="user.id"
+                        >
+                          <v-radio
+                            :label="user.fio"
+                            :value="user.id"
+                            :disabled="disableuser == user.id"
+                          >
+                          </v-radio>
+
+                          <v-btn
+                            class="ml-3"
+                            small
+                            :color="usercolor(user)"
+                            @click="getLids(user.id)"
+                            :value="user.hmlids"
+                            :disabled="disableuser == user.id"
+                            >{{ user.hmlids }}</v-btn
+                          >
+                        </v-row>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                </v-radio-group>
+              </v-list>
+            </v-card-text>
+          </v-card>
+          <v-card class="pa-5 mt-1 w-100">
+            <div class="tel">Тел: {{ clickedItemTel }}</div>
+            <v-list dense>
+              <v-subheader>Статусы лида</v-subheader>
+              <v-list-item-group color="primary">
+                <v-list-item v-for="(item, i) in clickedItemStatuses" :key="i">
+                  <v-list-item-content :style="{ background: item.color }">
+                    <v-list-item-title
+                      v-text="item.name + ' ' + item.uname + ' ' + item.cdate"
+                    ></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-card>
+        </div>
       </v-col>
     </v-row>
   </div>
@@ -387,6 +451,47 @@ export default {
           self.clickedItemStatuses = res.data;
         })
         .catch((error) => console.log(error));
+    },
+        changeLidsUser() {
+      const self = this;
+      let cur_user_id = this.disableuser;
+      let send = {};
+      send.user_id = this.userid;
+
+      if (this.selectedStatus !== 0) {
+        send.status_id = this.selectedStatus;
+      }
+      if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
+        send.data = this.selected;
+      } else if (
+        (this.search !== "" ||
+          this.filtertel !== "" ||
+          this.filterStatus !== 0 ||
+          this.filterGStatus !== 0) &&
+        this.$refs.datatable.$children[0].filteredItems.length > 0
+      ) {
+        send.data = this.$refs.datatable.$children[0].filteredItems;
+      }
+      if (self.$props.user.role_id == 2) {
+        //CallBack user not change
+        send.data = send.data.filter((f) => f.status_id != 9);
+      }
+      axios
+        .post("api/Lid/changelidsuser", send)
+        .then(function (response) {
+          self.search = "";
+          self.filtertel = "";
+          self.userid = null;
+          self.$refs.radiogroup.lazyValue = null;
+          self.selected = [];
+          self.filterStatus = 0;
+          self.getUsers();
+          self.getLids(cur_user_id);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      self.searchAll = "";
     },
     getUsers() {
       let self = this;
