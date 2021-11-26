@@ -337,13 +337,8 @@ export default {
   },
   props: ["user"],
   data: () => ({
-<<<<<<< HEAD
     depozit:0,
     depozit_val:'',
-=======
-    depozit:false,
-   depozit_val:'',
->>>>>>> e68bce387e650698d1eef937eaa3da0954e50a36
     componentKey: 0,
     text: null,
     tel: "",
