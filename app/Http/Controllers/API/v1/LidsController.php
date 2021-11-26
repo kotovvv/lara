@@ -336,6 +336,37 @@ class LidsController extends Controller
     return response($res);
   }
 
+  public function get_zaliv_all(Request $request)
+  {
+    $req = $request->all();
+    $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+    if (!$f_key) return response('Key incorect', 403);
+    $res['result'] = 'Error';
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id. ")";
+    $lids = DB::select(DB::raw($sql));
+    if ($lids) {
+      $res['data'] = [];
+      $res['result'] = "success";
+      $res['rows'] = 0;
+      foreach($lids as $lid){
+        $ftd = $lid->status_id == 10? 1:0;
+        $res['data'][] = [
+      'afilateName' => $lid->afilyator,
+      'name' => $lid->name,
+      'email' => $lid->email,
+      'phone' => $lid->tel,
+      'status' => $lid->statusName,
+      'lead_id' => $lid->id,
+      'ftd' => $ftd
+        ];
+      $res['rows']++;
+      }
+
+
+    }
+    return response($res);
+  }
+
 
   public function setDepozit(Request $request)
   {
