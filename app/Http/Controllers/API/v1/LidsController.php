@@ -316,14 +316,22 @@ class LidsController extends Controller
 
     if (!$f_key) return response('Key incorect', 403);
     $sql = "SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = '" . $f_key->id . "' AND `lead_id` = '" . $req['lead_id'] . "'";
-    $res['status'] = 'Error';
+    $res['result'] = 'Error';
     if (DB::select(DB::raw($sql))) {
       $sql = "SELECT `name` FROM `statuses` WHERE `id` IN ( SELECT `status_id` FROM `lids` WHERE `id` = " . $req['lead_id'] . ")";
       $lid_status = DB::select(DB::raw($sql));
-      $res['status'] = $lid_status;
+      $sql = "SELECT * FROM `lids` WHERE `id` = " . $req['lead_id']. " LIMIT 1";
+      $lid = DB::select(DB::raw($sql));
+      $res['result'] = "success";
+      $res['afilateName'] = $lid[0]->afilyator;
+      $res['name'] = $lid[0]->name;
+      $res['email'] = $lid[0]->email;
+      $res['phone'] = $lid[0]->tel;
+      $res['status'] = $lid_status[0]->name;
+      $res['lead_id'] = $req['lead_id'];
       $res['ftd'] = 0;
       if ($req['lead_id'] == 10) $res['ftd'] = 1;
-      $res['id'] = $req['lead_id'];
+
     }
     return response($res);
   }
