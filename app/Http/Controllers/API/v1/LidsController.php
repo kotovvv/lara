@@ -321,6 +321,8 @@ class LidsController extends Controller
       $sql = "SELECT `name` FROM `statuses` WHERE `id` IN ( SELECT `status_id` FROM `lids` WHERE `id` = " . $req['lead_id'] . ")";
       $lid_status = DB::select(DB::raw($sql));
       $res['status'] = $lid_status;
+      $res['ftd'] = 0;
+      if ($req['lead_id'] == 10) $res['ftd'] = 1;
       $res['id'] = $req['lead_id'];
     }
     return response($res);
