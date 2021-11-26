@@ -271,6 +271,7 @@
                 :value="status.id"
                 v-for="status in statuses"
                 :key="status.id"
+                @click="nextdep(status.id)"
               >
                 <span
                   slot="label"
@@ -336,8 +337,13 @@ export default {
   },
   props: ["user"],
   data: () => ({
+<<<<<<< HEAD
     depozit:0,
     depozit_val:'',
+=======
+    depozit:false,
+   depozit_val:'',
+>>>>>>> e68bce387e650698d1eef937eaa3da0954e50a36
     componentKey: 0,
     text: null,
     tel: "",
@@ -415,6 +421,10 @@ export default {
     },
   },
   methods: {
+    nextdep(status_id){
+      if(status_id != 10) return
+this.depozit = true
+    },
     forceRerender() {
       this.componentKey += 1;
     },
@@ -521,6 +531,22 @@ export default {
           console.log(error);
         });
 
+    },
+    setDepozit(){
+      let self = this
+      let send ={}
+      send.lid_id = this.selected[0].id
+      send.user_id = this.selected[0].user_id
+      send.depozit = this.depozit_val
+      axios
+        .post("api/setDepozit", send)
+        .then(function (response) {
+          self.depozit_val = '';
+          // console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";

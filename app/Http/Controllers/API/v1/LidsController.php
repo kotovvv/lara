@@ -201,6 +201,18 @@ class LidsController extends Controller
     return Lid::select('id')->whereBetween('created_at', [$req['start'], $req['end']])->get();
   }
 
+
+  public function getLidsOnDate($date)
+  {
+    $date = explode(',', $date);
+
+    if (count($date) == 2) {
+      return Lid::whereBetween('created_at', [$date[0], $date[1]])->get();
+    } else {
+      return Lid::whereDate('created_at', $date[0])->get();
+    }
+  }
+
   public function getlidonid(Request $request, $id)
   {
     $req = $request->all();
@@ -283,16 +295,17 @@ class LidsController extends Controller
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
 
     if (!$f_lid->isEmpty()) {
-      return response('дублікат');
+      return response('duplicate');
     }
 
     $n_lid->save();
     $id = $n_lid->id;
-    DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
+    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
 
 
     $res['status'] = 'OK';
     $res['id'] = $id;
+    $res['insart'] = $insert;
     return response($res);
   }
 
@@ -302,12 +315,65 @@ class LidsController extends Controller
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response('Key incorect', 403);
+    $sql = "SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = '" . $f_key->id . "' AND `lead_id` = '" . $req['lead_id'] . "'";
+    $res['result'] = 'Error';
+    if (DB::select(DB::raw($sql))) {
+      $sql = "SELECT `name` FROM `statuses` WHERE `id` IN ( SELECT `status_id` FROM `lids` WHERE `id` = " . $req['lead_id'] . ")";
+      $lid_status = DB::select(DB::raw($sql));
+      $sql = "SELECT * FROM `lids` WHERE `id` = " . $req['lead_id']. " LIMIT 1";
+      $lid = DB::select(DB::raw($sql));
+      $res['result'] = "success";
+      $res['afilateName'] = $lid[0]->afilyator;
+      $res['name'] = $lid[0]->name;
+      $res['email'] = $lid[0]->email;
+      $res['phone'] = $lid[0]->tel;
+      $res['status'] = $lid_status[0]->name;
+      $res['lead_id'] = $req['lead_id'];
+      $res['ftd'] = 0;
+      if ($req['lead_id'] == 10) $res['ftd'] = 1;
 
-    $sql = "SELECT `name` FROM `statuses` WHERE `id` IN ( SELECT `status_id` FROM `lids` WHERE `id` = ".$req['lead_id'].")";
+    }
+    return response($res);
+  }
 
-    $all_lids = DB::select(DB::raw($sql));
+  public function get_zaliv_all(Request $request)
+  {
+    $req = $request->all();
+    $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+    if (!$f_key) return response('Key incorect', 403);
+    $res['result'] = 'Error';
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id. ")";
+    $lids = DB::select(DB::raw($sql));
+    if ($lids) {
+      $res['data'] = [];
+      $res['result'] = "success";
+      $res['rows'] = 0;
+      foreach($lids as $lid){
+        $ftd = $lid->status_id == 10? 1:0;
+        $res['data'][] = [
+      'afilateName' => $lid->afilyator,
+      'name' => $lid->name,
+      'email' => $lid->email,
+      'phone' => $lid->tel,
+      'status' => $lid->statusName,
+      'lead_id' => $lid->id,
+      'ftd' => $ftd
+        ];
+      $res['rows']++;
+      }
 
-    $res['status'] = $all_lids;
+
+    }
+    return response($res);
+  }
+
+
+  public function setDepozit(Request $request)
+  {
+    $req = $request->all();
+    $req['created_at'] = Now();
+    $res = Depozit::create($req);
+
     return response($res);
   }
 
