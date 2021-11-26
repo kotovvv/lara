@@ -320,7 +320,7 @@ class LidsController extends Controller
     if (DB::select(DB::raw($sql))) {
       $sql = "SELECT `name` FROM `statuses` WHERE `id` IN ( SELECT `status_id` FROM `lids` WHERE `id` = " . $req['lead_id'] . ")";
       $lid_status = DB::select(DB::raw($sql));
-      $sql = "SELECT * FROM `lids` WHERE `id` = " . $req['lead_id']. " LIMIT 1";
+      $sql = "SELECT * FROM `lids` WHERE `id` = " . $req['lead_id'] . " LIMIT 1";
       $lid = DB::select(DB::raw($sql));
       $res['result'] = "success";
       $res['afilateName'] = $lid[0]->afilyator;
@@ -331,7 +331,6 @@ class LidsController extends Controller
       $res['lead_id'] = $req['lead_id'];
       $res['ftd'] = 0;
       if ($req['lead_id'] == 10) $res['ftd'] = 1;
-
     }
     return response($res);
   }
@@ -342,27 +341,25 @@ class LidsController extends Controller
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response('Key incorect', 403);
     $res['result'] = 'Error';
-    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id. ")";
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . ")";
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
       $res['data'] = [];
       $res['result'] = "success";
       $res['rows'] = 0;
-      foreach($lids as $lid){
-        $ftd = $lid->status_id == 10? 1:0;
+      foreach ($lids as $lid) {
+        $ftd = $lid->status_id == 10 ? 1 : 0;
         $res['data'][] = [
-      'afilateName' => $lid->afilyator,
-      'name' => $lid->name,
-      'email' => $lid->email,
-      'phone' => $lid->tel,
-      'status' => $lid->statusName,
-      'lead_id' => $lid->id,
-      'ftd' => $ftd
+          'afilateName' => $lid->afilyator,
+          'name' => $lid->name,
+          'email' => $lid->email,
+          'phone' => $lid->tel,
+          'status' => $lid->statusName,
+          'lead_id' => $lid->id,
+          'ftd' => $ftd
         ];
-      $res['rows']++;
+        $res['rows']++;
       }
-
-
     }
     return response($res);
   }
@@ -375,16 +372,6 @@ class LidsController extends Controller
     $res = Depozit::create($req);
 
     return response($res);
-  }
-
-
-  public function setDepozit(Request $request)
-  {
-    $req = $request->all();
-    $req['created_at'] = Now();
-$res = Depozit::create($req);
-
-return response($res);
   }
 
   /**
