@@ -65,8 +65,5 @@ Route::get('getlogonid/{id}', [LogsController::class,'getlogonid'])->name('getlo
 Route::get('StasusesOfId/{id}', [LogsController::class,'StasusesOfId'])->name('StasusesOfId');
 Route::get('set_zaliv', [LidsController::class,'set_zaliv'])->name('set_zaliv');
 Route::get('get_zaliv', [LidsController::class,'get_zaliv'])->name('get_zaliv');
-<<<<<<< HEAD
-=======
 Route::get('get_zaliv_all', [LidsController::class,'get_zaliv_all'])->name('get_zaliv_all');
->>>>>>> e68bce387e650698d1eef937eaa3da0954e50a36
 Route::post('setDepozit', [LidsController::class,'setDepozit'])->name('setDepozit');
