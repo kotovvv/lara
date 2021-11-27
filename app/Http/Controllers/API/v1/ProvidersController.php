@@ -48,7 +48,7 @@ class ProvidersController extends Controller
 
             $sql = "SELECT DISTINCT CAST(`start` AS DATE) 'start' FROM `imports` WHERE `provider_id` = " . $provider_id . " AND (CAST(`start` AS DATE) BETWEEN '" . $datefrom . "' AND '" . $dateto . "')";
             $a_dateadd = DB::select(DB::raw($sql));
-            $sql = "SELECT COUNT(id) n FROM `lids` WHERE `provider_id` = '". $provider_id."'";
+            $sql = "SELECT COUNT(id) n FROM `lids` WHERE `provider_id` = '" . $provider_id . "'";
             $all_lids = DB::select(DB::raw($sql));
             $return['all'] = $all_lids;
             if ($a_dateadd) {
@@ -61,7 +61,7 @@ class ProvidersController extends Controller
                 }
 
                 //$sql = "select *,count(*) n from (SELECT DISTINCT  s.`color`,s.`name`,tel FROM `logs` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `status_id` > 0 AND CAST(l.`created_at` AS DATE ) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `lid_id` IN (SELECT id FROM `lids` WHERE `provider_id` = ". $provider_id . " )  ORDER BY s.`order` ASC ) t1 group by name";
-                $sql = "SELECT *,COUNT(*) n FROM (SELECT * FROM (SELECT DISTINCT  s.`color`,s.`name`,tel FROM `logs` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `status_id` > 0 AND CAST(l.`created_at` AS DATE )  BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `lid_id` IN (SELECT id FROM `lids` WHERE `provider_id` = ". $provider_id ." ) ORDER BY l.`created_at` DESC) t1 GROUP BY t1.tel) t2 GROUP BY t2.name";
+                $sql = "SELECT *,COUNT(*) n FROM (SELECT * FROM (SELECT DISTINCT  s.`color`,s.`name`,tel FROM `logs` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `status_id` > 0 AND CAST(l.`created_at` AS DATE )  BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `lid_id` IN (SELECT id FROM `lids` WHERE `provider_id` = " . $provider_id . " ) ORDER BY l.`created_at` DESC) t1 GROUP BY t1.tel) t2 GROUP BY t2.name";
 
 
                 $a_statuses = DB::select(DB::raw($sql));
@@ -113,15 +113,15 @@ class ProvidersController extends Controller
                 //return response('Provider added', 200);
             } //else //return response('Provider add error', 301);
         }
-        $name_key = Provider::select('name','tel')->get();
+        $name_key = Provider::select('id', 'name', 'tel')->get();
         $sql = 'TRUNCATE TABLE `apikeys`';
         DB::select(DB::raw($sql));
-        $sql = "INSERT INTO `apikeys` (`name`,`api_key`) VALUES ";
-        $i=0;
-        foreach($name_key as $key){
-$z = $i==0?'':',';
-          $sql .= $z."('".$key['name']."','".$key['tel']."')";
-          $i++;
+        $sql = "INSERT INTO `apikeys` (`id`,`name`,`api_key`) VALUES ";
+        $i = 0;
+        foreach ($name_key as $key) {
+            $z = $i == 0 ? '' : ',';
+            $sql .= $z . "('" . $key['id'] . "','" . $key['name'] . "','" . $key['tel'] . "')";
+            $i++;
         }
         DB::select(DB::raw($sql));
     }

@@ -305,7 +305,7 @@ class LidsController extends Controller
 
     $res['status'] = 'OK';
     $res['id'] = $id;
-    $res['insart'] = $insert;
+    $res['insert'] = $insert;
     return response($res);
   }
 
