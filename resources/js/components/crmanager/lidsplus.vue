@@ -55,15 +55,7 @@
             <v-icon small @click="deleteItem()"> mdi-delete </v-icon>
           </v-btn>
         </v-col>
-        <v-col cols="2" class="pt-3 mt-4">
-          <v-select
-            v-model="filterGStatus"
-            :items="statuses"
-            label="Глобальный фильтр по статусам"
-            item-text="name"
-            item-value="id"
-          ></v-select>
-        </v-col>
+
 
         <v-col cols="2" class="pt-3 mt-4">
           <v-select
@@ -87,19 +79,8 @@
             ></v-text-field>
           </v-card-title>
         </v-col>
-        <v-col cols="1">
-          <v-card-title>
-            <v-text-field
-              v-model.lazy.trim="filtertel"
-              append-icon="mdi-phone"
-              label="Первые цифры телефона"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-card-title>
-        </v-col>
 
-        <v-col cols="1" class="pt-3 mt-4">
+        <v-col cols="3" class="pt-3 mt-4">
           <v-select
             v-model="selectedStatus"
             :items="statuses"
@@ -271,7 +252,7 @@ export default {
   data: () => ({
     modal: false,
     dates: [
-      new Date(new Date().setDate(new Date().getDate() - 30))
+      new Date(new Date().setDate(new Date().getDate() - 7))
         .toISOString()
         .substr(0, 10),
       new Date().toISOString().substr(0, 10),
@@ -480,13 +461,14 @@ export default {
         .post("api/Lid/changelidsuser", send)
         .then(function (response) {
           self.search = "";
-          self.filtertel = "";
+          // self.filtertel = "";
           self.userid = null;
           self.$refs.radiogroup.lazyValue = null;
           self.selected = [];
           self.filterStatus = 0;
           self.getUsers();
-          self.getLids(cur_user_id);
+          // self.getLids(cur_user_id);
+          self.getLidsOnDate();
         })
         .catch(function (error) {
           console.log(error);
