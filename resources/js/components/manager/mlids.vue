@@ -149,6 +149,7 @@
                 :items="filteredItems"
                 ref="datatable"
                 :expanded="expanded"
+                show-expand
                 :footer-props="{
                   'items-per-page-options': [10, 50, 100, 250, 500, -1],
                   'items-per-page-text': 'Показать',
@@ -313,6 +314,13 @@
           <small>*Заповніть обов'язкове поле</small>
         </v-card-text>
         <v-card-actions>
+                        <v-btn
+            color="blue darken-1"
+            text
+            @click="depozit = false"
+          >
+            Відмінити
+          </v-btn>
           <v-spacer></v-spacer>
               <v-btn
             color="blue darken-1"

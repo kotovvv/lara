@@ -40,10 +40,10 @@
         <v-col cols="2" class="pt-3 mt-4">
           <v-select
             v-model="filterStatus"
-            :items="statuses"
+            :items="statuses_lids"
             label="Фильтр по статусам"
-            item-text="name"
-            item-value="id"
+            item-text="status"
+            item-value="status_id"
           ></v-select>
           <v-btn
             v-if="
@@ -110,8 +110,10 @@
             :single-select="false"
             item-key="id"
             show-select
+            show-expand
             @click:row="clickrow"
             :items="filteredItems"
+            :expanded="expanded"
             ref="datatable"
             :footer-props="{
               'items-per-page-options': [50, 10, 100, 250, 500, -1],
@@ -133,6 +135,7 @@
                     label="По группам"
                     item-text="fio"
                     item-value="id"
+                     multiple
                   ></v-select>
                 </v-col>
                 <!-- <v-col cols="2">
@@ -172,6 +175,15 @@
                 </v-col>
               </v-row>
             </template>
+            <template v-slot:expanded-item="{ headers, item }">
+                  <td :colspan="headers.length" class="blackborder">
+                    <v-row>
+                      <v-col cols="12">
+                        <logtel :lid_id="item.id" :key="item.id" />
+                      </v-col>
+                    </v-row>
+                  </td>
+                </template>
           </v-data-table>
         </v-card>
       </v-col>
@@ -222,7 +234,7 @@
               </v-list>
             </v-card-text>
           </v-card>
-          <v-card class="pa-5 mt-1 w-100">
+          <!-- <v-card class="pa-5 mt-1 w-100">
             <div class="tel">Тел: {{ clickedItemTel }}</div>
             <v-list dense>
               <v-subheader>Статусы лида</v-subheader>
@@ -236,7 +248,7 @@
                 </v-list-item>
               </v-list-item-group>
             </v-list>
-          </v-card>
+          </v-card> -->
         </div>
       </v-col>
     </v-row>
@@ -246,7 +258,7 @@
 <script>
 import axios from "axios";
 import _ from "lodash";
-
+import logtel from '../manager/logtel'
 export default {
   props: ["user"],
   data: () => ({
@@ -262,11 +274,12 @@ export default {
     users: [],
     disableuser: 0,
     statuses: [],
+    statuses_lids: [],
     selectedStatus: 0,
     filterStatus: 0,
     filterGStatus: 0,
     filterProviders: 0,
-    filterGroups: 0,
+    filterGroups: [],
     selected: [],
     lids: [],
     search: "",
@@ -280,6 +293,7 @@ export default {
       { text: "Поставщик", value: "provider" },
       { text: "Менеджер", value: "user" },
       { text: "Создан", value: "date_created" },
+      { text: "Изменён", value: "date_updated" },
       { text: "Статус", value: "status" },
       { text: "Сообщение", value: "text" },
     ],
@@ -291,6 +305,11 @@ export default {
     telsDuplicates: [],
     clickedItemStatuses: [],
     clickedItemTel: "",
+    tel: "",
+    lid_id:'',
+    expanded: [],
+    singleExpand: true,
+    componentKey: 0,
   }),
   mounted: function () {
     this.getProviders();
@@ -321,7 +340,7 @@ export default {
           (!this.filterProviders || i.provider_id == this.filterProviders) &&
           (!this.filtertel || reg.test(i.tel)) &&
           (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
-          (!this.filterGroups || i.group_id == this.filterGroups)
+          (!this.filterGroups.length ||  this.filterGroups.includes(i.group_id))
         );
       });
     },
@@ -351,6 +370,7 @@ export default {
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
+            e.date_updated = e.updated_at.substring(0, 10);
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
@@ -420,18 +440,25 @@ export default {
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
     },
+    forceRerender() {
+      this.componentKey += 1;
+    },
+    clickrow(item, row) {
+            if (!row.isSelected) {this.tel = item.tel;this.lid_id = item.id;this.expanded = item }
+      else this.tel = "";
+      row.select(!row.isSelected);
+// ===============
+      // let self = this;
+      // this.clickedItemTel = item.tel;
+      // this.clickedItemStatuses = [];
+      // axios
+      //   .get("/api/StasusesOfId/" + item.id)
+      //   .then((res) => {
+      //     self.clickedItemStatuses = res.data;
+      //   })
+      //   .catch((error) => console.log(error));
+// ====================
 
-    clickrow(value) {
-      // console.log(value.id,value.tel);
-      let self = this;
-      this.clickedItemTel = value.tel;
-      this.clickedItemStatuses = [];
-      axios
-        .get("/api/StasusesOfId/" + value.id)
-        .then((res) => {
-          self.clickedItemStatuses = res.data;
-        })
-        .catch((error) => console.log(error));
     },
         changeLidsUser() {
       const self = this;
@@ -530,6 +557,7 @@ export default {
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
+            e.date_updated = e.updated_at.substring(0, 10);
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
@@ -551,12 +579,14 @@ export default {
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
+            e.date_updated = e.updated_at.substring(0, 10);
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
             e.group_id = self.users.find((u) => u.id == e.user_id).group_id;
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
           self.searchAll = "";
+          self.statuses_lids = _.uniqBy(self.lids,'status_id').map((i)=>({status_id:i.status_id,status:i.status}))
           // self.getDuplicates();
         })
         .catch((error) => console.log(error));
@@ -576,10 +606,13 @@ export default {
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
+            e.date_updated = e.updated_at.substring(0, 10);
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
+          self.statuses_lids = _.uniqBy(self.lids,'status_id').map((i)=>({status_id:i.status_id,status:i.status}))
+
           self.searchAll = "";
           // self.getDuplicates();
         })
@@ -624,6 +657,9 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+  },
+    components: {
+    logtel,
   },
 };
 </script>
