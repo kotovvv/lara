@@ -79,7 +79,7 @@
             ></v-text-field>
           </v-card-title>
         </v-col>
-
+<v-spacer></v-spacer>
         <v-col cols="3" class="pt-3 mt-4">
           <v-select
             v-model="selectedStatus"
@@ -295,6 +295,7 @@ export default {
       { text: "Создан", value: "date_created" },
       { text: "Изменён", value: "date_updated" },
       { text: "Статус", value: "status" },
+      { text: "Депозит", value: "depozit" },
       { text: "Сообщение", value: "text" },
     ],
     parse_header: [],
@@ -665,8 +666,8 @@ export default {
 </script>
 
 <style scoped>
-.v-card__text.scroll-y {
+/* .v-card__text.scroll-y {
   overflow-y: auto;
   height: 60vh;
-}
+} */
 </style>

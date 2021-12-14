@@ -287,52 +287,53 @@
       </v-col>
     </v-row>
     <v-row justify="center">
-    <v-dialog
-      v-model="depozit"
-      persistent
-      max-width="600px"
-    >
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">Введіть суму депозиту</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col
-                cols="12"
-              >
-                <v-text-field
-                  label="Сума депозиту*"
-                  required
-                  v-model=depozit_val
-                ></v-text-field>
-              </v-col>
+      <v-dialog v-model="depozit" persistent max-width="600px">
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">Введіть суму депозиту</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
+                    label="Сума депозиту*"
+                    required
+                    v-model="depozit_val"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+            <small>*Заповніть обов'язкове поле</small>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="blue darken-1" text @click="depozit = false">
+              Відмінити
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="blue darken-1"
+              text
+              @click="
+                setDepozit();
+                depozit = false;
+              "
+            >
+              Зберегти
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
+    <v-snackbar v-model="snackbar" :centered='true' timeout='-1'>
+      {{ message }}
 
-            </v-row>
-          </v-container>
-          <small>*Заповніть обов'язкове поле</small>
-        </v-card-text>
-        <v-card-actions>
-                        <v-btn
-            color="blue darken-1"
-            text
-            @click="depozit = false"
-          >
-            Відмінити
-          </v-btn>
-          <v-spacer></v-spacer>
-              <v-btn
-            color="blue darken-1"
-            text
-            @click="setDepozit();depozit = false"
-          >
-            Зберегти
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-row>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          Х
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -345,12 +346,12 @@ export default {
   },
   props: ["user"],
   data: () => ({
-    depozit:0,
-    depozit_val:'',
+    depozit: 0,
+    depozit_val: "",
     componentKey: 0,
     text: null,
     tel: "",
-    lid_id:'',
+    lid_id: "",
     expanded: [],
     singleExpand: true,
     datetime: "",
@@ -382,8 +383,16 @@ export default {
     parse_header: [],
     sortOrders: {},
     sortKey: "tel",
+    hm: 0,
+    snackbar: false,
+    message: "",
   }),
-
+created:function() {
+		var self = this;
+		setInterval(function() {
+        self.getHm()
+    }, 10000)
+},
   mounted: function () {
     this.getProviders();
     this.getStatuses();
@@ -406,7 +415,7 @@ export default {
       }
     },
     datetime: function (newval, oldval) {
-      if ((newval == null || newval != oldval) && this.tel !='') {
+      if ((newval == null || newval != oldval) && this.tel != "") {
         this.setTime();
       }
     },
@@ -424,9 +433,34 @@ export default {
     },
   },
   methods: {
-    nextdep(status_id){
-      if(status_id != 10) return
-this.depozit = true
+    getHm() {
+      let self = this;
+      axios
+        .get("/api/getHmLidsUser/"+self.$props.user.id)
+        .then((res) => {
+          if(res.status == 200){
+            self.hm = res.data
+          }
+
+        })
+        .catch((error) => console.log(error));
+      if (localStorage.hm) {
+        if (localStorage.hm == this.hm) {
+          return;
+        } else {
+          this.message = 'Изменились лиды!'
+          this.snackbar = true
+          localStorage.hm = this.hm
+        }
+
+      } else {
+        this.hm = this.lids.length;
+        localStorage.hm = this.hm;
+      }
+    },
+    nextdep(status_id) {
+      if (status_id != 10) return;
+      this.depozit = true;
     },
     forceRerender() {
       this.componentKey += 1;
@@ -435,7 +469,16 @@ this.depozit = true
       const self = this;
       let send = {};
 
-      send.ontime =  (this.datetime == null)? "" :this.datetime.toString().length > 0 && this.datetime.toString().length > 20? new Date((this.datetime).getTime()- ((this.datetime).getTimezoneOffset()*60000)).toISOString() : this.datetime;
+      send.ontime =
+        this.datetime == null
+          ? ""
+          : this.datetime.toString().length > 0 &&
+            this.datetime.toString().length > 20
+          ? new Date(
+              this.datetime.getTime() -
+                this.datetime.getTimezoneOffset() * 60000
+            ).toISOString()
+          : this.datetime;
 
       // if (this.datetime == null) send.ontime = "";
       send.id = this.lid_id;
@@ -479,7 +522,7 @@ this.depozit = true
           // console.log(response);
           self.forceRerender();
           self.text = null;
-          self.lids.find((f) => f.id == send_el.lid_id).text = send_el.text
+          self.lids.find((f) => f.id == send_el.lid_id).text = send_el.text;
         })
         .catch(function (error) {
           console.log(error);
@@ -514,37 +557,36 @@ this.depozit = true
         .catch(function (error) {
           console.log(error);
         });
-        if( send_el.status_id == '10')  {
-          self.depozit = true
-          }
+      if (send_el.status_id == "10") {
+        self.depozit = true;
+      }
     },
-    setDepozit(){
-      let self = this
-      let send ={}
-      send.lid_id = this.selected[0].id
-      send.user_id = this.selected[0].user_id
-      send.depozit = this.depozit_val
+    setDepozit() {
+      let self = this;
+      let send = {};
+      send.lid_id = this.selected[0].id;
+      send.user_id = this.selected[0].user_id;
+      send.depozit = this.depozit_val;
       axios
         .post("api/setDepozit", send)
         .then(function (response) {
-          self.depozit_val = '';
+          self.depozit_val = "";
           // console.log(response);
         })
         .catch(function (error) {
           console.log(error);
         });
-
     },
-    setDepozit(){
-      let self = this
-      let send ={}
-      send.lid_id = this.selected[0].id
-      send.user_id = this.selected[0].user_id
-      send.depozit = this.depozit_val
+    setDepozit() {
+      let self = this;
+      let send = {};
+      send.lid_id = this.selected[0].id;
+      send.user_id = this.selected[0].user_id;
+      send.depozit = this.depozit_val;
       axios
         .post("api/setDepozit", send)
         .then(function (response) {
-          self.depozit_val = '';
+          self.depozit_val = "";
           // console.log(response);
         })
         .catch(function (error) {
@@ -556,9 +598,10 @@ this.depozit = true
     },
 
     clickrow(item, row) {
-
-      if (!row.isSelected) {this.tel = item.tel;this.lid_id = item.id; }
-      else this.tel = "";
+      if (!row.isSelected) {
+        this.tel = item.tel;
+        this.lid_id = item.id;
+      } else this.tel = "";
       row.select(!row.isSelected);
     },
 
@@ -636,7 +679,7 @@ this.depozit = true
         .catch((error) => console.log(error));
     },
   },
-};
+}
 </script>
 
 <style scoped>

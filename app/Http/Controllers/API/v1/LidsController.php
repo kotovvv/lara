@@ -166,12 +166,12 @@ class LidsController extends Controller
 
   public function userLids($id)
   {
-    return Lid::where('user_id', $id)->orderBy('created_at', 'desc')->get();
+    return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)->orderBy('lids.created_at', 'desc')->get();
   }
 
   public function statusLids($id)
   {
-    return Lid::where('status_id', $id)->orderBy('created_at', 'desc')->get();
+    return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.status_id', $id)->orderBy('lids.created_at', 'desc')->get();
   }
 
   public function getuserLids(Request $request, $id)
@@ -207,7 +207,7 @@ class LidsController extends Controller
     $date = explode(',', $date);
 
     if (count($date) == 2) {
-      return Lid::whereBetween('created_at', [$date[0], $date[1]])->get();
+      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->whereBetween('lids.created_at', [$date[0], $date[1]])->get();
     } else {
       return Lid::whereDate('created_at', $date[0])->get();
     }
@@ -302,7 +302,6 @@ class LidsController extends Controller
     $id = $n_lid->id;
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
 
-
     $res['status'] = 'OK';
     $res['id'] = $id;
     $res['insert'] = $insert;
@@ -372,6 +371,14 @@ class LidsController extends Controller
     $res = Depozit::create($req);
 
     return response($res);
+  }
+
+  public function getHmLidsUser($id)
+  {
+
+    $hm = Lid::where('user_id',$id)->count();
+
+    return response($hm);
   }
 
   /**
