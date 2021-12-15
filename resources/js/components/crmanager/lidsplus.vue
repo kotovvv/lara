@@ -56,7 +56,6 @@
           </v-btn>
         </v-col>
 
-
         <v-col cols="2" class="pt-3 mt-4">
           <v-select
             v-model="filterProviders"
@@ -79,7 +78,7 @@
             ></v-text-field>
           </v-card-title>
         </v-col>
-<v-spacer></v-spacer>
+        <v-spacer></v-spacer>
         <v-col cols="3" class="pt-3 mt-4">
           <v-select
             v-model="selectedStatus"
@@ -128,14 +127,14 @@
               }"
             >
               <v-row>
-                <v-col cols="2" class="ml-5">
+                <v-col cols="2" class="pl-5">
                   <v-select
                     v-model="filterGroups"
                     :items="group"
                     label="По группам"
                     item-text="fio"
                     item-value="id"
-                     multiple
+                    multiple
                   ></v-select>
                 </v-col>
                 <!-- <v-col cols="2">
@@ -174,32 +173,26 @@
                   />
                 </v-col>
                 <v-col cols="2">
-<v-btn
-      tile
-      color="success"
-      @click="exportXlsx"
-    >
-      <v-icon left>
-        mdi-file-excel
-      </v-icon>
-      XLSX
-    </v-btn>
+                  <v-btn tile color="success" @click="exportXlsx">
+                    <v-icon left> mdi-file-excel </v-icon>
+                    XLSX
+                  </v-btn>
                 </v-col>
               </v-row>
             </template>
             <template v-slot:expanded-item="{ headers, item }">
-                  <td :colspan="headers.length" class="blackborder">
-                    <v-row>
-                      <v-col cols="12">
-                        <logtel :lid_id="item.id" :key="item.id" />
-                      </v-col>
-                    </v-row>
-                  </td>
-                </template>
+              <td :colspan="headers.length" class="blackborder">
+                <v-row>
+                  <v-col cols="12">
+                    <logtel :lid_id="item.id" :key="item.id" />
+                  </v-col>
+                </v-row>
+              </td>
+            </template>
           </v-data-table>
         </v-card>
       </v-col>
-            <v-col cols="3">
+      <v-col cols="3">
         <div class="row">
           <v-card class="pa-5 w-100">
             Укажите пользователя
@@ -219,7 +212,9 @@
                       </v-expansion-panel-header>
                       <v-expansion-panel-content>
                         <v-row
-                          v-for="user in users.filter(function(i){return i.group_id == item.group_id})"
+                          v-for="user in users.filter(function (i) {
+                            return i.group_id == item.group_id;
+                          })"
                           :key="user.id"
                         >
                           <v-radio
@@ -268,9 +263,10 @@
 </template>
 
 <script>
+import XLSX from "xlsx";
 import axios from "axios";
 import _ from "lodash";
-import logtel from '../manager/logtel'
+import logtel from "../manager/logtel";
 export default {
   props: ["user"],
   data: () => ({
@@ -319,11 +315,10 @@ export default {
     clickedItemStatuses: [],
     clickedItemTel: "",
     tel: "",
-    lid_id:'',
+    lid_id: "",
     expanded: [],
     singleExpand: true,
     componentKey: 0,
-
   }),
   mounted: function () {
     this.getProviders();
@@ -332,6 +327,14 @@ export default {
     this.getLidsOnDate();
   },
   watch: {
+    filteredItems:function(){
+      const self = this
+                self.statuses_lids = _.uniqBy(self.filteredItems, "status_id").map((i) => ({
+            status_id: i.status_id,
+            status: i.status,
+          }));
+          self.statuses_lids.unshift({ status: "выбор", status_id: 0 })
+    },
     filterGStatus: function (newval, oldval) {
       if (newval == 0) {
         //this.getLids(this.$props.user.id);
@@ -354,15 +357,32 @@ export default {
           (!this.filterProviders || i.provider_id == this.filterProviders) &&
           (!this.filtertel || reg.test(i.tel)) &&
           (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
-          (!this.filterGroups.length ||  this.filterGroups.includes(i.group_id))
+          (!this.filterGroups.length || this.filterGroups.includes(i.group_id))
         );
       });
     },
   },
   methods: {
-    exportXlsx(){
-const lidsByStatus = _.uniqBy(this.lids, "status")
-console.log(lidsByStatus)
+    exportXlsx() {
+      const self = this
+      let lidsByStatus = []
+      lidsByStatus =  Object.entries(_.groupBy(self.filteredItems, "status"));
+      console.log(lidsByStatus);
+  var wb = XLSX.utils.book_new() // make Workbook of Excel
+lidsByStatus.forEach((i,ix) => {
+   // export json to Worksheet of Excel
+      // only array possible
+      window['list'+ix] = XLSX.utils.json_to_sheet(i[ix][1]) 
+
+
+      // add Worksheet to Workbook
+      // Workbook contains one or more worksheets
+      XLSX.utils.book_append_sheet(wb,  window['list'+ix], i[ix][0]) // sheetAName is name of Worksheet
+
+})
+      // export Excel file
+      XLSX.writeFile(wb, 'book.xlsx') // name of the file is 'book.xlsx'
+      console.log(lidsByStatus);
     },
     getDuplicates() {
       this.telsDuplicates = this.lids
@@ -462,10 +482,13 @@ console.log(lidsByStatus)
       this.componentKey += 1;
     },
     clickrow(item, row) {
-            if (!row.isSelected) {this.tel = item.tel;this.lid_id = item.id;this.expanded = item }
-      else this.tel = "";
+      if (!row.isSelected) {
+        this.tel = item.tel;
+        this.lid_id = item.id;
+        this.expanded = item;
+      } else this.tel = "";
       row.select(!row.isSelected);
-// ===============
+      // ===============
       // let self = this;
       // this.clickedItemTel = item.tel;
       // this.clickedItemStatuses = [];
@@ -475,10 +498,9 @@ console.log(lidsByStatus)
       //     self.clickedItemStatuses = res.data;
       //   })
       //   .catch((error) => console.log(error));
-// ====================
-
+      // ====================
     },
-        changeLidsUser() {
+    changeLidsUser() {
       const self = this;
       let cur_user_id = this.disableuser;
       let send = {};
@@ -604,7 +626,7 @@ console.log(lidsByStatus)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
           self.searchAll = "";
-          self.statuses_lids = _.uniqBy(self.lids,'status_id').map((i)=>({status_id:i.status_id,status:i.status}))
+
           // self.getDuplicates();
         })
         .catch((error) => console.log(error));
@@ -629,7 +651,10 @@ console.log(lidsByStatus)
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
-          self.statuses_lids = _.uniqBy(self.lids,'status_id').map((i)=>({status_id:i.status_id,status:i.status}))
+          self.statuses_lids = _.uniqBy(self.lids, "status_id").map((i) => ({
+            status_id: i.status_id,
+            status: i.status,
+          }));
 
           self.searchAll = "";
           // self.getDuplicates();
@@ -676,7 +701,7 @@ console.log(lidsByStatus)
         .catch((error) => console.log(error));
     },
   },
-    components: {
+  components: {
     logtel,
   },
 };
