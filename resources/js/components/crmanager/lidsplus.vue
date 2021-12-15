@@ -164,7 +164,7 @@
                     >
                   </v-card-title>
                 </v-col>
-                <v-col cols="5">
+                <v-col cols="6">
                   <v-data-footer
                     :pagination="pagination"
                     :options="options"
@@ -172,6 +172,18 @@
                     :items-per-page-options="[50, 10, 100, 250, 500, -1]"
                     :items-per-page-text="'Показать'"
                   />
+                </v-col>
+                <v-col cols="2">
+<v-btn
+      tile
+      color="success"
+      @click="exportXlsx"
+    >
+      <v-icon left>
+        mdi-file-excel
+      </v-icon>
+      XLSX
+    </v-btn>
                 </v-col>
               </v-row>
             </template>
@@ -311,6 +323,7 @@ export default {
     expanded: [],
     singleExpand: true,
     componentKey: 0,
+
   }),
   mounted: function () {
     this.getProviders();
@@ -347,6 +360,10 @@ export default {
     },
   },
   methods: {
+    exportXlsx(){
+const lidsByStatus = _.uniqBy(this.lids, "status")
+console.log(lidsByStatus)
+    },
     getDuplicates() {
       this.telsDuplicates = this.lids
         .filter(this.duplicatesOnly)

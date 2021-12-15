@@ -338,6 +338,7 @@
 </template>
 
 <script>
+import XLSX from 'xlsx'
 import axios from "axios";
 import logtel from "./logtel";
 export default {
