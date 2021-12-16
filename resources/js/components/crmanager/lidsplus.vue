@@ -365,24 +365,24 @@ export default {
   methods: {
     exportXlsx() {
       const self = this
-      let lidsByStatus = []
-      lidsByStatus =  Object.entries(_.groupBy(self.filteredItems, "status"));
-      console.log(lidsByStatus);
+      //let lidsByStatus = []
+      //lidsByStatus =  Object.entries(_.groupBy(self.filteredItems, "status"));
+      const obj = _.groupBy(self.filteredItems, "status")
+      const lidsByStatus = Array.from(Object.keys(obj), k=>[`${k}`, obj[k]]);
+      //console.log(lidsByStatus.length);
+      //return;
   var wb = XLSX.utils.book_new() // make Workbook of Excel
-lidsByStatus.forEach((i,ix) => {
+  for(let i = 0;i < lidsByStatus.length;i++ ){
    // export json to Worksheet of Excel
       // only array possible
-      window['list'+ix] = XLSX.utils.json_to_sheet(i[ix][1]) 
-
-
+      window['list'+i] = XLSX.utils.json_to_sheet(lidsByStatus[i][1])
       // add Worksheet to Workbook
       // Workbook contains one or more worksheets
-      XLSX.utils.book_append_sheet(wb,  window['list'+ix], i[ix][0]) // sheetAName is name of Worksheet
-
-})
+      XLSX.utils.book_append_sheet(wb,  window['list'+i], lidsByStatus[i][0]) // sheetAName is name of Worksheet
+}
       // export Excel file
       XLSX.writeFile(wb, 'book.xlsx') // name of the file is 'book.xlsx'
-      console.log(lidsByStatus);
+      // console.log(lidsByStatus);
     },
     getDuplicates() {
       this.telsDuplicates = this.lids
