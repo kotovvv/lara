@@ -365,12 +365,9 @@ export default {
   methods: {
     exportXlsx() {
       const self = this
-      //let lidsByStatus = []
-      //lidsByStatus =  Object.entries(_.groupBy(self.filteredItems, "status"));
       const obj = _.groupBy(self.filteredItems, "status")
       const lidsByStatus = Array.from(Object.keys(obj), k=>[`${k}`, obj[k]]);
-      //console.log(lidsByStatus.length);
-      //return;
+
   var wb = XLSX.utils.book_new() // make Workbook of Excel
   for(let i = 0;i < lidsByStatus.length;i++ ){
    // export json to Worksheet of Excel
@@ -382,7 +379,6 @@ export default {
 }
       // export Excel file
       XLSX.writeFile(wb, 'book.xlsx') // name of the file is 'book.xlsx'
-      // console.log(lidsByStatus);
     },
     getDuplicates() {
       this.telsDuplicates = this.lids
