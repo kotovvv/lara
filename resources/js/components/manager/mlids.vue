@@ -389,10 +389,10 @@ export default {
     message: "",
   }),
   created: function () {
-    var self = this;
-    setInterval(function () {
-      self.getHm();
-    }, 10000);
+    // var self = this;
+    // setInterval(function () {
+    //   self.getHm();
+    // }, 10000);
   },
   mounted: function () {
     this.getProviders();
