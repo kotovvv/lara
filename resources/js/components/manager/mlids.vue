@@ -325,7 +325,7 @@
         </v-card>
       </v-dialog>
     </v-row>
-    <v-snackbar v-model="snackbar" :centered='true' timeout='-1'>
+    <v-snackbar v-model="snackbar" :centered="true" timeout="-1">
       {{ message }}
 
       <template v-slot:action="{ attrs }">
@@ -338,7 +338,7 @@
 </template>
 
 <script>
-import XLSX from 'xlsx'
+import XLSX from "xlsx";
 import axios from "axios";
 import logtel from "./logtel";
 export default {
@@ -388,12 +388,12 @@ export default {
     snackbar: false,
     message: "",
   }),
-created:function() {
-		var self = this;
-		setInterval(function() {
-        self.getHm()
-    }, 10000)
-},
+  created: function () {
+    var self = this;
+    setInterval(function () {
+      self.getHm();
+    }, 10000);
+  },
   mounted: function () {
     this.getProviders();
     this.getStatuses();
@@ -437,27 +437,25 @@ created:function() {
     getHm() {
       let self = this;
       axios
-        .get("/api/getHmLidsUser/"+self.$props.user.id)
+        .get("/api/getHmLidsUser/" + self.$props.user.id)
         .then((res) => {
-          if(res.status == 200){
-            self.hm = res.data
+          if (res.status == 200) {
+            self.hm = res.data;
+            if (localStorage.hm) {
+              if (localStorage.hm == self.hm) {
+                return;
+              } else {
+                self.message = "Изменились лиды!";
+                self.snackbar = true;
+                localStorage.hm = self.hm;
+              }
+            } else {
+              self.hm = self.lids.length;
+              localStorage.hm = self.hm;
+            }
           }
-
         })
         .catch((error) => console.log(error));
-      if (localStorage.hm) {
-        if (localStorage.hm == this.hm) {
-          return;
-        } else {
-          this.message = 'Изменились лиды!'
-          this.snackbar = true
-          localStorage.hm = this.hm
-        }
-
-      } else {
-        this.hm = this.lids.length;
-        localStorage.hm = this.hm;
-      }
     },
     nextdep(status_id) {
       if (status_id != 10) return;
@@ -562,22 +560,7 @@ created:function() {
         self.depozit = true;
       }
     },
-    setDepozit() {
-      let self = this;
-      let send = {};
-      send.lid_id = this.selected[0].id;
-      send.user_id = this.selected[0].user_id;
-      send.depozit = this.depozit_val;
-      axios
-        .post("api/setDepozit", send)
-        .then(function (response) {
-          self.depozit_val = "";
-          // console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
+
     setDepozit() {
       let self = this;
       let send = {};
@@ -680,7 +663,7 @@ created:function() {
         .catch((error) => console.log(error));
     },
   },
-}
+};
 </script>
 
 <style scoped>

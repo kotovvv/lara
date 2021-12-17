@@ -61,6 +61,7 @@
 <script>
 
 const mlids = () => import("./mlids.vue");
+const report = () => import("./report.vue");
 
 export default {
    props:['user'],
@@ -71,11 +72,13 @@ export default {
 
     items: [
       { text: "Manager", name: "mlids", icon: "mdi-phone-log-outline" },
+      { text: "Отчёты", name: "report", icon: "mdi-timetable" },
     ],
   }),
   computed: {
     managerComponent() {
       if (this.managerMenu == "mlids") return mlids;
+      if (this.managerMenu == "report") return report;
 
     },
   },
