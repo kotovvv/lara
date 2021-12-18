@@ -47,6 +47,10 @@ Route::get('statuslids/{id}', [LidsController::class,'statusLids'])->name('statu
 Route::get('getuserlids/{id}', [LidsController::class,'getuserLids'])->name('getuserlids');
 Route::delete('provider/{id}', [ProvidersController::class,'destroy']);
 Route::delete('user/{id}', [UsersController::class,'deleteuser']);
+Route::get('lastBalans/{id}', [UsersController::class,'lastBalans']);
+Route::get('getBalansMonth/{id}', [UsersController::class,'getBalansMonth']);
+Route::get('getStatusesMonth/{id}', [UsersController::class,'getStatusesMonth']);
+Route::get('getDepozitsMonth/{id}', [UsersController::class,'getDepozitsMonth']);
 
 Route::post('Lid/newlids', [LidsController::class,'newlids'])->name('Lid.newlids');
 Route::post('Lid/updatelids', [LidsController::class,'updatelids'])->name('Lid.updatelids');

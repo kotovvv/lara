@@ -9,6 +9,8 @@ use App\Models\Role;
 use App\Models\Lid;
 use App\Models\Log;
 use App\Models\Import;
+use App\Models\Balans;
+use App\Models\Depozit;
 use DB;
 use Debugbar;
 use Hash;
@@ -91,6 +93,14 @@ class UsersController extends Controller
     // Debugbar::info($data);
     if (isset($data['password'])) $password = Hash::make($data['password']);
     if (isset($data['id'])) {
+      if (isset($data['balans']) && $data['balans'] > 0) {
+        $arr = [];
+        $arr['user_id'] = $data['id'];
+        $arr['balans'] = $data['balans'];
+        $arr['date'] = Date('Y-m-d');
+        $arr['time'] = Date('h:i:s');
+        Balans::insert($arr);
+      }
       //  Debugbar::info('update');
       $arr = [];
       $arr['name'] = $data['name'];
@@ -134,7 +144,7 @@ class UsersController extends Controller
     $fio = DB::select(DB::raw($sql));
 
     foreach ($a_users as $user_id) {
-      $sql = "SELECT COUNT(*) n FROM `lids` WHERE `user_id` =  " . $user_id ;
+      $sql = "SELECT COUNT(*) n FROM `lids` WHERE `user_id` =  " . $user_id;
     }
     $all = DB::select(DB::raw($sql));
 
@@ -142,7 +152,7 @@ class UsersController extends Controller
     // write dates
 
     $repoprt[] =  ['color' => '', 'col' => ['Пользователь', $fio[0]->fio]];
-    $repoprt[] =['color' => '', 'col' => ['Всего лидов', $all[0]->n]];
+    $repoprt[] = ['color' => '', 'col' => ['Всего лидов', $all[0]->n]];
     $row_dates = ['color' => '', 'col' => ['Даты']];
     $row_added = ['color' => '', 'col' => ['Добавлено']];
     $row_status = [];
@@ -166,16 +176,16 @@ class UsersController extends Controller
       $current_date = $datefrom;
       $col = [$status->name];
       $count_status = 0;
-       while (strtotime($current_date) <= strtotime($dateto)) {
-         $sql = "SELECT COUNT(*) n FROM `logs` WHERE `user_id` = " . $a_users[0] . " AND CAST(created_at AS DATE) = '" . $current_date . "'  AND `status_id` = " . $status->id ;
-         $sts = DB::select(DB::raw($sql));
-         $col[] =  $sts[0]->n;
-         $count_status += $sts[0]->n;
+      while (strtotime($current_date) <= strtotime($dateto)) {
+        $sql = "SELECT COUNT(*) n FROM `logs` WHERE `user_id` = " . $a_users[0] . " AND CAST(created_at AS DATE) = '" . $current_date . "'  AND `status_id` = " . $status->id;
+        $sts = DB::select(DB::raw($sql));
+        $col[] =  $sts[0]->n;
+        $count_status += $sts[0]->n;
         //  Debugbar::info($sql);
-      $current_date = date("Y-m-d", strtotime("+1 day", strtotime($current_date)));
-       }
-       $col[] = $count_status;
-       $repoprt[] = ['color' => $status->color,'col'=> $col ];
+        $current_date = date("Y-m-d", strtotime("+1 day", strtotime($current_date)));
+      }
+      $col[] = $count_status;
+      $repoprt[] = ['color' => $status->color, 'col' => $col];
     }
     // $repoprt[] = $row_status;
 
@@ -196,7 +206,6 @@ class UsersController extends Controller
     //   $repoprt['status'] =  $sts[0];
     // }
     return $repoprt;
-
   }
 
 
@@ -240,6 +249,37 @@ class UsersController extends Controller
     Import::where('user_id', '=', $id)->delete();
     $user = User::find($id);
     $user->delete();
+  }
+
+  public function lastBalans($id)
+  {
+    $lastBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->orderBy('date', 'DESC')->first();
+    return $lastBalans['balans'] . ' (' . $lastBalans['date'] . ')';
+  }
+
+
+  public function getBalansMonth($id)
+  {
+    $dateto = date('Y-m-d');
+    $datefrom = date('Y-m-d', strtotime("-30 days"));
+    $getBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->whereDate('date','>=',$datefrom)->whereDate('date','>=',$dateto)->orderBy('date', 'ASC')->first();
+    return $getBalans;
+  }
+
+  public function getStatusesMonth($id)
+  {
+    $dateto= date('Y-m-d h:i:s');
+    $datefrom = date('Y-m-d h:i:s', strtotime("-30 days"));
+    $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color', )->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$datefrom)->whereDate('logs.created_at','<=',$dateto)->orderBy('statuses.order', 'ASC')->get();
+    return $getStatuses;
+  }
+
+  public function getDepozitsMonth($id)
+  {
+    $dateto = date('Y-m-d h:i:s');
+    $datefrom = date('Y-m-d h:i:s', strtotime("-30 days"));
+    $getDeposits = Depozit::where('user_id', $id)->whereDate('created_at','>=',$datefrom)->whereDate('created_at','<=',$dateto)->get();
+    return $getDeposits;
   }
 
   /**
