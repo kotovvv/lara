@@ -388,12 +388,6 @@ export default {
     snackbar: false,
     message: "",
   }),
-  created: function () {
-    // var self = this;
-    // setInterval(function () {
-    //   self.getHm();
-    // }, 10000);
-  },
   mounted: function () {
     this.getProviders();
     this.getStatuses();
@@ -629,6 +623,9 @@ export default {
             }
           });
           self.todaylids();
+          setInterval(function () {
+            self.getHm();
+          }, 30000);
         })
         .catch((error) => console.log(error));
     },

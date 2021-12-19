@@ -262,7 +262,7 @@ class UsersController extends Controller
   {
     $dateto = date('Y-m-d');
     $datefrom = date('Y-m-d', strtotime("-30 days"));
-    $getBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->whereDate('date','>=',$datefrom)->whereDate('date','>=',$dateto)->orderBy('date', 'ASC')->first();
+    $getBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->whereDate('date','>=',$datefrom)->whereDate('date','<=',$dateto)->orderBy('date', 'ASC')->get();
     return $getBalans;
   }
 
