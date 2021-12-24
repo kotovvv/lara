@@ -270,7 +270,7 @@ class UsersController extends Controller
   {
     $dateto= date('Y-m-d h:i:s');
     $datefrom = date('Y-m-d h:i:s', strtotime("-30 days"));
-    $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color', )->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$datefrom)->whereDate('logs.created_at','<=',$dateto)->orderBy('statuses.order', 'ASC')->get();
+    $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color',DB::Raw('CAST(logs.created_at as date) as date'),'logs.cols','logs.duration')->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$datefrom)->whereDate('logs.created_at','<=',$dateto)->orderBy('statuses.order', 'ASC')->get();
     return $getStatuses;
   }
 
