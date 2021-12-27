@@ -68,7 +68,7 @@ export default {
   data: () => ({
     drawer: null,
     selectedItem: 0,
-    managerMenu: "mlids",
+    managerMenu: "report",
 
     items: [
       { text: "Manager", name: "mlids", icon: "mdi-phone-log-outline" },
