@@ -248,8 +248,8 @@
           </v-card-title>
           <v-card-actions>
             <div>
-         <template v-for="(i) in Statuses">
-<div class="status_wrp"><span :style="{background: i[1][0].color }">{{ i[0] }}</span><b>{{ i[1].length }}</b> </div>
+         <template v-for="(i,x) in Statuses">
+<div class="status_wrp" :key="x"><span :style="{background: i[1][0].color }">{{ i[0] }}</span><b>{{ i[1].length }}</b> </div>
         </template>
         </div>
           </v-card-actions>
@@ -612,6 +612,7 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
+          self.Statuses = Object.entries(_.groupBy(self.lids,'status'))
           self.searchAll = "";
           // self.getDuplicates();
         })
@@ -635,6 +636,7 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
+          self.Statuses = Object.entries(_.groupBy(self.lids,'status'))
           self.searchAll = "";
 
           // self.getDuplicates();
@@ -665,7 +667,7 @@ export default {
             status_id: i.status_id,
             status: i.status,
           }));
-
+self.Statuses = Object.entries(_.groupBy(self.lids,'status'))
           self.searchAll = "";
           // self.getDuplicates();
         })
@@ -718,8 +720,21 @@ export default {
 </script>
 
 <style scoped>
-/* .v-card__text.scroll-y {
-  overflow-y: auto;
-  height: 60vh;
-} */
+
+.status_wrp span {
+  padding: 5px;
+  word-break: break-all;
+}
+
+.status_wrp b {
+  padding: 0 8px;
+}
+
+.status_wrp {
+  margin-right: 15px;
+  border: 1px solid grey;
+  padding: 3px 0;
+  margin-bottom: 15px;
+}
+
 </style>
