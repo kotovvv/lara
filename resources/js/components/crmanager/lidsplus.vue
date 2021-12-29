@@ -241,6 +241,19 @@
               </v-list>
             </v-card-text>
           </v-card>
+                  <v-card class="mt-5">
+
+          <v-card-title primary-title>
+<h3>Статусы</h3>
+          </v-card-title>
+          <v-card-actions>
+            <div>
+         <template v-for="(i) in Statuses">
+<div class="status_wrp"><span :style="{background: i[1][0].color }">{{ i[0] }}</span><b>{{ i[1].length }}</b> </div>
+        </template>
+        </div>
+          </v-card-actions>
+        </v-card>
           <!-- <v-card class="pa-5 mt-1 w-100">
             <div class="tel">Тел: {{ clickedItemTel }}</div>
             <v-list dense>
@@ -319,6 +332,7 @@ export default {
     expanded: [],
     singleExpand: true,
     componentKey: 0,
+    Statuses:[],
   }),
   mounted: function () {
     this.getProviders();
