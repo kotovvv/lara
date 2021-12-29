@@ -241,7 +241,7 @@
               </v-list>
             </v-card-text>
           </v-card>
-                  <v-card class="mt-5">
+                  <v-card class="mt-5 w-100">
 
           <v-card-title primary-title>
 <h3>Статусы</h3>
