@@ -281,6 +281,15 @@ class UsersController extends Controller
     $getDeposits = Depozit::where('user_id', $id)->whereDate('created_at','>=',$datefrom)->whereDate('created_at','<=',$dateto)->get();
     return $getDeposits;
   }
+  public function getCallsMonth($id)
+  {
+    $respons = [];
+    $dateto = date('Y-m-d h:i:s');
+    $datefrom = date('Y-m-d h:i:s', strtotime("-30 days"));
+    $respons['callmonth'] = DB::select(DB::Raw("SELECT SUM(COUNT) as count,SUM(duration) as duration FROM `calls` WHERE user_id = $id AND timecall >= '$datefrom' AND timecall <= '$dateto'"));
+    $respons['callday'] = DB::select(DB::Raw("SELECT SUM(COUNT)as count ,SUM(duration) as duration FROM `calls` WHERE user_id = $id AND CAST(timecall as date) = CURDATE()"));
+    return $respons;
+  }
 
   /**
    * Remove the specified resource from storage.

@@ -114,6 +114,7 @@ export default {
     this.getBalansMonth();
     this.getStatusesMonth();
     this.getDepozitsMonth();
+    this.getCallsMonth()
   },
   methods: {
     monthStatus() {},
@@ -143,12 +144,6 @@ export default {
           self.StatusesMonth = res.data;
 
           self.monthReport.ftd = _.filter(self.StatusesMonth,{'name' : 'Deposit'}).length
-          // self.monthReport.hmcall = _.sumBy(self.StatusesMonth,'cols')
-          // self.monthReport.alltimecall = _.sumBy(self.StatusesMonth,'duration')
-          // let today = _.filter(self.StatusesMonth,{'date':(new Date()).toISOString().slice(0,10)})
-          // self.todayReport.hmcall = _.sumBy(today,'cols')
-          // self.todayReport.alltimecall = _.sumBy(today,'duration')
-
           self.StatusesMonth = Object.entries(_.groupBy(self.StatusesMonth,'name'))
         })
         .catch(function (error) {
@@ -162,6 +157,21 @@ export default {
         .then((res) => {
           self.DepozitsMonth = res.data;
           self.todayReport.ftd = _.filter(self.DepozitsMonth,(d)=>{return d.created_at.slice(0,10) ==(new Date()).toISOString().slice(0,10)}).length
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    getCallsMonth() {
+      let self = this;
+      axios
+        .get("api/getCallsMonth/" + self.$attrs.user.id)
+        .then((res) => {
+          //  console.log(res.data.callmonth[0])
+          self.monthReport.hmcall = res.data.callmonth[0].count
+          self.monthReport.alltimecall = res.data.callmonth[0].duration
+          self.todayReport.hmcall = res.data.callday[0].count
+          self.todayReport.alltimecall = res.data.callday[0].duration
         })
         .catch(function (error) {
           console.log(error);
