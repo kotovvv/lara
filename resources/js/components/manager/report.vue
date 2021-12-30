@@ -26,13 +26,17 @@
       </v-col>
     </v-row>
  <hr>
+
     <v-row>
       <v-col cols="4">
         <h2>Месяц</h2>
+        <div>
+<ve-line :data="chartData"></ve-line>
+        </div>
         <v-card-text>
-          <v-sheet color="rgba(0, 0, 0, .12)">
+          <!-- <v-sheet color="rgba(0, 0, 0, .12)">
             <v-sparkline
-              :value="value"
+              :chartData="chartData"
               color="rgba(255, 255, 255, .7)"
               height="100"
               padding="24"
@@ -40,10 +44,10 @@
               smooth
             >
               <template v-slot:label="item">
-                {{ item.value }}
+                {{ item.chartData }}
               </template>
             </v-sparkline>
-          </v-sheet>
+          </v-sheet> -->
         </v-card-text>
       </v-col>
       <v-col cols="8">
@@ -91,7 +95,10 @@
 <script>
 import axios from "axios";
 import _ from "lodash";
+import VeLine from 'v-charts/lib/line.common'
+import 'v-charts/lib/style.css'
 export default {
+  components: { VeLine },
   data: () => ({
     todayReport: {
       ftd: "",
@@ -108,7 +115,10 @@ export default {
     BalansMonth: {},
     StatusesMonth: {},
     DepozitsMonth: {},
-    value: [],
+    chartData: {
+        columns: ['date','balans'],
+        rows: []
+      }
   }),
   mounted: function () {
     this.getBalansMonth();
@@ -120,7 +130,7 @@ export default {
     monthStatus() {},
     getBalansMonth() {
       let self = this;
-      self.value = [];
+      self.chartData.rows = [];
       axios
         .get("api/getBalansMonth/" + self.$attrs.user.id)
         .then((res) => {
@@ -128,9 +138,9 @@ export default {
           self.todayReport.sum = _.sumBy(_.filter(res.data,{'date':(new Date()).toISOString().slice(0,10)}),'balans')
           self.monthReport.sum = _.sumBy(res.data,'balans')
           self.BalansMonth.map((i) => {
-            self.value.push(i.balans);
+            self.chartData.rows.push({date:i.date,balans:i.balans});
           });
-          if (self.value.length == 1) self.value.unshift(0);
+          // if (self.chartData.length == 1) self.chartData.unshift(0);
         })
         .catch(function (error) {
           console.log(error);
