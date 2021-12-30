@@ -96,6 +96,7 @@
 import axios from "axios";
 import _ from "lodash";
 import VeLine from 'v-charts/lib/line.common'
+
 import 'v-charts/lib/style.css'
 export default {
   components: { VeLine },
