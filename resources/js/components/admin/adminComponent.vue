@@ -86,7 +86,7 @@ export default {
       { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
       { text: "Отчёт", name: "report", icon: "mdi-receipt" },
     ],
-    adminMenu: "users",
+    adminMenu: "report",
   }),
   computed: {
     adminComponent() {

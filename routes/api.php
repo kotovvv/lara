@@ -52,6 +52,7 @@ Route::get('getBalansMonth/{id}', [UsersController::class,'getBalansMonth']);
 Route::get('getStatusesMonth/{id}', [UsersController::class,'getStatusesMonth']);
 Route::get('getDepozitsMonth/{id}', [UsersController::class,'getDepozitsMonth']);
 Route::get('getCallsMonth/{id}', [UsersController::class,'getCallsMonth']);
+Route::get('getDataDay/{id}', [UsersController::class,'getDataDay']);
 
 Route::post('Lid/newlids', [LidsController::class,'newlids'])->name('Lid.newlids');
 Route::post('Lid/updatelids', [LidsController::class,'updatelids'])->name('Lid.updatelids');
