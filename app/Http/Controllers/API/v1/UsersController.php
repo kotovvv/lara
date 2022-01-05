@@ -251,10 +251,30 @@ class UsersController extends Controller
     $user->delete();
   }
 
+    public function delDataUser($id)
+  {
+    Balans::where('user_id', $id)->delete();
+DB::table('calls')->where('user_id',$id)->delete();
+  }
+
+    public function setBalans(Request $request)
+  {
+    $data = $request->All();
+    if (isset($data['id']) && isset($data['balans']) && $data['balans'] > 0) {
+        $arr = [];
+        $arr['user_id'] = $data['id'];
+        $arr['balans'] = $data['balans'];
+        $arr['date'] = Date('Y-m-d');
+        $arr['time'] = Date('h:i:s');
+        Balans::insert($arr);
+    }
+  }
+
+
   public function lastBalans($id)
   {
-    $lastBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->orderBy('date', 'DESC')->first();
-    return $lastBalans['balans'] . ' (' . $lastBalans['date'] . ')';
+    // $lastBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->orderBy('date', 'DESC')->first();
+    // return $lastBalans['balans'] . ' (' . $lastBalans['date'] . ')';
   }
 
 
@@ -264,13 +284,13 @@ class UsersController extends Controller
     $date = date('Y-m-d');
     $getBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->whereDate('date','=',$date)->orderBy('time', 'DESC')->get();
     $getDataDay['balans'] = $getBalans;
-    $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color',DB::Raw('CAST(logs.created_at as date) as date'),'logs.cols','logs.duration')->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$date)->orderBy('statuses.order', 'ASC')->get();
+    $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color')->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$date)->orderBy('statuses.order', 'ASC')->get();
     $getDataDay['statuses'] = $getStatuses;
     $getDeposits = Depozit::where('user_id', $id)->whereDate('created_at','>=',$date)->get();
     $getDataDay['deposits'] = $getDeposits;
     $getCallDay = DB::select(DB::Raw("SELECT SUM(COUNT)as count ,SUM(duration) as duration FROM `calls` WHERE user_id = $id AND CAST(timecall as date) = CURDATE()"));
     $getDataDay['calls'] = $getCallDay;
-    return $getDataDay;
+    return response($getDataDay);
   }
 
   public function getBalansMonth($id)

@@ -84,12 +84,7 @@
                         ></v-switch>
                       </v-col>
                       <v-col cols="6">
-                        <v-text-field
-                          v-model="editedItem.balans"
-                          label="Баланс"
-                          type="number"
-            :messages="lastBalans"
-                        ></v-text-field>
+
                       </v-col>
                        </v-row>
                   </v-container>
@@ -143,8 +138,6 @@ import statusUsers from './statusUsers'
 import axios from "axios";
 export default {
   data: () => ({
-    lastBalans:'',
-    balans:'',
     selected:[],
     dialog: false,
     dialogDelete: false,
@@ -171,7 +164,6 @@ export default {
       role_id: 0,
       password: "",
       active: 0,
-      balans:''
     },
     defaultItem: {
       name: "",
@@ -179,7 +171,6 @@ export default {
       role_id: 0,
       password: "",
       active: 0,
-      balans:''
     },
   }),
 
@@ -230,7 +221,6 @@ export default {
           self.users.map(function (u) {
             u.role = (self.roles.find((r) => r.id == u.role_id)).name;
             if (u.role_id == 2) self.group.push(u)
-            u.balans = ''
           });
         })
         .catch((error) => console.log(error));
@@ -248,19 +238,9 @@ export default {
     editItem(item) {
       this.editedIndex = this.users.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      this.getLastBalans(this.editedItem.id)
       this.dialog = true;
     },
-getLastBalans(user_id){
-        let self = this;
-      axios
-        .get("/api/lastBalans/" + user_id)
-        .then((res) => {
-          self.lastBalans = res.data
-        })
-        .catch((error) => console.log(error));
-  // return ['600 (2021-12-12)']
-},
+
     deleteItem(item) {
       this.editedIndex = this.users.indexOf(item);
       this.editedItem = Object.assign({}, item);

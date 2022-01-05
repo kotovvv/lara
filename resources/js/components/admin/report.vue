@@ -37,7 +37,13 @@
       </v-col>
 
       <v-col cols="8">
-        <v-simple-table>
+        <v-card>
+           <v-card-title>
+              {{user_fio}}
+           </v-card-title>
+        </v-card>
+
+         <v-simple-table>
           <template v-slot:default>
             <thead>
               <tr>
@@ -63,14 +69,60 @@
                         tile
                         color="primary"
                         class="ma-0"
-                        @click="saveBalans"
+                        @click="setBalans"
+                        :disabled="userid == 0 || balans == 0"
                       >
                         Записать
                       </v-btn>
                     </template></v-text-field
                   >
                 </td>
-                <td><v-btn>Очистить</v-btn></td>
+                <td>
+                  <template>
+  <v-row justify="center">
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="490"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          color="primary"
+          dark
+          v-bind="attrs"
+          v-on="on"
+          :disabled="userid == 0"
+        >
+          Стереть
+        </v-btn>
+      </template>
+      <v-card>
+        <v-card-title class="text-h5">
+          Стереть все данные пользователя?
+        </v-card-title>
+        <v-card-text>Балансы, телефонные звонки будут удалены без возможности восстановления!</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="dialog = false"
+          >
+            Отмена
+          </v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="dialog = false;delDataUser()"
+          >
+            Удалить
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
+</template>
+                </td>
               </tr>
             </tbody>
           </template>
@@ -113,12 +165,25 @@ export default {
     hmcall: "",
     alltime: "",
     loading: false,
+    user_fio:'',
+    dialog:false,
   }),
   mounted: function () {
     this.getUsers();
   },
+   computed: {
+
+   },
   methods: {
-    saveBalans() {},
+    delDataUser(){
+      let self = this;
+            axios
+        .delete("/api/delDataUser/"+self.userid)
+        .then((res) => {
+self.getData(self.userid)
+        })
+        .catch((error) => console.log(error));
+    },
     getUsers() {
       let self = this;
       axios
@@ -144,20 +209,36 @@ export default {
       self.alltime = "";
       self.balans = 0;
       self.lastBalans = "";
+      self.user_fio = ''
       self.loading = true;
+
       axios
         .get("/api/getDataDay/" + user_id)
         .then((res) => {
           self.loading = false;
-          console.log(res.data.calls);
           self.lastBalans = _.sumBy(res.data.balans, "balans").toString();
           self.hmcall = res.data.calls[0].count;
           self.alltime = res.data.calls[0].duration;
+          self.StatusesDay = Object.entries(_.groupBy(res.data.statuses,'name'));
+          self.user_fio = _.filter(self.users,{id:self.userid})[0].fio
         })
         .catch((error) => console.log(error));
     },
+    setBalans(){
+      let self = this;
+      let data = {}
+      data.balans = self.balans
+      data.id = self.userid
+            axios
+        .post("/api/setBalans", data)
+        .then((res) => {
+self.lastBalans = (parseInt(self.lastBalans)+parseInt(self.balans)).toString()
+self.balans = ''
+        })
+        .catch((error) => console.log(error));
+    }
   },
-  computed: {
+    computed: {
     group() {
       return _.uniqBy(this.users, "group_id").filter((i) => i.group_id > 0);
     },
