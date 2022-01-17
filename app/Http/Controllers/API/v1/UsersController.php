@@ -284,28 +284,28 @@ DB::table('calls')->where('user_id',$id)->delete();
     // SELECT `group_id`,fio FROM `users` WHERE `role_id` = 2 AND `group_id` > 0 AND `id` = `group_id`
 
 
-//     SELECT
-//   `id`,
-//   `fio`,
-//   (SELECT COUNT(*) FROM `lids`  WHERE `user_id` = u.id) hmlids,
-//   (SELECT SUM(`count`) FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) hmcalls,
-//   (SELECT SUM(`duration`) FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) alltime,
-//   (SELECT SUM(`balans`) FROM `balans` WHERE u.`id` = `user_id` AND `date` = CURDATE()) balans,
-//   `group_id`,
-//   `role_id`
-// FROM `users` u
-// WHERE active = 1 AND `role_id` > 1 ORDER BY `group_id`,`role_id`
+    $getDataDay =  DB::select(DB::Raw("SELECT
+    `id`,
+    `fio`,
+    (SELECT COUNT(*) FROM `lids`  WHERE `user_id` = u.id) hmlids,
+    (SELECT SUM(`count`) FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) hmcalls,
+    (SELECT SUM(`duration`)/60 FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) alltime,
+    (SELECT SUM(`balans`) FROM `balans` WHERE u.`id` = `user_id` AND `date` = CURDATE()) balans,
+    `group_id`,
+    `role_id`
+    FROM `users` u
+    WHERE `active` = 1 AND `role_id` > 1 AND `group_id` > 0 ORDER BY `group_id`,`role_id`"));
 
-    $getDataDay=[];
-    $date = date('Y-m-d');
-    $getBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->whereDate('date','=',$date)->orderBy('time', 'DESC')->get();
-    $getDataDay['balans'] = $getBalans;
-    $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color')->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$date)->orderBy('statuses.order', 'ASC')->get();
-    $getDataDay['statuses'] = $getStatuses;
-    $getDeposits = Depozit::where('user_id', $id)->whereDate('created_at','>=',$date)->get();
-    $getDataDay['deposits'] = $getDeposits;
-    $getCallDay = DB::select(DB::Raw("SELECT SUM(COUNT)as count ,SUM(duration) as duration FROM `calls` WHERE user_id = $id AND CAST(timecall as date) = CURDATE()"));
-    $getDataDay['calls'] = $getCallDay;
+    // $getDataDay=[];
+    // $date = date('Y-m-d');
+    // $getBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->whereDate('date','=',$date)->orderBy('time', 'DESC')->get();
+    // $getDataDay['balans'] = $getBalans;
+    // $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color')->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$date)->orderBy('statuses.order', 'ASC')->get();
+    // $getDataDay['statuses'] = $getStatuses;
+    // $getDeposits = Depozit::where('user_id', $id)->whereDate('created_at','>=',$date)->get();
+    // $getDataDay['deposits'] = $getDeposits;
+    // $getCallDay = DB::select(DB::Raw("SELECT SUM(COUNT)as count ,SUM(duration) as duration FROM `calls` WHERE user_id = $id AND CAST(timecall as date) = CURDATE()"));
+    // $getDataDay['calls'] = $getCallDay;
     return response($getDataDay);
   }
 

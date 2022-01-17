@@ -1,6 +1,40 @@
 <template>
   <div>
     <v-row>
+      <v-col>
+        <!-- <v-card class="pa-5 w-100"> -->
+        <v-expansion-panels>
+          <v-expansion-panel v-for="(item, i) in group" :key="i">
+            <v-expansion-panel-header>
+              {{ item.fio }}
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-data-table
+                :headers="tableHeaders"
+                :items="tableData.filter((i) => i.group_id == item.group_id)"
+                :single-expand="singleExpand"
+                :expanded.sync="expanded"
+                item-key="id"
+                show-expand
+                class="elevation-1"
+                :disable-pagination="true"
+              >
+                <template v-slot:item.deleteData="{ item }">
+                  <v-btn color="primary" dark> Стереть </v-btn>
+                </template>
+                <template v-slot:expanded-item="{ headers, item }">
+                  <td :colspan="headers.length">
+                    More info about {{ item.name }}
+                  </td>
+                </template>
+              </v-data-table>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+        <!-- </v-card> -->
+      </v-col>
+    </v-row>
+    <v-row>
       <v-col cols="4">
         <div>
           <v-card class="pa-5 w-100">
@@ -77,60 +111,9 @@
                     </template></v-text-field
                   >
                 </td>
-                <td>
-                  <template>
-                    <v-row justify="center">
-                      <v-dialog v-model="dialog" persistent max-width="490">
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            color="primary"
-                            dark
-                            v-bind="attrs"
-                            v-on="on"
-                            :disabled="userid == 0"
-                          >
-                            Стереть
-                          </v-btn>
-                        </template>
-                        <v-card>
-                          <v-card-title class="text-h5">
-                            Стереть все данные пользователя?
-                          </v-card-title>
-                          <v-card-text
-                            >Балансы, телефонные звонки будут удалены без
-                            возможности восстановления!</v-card-text
-                          >
-                          <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn
-                              color="green darken-1"
-                              text
-                              @click="dialog = false"
-                            >
-                              Отмена
-                            </v-btn>
-                            <v-btn
-                              color="blue darken-1"
-                              text
-                              @click="
-                                dialog = false;
-                                delDataUser();
-                              "
-                            >
-                              Удалить
-                            </v-btn>
-                          </v-card-actions>
-                        </v-card>
-                      </v-dialog>
-                    </v-row>
-                  </template>
-                </td>
-              </tr>
-            </tbody></template
-          ></v-simple-table
-        ></v-col
-      ></v-row
-    >
+                <td></td>
+              </tr></tbody></template></v-simple-table></v-col
+    ></v-row>
   </div>
 </template>
                 </td>
@@ -168,6 +151,17 @@ import axios from "axios";
 import _ from "lodash";
 export default {
   data: () => ({
+    expanded: [],
+    singleExpand: false,
+    tableHeaders: [
+      { text: "ФИО", value: "fio" },
+      { text: "Кол-во лидов", value: "hmlids" },
+      { text: "Кол-во наборов", value: "hmcalls" },
+      { text: "Общее время", value: "alltime" },
+      { text: "Баланс", value: "balans" },
+      { text: "Очистить", value: "deleteData" },
+    ],
+    tableData: [],
     users: [],
     userid: 0,
     balans: "",
@@ -181,15 +175,16 @@ export default {
   }),
   mounted: function () {
     this.getUsers();
+    this.getData();
   },
   computed: {},
   methods: {
-    delDataUser() {
+    delDataUser(user_id) {
       let self = this;
       axios
-        .delete("/api/delDataUser/" + self.userid)
+        .delete("/api/delDataUser/" + user_id)
         .then((res) => {
-          self.getData(self.userid);
+          // self.getData(self.userid);
         })
         .catch((error) => console.log(error));
     },
@@ -225,13 +220,7 @@ export default {
         .get("/api/getDataDay/" + user_id)
         .then((res) => {
           self.loading = false;
-          self.lastBalans = _.sumBy(res.data.balans, "balans").toString();
-          self.hmcall = res.data.calls[0].count;
-          self.alltime = res.data.calls[0].duration;
-          self.StatusesDay = Object.entries(
-            _.groupBy(res.data.statuses, "name")
-          );
-          self.user_fio = _.filter(self.users, { id: self.userid })[0].fio;
+          self.tableData = res.data;
         })
         .catch((error) => console.log(error));
     },
@@ -253,7 +242,9 @@ export default {
   },
   computed: {
     group() {
-      return _.uniqBy(this.users, "group_id").filter((i) => i.group_id > 0);
+      return _.uniqBy(this.tableData, "group_id").filter(
+        (i) => i.group_id == i.id
+      );
     },
   },
 };
