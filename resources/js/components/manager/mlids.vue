@@ -325,7 +325,7 @@
         </v-card>
       </v-dialog>
     </v-row>
-    <v-snackbar v-model="snackbar" :centered="true" timeout="-1">
+    <v-snackbar v-model="snackbar" :bottom="true" :rigth="true" timeout="-1">
       {{ message }}
 
       <template v-slot:action="{ attrs }">
@@ -439,7 +439,7 @@ export default {
               if (localStorage.hm == self.hm) {
                 return;
               } else {
-                self.message = "Изменились лиды!";
+                self.message = "У вас изменилось количество лидов!";
                 self.snackbar = true;
                 localStorage.hm = self.hm;
               }
