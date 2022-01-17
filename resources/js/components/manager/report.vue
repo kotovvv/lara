@@ -1,14 +1,19 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="4"> <h2>Сегодня</h2> </v-col>
+      <v-col cols="4">
+        <h2>Месяц</h2>
+        <div>
+<ve-line :data="chartData"></ve-line>
+        </div>
+      </v-col>
       <v-col cols="8">
-        <v-simple-table>
+              <v-simple-table>
           <template v-slot:default>
             <thead>
               <tr>
                 <th class="text-left">FTD</th>
-                <th class="text-left">Сумма</th>
+                <th class="text-left">Сегодня</th>
                 <th class="text-left">Количество наборов</th>
                 <th class="text-left">Общее время разговоров</th>
               </tr>
@@ -23,40 +28,12 @@
             </tbody>
           </template>
         </v-simple-table>
-      </v-col>
-    </v-row>
- <hr>
-
-    <v-row>
-      <v-col cols="4">
-        <h2>Месяц</h2>
-        <div>
-<ve-line :data="chartData"></ve-line>
-        </div>
-        <v-card-text>
-          <!-- <v-sheet color="rgba(0, 0, 0, .12)">
-            <v-sparkline
-              :chartData="chartData"
-              color="rgba(255, 255, 255, .7)"
-              height="100"
-              padding="24"
-              stroke-linecap="round"
-              smooth
-            >
-              <template v-slot:label="item">
-                {{ item.chartData }}
-              </template>
-            </v-sparkline>
-          </v-sheet> -->
-        </v-card-text>
-      </v-col>
-      <v-col cols="8">
         <v-simple-table>
           <template v-slot:default>
             <thead>
               <tr>
                 <th class="text-left">FTD</th>
-                <th class="text-left">Сумма</th>
+                <th class="text-left">Месяц</th>
                 <th class="text-left">Количество наборов</th>
                 <th class="text-left">Общее время разговоров</th>
               </tr>
@@ -180,9 +157,9 @@ export default {
         .then((res) => {
           //  console.log(res.data.callmonth[0])
           self.monthReport.hmcall = res.data.callmonth[0].count
-          self.monthReport.alltimecall = res.data.callmonth[0].duration
+          self.monthReport.alltimecall = ((res.data.callmonth[0].duration)/60).toPrecision(2)
           self.todayReport.hmcall = res.data.callday[0].count
-          self.todayReport.alltimecall = res.data.callday[0].duration
+          self.todayReport.alltimecall = ((res.data.callday[0].duration)/60).toPrecision(2)
         })
         .catch(function (error) {
           console.log(error);

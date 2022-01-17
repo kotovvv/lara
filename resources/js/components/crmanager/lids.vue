@@ -553,7 +553,7 @@ export default {
     afterUpdateLids() {
       const self = this;
       self.selected = [];
-      self.selectedStatus = 0;
+      // self.selectedStatus = 0;
       self.getLids(self.disableuser);
     },
     getProviders() {

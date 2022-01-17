@@ -278,8 +278,24 @@ DB::table('calls')->where('user_id',$id)->delete();
   }
 
 
-  public function getDataDay($id)
+  public function getDataDay($group_id)
   {
+    //get group
+    // SELECT `group_id`,fio FROM `users` WHERE `role_id` = 2 AND `group_id` > 0 AND `id` = `group_id`
+
+
+//     SELECT
+//   `id`,
+//   `fio`,
+//   (SELECT COUNT(*) FROM `lids`  WHERE `user_id` = u.id) hmlids,
+//   (SELECT SUM(`count`) FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) hmcalls,
+//   (SELECT SUM(`duration`) FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) alltime,
+//   (SELECT SUM(`balans`) FROM `balans` WHERE u.`id` = `user_id` AND `date` = CURDATE()) balans,
+//   `group_id`,
+//   `role_id`
+// FROM `users` u
+// WHERE active = 1 AND `role_id` > 1 ORDER BY `group_id`,`role_id`
+
     $getDataDay=[];
     $date = date('Y-m-d');
     $getBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->whereDate('date','=',$date)->orderBy('time', 'DESC')->get();
