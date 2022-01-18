@@ -279,11 +279,15 @@ DB::table('calls')->where('user_id',$id)->delete();
   }
 
 
-  public function getDataDay($group_id)
+  public function getDataDay($user_id)
   {
     //get group
     // SELECT `group_id`,fio FROM `users` WHERE `role_id` = 2 AND `group_id` > 0 AND `id` = `group_id`
-
+if ($user_id){
+  $date = date('Y-m-d');
+  $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color')->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $user_id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$date)->orderBy('statuses.order', 'ASC')->get();
+  return response($getStatuses);
+}
 
     $getDataDay =  DB::select(DB::Raw("SELECT
     `id`,
