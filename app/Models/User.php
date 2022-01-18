@@ -20,7 +20,8 @@ class User extends Authenticatable
         'name',
         'role_id',
         'fio',
-        'active'
+        'active',
+        'order'
     ];
 
     /**

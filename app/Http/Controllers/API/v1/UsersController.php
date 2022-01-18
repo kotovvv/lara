@@ -31,7 +31,7 @@ class UsersController extends Controller
       // ->where('users.role_id', '>', 1)
       // ->where('users.active', 1)
       // ->leftJoin('lids', 'users.id', '=', 'lids.user_id')
-      ->orderBy('users.role_id', 'asc')
+      ->orderBy('users.order', 'asc')
       // ->groupBy('users.id')
       ->get();
   }
@@ -108,6 +108,7 @@ class UsersController extends Controller
       $arr['role_id'] = $data['role_id'];
       $arr['fio'] = $data['fio'];
       $arr['group_id'] = $data['group_id'];
+      $arr['order'] = $data['order'];
       if (User::where('id', $data['id'])->update($arr)) {
         if (isset($data['password'])) {
           $user = User::find($data['id']);
@@ -217,7 +218,7 @@ class UsersController extends Controller
       ->where('users.role_id', '>', 1)
       ->where('users.active', 1)
       // ->leftJoin('lids', 'users.id', '=', 'lids.user_id')
-      ->orderBy('users.role_id', 'asc')
+      ->orderBy('users.order', 'asc')
       // ->groupBy('users.id')
       ->get();
   }

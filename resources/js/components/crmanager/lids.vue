@@ -170,7 +170,9 @@
                       </v-expansion-panel-header>
                       <v-expansion-panel-content>
                         <v-row
-                          v-for="user in users.filter(function(i){return i.group_id == item.group_id})"
+                          v-for="user in users.filter(function (i) {
+                            return i.group_id == item.group_id;
+                          })"
                           :key="user.id"
                         >
                           <v-radio
@@ -275,8 +277,9 @@ export default {
   },
   computed: {
     group() {
-      return _.uniqBy(this.users, "group_id");
-    },
+      // return _.uniqBy(this.users, "group_id");
+           return _.filter(this.users, function(o) { return o.group_id == o.id; });
+      },
     filteredItems() {
       // if (this.showDuplicates && this.telsDuplicates.length > 0)
       //   return this.telsDuplicates;
@@ -445,15 +448,25 @@ export default {
         .get(get)
         .then((res) => {
           self.users = res.data.map(
-            ({ name, id, role_id, fio, hmlids, group_id }) => ({
+            ({ name, id, role_id, fio, hmlids, group_id, order }) => ({
               name,
               id,
               role_id,
               fio,
               hmlids,
               group_id,
+              order,
             })
           );
+          // self.users.sort(function (a, b) {
+          //   if (a.order > b.order) {
+          //     return 1;
+          //   }
+          //   if (a.order < b.order) {
+          //     return -1;
+          //   }
+          //   return 0;
+          // });
           if (self.$props.user.role_id != 1) {
             self.users = self.users.filter(
               (f) => f.group_id == self.$props.user.group_id

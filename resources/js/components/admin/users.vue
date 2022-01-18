@@ -84,7 +84,10 @@
                         ></v-switch>
                       </v-col>
                       <v-col cols="6">
-
+                        <v-text-field
+                          v-model="editedItem.order"
+                          label="Номер сортировки"
+                        ></v-text-field>
                       </v-col>
                        </v-row>
                   </v-container>
@@ -164,6 +167,7 @@ export default {
       role_id: 0,
       password: "",
       active: 0,
+      order:99
     },
     defaultItem: {
       name: "",
@@ -171,6 +175,7 @@ export default {
       role_id: 0,
       password: "",
       active: 0,
+      order:99
     },
   }),
 
