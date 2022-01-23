@@ -15,7 +15,10 @@
             @click="getData()"
           >
             <v-expansion-panel-header>
-              {{ item.fio }}
+              <v-row>
+              <v-col cols="3">{{ item.fio }}</v-col>
+              <v-col cols="3">{{ sumGroup( item.group_id)}}</v-col>
+              </v-row>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <!-- :expanded.sync="expanded" -->
@@ -78,20 +81,28 @@
         <!-- </v-card> -->
       </v-col>
     </v-row>
-
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-card-title primary-title>
+                        <v-row>
+              <v-col cols="3"></v-col>
+              <v-col cols="3">{{ sumAll()}}</v-col>
+              </v-row>
+          </v-card-title>
+        </v-card>
+      </v-col>
+    </v-row>
     <v-dialog v-model="dialog" width="500">
       <v-card>
         <v-card-title class="text-h5 grey lighten-2">
           Удалить данные пользователя?
         </v-card-title>
-
         <v-card-text>
           Балансы, телефонные звонки будут удалены без возможности
           восстановления!
         </v-card-text>
-
         <v-divider></v-divider>
-
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
@@ -140,9 +151,14 @@ export default {
   },
   computed: {},
   methods: {
+    sumAll(){
+            return _.sumBy(this.tableData,function(i){return parseInt(i.balans||0)})
+    },
+    sumGroup(group_id){
+      return _.sumBy(_.filter(this.tableData, function(i){return i.group_id ==group_id && i.balans >0}),function(i){return parseInt(i.balans)})
+    },
     delDataUser() {
       let self = this;
-
       axios
         .delete("/api/delDataUser/" + self.clearUser)
         .then((res) => {
@@ -179,7 +195,7 @@ export default {
         .post("/api/setBalans", data)
         .then((res) => {
           let elm = self.tableData.find((i) => i.id == user_id);
-          elm.balans = (parseInt(elm.balans) + parseInt(balans)).toString();
+          elm.balans = (parseInt(elm.balans||0) + parseInt(balans)).toString();
         })
         .catch((error) => console.log(error));
     },
