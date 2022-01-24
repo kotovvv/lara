@@ -213,7 +213,7 @@ class UsersController extends Controller
   public function getusers()
   {
 
-    return User::select(['users.*', DB::raw('(SELECT COUNT(user_id) FROM lids WHERE lids.user_id = users.id) as hmlids ')])
+    return User::select(['users.*', DB::raw('CONCAT((SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id),'/',(SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8)) as hmlids ')])
 
       ->where('users.role_id', '>', 1)
       ->where('users.active', 1)
