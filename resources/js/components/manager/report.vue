@@ -157,9 +157,11 @@ export default {
         .then((res) => {
           //  console.log(res.data.callmonth[0])
           self.monthReport.hmcall = res.data.callmonth[0].count
-          self.monthReport.alltimecall = ((res.data.callmonth[0].duration)/60).toPrecision(2)
+          let t = (((res.data.callmonth[0].duration)/60)/60).toFixed(2).toString().split('.')
+          self.monthReport.alltimecall = t[0]+' час. '+ t[1]+' мин.'
           self.todayReport.hmcall = res.data.callday[0].count
-          self.todayReport.alltimecall = ((res.data.callday[0].duration)/60).toPrecision(2)
+          t = (((res.data.callday[0].duration)/60)/60).toFixed(2).toString().split('.')
+          self.todayReport.alltimecall = t[0]+' час. '+ t[1]+' мин.'
         })
         .catch(function (error) {
           console.log(error);

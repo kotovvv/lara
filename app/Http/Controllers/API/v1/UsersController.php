@@ -26,7 +26,7 @@ class UsersController extends Controller
   public function index()
   {
     // return User::All();
-    return User::select(['users.*', DB::raw('(SELECT COUNT(user_id) FROM lids WHERE lids.user_id = users.id) as hmlids ')])
+    return User::select(['users.*', DB::raw('CONCAT((SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id),"/",(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8)) as hmlids ')])
 
       // ->where('users.role_id', '>', 1)
       // ->where('users.active', 1)
@@ -213,7 +213,7 @@ class UsersController extends Controller
   public function getusers()
   {
 
-    return User::select(['users.*', DB::raw('CONCAT((SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id),'/',(SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8)) as hmlids ')])
+    return User::select(['users.*', DB::raw('CONCAT((SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id),"/",(SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8)) as hmlids')])
 
       ->where('users.role_id', '>', 1)
       ->where('users.active', 1)
@@ -294,7 +294,7 @@ if ($user_id){
     `fio`,
     (SELECT COUNT(*) FROM `lids`  WHERE `user_id` = u.id) hmlids,
     (SELECT SUM(`count`) FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) hmcalls,
-    (SELECT SUM(`duration`)/60 FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) alltime,
+    (SELECT SUM(`duration`) FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) alltime,
     (SELECT SUM(`balans`) FROM `balans` WHERE u.`id` = `user_id` AND `date` = CURDATE()) balans,
     `group_id`,
     `role_id`

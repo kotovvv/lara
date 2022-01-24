@@ -177,6 +177,11 @@ export default {
             self.StatusesDay = Object.entries(_.groupBy(res.data, "name"));
           } else {
             self.tableData = res.data;
+            self.tableData = self.tableData.map(function(i){
+          let t = (((i.duration)/60)/60).toFixed(2).toString().split('.')
+          i.duration = t[0]+' час. '+ t[1]+' мин.'
+              return i
+            })
           }
           self.loading = false;
         })
