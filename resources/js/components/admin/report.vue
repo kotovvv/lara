@@ -178,8 +178,8 @@ export default {
           } else {
             self.tableData = res.data;
             self.tableData = self.tableData.map(function(i){
-          let t = (((i.duration)/60)/60).toFixed(2).toString().split('.')
-          i.duration = t[0]+' час. '+ t[1]+' мин.'
+          let t = (((i.alltime)/60)/60).toFixed(2).toString().split('.')
+          i.alltime = t[0]+' час. '+ t[1]+' мин.'
               return i
             })
           }
