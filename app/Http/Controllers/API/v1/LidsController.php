@@ -366,11 +366,14 @@ class LidsController extends Controller
   public function get_zaliv_allTime(Request $request)
   {
     // get_zaliv_allTime?api_key=857193747ca93f651b1f32dcf426ab42&startDate=10.07.2021&endDate=14.01.2022
+
     $req = $request->all();
+
     $f_key = DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response('Key incorect', 403);
     $res['result'] = 'Error';
-    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . " AND DATE(`upload_time`) >= DATE('".$req['startDate']."') AND DATE(`upload_time`) <= DATE('".$req['endDate']."') )";
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . " AND DATE(`upload_time`) >= ".$req['startDate']." AND DATE(`upload_time`) <= ".$req['endDate']." )";
+
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
       $res['data'] = [];
