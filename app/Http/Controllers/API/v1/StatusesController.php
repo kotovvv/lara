@@ -15,12 +15,12 @@ class StatusesController extends Controller
      */
     public function index()
     {
-        return Status::all()->where('active',1);
+        return Status::where('active',1)->orderBy('order','asc')->get();
     }
 
     public function getall()
     {
-        return Status::all();
+        return Status::orderBy('order','asc')->get();
     }
 
     /**

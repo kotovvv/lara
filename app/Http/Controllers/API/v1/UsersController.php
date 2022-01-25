@@ -214,6 +214,7 @@ class UsersController extends Controller
   {
 
     return User::select(['users.*', DB::raw('CONCAT((SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id),"/",(SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8)) as hmlids')])
+    // return User::select(['users.*', DB::raw('(SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id) as hmlids')])
 
       ->where('users.role_id', '>', 1)
       ->where('users.active', 1)
@@ -326,7 +327,7 @@ if ($user_id){
   {
     $dateto= date('Y-m-d h:i:s');
     $datefrom = date('Y-m-d h:i:s', strtotime("-30 days"));
-    $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color',DB::Raw('CAST(logs.created_at as date) as date'),'logs.cols','logs.duration')->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$datefrom)->whereDate('logs.created_at','<=',$dateto)->orderBy('statuses.order', 'ASC')->get();
+    $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color',DB::Raw('CAST(logs.created_at as date) as date'))->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$datefrom)->whereDate('logs.created_at','<=',$dateto)->orderBy('statuses.order', 'ASC')->get();
     return $getStatuses;
   }
 

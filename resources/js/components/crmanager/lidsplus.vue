@@ -496,7 +496,7 @@ export default {
       if (!row.isSelected) {
         this.tel = item.tel;
         this.lid_id = item.id;
-        this.expanded = item;
+        this.expanded = [item];
       } else this.tel = "";
       row.select(!row.isSelected);
       // ===============
@@ -624,6 +624,7 @@ export default {
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
           self.Statuses = Object.entries(_.groupBy(self.lids,'status'))
+
           self.searchAll = "";
           // self.getDuplicates();
         })
