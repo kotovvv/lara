@@ -241,19 +241,21 @@
               </v-list>
             </v-card-text>
           </v-card>
-                  <v-card class="mt-5 w-100">
-
-          <v-card-title primary-title>
-<h3>Статусы</h3>
-          </v-card-title>
-          <v-card-actions>
-            <div>
-         <template v-for="(i,x) in Statuses">
-<div class="status_wrp" :key="x"><span :style="{background: i[1][0].color }">{{ i[0] }}</span><b>{{ i[1].length }}</b> </div>
-        </template>
-        </div>
-          </v-card-actions>
-        </v-card>
+          <v-card class="mt-5 w-100">
+            <v-card-title primary-title>
+              <h3>Статусы</h3>
+            </v-card-title>
+            <v-card-actions>
+              <div>
+                <template v-for="(i, x) in Statuses">
+                  <div class="status_wrp" :key="x">
+                    <span :style="{ background: i.color }">{{ i.name }}</span
+                    ><b>{{ i.hm }}</b>
+                  </div>
+                </template>
+              </div>
+            </v-card-actions>
+          </v-card>
           <!-- <v-card class="pa-5 mt-1 w-100">
             <div class="tel">Тел: {{ clickedItemTel }}</div>
             <v-list dense>
@@ -332,7 +334,7 @@ export default {
     expanded: [],
     singleExpand: true,
     componentKey: 0,
-    Statuses:[],
+    Statuses: [],
   }),
   mounted: function () {
     this.getProviders();
@@ -341,13 +343,15 @@ export default {
     this.getLidsOnDate();
   },
   watch: {
-    filteredItems:function(){
-      const self = this
-                self.statuses_lids = _.uniqBy(self.filteredItems, "status_id").map((i) => ({
-            status_id: i.status_id,
-            status: i.status,
-          }));
-          self.statuses_lids.unshift({ status: "выбор", status_id: 0 })
+    filteredItems: function () {
+      const self = this;
+      self.statuses_lids = _.uniqBy(self.filteredItems, "status_id").map(
+        (i) => ({
+          status_id: i.status_id,
+          status: i.status,
+        })
+      );
+      self.statuses_lids.unshift({ status: "выбор", status_id: 0 });
     },
     filterGStatus: function (newval, oldval) {
       if (newval == 0) {
@@ -360,7 +364,9 @@ export default {
   computed: {
     group() {
       // return _.uniqBy(this.users, "group_id").filter((i) => i.group_id > 0);
-           return _.filter(this.users, function(o) { return o.group_id == o.id; });
+      return _.filter(this.users, function (o) {
+        return o.group_id == o.id;
+      });
     },
     filteredItems() {
       // if (this.showDuplicates && this.telsDuplicates.length > 0)
@@ -379,21 +385,28 @@ export default {
   },
   methods: {
     exportXlsx() {
-      const self = this
-      const obj = _.groupBy(self.filteredItems, "status")
-      const lidsByStatus = Array.from(Object.keys(obj), k=>[`${k}`, obj[k]]);
+      const self = this;
+      const obj = _.groupBy(self.filteredItems, "status");
+      const lidsByStatus = Array.from(Object.keys(obj), (k) => [
+        `${k}`,
+        obj[k],
+      ]);
 
-  var wb = XLSX.utils.book_new() // make Workbook of Excel
-  for(let i = 0;i < lidsByStatus.length;i++ ){
-   // export json to Worksheet of Excel
-      // only array possible
-      window['list'+i] = XLSX.utils.json_to_sheet(lidsByStatus[i][1])
-      // add Worksheet to Workbook
-      // Workbook contains one or more worksheets
-      XLSX.utils.book_append_sheet(wb,  window['list'+i], lidsByStatus[i][0]) // sheetAName is name of Worksheet
-}
+      var wb = XLSX.utils.book_new(); // make Workbook of Excel
+      for (let i = 0; i < lidsByStatus.length; i++) {
+        // export json to Worksheet of Excel
+        // only array possible
+        window["list" + i] = XLSX.utils.json_to_sheet(lidsByStatus[i][1]);
+        // add Worksheet to Workbook
+        // Workbook contains one or more worksheets
+        XLSX.utils.book_append_sheet(
+          wb,
+          window["list" + i],
+          lidsByStatus[i][0]
+        ); // sheetAName is name of Worksheet
+      }
       // export Excel file
-      XLSX.writeFile(wb, 'book.xlsx') // name of the file is 'book.xlsx'
+      XLSX.writeFile(wb, "book.xlsx"); // name of the file is 'book.xlsx'
     },
     getDuplicates() {
       this.telsDuplicates = this.lids
@@ -560,14 +573,14 @@ export default {
         .get(get)
         .then((res) => {
           self.users = res.data.map(
-            ({ name, id, role_id, fio, hmlids, group_id,order }) => ({
+            ({ name, id, role_id, fio, hmlids, group_id, order }) => ({
               name,
               id,
               role_id,
               fio,
               hmlids,
               group_id,
-              order
+              order,
             })
           );
           // self.users.sort(function (a, b) {
@@ -593,11 +606,12 @@ export default {
       axios
         .get("/api/statuses")
         .then((res) => {
-          self.statuses = res.data.map(({ uname, name, id, color }) => ({
+          self.statuses = res.data.map(({ uname, name, id, color, order }) => ({
             uname,
             name,
             id,
             color,
+            order,
           }));
           self.statuses.unshift({ name: "Default", id: 0 });
         })
@@ -623,8 +637,7 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
-          self.Statuses = Object.entries(_.groupBy(self.lids,'status'))
-
+          self.orderStatus();
           self.searchAll = "";
           // self.getDuplicates();
         })
@@ -648,7 +661,7 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
-          self.Statuses = Object.entries(_.groupBy(self.lids,'status'))
+          self.orderStatus();
           self.searchAll = "";
 
           // self.getDuplicates();
@@ -661,6 +674,7 @@ export default {
       self.search = "";
       self.filtertel = "";
       self.disableuser = id;
+      self.Statuses = [];
       axios
         .get("/api/userlids/" + id)
         .then((res) => {
@@ -679,11 +693,28 @@ export default {
             status_id: i.status_id,
             status: i.status,
           }));
-self.Statuses = Object.entries(_.groupBy(self.lids,'status'))
+          self.orderStatus();
           self.searchAll = "";
           // self.getDuplicates();
         })
         .catch((error) => console.log(error));
+    },
+    orderStatus() {
+      const self = this
+      let stord = [];
+      stord = Object.entries(_.groupBy(self.lids, "status"));
+      stord.map(function (i) {
+        //i[0]//name
+        //i[1]//array
+        let el = self.statuses.find((s) => s.name == i[0]);
+        self.Statuses.push({
+          name: i[0],
+          hm: i[1].length,
+          order: el.order,
+          color: el.color,
+        });
+      });
+      self.Statuses = _.orderBy(self.Statuses, "order");
     },
     changeStatus() {
       const self = this;
@@ -732,7 +763,6 @@ self.Statuses = Object.entries(_.groupBy(self.lids,'status'))
 </script>
 
 <style scoped>
-
 .status_wrp span {
   padding: 5px;
   word-break: break-all;
@@ -748,5 +778,4 @@ self.Statuses = Object.entries(_.groupBy(self.lids,'status'))
   padding: 3px 0;
   margin-bottom: 15px;
 }
-
 </style>

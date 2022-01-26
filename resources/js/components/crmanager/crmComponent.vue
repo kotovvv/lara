@@ -61,6 +61,7 @@
 <script>
 const lids = () => import("../crmanager/lids.vue");
 const mlids = () => import("../manager/mlids.vue");
+const report = () => import("../manager/report.vue");
 
 export default {
   props:['user'],
@@ -71,12 +72,14 @@ export default {
     items: [
       { text: "Распределение", name: "lids", icon: "mdi-account-arrow-left" },
       { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
+      { text: "Отчёты", name: "report", icon: "mdi-timetable" },
     ],
   }),
   computed: {
     managerComponent() {
       if (this.managerMenu == "lids") return lids;
       if (this.managerMenu == "mlids") return mlids;
+      if (this.managerMenu == "report") return report;
     },
   },
   methods: {},

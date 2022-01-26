@@ -40,14 +40,17 @@
                 "
               >
                 <template v-slot:item.balans="{ item }">
+{{item.balans}}
+                </template>
+                <template v-slot:item.setbalans="{ item }">
                   <v-text-field
-                    :messages="item.balans"
                     append-icon="mdi-database-plus"
                     @click:append="setBalans(item.id)"
                     :id="'b' + item.id"
                   >
                   </v-text-field>
                 </template>
+
                 <template v-slot:item.deleteData="{ item }">
                   <v-btn
                     color="primary"
@@ -135,6 +138,7 @@ export default {
       { text: "Кол-во наборов", value: "hmcalls" },
       { text: "Общее время", value: "alltime" },
       { text: "Баланс", value: "balans" },
+      { text: "Установка баланса", value: "setbalans" },
       { text: "Очистить", value: "deleteData" },
     ],
     tableData: [],

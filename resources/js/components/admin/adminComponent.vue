@@ -1,20 +1,29 @@
 <template>
   <v-app id="inspire">
-    <!-- <v-system-bar app>
-      <v-spacer></v-spacer>
-
-      <v-icon>mdi-square</v-icon>
-
-      <v-icon>mdi-circle</v-icon>
-
-      <v-icon>mdi-triangle</v-icon>
-    </v-system-bar> -->
-
     <v-app-bar app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-bottom-navigation
+        color="primary"
+        background-color="transparent"
+        max-width="50%"
+        :value="adminMenu"
+        style="box-shadow: none"
+      >
+        <v-btn
+          :value="item.name"
+          v-for="(item, i) in items"
+          :key="i"
+          @click="adminMenu = item.name"
+        >
+          <!-- <span>{{ item.text }}</span> -->
 
-      <v-toolbar-title>Пользователь в системе: {{ user.fio }}</v-toolbar-title>
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-btn>
+      </v-bottom-navigation>
+
       <v-spacer></v-spacer>
+      <v-toolbar-title>В системе: {{ user.fio }}</v-toolbar-title>
+
       <v-btn @click="$emit('login', {})">ВЫХОД</v-btn>
     </v-app-bar>
 
@@ -70,7 +79,7 @@ const lidsplus = () => import("../crmanager/lidsplus");
 const report = () => import("./report");
 
 export default {
-  props:['user'],
+  props: ["user"],
   data: () => ({
     drawer: null,
     selectedItem: 0,
@@ -78,15 +87,23 @@ export default {
     items: [
       { text: "Импорт CSV", name: "importcsv", icon: "mdi-progress-upload" },
       { text: "Пользователи", name: "users", icon: "mdi-account" },
-      { text: "Статусы лидов", name: "statusLid", icon: "mdi-format-list-checks" },
-      { text: "Поставщики", name: "providers", icon: "mdi-contact-phone-outline" },
+      {
+        text: "Статусы лидов",
+        name: "statusLid",
+        icon: "mdi-format-list-checks",
+      },
+      {
+        text: "Поставщики",
+        name: "providers",
+        icon: "mdi-contact-phone-outline",
+      },
       // { text: "Рабочие места", name: "workPlaces", icon: "mdi-sitemap" },
       { text: "Распределение", name: "lids", icon: "mdi-account-arrow-left" },
       { text: "Распределение2", name: "lidsplus", icon: "mdi-filter-outline" },
       { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
       { text: "Отчёт", name: "report", icon: "mdi-receipt" },
     ],
-    adminMenu: "report",
+    adminMenu: "",
   }),
   computed: {
     adminComponent() {
@@ -101,8 +118,16 @@ export default {
       if (this.adminMenu == "report") return report;
     },
   },
-  mounted:function (){
-
+  mounted: function () {},
+  mounted: function () {
+    if (localStorage.adminMenu) {
+      this.adminMenu = localStorage.adminMenu;
+    }
+  },
+  watch: {
+    adminMenu(newName) {
+      localStorage.adminMenu = newName;
+    },
   },
   methods: {},
 };
