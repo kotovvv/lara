@@ -118,7 +118,6 @@ export default {
       if (this.adminMenu == "report") return report;
     },
   },
-  mounted: function () {},
   mounted: function () {
     if (localStorage.adminMenu) {
       this.adminMenu = localStorage.adminMenu;

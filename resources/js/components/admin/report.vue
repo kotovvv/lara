@@ -39,6 +39,9 @@
                   }
                 "
               >
+                <template v-slot:item.mbalans="{ item }">
+{{item.mbalans}}
+                </template>
                 <template v-slot:item.balans="{ item }">
 {{item.balans}}
                 </template>
@@ -137,7 +140,8 @@ export default {
       { text: "Кол-во лидов", value: "hmlids" },
       { text: "Кол-во наборов", value: "hmcalls" },
       { text: "Общее время", value: "alltime" },
-      { text: "Баланс", value: "balans" },
+      { text: "Баланс месяц", value: "mbalans" },
+      { text: "Баланс день", value: "balans" },
       { text: "Установка баланса", value: "setbalans" },
       { text: "Очистить", value: "deleteData" },
     ],

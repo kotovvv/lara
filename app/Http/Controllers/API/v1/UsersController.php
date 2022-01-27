@@ -26,7 +26,7 @@ class UsersController extends Controller
   public function index()
   {
     // return User::All();
-    return User::select(['users.*', DB::raw('CONCAT((SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id),"/",(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8)) as hmlids ')])
+    return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '),DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
 
       // ->where('users.role_id', '>', 1)
       // ->where('users.active', 1)
@@ -213,7 +213,7 @@ class UsersController extends Controller
   public function getusers()
   {
 
-    return User::select(['users.*', DB::raw('CONCAT((SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id),"/",(SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8)) as hmlids')])
+    return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '),DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
     // return User::select(['users.*', DB::raw('(SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id) as hmlids')])
 
       ->where('users.role_id', '>', 1)
@@ -284,12 +284,12 @@ DB::table('calls')->where('user_id',$id)->delete();
   {
     //get group
     // SELECT `group_id`,fio FROM `users` WHERE `role_id` = 2 AND `group_id` > 0 AND `id` = `group_id`
+    $date = date('Y-m-d');
+    $datefrom = date('Y-m-d', strtotime("-30 days"));
 if ($user_id){
-  $date = date('Y-m-d');
   $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color')->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $user_id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$date)->orderBy('statuses.order', 'ASC')->get();
   return response($getStatuses);
 }
-
     $getDataDay =  DB::select(DB::Raw("SELECT
     `id`,
     `fio`,
@@ -297,6 +297,7 @@ if ($user_id){
     (SELECT SUM(`count`) FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) hmcalls,
     (SELECT SUM(`duration`) FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) alltime,
     (SELECT SUM(`balans`) FROM `balans` WHERE u.`id` = `user_id` AND `date` = CURDATE()) balans,
+    (SELECT SUM(`balans`) FROM `balans` WHERE u.`id` = `user_id` AND `date` >= '".$datefrom."' AND `date` <= CURDATE()) mbalans,
     `group_id`,
     `role_id`
     FROM `users` u

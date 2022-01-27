@@ -191,6 +191,9 @@
                             :disabled="disableuser == user.id"
                             >{{ user.hmlids }}</v-btn
                           >
+<v-chip v-if="user.statnew" label small>
+      {{user.statnew}}
+    </v-chip>
                         </v-row>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
@@ -448,7 +451,7 @@ export default {
         .get(get)
         .then((res) => {
           self.users = res.data.map(
-            ({ name, id, role_id, fio, hmlids, group_id, order }) => ({
+            ({ name, id, role_id, fio, hmlids, group_id, order,statnew }) => ({
               name,
               id,
               role_id,
@@ -456,6 +459,7 @@ export default {
               hmlids,
               group_id,
               order,
+              statnew
             })
           );
           // self.users.sort(function (a, b) {

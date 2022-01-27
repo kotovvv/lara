@@ -39,6 +39,7 @@
         </v-col>
         <v-col cols="2" class="pt-3 mt-4">
           <v-select
+            ref="filterStatus"
             v-model="filterStatus"
             :items="statuses_lids"
             label="Фильтр по статусам"
@@ -233,6 +234,9 @@
                             :disabled="disableuser == user.id"
                             >{{ user.hmlids }}</v-btn
                           >
+                          <v-chip v-if="user.statnew" label small>
+                            {{ user.statnew }}
+                          </v-chip>
                         </v-row>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
@@ -341,8 +345,15 @@ export default {
     this.getUsers();
     this.getStatuses();
     this.getLidsOnDate();
+    if (localStorage.filterStatus) {
+      this.filterStatus = localStorage.filterStatus;
+    }
   },
+
   watch: {
+    filterStatus(newName) {
+      localStorage.filterStatus = newName;
+    },
     filteredItems: function () {
       const self = this;
       self.statuses_lids = _.uniqBy(self.filteredItems, "status_id").map(
@@ -352,6 +363,7 @@ export default {
         })
       );
       self.statuses_lids.unshift({ status: "выбор", status_id: 0 });
+
     },
     filterGStatus: function (newval, oldval) {
       if (newval == 0) {
@@ -573,7 +585,7 @@ export default {
         .get(get)
         .then((res) => {
           self.users = res.data.map(
-            ({ name, id, role_id, fio, hmlids, group_id, order }) => ({
+            ({ name, id, role_id, fio, hmlids, group_id, order, statnew }) => ({
               name,
               id,
               role_id,
@@ -581,6 +593,7 @@ export default {
               hmlids,
               group_id,
               order,
+              statnew,
             })
           );
           // self.users.sort(function (a, b) {
@@ -661,6 +674,7 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
+
           self.orderStatus();
           self.searchAll = "";
 
@@ -695,12 +709,15 @@ export default {
           }));
           self.orderStatus();
           self.searchAll = "";
+                    if (localStorage.filterStatus) {
+            self.$refs.filterStatus.selectedItems = [self.statuses_lids.find(function(i) { return i.status_id == localStorage.filterStatus})]
+          }
           // self.getDuplicates();
         })
         .catch((error) => console.log(error));
     },
     orderStatus() {
-      const self = this
+      const self = this;
       let stord = [];
       stord = Object.entries(_.groupBy(self.lids, "status"));
       stord.map(function (i) {
