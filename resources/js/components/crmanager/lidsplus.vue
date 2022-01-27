@@ -341,10 +341,10 @@ export default {
     Statuses: [],
   }),
   mounted: function () {
-    this.getProviders();
     this.getUsers();
+    this.getProviders();
     this.getStatuses();
-    this.getLidsOnDate();
+    // this.getLidsOnDate();
     if (localStorage.filterStatus) {
       this.filterStatus = localStorage.filterStatus;
     }
@@ -363,7 +363,6 @@ export default {
         })
       );
       self.statuses_lids.unshift({ status: "выбор", status_id: 0 });
-
     },
     filterGStatus: function (newval, oldval) {
       if (newval == 0) {
@@ -643,13 +642,13 @@ export default {
           self.lids = Object.entries(res.data).map((e) => e[1]);
 
           self.lids.map(function (e) {
-            e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
             e.date_updated = e.updated_at.substring(0, 10);
-            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
+          e.user = self.users.find((u) => u.id == e.user_id).fio;
+          e.provider = self.providers.find((p) => p.id == e.provider_id).name;
           self.orderStatus();
           self.searchAll = "";
           // self.getDuplicates();
@@ -658,23 +657,27 @@ export default {
     },
     getLidsOnDate() {
       let self = this;
-
       axios
-        .get("/api/getLidsOnDate/" + this.dates)
+        .get("/api/getLidsOnDate/" + self.dates)
         .then((res) => {
           // console.log(res.data);
           self.lids = Object.entries(res.data).map((e) => e[1]);
-
           self.lids.map(function (e) {
-            e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
             e.date_updated = e.updated_at.substring(0, 10);
-            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
-            e.group_id = self.users.find((u) => u.id == e.user_id).group_id;
-            if (e.status_id)
+            if (e.status_id) {
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
-          });
+            }
+            if(self.users.find((u) => u.id == e.user_id)){
+                          let luser = self.users.find((u) => u.id == e.user_id);
+            e.user = luser.fio;
+            e.group_id = luser.group_id;
+            }
 
+            if(self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider =  self.providers.find((p) => p.id == e.provider_id).name ;
+            }
+          });
           self.orderStatus();
           self.searchAll = "";
 
@@ -709,8 +712,12 @@ export default {
           }));
           self.orderStatus();
           self.searchAll = "";
-                    if (localStorage.filterStatus) {
-            self.$refs.filterStatus.selectedItems = [self.statuses_lids.find(function(i) { return i.status_id == localStorage.filterStatus})]
+          if (localStorage.filterStatus) {
+            self.$refs.filterStatus.selectedItems = [
+              self.statuses_lids.find(function (i) {
+                return i.status_id == localStorage.filterStatus;
+              }),
+            ];
           }
           // self.getDuplicates();
         })
@@ -769,6 +776,7 @@ export default {
         .then((res) => {
           self.providers = res.data.map(({ name, id }) => ({ name, id }));
           self.providers.unshift({ name: "выбор", id: 0 });
+          self.getLidsOnDate();
         })
         .catch((error) => console.log(error));
     },
