@@ -39,7 +39,7 @@
                   }
                 "
               >
-                <template v-slot:item.mbalans="{ item }">
+                <template v-slot:item.mbalans="{ item }" >
 {{item.mbalans}}
                 </template>
                 <template v-slot:item.balans="{ item }">
@@ -215,7 +215,7 @@ export default {
   },
   computed: {
     group() {
-      return _.uniqBy(this.tableData, "group_id").filter(
+      return this.tableData.filter(
         (i) => i.group_id == i.id
       );
     },

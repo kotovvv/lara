@@ -66,7 +66,17 @@
             item-value="id"
           ></v-select>
         </v-col>
-
+        <v-col cols="2">
+          <v-card-title>
+            <v-text-field
+              v-model.lazy.trim="filtertel"
+              append-icon="mdi-phone"
+              label="Первые цифры телефона"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-card-title>
+        </v-col>
         <v-col cols="2">
           <v-card-title>
             <v-text-field
@@ -80,7 +90,7 @@
           </v-card-title>
         </v-col>
         <v-spacer></v-spacer>
-        <v-col cols="3" class="pt-3 mt-4">
+        <v-col cols="2" class="pt-3 mt-4">
           <v-select
             v-model="selectedStatus"
             :items="statuses"
@@ -348,11 +358,24 @@ export default {
     if (localStorage.filterStatus) {
       this.filterStatus = localStorage.filterStatus;
     }
+    if (localStorage.dates) {
+ this.dates = localStorage.dates
+    }
+    if (localStorage.filterProviders) {
+      this.filterProviders = localStorage.filterProviders
+
+    }
   },
 
   watch: {
     filterStatus(newName) {
       localStorage.filterStatus = newName;
+    },
+    dates(newName){
+      localStorage.dates = newName;
+    },
+    filterProviders(newName){
+localStorage.filterProviders = newName;
     },
     filteredItems: function () {
       const self = this;
@@ -647,10 +670,17 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
-          e.user = self.users.find((u) => u.id == e.user_id).fio;
-          e.provider = self.providers.find((p) => p.id == e.provider_id).name;
+          if (self.users.length) {
+            e.user = self.users.find((u) => u.id == e.user_id).fio;
+          }
+          if (self.providers.length) {
+            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
+          }
           self.orderStatus();
           self.searchAll = "";
+          if (localStorage.filterStatus) {
+            self.filterStatus = parseInt(localStorage.filterStatus);
+          }
           // self.getDuplicates();
         })
         .catch((error) => console.log(error));
@@ -668,18 +698,26 @@ export default {
             if (e.status_id) {
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
             }
-            if(self.users.find((u) => u.id == e.user_id)){
-                          let luser = self.users.find((u) => u.id == e.user_id);
-            e.user = luser.fio;
-            e.group_id = luser.group_id;
+            if (self.users.find((u) => u.id == e.user_id)) {
+              let luser = self.users.find((u) => u.id == e.user_id);
+              e.user = luser.fio;
+              e.group_id = luser.group_id;
             }
 
-            if(self.providers.find((p) => p.id == e.provider_id)) {
-              e.provider =  self.providers.find((p) => p.id == e.provider_id).name ;
+            if (self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
             }
           });
           self.orderStatus();
           self.searchAll = "";
+          if (localStorage.filterStatus) {
+            self.filterStatus = parseInt(localStorage.filterStatus);
+          }
+          if (localStorage.filterProviders) {
+            self.filterProviders = parseInt(localStorage.filterProviders);
+          }
 
           // self.getDuplicates();
         })

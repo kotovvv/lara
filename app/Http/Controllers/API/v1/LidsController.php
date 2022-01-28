@@ -307,6 +307,34 @@ class LidsController extends Controller
     $res['insert'] = $insert;
     return response($res);
   }
+    public function  set_zalivDub(Request $request)
+  {
+    $req = $request->all();
+    $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+
+    if (!$f_key) return response('Key incorect', 403);
+    // http://91.192.102.34/api/set_zaliv?user_id=152&afilat_id=62&api_key=11e9c0056d4aa76c3c7b946737f089d4&umcfields[email]=$email&umcfields[name]=$fio%20$lastn&umcfields[phone]=$phonestr&umcfields[affiliate_user]=$affiliate
+    $n_lid = new Lid;
+
+    $n_lid->name =  $req['umcfields']['name'];
+    $n_lid->tel =  $req['umcfields']['phone'];
+    $n_lid->email = $req['umcfields']['email'];
+    $n_lid->afilyator = $req['umcfields']['affiliate_user'];
+    $n_lid->provider_id = $req['afilat_id'];
+    $n_lid->user_id = $req['user_id'];
+    $n_lid->status_id = 22;
+    $n_lid->created_at = Now();
+
+
+    $n_lid->save();
+    $id = $n_lid->id;
+    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
+
+    $res['status'] = 'OK';
+    $res['id'] = $id;
+    $res['insert'] = $insert;
+    return response($res);
+  }
 
   public function get_zaliv(Request $request)
   {
@@ -361,8 +389,8 @@ class LidsController extends Controller
       }
     }
     return response($res);
-  }  
-  
+  }
+
   public function get_zaliv_allTime(Request $request)
   {
     // get_zaliv_allTime?api_key=857193747ca93f651b1f32dcf426ab42&startDate=10.07.2021&endDate=14.01.2022

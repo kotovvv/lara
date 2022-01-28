@@ -191,9 +191,9 @@
                             :disabled="disableuser == user.id"
                             >{{ user.hmlids }}</v-btn
                           >
-<v-chip v-if="user.statnew" label small>
-      {{user.statnew}}
-    </v-chip>
+                          <v-chip v-if="user.statnew" label small>
+                            {{ user.statnew }}
+                          </v-chip>
                         </v-row>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
@@ -281,8 +281,10 @@ export default {
   computed: {
     group() {
       // return _.uniqBy(this.users, "group_id");
-           return _.filter(this.users, function(o) { return o.group_id == o.id; });
-      },
+      return _.filter(this.users, function (o) {
+        return o.group_id == o.id;
+      });
+    },
     filteredItems() {
       // if (this.showDuplicates && this.telsDuplicates.length > 0)
       //   return this.telsDuplicates;
@@ -322,7 +324,11 @@ export default {
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
-            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
+            if (self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            }
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
@@ -451,7 +457,7 @@ export default {
         .get(get)
         .then((res) => {
           self.users = res.data.map(
-            ({ name, id, role_id, fio, hmlids, group_id, order,statnew }) => ({
+            ({ name, id, role_id, fio, hmlids, group_id, order, statnew }) => ({
               name,
               id,
               role_id,
@@ -459,7 +465,7 @@ export default {
               hmlids,
               group_id,
               order,
-              statnew
+              statnew,
             })
           );
           // self.users.sort(function (a, b) {
@@ -509,13 +515,22 @@ export default {
           self.lids = Object.entries(res.data).map((e) => e[1]);
 
           self.lids.map(function (e) {
-            e.user = self.users.find((u) => u.id == e.user_id).fio;
+            if (self.users.find((u) => u.id == e.user_id)) {
+              e.user = self.users.find((u) => u.id == e.user_id).fio;
+            }
             e.date_created = e.created_at.substring(0, 10);
-            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
-            if (e.status_id)
+            if (self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            }
+            if (self.statuses.find((s) => s.id == e.status_id))
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
           self.searchAll = "";
+          if (localStorage.filterStatus) {
+            self.filterStatus = parseInt(localStorage.filterStatus);
+          }
           // self.getDuplicates();
         })
         .catch((error) => console.log(error));
@@ -533,13 +548,22 @@ export default {
           self.lids = Object.entries(res.data).map((e) => e[1]);
 
           self.lids.map(function (e) {
-            e.user = self.users.find((u) => u.id == e.user_id).fio;
+            if (self.users.find((u) => u.id == e.user_id)) {
+              e.user = self.users.find((u) => u.id == e.user_id).fio;
+            }
             e.date_created = e.created_at.substring(0, 10);
-            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
-            if (e.status_id)
+            if (self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            }
+            if (self.statuses.find((s) => s.id == e.status_id))
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
           self.searchAll = "";
+          if (localStorage.filterStatus) {
+            self.filterStatus = parseInt(localStorage.filterStatus);
+          }
           // self.getDuplicates();
         })
         .catch((error) => console.log(error));

@@ -21,7 +21,7 @@
             <tbody>
               <tr>
                 <td>{{ todayReport.ftd }}</td>
-                <td>{{ todayReport.sum }}</td>
+                <td><span class="h5">{{ todayReport.sum }}</span><span v-if="todayReport.sum" class="h5">$</span></td>
                 <td>{{ todayReport.hmcall }}</td>
                 <td>{{ todayReport.alltimecall }}</td>
               </tr>
@@ -41,7 +41,7 @@
             <tbody>
               <tr>
                 <td>{{ monthReport.ftd }}</td>
-                <td>{{ monthReport.sum }}</td>
+                <td><span class="h5">{{ monthReport.sum }}</span><span v-if="monthReport.sum" class="h5">$</span></td>
                 <td>{{ monthReport.hmcall }}</td>
                 <td>{{ monthReport.alltimecall }}</td>
               </tr>
