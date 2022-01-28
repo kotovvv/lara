@@ -38,13 +38,14 @@
           </v-dialog>
         </v-col>
         <v-col cols="2" class="pt-3 mt-4">
+          <!-- statuses_lids -->
           <v-select
             ref="filterStatus"
             v-model="filterStatus"
-            :items="statuses_lids"
+            :items="statuses"
             label="Фильтр по статусам"
-            item-text="status"
-            item-value="status_id"
+            item-text="name"
+            item-value="id"
           ></v-select>
           <v-btn
             v-if="
@@ -311,7 +312,7 @@ export default {
     users: [],
     disableuser: 0,
     statuses: [],
-    statuses_lids: [],
+    // statuses_lids: [],
     selectedStatus: 0,
     filterStatus: 0,
     filterGStatus: 0,
@@ -377,16 +378,16 @@ export default {
     filterProviders(newName){
 localStorage.filterProviders = newName;
     },
-    filteredItems: function () {
-      const self = this;
-      self.statuses_lids = _.uniqBy(self.filteredItems, "status_id").map(
-        (i) => ({
-          status_id: i.status_id,
-          status: i.status,
-        })
-      );
-      self.statuses_lids.unshift({ status: "выбор", status_id: 0 });
-    },
+    // filteredItems: function () {
+    //   const self = this;
+    //   self.statuses_lids = _.uniqBy(self.filteredItems, "status_id").map(
+    //     (i) => ({
+    //       status_id: i.status_id,
+    //       status: i.status,
+    //     })
+    //   );
+    //   self.statuses_lids.unshift({ status: "выбор", status_id: 0 });
+    // },
     filterGStatus: function (newval, oldval) {
       if (newval == 0) {
         //this.getLids(this.$props.user.id);
@@ -744,16 +745,16 @@ localStorage.filterProviders = newName;
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
-          self.statuses_lids = _.uniqBy(self.lids, "status_id").map((i) => ({
-            status_id: i.status_id,
-            status: i.status,
-          }));
+          // self.statuses_lids = _.uniqBy(self.lids, "status_id").map((i) => ({
+          //   status_id: i.status_id,
+          //   status: i.status,
+          // }));
           self.orderStatus();
           self.searchAll = "";
           if (localStorage.filterStatus) {
             self.$refs.filterStatus.selectedItems = [
-              self.statuses_lids.find(function (i) {
-                return i.status_id == localStorage.filterStatus;
+              self.statuses.find(function (i) {
+                return i.id == localStorage.filterStatus;
               }),
             ];
           }
