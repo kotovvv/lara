@@ -75,6 +75,7 @@
               label="Первые цифры телефона"
               single-line
               hide-details
+              @input="filterStatuses"
             ></v-text-field>
           </v-card-title>
         </v-col>
@@ -110,7 +111,25 @@
         </v-col>
       </v-row>
     </v-container>
-
+    <v-row>
+      <v-col>
+        <v-card class="w-100">
+          <!-- <v-card-title primary-title>
+              <h3>Статусы</h3>
+            </v-card-title> -->
+          <v-card-actions>
+            <div class="d-flex flex-wrap">
+              <template v-for="(i, x) in Statuses">
+                <div class="status_wrp" :key="x">
+                  <span :style="{ background: i.color }">{{ i.name }}</span
+                  ><b>{{ i.hm }}</b>
+                </div>
+              </template>
+            </div>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col cols="9">
         <v-card>
@@ -130,6 +149,8 @@
               'items-per-page-options': [50, 10, 100, 250, 500, -1],
               'items-per-page-text': 'Показать',
             }"
+            :loading="loading"
+    loading-text="Загружаю... Ожидайте"
           >
             <template
               v-slot:top="{ pagination, options, updateOptions }"
@@ -208,6 +229,15 @@
         <div class="row">
           <v-card class="pa-5 w-100">
             Укажите пользователя
+            <v-autocomplete
+              v-model="selectedUser"
+              :items="users"
+              dense
+              item-text="fio"
+              item-value="id"
+              label="выбор"
+              :return-object="true"
+            ></v-autocomplete>
             <v-card-text class="scroll-y">
               <v-list>
                 <v-radio-group
@@ -217,8 +247,11 @@
                   v-bind="users"
                   id="usersradiogroup"
                 >
-                  <v-expansion-panels>
-                    <v-expansion-panel v-for="(item, i) in group" :key="i">
+                  <v-expansion-panels ref="akk" v-model="akkvalue">
+                    <v-expansion-panel
+                      v-for="(item, i) in group"
+                      :key="i"
+                    >
                       <v-expansion-panel-header>
                         {{ item.fio }}
                       </v-expansion-panel-header>
@@ -256,21 +289,7 @@
               </v-list>
             </v-card-text>
           </v-card>
-          <v-card class="mt-5 w-100">
-            <v-card-title primary-title>
-              <h3>Статусы</h3>
-            </v-card-title>
-            <v-card-actions>
-              <div>
-                <template v-for="(i, x) in Statuses">
-                  <div class="status_wrp" :key="x">
-                    <span :style="{ background: i.color }">{{ i.name }}</span
-                    ><b>{{ i.hm }}</b>
-                  </div>
-                </template>
-              </div>
-            </v-card-actions>
-          </v-card>
+
           <!-- <v-card class="pa-5 mt-1 w-100">
             <div class="tel">Тел: {{ clickedItemTel }}</div>
             <v-list dense>
@@ -300,6 +319,10 @@ import logtel from "../manager/logtel";
 export default {
   props: ["user"],
   data: () => ({
+    akkvalue:null,
+    loading:false,
+    selectedUser: {},
+    group: null,
     modal: false,
     dates: [
       new Date(new Date().setDate(new Date().getDate() - 7))
@@ -360,23 +383,26 @@ export default {
       this.filterStatus = localStorage.filterStatus;
     }
     if (localStorage.dates) {
- this.dates = localStorage.dates
+      this.dates = localStorage.dates;
     }
     if (localStorage.filterProviders) {
-      this.filterProviders = localStorage.filterProviders
-
+      this.filterProviders = localStorage.filterProviders;
     }
   },
 
   watch: {
+    selectedUser(user) {
+      this.getLids(user.id);
+      this.akkvalue = _.findIndex(this.group,{group_id:user.group_id})
+    },
     filterStatus(newName) {
       localStorage.filterStatus = newName;
     },
-    dates(newName){
+    dates(newName) {
       localStorage.dates = newName;
     },
-    filterProviders(newName){
-localStorage.filterProviders = newName;
+    filterProviders(newName) {
+      localStorage.filterProviders = newName;
     },
     // filteredItems: function () {
     //   const self = this;
@@ -397,12 +423,6 @@ localStorage.filterProviders = newName;
     },
   },
   computed: {
-    group() {
-      // return _.uniqBy(this.users, "group_id").filter((i) => i.group_id > 0);
-      return _.filter(this.users, function (o) {
-        return o.group_id == o.id;
-      });
-    },
     filteredItems() {
       // if (this.showDuplicates && this.telsDuplicates.length > 0)
       //   return this.telsDuplicates;
@@ -419,6 +439,29 @@ localStorage.filterProviders = newName;
     },
   },
   methods: {
+    getGroup() {
+      return _.filter(this.users, function (o) {
+        return o.group_id == o.id;
+      });
+    },
+    filterStatuses() {
+      const self = this;
+      self.Statuses = [];
+      let stord = this.filteredItems;
+      stord = Object.entries(_.groupBy(stord, "status"));
+      stord.map(function (i) {
+        //i[0]//name
+        //i[1]//array
+        let el = self.statuses.find((s) => s.name == i[0]);
+        self.Statuses.push({
+          name: i[0],
+          hm: i[1].length,
+          order: el.order,
+          color: el.color,
+        });
+      });
+      self.Statuses = _.orderBy(self.Statuses, "order");
+    },
     exportXlsx() {
       const self = this;
       const obj = _.groupBy(self.filteredItems, "status");
@@ -633,6 +676,7 @@ localStorage.filterProviders = newName;
               (f) => f.group_id == self.$props.user.group_id
             );
           }
+          self.group = self.getGroup();
         })
         .catch((error) => console.log(error));
     },
@@ -649,7 +693,7 @@ localStorage.filterProviders = newName;
             color,
             order,
           }));
-          self.statuses.unshift({ name: "Default", id: 0 });
+          self.statuses.unshift({ name: "выбор", id: 0 });
         })
         .catch((error) => console.log(error));
     },
@@ -731,6 +775,8 @@ localStorage.filterProviders = newName;
       self.filtertel = "";
       self.disableuser = id;
       self.Statuses = [];
+      self.loading=true
+      self.lids = []
       axios
         .get("/api/userlids/" + id)
         .then((res) => {
@@ -738,10 +784,16 @@ localStorage.filterProviders = newName;
           self.lids = Object.entries(res.data).map((e) => e[1]);
 
           self.lids.map(function (e) {
-            e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
             e.date_updated = e.updated_at.substring(0, 10);
-            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
+            if (self.users.find((u) => u.id == e.user_id)) {
+              e.user = self.users.find((u) => u.id == e.user_id).fio;
+            }
+            if (self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            }
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
@@ -759,6 +811,7 @@ localStorage.filterProviders = newName;
             ];
           }
           // self.getDuplicates();
+          self.loading=false
         })
         .catch((error) => console.log(error));
     },

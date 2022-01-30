@@ -623,9 +623,9 @@ export default {
             }
           });
           self.todaylids();
-          // setInterval(function () {
-          //   self.getHm();
-          // }, 30000);
+          setInterval(function () {
+            self.getHm();
+          }, 180000);
         })
         .catch((error) => console.log(error));
     },
