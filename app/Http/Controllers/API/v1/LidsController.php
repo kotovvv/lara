@@ -322,9 +322,13 @@ class LidsController extends Controller
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $req['afilat_id'];
     $n_lid->user_id = $req['user_id'];
-    $n_lid->status_id = 22;
     $n_lid->created_at = Now();
 
+    $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
+
+    if (!$f_lid->isEmpty()) {
+      $n_lid->status_id = 22;
+    }
 
     $n_lid->save();
     $id = $n_lid->id;
