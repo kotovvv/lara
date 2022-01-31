@@ -216,7 +216,9 @@ class LidsController extends Controller
     $date = explode(',', $date);
 
     if (count($date) == 2) {
-      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->whereBetween('lids.created_at', [$date[0], $date[1]])->get();
+      $sql = "SELECT l.*,d.depozit FROM lids l LEFT JOIN depozits d ON (l.id = d.lid_id) WHERE DATE(l.created_at) >= '".$date[0]."' AND DATE(l.created_at) <= '".$date[1]."'";
+      return DB::select(DB::raw($sql));
+      //return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->whereBetween('lids.created_at', [$date[0], $date[1]])->get();
     } else {
       return Lid::whereDate('created_at', $date[0])->get();
     }
