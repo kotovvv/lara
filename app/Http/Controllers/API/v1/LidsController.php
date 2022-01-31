@@ -25,7 +25,10 @@ class LidsController extends Controller
   public function importlid(Request $request)
   {
     $insertItem = $request->all();
-    if ($insertItem['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    // if ($insertItem['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    $f_key =   DB::table('apikeys')->where('api_key', $insertItem['api_key'])->first();
+    if (!$f_key) return response('Key incorect', 403);
+
     $n_lid = new Lid;
     $n_lid->tel = $insertItem['umcfields']['phone'];
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
@@ -177,7 +180,9 @@ class LidsController extends Controller
   public function getuserLids(Request $request, $id)
   {
     $getlid = $request->all();
-    if ($getlid['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    // if ($getlid['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    $f_key =   DB::table('apikeys')->where('api_key', $getlid['api_key'])->first();
+    if (!$f_key) return response('Key incorect', 403);
     return Lid::all()->where('user_id', $id);
   }
 
@@ -185,7 +190,9 @@ class LidsController extends Controller
   {
 
     $getlidid = $request->all();
-    if ($getlidid['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    // if ($getlidid['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    $f_key =   DB::table('apikeys')->where('api_key', $getlidid['api_key'])->first();
+    if (!$f_key) return response('Key incorect', 403);
     $a_lid = [
       'tel' => $getlidid['umcfields']['phone'],
       'afilyator' => $getlidid['umcfields']['affiliate_user'],
@@ -197,7 +204,9 @@ class LidsController extends Controller
   public function getlidsontime(Request $request)
   {
     $req = $request->all();
-    if ($req['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    // if ($req['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+    if (!$f_key) return response('Key incorect', 403);
     return Lid::select('id')->whereBetween('created_at', [$req['start'], $req['end']])->get();
   }
 
@@ -216,7 +225,9 @@ class LidsController extends Controller
   public function getlidonid(Request $request, $id)
   {
     $req = $request->all();
-    if ($req['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    // if ($req['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+    if (!$f_key) return response('Key incorect', 403);
 
     return Lid::where('id', $id)->get();
   }

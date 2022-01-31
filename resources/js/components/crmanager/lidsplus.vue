@@ -383,7 +383,9 @@ export default {
       this.filterStatus = localStorage.filterStatus;
     }
     if (localStorage.dates) {
-      this.dates = localStorage.dates;
+
+      let d = localStorage.dates.split(',')
+      this.dates = [d[0],d[1]];
     }
     if (localStorage.filterProviders) {
       this.filterProviders = localStorage.filterProviders;
@@ -818,6 +820,7 @@ export default {
     orderStatus() {
       const self = this;
       let stord = [];
+      self.Statuses = []
       stord = Object.entries(_.groupBy(self.lids, "status"));
       stord.map(function (i) {
         //i[0]//name
