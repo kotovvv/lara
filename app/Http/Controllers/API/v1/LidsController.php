@@ -385,7 +385,7 @@ class LidsController extends Controller
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response('Key incorect', 403);
     $res['result'] = 'Error';
-    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . ")";
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName ".$req['date'] == 'y'?', l.created_at , l.updated_at':''." FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . ")";
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
       $res['data'] = [];
@@ -393,7 +393,7 @@ class LidsController extends Controller
       $res['rows'] = 0;
       foreach ($lids as $lid) {
         $ftd = $lid->status_id == 10 ? 1 : 0;
-        $res['data'][] = [
+        $a1 = [
           'afilateName' => $lid->afilyator,
           'name' => $lid->name,
           'email' => $lid->email,
@@ -402,6 +402,11 @@ class LidsController extends Controller
           'lead_id' => $lid->id,
           'ftd' => $ftd
         ];
+        if ($req['date'] == 'y') {
+          $a1['datestart'] = $lid->created_at;
+          $a1['dateupdate'] = $lid->updated_at;
+        }
+        $res['data'][] = $a1;
         $res['rows']++;
       }
     }
