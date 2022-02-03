@@ -144,8 +144,8 @@ class LidsController extends Controller
     foreach ($data['data'] as $lid) {
       $n_lid = new Lid;
 
-      $n_lid->name =  strval($lid['name']);
-      $n_lid->tel =  $lid['tel'];
+      $n_lid->name =  strval($lid['name']) || '';
+      $n_lid->tel =  $lid['tel'] || '000000000';
       $n_lid->email = $lid['email'];
       $n_lid->user_id = $data['user_id'];
       $n_lid->created_at = Now();
@@ -216,9 +216,8 @@ class LidsController extends Controller
     $date = explode(',', $date);
 
     if (count($date) == 2) {
-      $sql = "SELECT l.*,d.depozit FROM lids l LEFT JOIN depozits d ON (l.id = d.lid_id) WHERE DATE(l.created_at) >= '".$date[0]."' AND DATE(l.created_at) <= '".$date[1]."'";
+      $sql = "SELECT l.*,d.depozit FROM lids l LEFT JOIN depozits d ON (l.id = d.lid_id) WHERE DATE(l.created_at) >= '" . $date[0] . "' AND DATE(l.created_at) <= '" . $date[1] . "'";
       return DB::select(DB::raw($sql));
-      //return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->whereBetween('lids.created_at', [$date[0], $date[1]])->get();
     } else {
       return Lid::whereDate('created_at', $date[0])->get();
     }
@@ -297,8 +296,8 @@ class LidsController extends Controller
 
     $n_lid = new Lid;
 
-    $n_lid->name =  $req['umcfields']['name'];
-    $n_lid->tel =  $req['umcfields']['phone'];
+    $n_lid->name =  $req['umcfields']['name'] || ' ';
+    $n_lid->tel =  $req['umcfields']['phone'] || '00000000';
     $n_lid->email = $req['umcfields']['email'];
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $req['afilat_id'];
@@ -320,7 +319,7 @@ class LidsController extends Controller
     $res['insert'] = $insert;
     return response($res);
   }
-    public function  set_zalivDub(Request $request)
+  public function  set_zalivDub(Request $request)
   {
     $req = $request->all();
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
@@ -329,8 +328,8 @@ class LidsController extends Controller
     // http://91.192.102.34/api/set_zaliv?user_id=152&afilat_id=62&api_key=11e9c0056d4aa76c3c7b946737f089d4&umcfields[email]=$email&umcfields[name]=$fio%20$lastn&umcfields[phone]=$phonestr&umcfields[affiliate_user]=$affiliate
     $n_lid = new Lid;
 
-    $n_lid->name =  $req['umcfields']['name'];
-    $n_lid->tel =  $req['umcfields']['phone'];
+    $n_lid->name =  $req['umcfields']['name'] || '';
+    $n_lid->tel =  $req['umcfields']['phone'] || '000000000000';
     $n_lid->email = $req['umcfields']['email'];
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $req['afilat_id'];
@@ -386,11 +385,11 @@ class LidsController extends Controller
     if (!$f_key) return response('Key incorect', 403);
     $res['result'] = 'Error';
     $date = '';
-    if(isset($req['date'])){
-      $date = $req['date'] == 'y'?', l.created_at , l.updated_at':'';
+    if (isset($req['date'])) {
+      $date = $req['date'] == 'y' ? ', l.created_at , l.updated_at' : '';
     }
 
-    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName ".$date." FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . ")";
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName " . $date . " FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . ")";
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
       $res['data'] = [];
@@ -427,7 +426,7 @@ class LidsController extends Controller
     $f_key = DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response('Key incorect', 403);
     $res['result'] = 'Error';
-    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . " AND DATE(`upload_time`) >= ".$req['startDate']." AND DATE(`upload_time`) <= ".$req['endDate']." )";
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . " AND DATE(`upload_time`) >= " . $req['startDate'] . " AND DATE(`upload_time`) <= " . $req['endDate'] . " )";
 
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
@@ -464,7 +463,7 @@ class LidsController extends Controller
   public function getHmLidsUser($id)
   {
 
-    $hm = Lid::where('user_id',$id)->count();
+    $hm = Lid::where('user_id', $id)->count();
 
     return response($hm);
   }

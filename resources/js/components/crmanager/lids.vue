@@ -370,7 +370,7 @@ export default {
         send.status_id = this.selectedStatus;
       }
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-        send.data = this.selected;
+        send.data = this.selected || this.lids;
       } else if (
         (this.search !== "" ||
           this.filtertel !== "" ||
