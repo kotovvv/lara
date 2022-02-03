@@ -296,8 +296,17 @@ class LidsController extends Controller
 
     $n_lid = new Lid;
 
-    $n_lid->name =  $req['umcfields']['name'] || ' ';
-    $n_lid->tel =  $req['umcfields']['phone'] || '00000000';
+    if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
+      $n_lid->name =  $req['umcfields']['name'];
+    } else {
+      $n_lid->name = time();
+    }
+
+    if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
+      $n_lid->tel =  $req['umcfields']['phone'];
+    } else {
+      $n_lid->tel = time();
+    }
     $n_lid->email = $req['umcfields']['email'];
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $req['afilat_id'];
@@ -328,8 +337,17 @@ class LidsController extends Controller
     // http://91.192.102.34/api/set_zaliv?user_id=152&afilat_id=62&api_key=11e9c0056d4aa76c3c7b946737f089d4&umcfields[email]=$email&umcfields[name]=$fio%20$lastn&umcfields[phone]=$phonestr&umcfields[affiliate_user]=$affiliate
     $n_lid = new Lid;
 
-    $n_lid->name =  $req['umcfields']['name'] || '';
-    $n_lid->tel =  $req['umcfields']['phone'] || '000000000000';
+    if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
+      $n_lid->name =  $req['umcfields']['name'];
+    } else {
+      $n_lid->name = time();
+    }
+
+    if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
+      $n_lid->tel =  $req['umcfields']['phone'];
+    } else {
+      $n_lid->tel = time();
+    }
     $n_lid->email = $req['umcfields']['email'];
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $req['afilat_id'];
