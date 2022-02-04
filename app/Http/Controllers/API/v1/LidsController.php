@@ -144,9 +144,25 @@ class LidsController extends Controller
     foreach ($data['data'] as $lid) {
       $n_lid = new Lid;
 
-      $n_lid->name =  strval($lid['name']) || '';
-      $n_lid->tel =  $lid['tel'] || '000000000';
-      $n_lid->email = $lid['email'];
+      if (isset($lid['name'])) {
+        $n_lid->name =  $lid['name'];
+      } else {
+        $n_lid->name = time();
+      }
+  
+      if (isset( $lid['tel'])) {
+        $n_lid->tel =   $lid['tel'];
+      } else {
+        $n_lid->tel = time();
+      }
+  
+      if (isset($lid['email'])) {
+        $n_lid->email = $lid['email'];
+      } else {
+        $n_lid->email = time().'@none.com';
+      }
+  
+
       $n_lid->user_id = $data['user_id'];
       $n_lid->created_at = Now();
 
@@ -307,7 +323,15 @@ class LidsController extends Controller
     } else {
       $n_lid->tel = time();
     }
-    $n_lid->email = $req['umcfields']['email'];
+
+    if (isset($req['umcfields']['email']) && strlen($req['umcfields']['email']) > 1) {
+      $n_lid->email = $req['umcfields']['email'];
+    } else {
+      $n_lid->email = time().'@none.com';
+    }
+
+
+   
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $req['afilat_id'];
     $n_lid->user_id = $req['user_id'];

@@ -365,7 +365,7 @@ export default {
       let cur_user_id = this.disableuser;
       let send = {};
       send.user_id = this.userid;
-
+      send.data = [];
       if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
       }
@@ -384,6 +384,7 @@ export default {
         //CallBack user not change
         send.data = send.data.filter((f) => f.status_id != 9);
       }
+      if (send.data.length == 0) send.data = this.lids;
       axios
         .post("api/Lid/changelidsuser", send)
         .then(function (response) {

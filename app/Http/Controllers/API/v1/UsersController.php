@@ -26,7 +26,7 @@ class UsersController extends Controller
   public function index()
   {
     // return User::All();
-    return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '),DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
+    return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
 
       // ->where('users.role_id', '>', 1)
       // ->where('users.active', 1)
@@ -213,8 +213,8 @@ class UsersController extends Controller
   public function getusers()
   {
 
-    return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '),DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
-    // return User::select(['users.*', DB::raw('(SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id) as hmlids')])
+    return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
+      // return User::select(['users.*', DB::raw('(SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id) as hmlids')])
 
       ->where('users.role_id', '>', 1)
       ->where('users.active', 1)
@@ -253,22 +253,22 @@ class UsersController extends Controller
     $user->delete();
   }
 
-    public function delDataUser($id)
+  public function delDataUser($id)
   {
     Balans::where('user_id', $id)->delete();
-DB::table('calls')->where('user_id',$id)->delete();
+    DB::table('calls')->where('user_id', $id)->delete();
   }
 
-    public function setBalans(Request $request)
+  public function setBalans(Request $request)
   {
     $data = $request->All();
     if (isset($data['id']) && isset($data['balans']) && $data['balans'] > 0) {
-        $arr = [];
-        $arr['user_id'] = $data['id'];
-        $arr['balans'] = $data['balans'];
-        $arr['date'] = Date('Y-m-d');
-        $arr['time'] = Date('h:i:s');
-        Balans::insert($arr);
+      $arr = [];
+      $arr['user_id'] = $data['id'];
+      $arr['balans'] = $data['balans'];
+      $arr['date'] = Date('Y-m-d');
+      $arr['time'] = Date('h:i:s');
+      Balans::insert($arr);
     }
   }
 
@@ -286,10 +286,10 @@ DB::table('calls')->where('user_id',$id)->delete();
     // SELECT `group_id`,fio FROM `users` WHERE `role_id` = 2 AND `group_id` > 0 AND `id` = `group_id`
     $date = date('Y-m-d');
     $datefrom = date('Y-m-d', strtotime("-30 days"));
-if ($user_id){
-  $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color')->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $user_id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$date)->orderBy('statuses.order', 'ASC')->get();
-  return response($getStatuses);
-}
+    if ($user_id) {
+      $getStatuses = Log::select('logs.status_id', 'statuses.name', 'statuses.color')->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $user_id)->where('logs.status_id', '>', 0)->whereDate('logs.created_at', '>=', $date)->orderBy('statuses.order', 'ASC')->get();
+      return response($getStatuses);
+    }
     $getDataDay =  DB::select(DB::Raw("SELECT
     `id`,
     `fio`,
@@ -297,7 +297,7 @@ if ($user_id){
     (SELECT SUM(`count`) FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) hmcalls,
     (SELECT SUM(`duration`) FROM `calls` WHERE u.`id` = `user_id` AND CAST(timecall AS DATE) = CURDATE()) alltime,
     (SELECT SUM(`balans`) FROM `balans` WHERE u.`id` = `user_id` AND `date` = CURDATE()) balans,
-    (SELECT SUM(`balans`) FROM `balans` WHERE u.`id` = `user_id` AND `date` >= '".$datefrom."' AND `date` <= CURDATE()) mbalans,
+    (SELECT SUM(`balans`) FROM `balans` WHERE u.`id` = `user_id` AND `date` >= '" . $datefrom . "' AND `date` <= CURDATE()) mbalans,
     `group_id`,
     `role_id`
     FROM `users` u
@@ -320,15 +320,15 @@ if ($user_id){
   {
     $dateto = date('Y-m-d');
     $datefrom = date('Y-m-d', strtotime("-30 days"));
-    $getBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->whereDate('date','>=',$datefrom)->whereDate('date','<=',$dateto)->orderBy('date', 'ASC')->get();
+    $getBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->whereDate('date', '>=', $datefrom)->whereDate('date', '<=', $dateto)->orderBy('date', 'ASC')->get();
     return $getBalans;
   }
 
   public function getStatusesMonth($id)
   {
-    $dateto= date('Y-m-d h:i:s');
+    $dateto = date('Y-m-d h:i:s');
     $datefrom = date('Y-m-d h:i:s', strtotime("-30 days"));
-    $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color',DB::Raw('CAST(logs.created_at as date) as date'))->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$datefrom)->whereDate('logs.created_at','<=',$dateto)->orderBy('statuses.order', 'ASC')->get();
+    $getStatuses = Log::select('logs.status_id', 'statuses.name', 'statuses.color', DB::Raw('CAST(logs.created_at as date) as date'))->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id', '>', 0)->whereDate('logs.created_at', '>=', $datefrom)->whereDate('logs.created_at', '<=', $dateto)->orderBy('statuses.order', 'ASC')->get();
     return $getStatuses;
   }
 
@@ -336,7 +336,7 @@ if ($user_id){
   {
     $dateto = date('Y-m-d h:i:s');
     $datefrom = date('Y-m-d h:i:s', strtotime("-30 days"));
-    $getDeposits = Depozit::where('user_id', $id)->whereDate('created_at','>=',$datefrom)->whereDate('created_at','<=',$dateto)->get();
+    $getDeposits = Depozit::where('user_id', $id)->whereDate('created_at', '>=', $datefrom)->whereDate('created_at', '<=', $dateto)->get();
     return $getDeposits;
   }
   public function getCallsMonth($id)
