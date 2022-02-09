@@ -65,6 +65,7 @@
             label="Фильтр по поставщикам"
             item-text="name"
             item-value="id"
+            @change="filterStatuses"
           ></v-select>
         </v-col>
         <v-col cols="2">
@@ -237,6 +238,8 @@
               item-value="id"
               label="выбор"
               :return-object="true"
+              append-icon="mdi-close"
+              @click:append="getLidsOnDate()"
             ></v-autocomplete>
             <v-card-text class="scroll-y">
               <v-list>
