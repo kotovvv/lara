@@ -239,7 +239,7 @@
               label="выбор"
               :return-object="true"
               append-icon="mdi-close"
-              @click:append="getLidsOnDate()"
+              @click:append="selectedUser={};getLidsOnDate();"
             ></v-autocomplete>
             <v-card-text class="scroll-y">
               <v-list>
@@ -397,6 +397,10 @@ export default {
 
   watch: {
     selectedUser(user) {
+      if(user == {}){
+        this.userid = null
+        return
+      }
       this.getLids(user.id);
       this.akkvalue = _.findIndex(this.group,{group_id:user.group_id})
     },
