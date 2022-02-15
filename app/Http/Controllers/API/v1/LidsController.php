@@ -25,9 +25,9 @@ class LidsController extends Controller
   public function importlid(Request $request)
   {
     $insertItem = $request->all();
-    // if ($insertItem['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    // if ($insertItem['api_key'] != env('API_KEY')) return response(['status'=>'Key incorect'], 403);
     $f_key =   DB::table('apikeys')->where('api_key', $insertItem['api_key'])->first();
-    if (!$f_key) return response('Key incorect', 403);
+    if (!$f_key) return response(['status'=>'Key incorect'], 403);
 
     $n_lid = new Lid;
     $n_lid->tel = $insertItem['umcfields']['phone'];
@@ -149,19 +149,19 @@ class LidsController extends Controller
       } else {
         $n_lid->name = time();
       }
-  
+
       if (isset( $lid['tel'])) {
         $n_lid->tel =   $lid['tel'];
       } else {
         $n_lid->tel = time();
       }
-  
+
       if (isset($lid['email'])) {
         $n_lid->email = $lid['email'];
       } else {
         $n_lid->email = time().'@none.com';
       }
-  
+
 
       $n_lid->user_id = $data['user_id'];
       $n_lid->created_at = Now();
@@ -196,9 +196,9 @@ class LidsController extends Controller
   public function getuserLids(Request $request, $id)
   {
     $getlid = $request->all();
-    // if ($getlid['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    // if ($getlid['api_key'] != env('API_KEY')) return response(['status'=>'Key incorect'], 403);
     $f_key =   DB::table('apikeys')->where('api_key', $getlid['api_key'])->first();
-    if (!$f_key) return response('Key incorect', 403);
+    if (!$f_key) return response(['status'=>'Key incorect'], 403);
     return Lid::all()->where('user_id', $id);
   }
 
@@ -206,9 +206,9 @@ class LidsController extends Controller
   {
 
     $getlidid = $request->all();
-    // if ($getlidid['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    // if ($getlidid['api_key'] != env('API_KEY')) return response(['status'=>'Key incorect'], 403);
     $f_key =   DB::table('apikeys')->where('api_key', $getlidid['api_key'])->first();
-    if (!$f_key) return response('Key incorect', 403);
+    if (!$f_key) return response(['status'=>'Key incorect'], 403);
     $a_lid = [
       'tel' => $getlidid['umcfields']['phone'],
       'afilyator' => $getlidid['umcfields']['affiliate_user'],
@@ -220,9 +220,9 @@ class LidsController extends Controller
   public function getlidsontime(Request $request)
   {
     $req = $request->all();
-    // if ($req['api_key'] != env('API_KEY')) return response('Key incorect', 403);
+    // if ($req['api_key'] != env('API_KEY')) return response(['status'=>'Key incorect'], 403);
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
-    if (!$f_key) return response('Key incorect', 403);
+    if (!$f_key) return response(['status'=>'Key incorect'], 403);
     return Lid::select('id')->whereBetween('created_at', [$req['start'], $req['end']])->get();
   }
 
@@ -242,9 +242,8 @@ class LidsController extends Controller
   public function getlidonid(Request $request, $id)
   {
     $req = $request->all();
-    // if ($req['api_key'] != env('API_KEY')) return response('Key incorect', 403);
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
-    if (!$f_key) return response('Key incorect', 403);
+    if (!$f_key) return response(['status'=>'Key incorect'], 403);
 
     return Lid::where('id', $id)->get();
   }
@@ -308,7 +307,7 @@ class LidsController extends Controller
     $req = $request->all();
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
-    if (!$f_key) return response('Key incorect', 403);
+    if (!$f_key) return response(['status'=>'Key incorect'], 403);
 
     $n_lid = new Lid;
 
@@ -330,8 +329,6 @@ class LidsController extends Controller
       $n_lid->email = time().'@none.com';
     }
 
-
-   
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $req['afilat_id'];
     $n_lid->user_id = $req['user_id'];
@@ -340,7 +337,7 @@ class LidsController extends Controller
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
 
     if (!$f_lid->isEmpty()) {
-      return response('duplicate');
+       return response('duplicate');
     }
 
     $n_lid->save();
@@ -352,12 +349,65 @@ class LidsController extends Controller
     $res['insert'] = $insert;
     return response($res);
   }
+
+
+  public function set_zalivjs(Request $request)
+  {
+    $req = $request->all();
+    $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+
+    if (!$f_key) return response(['status'=>'Key incorect'], 403);
+
+    $n_lid = new Lid;
+
+    if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
+      $n_lid->name =  $req['umcfields']['name'];
+    } else {
+      $n_lid->name = time();
+    }
+
+    if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
+      $n_lid->tel =  $req['umcfields']['phone'];
+    } else {
+      $n_lid->tel = time();
+    }
+
+    if (isset($req['umcfields']['email']) && strlen($req['umcfields']['email']) > 1) {
+      $n_lid->email = $req['umcfields']['email'];
+    } else {
+      $n_lid->email = time().'@none.com';
+    }
+
+    $n_lid->afilyator = $req['umcfields']['affiliate_user'];
+    $n_lid->provider_id = $req['afilat_id'];
+    $n_lid->user_id = $req['user_id'];
+    $n_lid->created_at = Now();
+
+    $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
+
+    if (!$f_lid->isEmpty()) {
+
+      $res['status'] = 'duplicate';
+       return response($res);
+    }
+
+    $n_lid->save();
+    $id = $n_lid->id;
+    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
+
+    $res['status'] = 'OK';
+    $res['id'] = $id;
+    $res['insert'] = $insert;
+    return response($res);
+  }
+
+
   public function  set_zalivDub(Request $request)
   {
     $req = $request->all();
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
-    if (!$f_key) return response('Key incorect', 403);
+    if (!$f_key) return response(['status'=>'Key incorect'], 403);
     // http://91.192.102.34/api/set_zaliv?user_id=152&afilat_id=62&api_key=11e9c0056d4aa76c3c7b946737f089d4&umcfields[email]=$email&umcfields[name]=$fio%20$lastn&umcfields[phone]=$phonestr&umcfields[affiliate_user]=$affiliate
     $n_lid = new Lid;
 
@@ -399,7 +449,7 @@ class LidsController extends Controller
     $req = $request->all();
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
-    if (!$f_key) return response('Key incorect', 403);
+    if (!$f_key) return response(['status'=>'Key incorect'], 403);
     $sql = "SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = '" . $f_key->id . "' AND `lead_id` = '" . $req['lead_id'] . "'";
     $res['result'] = 'Error';
     if (DB::select(DB::raw($sql))) {
@@ -424,7 +474,7 @@ class LidsController extends Controller
   {
     $req = $request->all();
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
-    if (!$f_key) return response('Key incorect', 403);
+    if (!$f_key) return response(['status'=>'Key incorect'], 403);
     $res['result'] = 'Error';
     $date = '';
     if (isset($req['date'])) {
@@ -466,7 +516,7 @@ class LidsController extends Controller
     $req = $request->all();
 
     $f_key = DB::table('apikeys')->where('api_key', $req['api_key'])->first();
-    if (!$f_key) return response('Key incorect', 403);
+    if (!$f_key) return response(['status'=>'Key incorect'], 403);
     $res['result'] = 'Error';
     $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . " AND DATE(`upload_time`) >= " . $req['startDate'] . " AND DATE(`upload_time`) <= " . $req['endDate'] . " )";
 

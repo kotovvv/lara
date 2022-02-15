@@ -529,9 +529,9 @@ export default {
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
           self.searchAll = "";
-          if (localStorage.filterStatus) {
-            self.filterStatus = parseInt(localStorage.filterStatus);
-          }
+          // if (localStorage.filterStatus1) {
+          //   self.filterStatus = parseInt(localStorage.filterStatus1);
+          // }
           // self.getDuplicates();
         })
         .catch((error) => console.log(error));
@@ -562,9 +562,9 @@ export default {
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
           self.searchAll = "";
-          if (localStorage.filterStatus) {
-            self.filterStatus = parseInt(localStorage.filterStatus);
-          }
+          // if (localStorage.filterStatus) {
+          //   self.filterStatus = parseInt(localStorage.filterStatus);
+          // }
           // self.getDuplicates();
         })
         .catch((error) => console.log(error));

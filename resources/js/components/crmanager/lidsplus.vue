@@ -171,16 +171,15 @@
                     multiple
                   ></v-select>
                 </v-col>
-                <!-- <v-col cols="2">
-                  <v-text-field
-                    v-model="search"
-                    append-icon="mdi-magnify"
-                    label="Поиск"
-                    single-line
-                    hide-details
-                    class="ml-3"
-                  ></v-text-field>
-                </v-col> -->
+                <v-col cols="3" class="pl-5">
+                  <v-select
+                    v-model="filterdates"
+                    :items="lidaddates"
+                    label="даты добавления"
+                     multiple
+                  ></v-select>
+                </v-col>
+
                 <!-- v-if="telsDuplicates.length > 0" -->
                 <v-col cols="2">
                   <v-card-title>
@@ -239,7 +238,7 @@
               label="выбор"
               :return-object="true"
               append-icon="mdi-close"
-              @click:append="selectedUser={};getLidsOnDate();"
+              @click:append="getLids(value);selectedUser={};"
             ></v-autocomplete>
             <v-card-text class="scroll-y">
               <v-list>
@@ -292,22 +291,6 @@
               </v-list>
             </v-card-text>
           </v-card>
-
-          <!-- <v-card class="pa-5 mt-1 w-100">
-            <div class="tel">Тел: {{ clickedItemTel }}</div>
-            <v-list dense>
-              <v-subheader>Статусы лида</v-subheader>
-              <v-list-item-group color="primary">
-                <v-list-item v-for="(item, i) in clickedItemStatuses" :key="i">
-                  <v-list-item-content :style="{ background: item.color }">
-                    <v-list-item-title
-                      v-text="item.name + ' ' + item.uname + ' ' + item.cdate"
-                    ></v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-card> -->
         </div>
       </v-col>
     </v-row>
@@ -322,6 +305,8 @@ import logtel from "../manager/logtel";
 export default {
   props: ["user"],
   data: () => ({
+    filterdates:'',
+    lidaddates:[],
     akkvalue:null,
     loading:false,
     selectedUser: {},
@@ -442,7 +427,8 @@ export default {
           (!this.filterProviders || i.provider_id == this.filterProviders) &&
           (!this.filtertel || reg.test(i.tel)) &&
           (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
-          (!this.filterGroups.length || this.filterGroups.includes(i.group_id))
+          (!this.filterGroups.length || this.filterGroups.includes(i.group_id)) &&
+          (!this.filterdates.length || this.filterdates.includes(i.date_created))
         );
       });
     },
@@ -774,6 +760,7 @@ send.data = []
           if (localStorage.filterProviders) {
             self.filterProviders = parseInt(localStorage.filterProviders);
           }
+self.lidaddates = Object.keys(_.groupBy(self.lids,'date_created'))
 
           // self.getDuplicates();
         })
@@ -821,6 +808,7 @@ send.data = []
               }),
             ];
           }
+          self.lidaddates = Object.keys(_.groupBy(self.lids,'date_created'))
           // self.getDuplicates();
           self.loading=false
         })
