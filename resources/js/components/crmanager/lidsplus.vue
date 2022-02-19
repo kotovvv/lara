@@ -201,7 +201,7 @@
               label="выбор"
               :return-object="true"
               append-icon="mdi-close"
-              @click:append="disableuser = value; getLidsOnDate();
+              @click:append="disableuser = value || 0; getLidsOnDate();
                 selectedUser = {};
               "
             ></v-autocomplete>
