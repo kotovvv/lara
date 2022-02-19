@@ -316,6 +316,7 @@
               text
               @click="
                 setDepozit();
+                putSelectedLidsDB();
                 depozit = false;
               "
             >
@@ -523,6 +524,7 @@ export default {
     },
     putSelectedLidsDB() {
       const self = this;
+      if(self.selectedStatus == 10 && self.depozit == false) return
       let send = {};
       let send_el = {};
       let costil = self.filtertel;

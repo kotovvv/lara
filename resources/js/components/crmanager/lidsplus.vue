@@ -2,42 +2,26 @@
   <div>
     <v-container fluid>
       <v-row>
-        <v-col cols="2" class="pt-3 mt-4">
-          <v-dialog
-            ref="dialog"
-            v-model="modal"
-            :return-value.sync="dates"
-            persistent
-            width="290px"
+        <v-col>
+          <v-datetime-picker
+            label="С Дата/время"
+            v-model="datetimeFrom"
+            clearText=""
+            scrollable
+            :date-picker-props="dateProps"
+            @input="getLidsOnDate"
           >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="dates"
-                label="Период"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker v-model="dates" scrollable range locale="ru-RU">
-              <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="modal = false">
-                Отменить
-              </v-btn>
-              <v-btn
-                text
-                color="primary"
-                @click="
-                  $refs.dialog.save(dates);
-                  getLidsOnDate();
-                "
-              >
-                Выбрать
-              </v-btn>
-            </v-date-picker>
-          </v-dialog>
+          </v-datetime-picker>
+          <v-datetime-picker
+            label="По Дата/время"
+            v-model="datetimeTo"
+            clearText=""
+            @input="getLidsOnDate"
+            :date-picker-props="dateProps"
+          >
+          </v-datetime-picker>
         </v-col>
-        <v-col cols="2" class="pt-3 mt-4">
+        <v-col>
           <!-- statuses_lids -->
           <v-select
             ref="filterStatus"
@@ -58,7 +42,7 @@
           </v-btn>
         </v-col>
 
-        <v-col cols="2" class="pt-3 mt-4">
+        <v-col>
           <v-select
             v-model="filterProviders"
             :items="providers"
@@ -68,32 +52,29 @@
             @change="filterStatuses"
           ></v-select>
         </v-col>
-        <v-col cols="2">
-          <v-card-title>
-            <v-text-field
-              v-model.lazy.trim="filtertel"
-              append-icon="mdi-phone"
-              label="Первые цифры телефона"
-              single-line
-              hide-details
-              @input="filterStatuses"
-            ></v-text-field>
-          </v-card-title>
+        <v-col>
+          <v-text-field
+            v-model.lazy.trim="filtertel"
+            append-icon="mdi-phone"
+            label="Первые цифры телефона"
+            single-line
+            hide-details
+            @input="filterStatuses"
+          ></v-text-field>
         </v-col>
-        <v-col cols="2">
-          <v-card-title>
-            <v-text-field
-              v-model="searchAll"
-              append-icon="mdi-magnify"
-              label="Глобальный поиск"
-              @click:append="searchInDB"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-card-title>
+        <v-btn @click="clearFilter">X</v-btn>
+        <v-col>
+          <v-text-field
+            v-model="searchAll"
+            append-icon="mdi-magnify"
+            label="Глобальный поиск"
+            @click:append="searchInDB"
+            single-line
+            hide-details
+          ></v-text-field>
         </v-col>
         <v-spacer></v-spacer>
-        <v-col cols="2" class="pt-3 mt-4">
+        <v-col>
           <v-select
             v-model="selectedStatus"
             :items="statuses"
@@ -115,9 +96,6 @@
     <v-row>
       <v-col>
         <v-card class="w-100">
-          <!-- <v-card-title primary-title>
-              <h3>Статусы</h3>
-            </v-card-title> -->
           <v-card-actions>
             <div class="d-flex flex-wrap">
               <template v-for="(i, x) in Statuses">
@@ -151,7 +129,7 @@
               'items-per-page-text': 'Показать',
             }"
             :loading="loading"
-    loading-text="Загружаю... Ожидайте"
+            loading-text="Загружаю... Ожидайте"
           >
             <template
               v-slot:top="{ pagination, options, updateOptions }"
@@ -161,6 +139,16 @@
               }"
             >
               <v-row>
+                <v-col cols="4">
+                  <v-text-field
+                    v-model="search"
+                    append-icon="mdi-magnify"
+                    label="Поиск"
+                    single-line
+                    hide-details
+                    class="ml-3"
+                  ></v-text-field>
+                </v-col>
                 <v-col cols="2" class="pl-5">
                   <v-select
                     v-model="filterGroups"
@@ -170,31 +158,6 @@
                     item-value="id"
                     multiple
                   ></v-select>
-                </v-col>
-                <v-col cols="3" class="pl-5">
-                  <v-select
-                    v-model="filterdates"
-                    :items="lidaddates"
-                    label="даты добавления"
-                     multiple
-                  ></v-select>
-                </v-col>
-
-                <!-- v-if="telsDuplicates.length > 0" -->
-                <v-col cols="2">
-                  <v-card-title>
-                    <v-checkbox
-                      v-model="showDuplicates"
-                      class="mt-0"
-                      @click="getDuplicates"
-                    >
-                      <template v-slot:label>
-                        <v-icon small> mdi-phone </v-icon>
-                        <v-icon small> mdi-phone </v-icon>
-                      </template>
-                      ></v-checkbox
-                    >
-                  </v-card-title>
                 </v-col>
                 <v-col cols="6">
                   <v-data-footer
@@ -238,7 +201,9 @@
               label="выбор"
               :return-object="true"
               append-icon="mdi-close"
-              @click:append="getLids(value);selectedUser={};"
+              @click:append="disableuser = value; getLidsOnDate();
+                selectedUser = {};
+              "
             ></v-autocomplete>
             <v-card-text class="scroll-y">
               <v-list>
@@ -250,10 +215,7 @@
                   id="usersradiogroup"
                 >
                   <v-expansion-panels ref="akk" v-model="akkvalue">
-                    <v-expansion-panel
-                      v-for="(item, i) in group"
-                      :key="i"
-                    >
+                    <v-expansion-panel v-for="(item, i) in group" :key="i">
                       <v-expansion-panel-header>
                         {{ item.fio }}
                       </v-expansion-panel-header>
@@ -275,7 +237,10 @@
                             class="ml-3"
                             small
                             :color="usercolor(user)"
-                            @click="getLids(user.id)"
+                            @click="
+                              disableuser = user.id;
+                              getLidsOnDate();
+                            "
                             :value="user.hmlids"
                             :disabled="disableuser == user.id"
                             >{{ user.hmlids }}</v-btn
@@ -305,25 +270,18 @@ import logtel from "../manager/logtel";
 export default {
   props: ["user"],
   data: () => ({
-    filterdates:'',
-    lidaddates:[],
-    akkvalue:null,
-    loading:false,
+    akkvalue: null,
+    loading: false,
     selectedUser: {},
     group: null,
     modal: false,
-    dates: [
-      new Date(new Date().setDate(new Date().getDate() - 7))
-        .toISOString()
-        .substr(0, 10),
-      new Date().toISOString().substr(0, 10),
-    ],
-    datetime: "",
+    dateProps:{locale:"ru-RU",format:"24hr"},
+    datetimeFrom: "",
+    datetimeTo: "",
     userid: null,
     users: [],
     disableuser: 0,
     statuses: [],
-    // statuses_lids: [],
     selectedStatus: 0,
     filterStatus: 0,
     filterGStatus: 0,
@@ -366,14 +324,17 @@ export default {
     this.getUsers();
     this.getProviders();
     this.getStatuses();
-    // this.getLidsOnDate();
     if (localStorage.filterStatus) {
       this.filterStatus = localStorage.filterStatus;
     }
-    if (localStorage.dates) {
-
-      let d = localStorage.dates.split(',')
-      this.dates = [d[0],d[1]];
+    if (localStorage.tel) {
+      this.filtertel = localStorage.tel;
+    }
+    if (localStorage.datetimeFrom) {
+      this.datetimeFrom = new Date(localStorage.datetimeFrom);
+    }
+    if (localStorage.datetimeTo) {
+      this.datetimeTo = new Date(localStorage.datetimeTo);
     }
     if (localStorage.filterProviders) {
       this.filterProviders = localStorage.filterProviders;
@@ -382,32 +343,29 @@ export default {
 
   watch: {
     selectedUser(user) {
-      if(user == {}){
-        this.userid = null
-        return
+      if (user == {}) {
+        this.userid = null;
+        return;
       }
-      this.getLids(user.id);
-      this.akkvalue = _.findIndex(this.group,{group_id:user.group_id})
+      this.disableuser = user.id
+      this.getLidsOnDate()
+      this.akkvalue = _.findIndex(this.group, { group_id: user.group_id });
     },
     filterStatus(newName) {
       localStorage.filterStatus = newName;
     },
-    dates(newName) {
-      localStorage.dates = newName;
+    datetimeFrom(newName) {
+      localStorage.datetimeFrom = newName;
+    },
+    datetimeTo(newName) {
+      localStorage.datetimeTo = newName;
+    },
+    filtertel(newName) {
+      localStorage.tel = newName;
     },
     filterProviders(newName) {
       localStorage.filterProviders = newName;
     },
-    // filteredItems: function () {
-    //   const self = this;
-    //   self.statuses_lids = _.uniqBy(self.filteredItems, "status_id").map(
-    //     (i) => ({
-    //       status_id: i.status_id,
-    //       status: i.status,
-    //     })
-    //   );
-    //   self.statuses_lids.unshift({ status: "выбор", status_id: 0 });
-    // },
     filterGStatus: function (newval, oldval) {
       if (newval == 0) {
         //this.getLids(this.$props.user.id);
@@ -418,8 +376,6 @@ export default {
   },
   computed: {
     filteredItems() {
-      // if (this.showDuplicates && this.telsDuplicates.length > 0)
-      //   return this.telsDuplicates;
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
         return (
@@ -427,13 +383,23 @@ export default {
           (!this.filterProviders || i.provider_id == this.filterProviders) &&
           (!this.filtertel || reg.test(i.tel)) &&
           (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
-          (!this.filterGroups.length || this.filterGroups.includes(i.group_id)) &&
-          (!this.filterdates.length || this.filterdates.includes(i.date_created))
+          (!this.filterGroups.length || this.filterGroups.includes(i.group_id))
         );
       });
     },
   },
   methods: {
+    clearFilter() {
+      this.datetimeFrom = new Date(
+        new Date().setDate(new Date().getDate() - 14)
+      );
+      this.datetimeTo = new Date();
+      this.filterStatus = 0;
+      this.filterProviders = 0;
+      this.filtertel = "";
+      this.disableuser = 0
+      this.getLidsOnDate();
+    },
     getGroup() {
       return _.filter(this.users, function (o) {
         return o.group_id == o.id;
@@ -602,7 +568,7 @@ export default {
       let cur_user_id = this.disableuser;
       let send = {};
       send.user_id = this.userid;
-send.data = []
+      send.data = [];
       if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
       }
@@ -621,7 +587,7 @@ send.data = []
         //CallBack user not change
         send.data = send.data.filter((f) => f.status_id != 9);
       }
-      if(send.data.length == 0) send.data = this.lids
+      if (send.data.length == 0) send.data = this.lids;
 
       axios
         .post("api/Lid/changelidsuser", send)
@@ -631,7 +597,7 @@ send.data = []
           self.userid = null;
           self.$refs.radiogroup.lazyValue = null;
           self.selected = [];
-          self.filterStatus = 0;
+          // self.filterStatus = 0;
           self.getUsers();
           // self.getLids(cur_user_id);
           self.getLidsOnDate();
@@ -727,12 +693,28 @@ send.data = []
         })
         .catch((error) => console.log(error));
     },
+    getLocalDateTime(DateTime) {
+      return new Date(
+        new Date(DateTime).getTime() -
+          new Date(DateTime).getTimezoneOffset() * 60 * 1000
+      )
+        .toJSON()
+        .slice(0, 16)
+        .replace("T", " ");
+    },
     getLidsOnDate() {
       let self = this;
+      this.loading = true;
+      let data = {};
+      data.datefrom = this.getLocalDateTime(this.datetimeFrom);
+      data.dateto = this.getLocalDateTime(this.datetimeTo);
+      data.user_id = this.disableuser;
+
       axios
-        .get("/api/getLidsOnDate/" + self.dates)
+        .post("/api/getLidsOnDate", data)
         .then((res) => {
           // console.log(res.data);
+          self.loading = false;
           self.lids = Object.entries(res.data).map((e) => e[1]);
           self.lids.map(function (e) {
             e.date_created = e.created_at.substring(0, 10);
@@ -760,7 +742,7 @@ send.data = []
           if (localStorage.filterProviders) {
             self.filterProviders = parseInt(localStorage.filterProviders);
           }
-self.lidaddates = Object.keys(_.groupBy(self.lids,'date_created'))
+          // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
 
           // self.getDuplicates();
         })
@@ -768,17 +750,16 @@ self.lidaddates = Object.keys(_.groupBy(self.lids,'date_created'))
     },
     getLids(id) {
       let self = this;
-      self.filterStatus = 0;
+      // self.filterStatus = 0;
       self.search = "";
-      self.filtertel = "";
+      // self.filtertel = "";
       self.disableuser = id;
       self.Statuses = [];
-      self.loading=true
-      self.lids = []
+      self.loading = true;
+      self.lids = [];
       axios
         .get("/api/userlids/" + id)
         .then((res) => {
-          // console.log(res.data);
           self.lids = Object.entries(res.data).map((e) => e[1]);
 
           self.lids.map(function (e) {
@@ -808,16 +789,16 @@ self.lidaddates = Object.keys(_.groupBy(self.lids,'date_created'))
               }),
             ];
           }
-          self.lidaddates = Object.keys(_.groupBy(self.lids,'date_created'))
+          // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
           // self.getDuplicates();
-          self.loading=false
+          self.loading = false;
         })
         .catch((error) => console.log(error));
     },
     orderStatus() {
       const self = this;
       let stord = [];
-      self.Statuses = []
+      self.Statuses = [];
       stord = Object.entries(_.groupBy(self.lids, "status"));
       stord.map(function (i) {
         //i[0]//name

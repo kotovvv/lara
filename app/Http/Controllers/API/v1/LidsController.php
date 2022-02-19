@@ -227,16 +227,24 @@ class LidsController extends Controller
   }
 
 
-  public function getLidsOnDate($date)
+  public function getLidsOnDate(Request $request)
   {
-    $date = explode(',', $date);
+    $req = $request->all();
 
-    if (count($date) == 2) {
-      $sql = "SELECT l.*,d.depozit FROM lids l LEFT JOIN depozits d ON (l.id = d.lid_id) WHERE DATE(l.created_at) >= '" . $date[0] . "' AND DATE(l.created_at) <= '" . $date[1] . "'";
+    $date = [$req['datefrom'],$req['dateto']];
+
+   
+      $where_user =$req['user_id'] > 0 ? ' l.user_id = '. (int) $req['user_id'] . ' AND ':'';
+      $sql = "SELECT l.*,d.depozit FROM lids l LEFT JOIN depozits d ON (l.id = d.lid_id) WHERE ".$where_user." l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
       return DB::select(DB::raw($sql));
-    } else {
-      return Lid::whereDate('created_at', $date[0])->get();
-    }
+
+
+    // if (count($date) == 2) {
+      $sql = "SELECT l.*,d.depozit FROM lids l LEFT JOIN depozits d ON (l.id = d.lid_id) WHERE l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
+      return DB::select(DB::raw($sql));
+    // } else {
+    //   return Lid::whereDate('created_at', $date[0])->get();
+    // }
   }
 
   public function getlidonid(Request $request, $id)
