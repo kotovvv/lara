@@ -514,9 +514,9 @@ export default {
         .post("api/log/add", send_el)
         .then(function (response) {
           // console.log(response);
-          self.forceRerender();
           self.text = null;
           self.lids.find((f) => f.id == send_el.lid_id).text = send_el.text;
+          self.forceRerender();
         })
         .catch(function (error) {
           console.log(error);

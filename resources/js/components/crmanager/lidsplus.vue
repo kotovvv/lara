@@ -706,6 +706,10 @@ export default {
       let self = this;
       this.loading = true;
       let data = {};
+      if(this.datetimeFrom == '') this.datetimeFrom = this.datetimeFrom = new Date(
+        new Date().setDate(new Date().getDate() - 14)
+      );
+      if(this.datetimeTo == '') this.datetimeTo = new Date()
       data.datefrom = this.getLocalDateTime(this.datetimeFrom);
       data.dateto = this.getLocalDateTime(this.datetimeTo);
       data.user_id = this.disableuser;
