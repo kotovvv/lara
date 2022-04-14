@@ -47,13 +47,13 @@ class load_calls extends Command
     $a_all = [];
 
     $last_writed = DB::table('logs')->selectRaw('CAST(DATE_SUB(`created_at`, INTERVAL 1 DAY) AS DATE) as lastdate')->whereNotNull('cols')->latest()->limit(1)->first();
-    if($last_writed) $last_writed = $last_writed->lastdate;
+    if ($last_writed) $last_writed = $last_writed->lastdate;
 
     foreach ($a_calls as $param) {
       $date = date('Y-m-d', $param[3]);
-      if($last_writed){
+      if ($last_writed) {
         //get only new
-        if($date <= $last_writed) continue;
+        if ($date <= $last_writed) continue;
       }
       $tel = $param[0];
       $duration = $param[4];
@@ -64,17 +64,17 @@ class load_calls extends Command
     }
 
     $a_calls = [];
-//  echo count($a_all).PHP_EOL;
-$all= count($a_all);
-$i = $all;
+    //  echo count($a_all).PHP_EOL;
+    $all = count($a_all);
+    $i = $all;
     foreach ($a_all as $tel => $params) {
       foreach ($params as $date => $value) {
-DB::update(DB::Raw("UPDATE `logs` SET `cols` = '".$value['col']."', `duration`='".$value['duration']."' WHERE `tel` = '".$tel."' AND CAST( `created_at` AS DATE) = '".$date."' ORDER BY id DESC LIMIT 1"));
+        DB::update(DB::Raw("UPDATE `logs` SET `cols` = '" . $value['col'] . "', `duration`='" . $value['duration'] . "' WHERE `tel` = '" . $tel . "' AND CAST( `created_at` AS DATE) = '" . $date . "' ORDER BY id DESC LIMIT 1"));
         //echo "tel:" . $tel . " date:" . $date . " count:" . $value['col'] . ":" . $value['duration'] . " <br>";
         $i--;
       }
     }
-    if($i == 0) unlink($file);
+    if ($i == 0) unlink($file);
     return 0;
   }
 

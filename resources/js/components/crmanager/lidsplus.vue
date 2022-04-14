@@ -2,25 +2,43 @@
   <div>
     <v-container fluid>
       <v-row>
-        <v-col>
-          <v-datetime-picker
-            label="С Дата/время"
-            v-model="datetimeFrom"
-            clearText=""
-            scrollable
-            :date-picker-props="dateProps"
-            @input="getLidsOnDate"
+        <v-col cols="1">
+          <div>Сброс</div>
+          <v-btn @click="clearFilter" class="border" outlined rounded
+            ><v-icon>close</v-icon></v-btn
           >
-          </v-datetime-picker>
-          <v-datetime-picker
-            label="По Дата/время"
-            v-model="datetimeTo"
-            clearText=""
-            @input="getLidsOnDate"
-            :date-picker-props="dateProps"
-          >
-          </v-datetime-picker>
         </v-col>
+        <v-col cols="4">
+          <v-row class="px-3">
+            <v-col>С Дата/время</v-col>
+            <v-col>По Дата/время</v-col>
+          </v-row>
+
+          <div class="status_wrp px-3">
+            <v-row>
+              <v-col>
+                <v-datetime-picker
+                  v-model="datetimeFrom"
+                  clearText=""
+                  scrollable
+                  :date-picker-props="dateProps"
+                  @input="getLidsOnDate"
+                >
+                </v-datetime-picker>
+              </v-col>
+              <v-col>
+                <v-datetime-picker
+                  v-model="datetimeTo"
+                  clearText=""
+                  @input="getLidsOnDate"
+                  :date-picker-props="dateProps"
+                >
+                </v-datetime-picker>
+              </v-col>
+            </v-row>
+          </div>
+        </v-col>
+
         <v-col>
           <!-- statuses_lids -->
           Фильтр по статусам
@@ -33,14 +51,28 @@
             item-value="id"
             class="border"
             outlined
-            rounded =true
+            rounded
           >
-                    <template v-slot:selection="{ item}">
-<i :style="{background:item.color,outline: '1px solid'+ item.color}" class="sel_stat mr-4"></i>{{item.name}}
-      </template>
-          <template v-slot:item="{ item }">
-<i :style="{background:item.color,outline: '1px solid'+ item.color}" class="sel_stat mr-4"></i>{{item.name}}
-      </template>
+            <template v-slot:selection="{ item }">
+              <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid' + item.color,
+                }"
+                class="sel_stat mr-4"
+              ></i
+              >{{ item.name }}
+            </template>
+            <template v-slot:item="{ item }">
+              <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid' + item.color,
+                }"
+                class="sel_stat mr-4"
+              ></i
+              >{{ item.name }}
+            </template>
           </v-select>
           <v-btn
             v-if="
@@ -61,8 +93,8 @@
             item-text="name"
             item-value="id"
             @change="filterStatuses"
-                    outlined
-            rounded =true
+            outlined
+            rounded
           ></v-select>
         </v-col>
         <v-col>
@@ -73,11 +105,11 @@
             single-line
             hide-details
             @input="filterStatuses"
-                    outlined
-            rounded =true
+            outlined
+            rounded
           ></v-text-field>
         </v-col>
-        <v-btn @click="clearFilter">X</v-btn>
+
         <v-col>
           <v-text-field
             v-model="searchAll"
@@ -86,8 +118,8 @@
             @click:append="searchInDB"
             single-line
             hide-details
-                    outlined
-            rounded =true
+            outlined
+            rounded
           ></v-text-field>
         </v-col>
         <v-spacer></v-spacer>
@@ -98,7 +130,6 @@
             label="Назначение статусов"
             item-text="name"
             item-value="id"
-
           ></v-select>
           <v-btn
             v-if="selectedStatus && selected.length"
@@ -118,9 +149,14 @@
             <div class="d-flex flex-wrap">
               <template v-for="(i, x) in Statuses">
                 <div class="status_wrp" :key="x">
-                  <b :style="{ background: i.color,outline: '1px solid'+ i.color}">{{ i.hm }}</b>
-                  <span>{{ i.name }}</span
+                  <b
+                    :style="{
+                      background: i.color,
+                      outline: '1px solid' + i.color,
+                    }"
+                    >{{ i.hm }}</b
                   >
+                  <span>{{ i.name }}</span>
                 </div>
               </template>
             </div>
@@ -144,9 +180,10 @@
             :expanded="expanded"
             ref="datatable"
             :footer-props="{
-              'items-per-page-options': [50, 10, 100, 250, 500, -1],
-              'items-per-page-text': 'Показать',
+              'items-per-page-options': [],
+              'items-per-page-text': '',
             }"
+            :disable-items-per-page="true"
             :loading="loading"
             loading-text="Загружаю... Ожидайте"
           >
@@ -154,7 +191,7 @@
               v-slot:top="{ pagination, options, updateOptions }"
               :footer-props="{
                 'items-per-page-options': [50, 10, 100, 250, 500, -1],
-                'items-per-page-text': 'Показать',
+                'items-per-page-text': '',
               }"
             >
               <v-row>
@@ -184,14 +221,8 @@
                     :options="options"
                     @update:options="updateOptions"
                     :items-per-page-options="[50, 10, 100, 250, 500, -1]"
-                    :items-per-page-text="'Показать'"
+                    :items-per-page-text="''"
                   />
-                </v-col>
-                <v-col cols="2">
-                  <v-btn tile color="success" @click="exportXlsx">
-                    <v-icon left> mdi-file-excel </v-icon>
-                    XLSX
-                  </v-btn>
                 </v-col>
               </v-row>
             </template>
@@ -204,77 +235,85 @@
                 </v-row>
               </td>
             </template>
+            <template v-slot:footer.prepend>
+              <v-col cols="2">
+                <v-btn tile outlined rounded @click="exportXlsx">
+                  <v-icon left> mdi-file-excel </v-icon>
+                  XLSX
+                </v-btn>
+              </v-col>
+            </template>
           </v-data-table>
         </v-card>
       </v-col>
       <v-col cols="3">
-        <div class="row">
-          <v-card class="pa-5 w-100">
-            Укажите пользователя
-            <v-autocomplete
-              v-model="selectedUser"
-              :items="users"
-              dense
-              item-text="fio"
-              item-value="id"
-              label="выбор"
-              :return-object="true"
-              append-icon="mdi-close"
-              @click:append="disableuser = value || 0; getLidsOnDate();
-                selectedUser = {};
-              "
-            ></v-autocomplete>
-            <v-card-text class="scroll-y">
-              <v-list>
-                <v-radio-group
-                  @change="changeLidsUser"
-                  ref="radiogroup"
-                  v-model="userid"
-                  v-bind="users"
-                  id="usersradiogroup"
-                >
-                  <v-expansion-panels ref="akk" v-model="akkvalue">
-                    <v-expansion-panel v-for="(item, i) in group" :key="i">
-                      <v-expansion-panel-header>
-                        {{ item.fio }}
-                      </v-expansion-panel-header>
-                      <v-expansion-panel-content>
-                        <v-row
-                          v-for="user in users.filter(function (i) {
-                            return i.group_id == item.group_id;
-                          })"
-                          :key="user.id"
+        <div class="pa-3 w-100 border wight">
+          Поиск пользователей
+          <v-autocomplete
+            v-model="selectedUser"
+            :items="users"
+            item-text="fio"
+            item-value="id"
+            :return-object="true"
+            append-icon="mdi-close"
+            outlined
+            rounded
+            @click:append="
+              disableuser = value || 0;
+              getLidsOnDate();
+              selectedUser = {};
+            "
+          ></v-autocomplete>
+          <div class="scroll-y">
+            <v-list>
+              <v-radio-group
+                @change="changeLidsUser"
+                ref="radiogroup"
+                v-model="userid"
+                v-bind="users"
+                id="usersradiogroup"
+              >
+                <v-expansion-panels ref="akk" v-model="akkvalue">
+                  <v-expansion-panel v-for="(item, i) in group" :key="i">
+                    <v-expansion-panel-header>
+                      {{ item.fio }}
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <v-row
+                        v-for="user in users.filter(function (i) {
+                          return i.group_id == item.group_id;
+                        })"
+                        :key="user.id"
+                      >
+                        <v-radio
+                          :label="user.fio"
+                          :value="user.id"
+                          :disabled="disableuser == user.id"
                         >
-                          <v-radio
-                            :label="user.fio"
-                            :value="user.id"
-                            :disabled="disableuser == user.id"
-                          >
-                          </v-radio>
+                        </v-radio>
 
-                          <v-btn
-                            class="ml-3"
-                            small
-                            :color="usercolor(user)"
-                            @click="
-                              disableuser = user.id;
-                              getLidsOnDate();
-                            "
-                            :value="user.hmlids"
-                            :disabled="disableuser == user.id"
-                            >{{ user.hmlids }}</v-btn
-                          >
-                          <v-chip v-if="user.statnew" label small>
-                            {{ user.statnew }}
-                          </v-chip>
-                        </v-row>
-                      </v-expansion-panel-content>
-                    </v-expansion-panel>
-                  </v-expansion-panels>
-                </v-radio-group>
-              </v-list>
-            </v-card-text>
-          </v-card>
+                        <v-btn
+                          class="ml-3"
+                          small
+                          :color="usercolor(user)"
+                          @click="
+                            disableuser = user.id;
+                            getLidsOnDate();
+                          "
+                          :value="user.hmlids"
+                          :disabled="disableuser == user.id"
+                          >{{ user.hmlids }}</v-btn
+                        >
+                        <v-chip v-if="user.statnew" label small>
+                          {{ user.statnew }}
+                        </v-chip>
+                      </v-row>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-radio-group>
+            </v-list>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -294,7 +333,7 @@ export default {
     selectedUser: {},
     group: null,
     modal: false,
-    dateProps:{locale:"ru-RU",format:"24hr"},
+    dateProps: { locale: "ru-RU", format: "24hr" },
     datetimeFrom: "",
     datetimeTo: "",
     userid: null,
@@ -366,8 +405,8 @@ export default {
         this.userid = null;
         return;
       }
-      this.disableuser = user.id
-      this.getLidsOnDate()
+      this.disableuser = user.id;
+      this.getLidsOnDate();
       this.akkvalue = _.findIndex(this.group, { group_id: user.group_id });
     },
     filterStatus(newName) {
@@ -416,7 +455,7 @@ export default {
       this.filterStatus = 0;
       this.filterProviders = 0;
       this.filtertel = "";
-      this.disableuser = 0
+      this.disableuser = 0;
       this.getLidsOnDate();
     },
     getGroup() {
@@ -725,10 +764,11 @@ export default {
       let self = this;
       this.loading = true;
       let data = {};
-      if(this.datetimeFrom == '') this.datetimeFrom = this.datetimeFrom = new Date(
-        new Date().setDate(new Date().getDate() - 14)
-      );
-      if(this.datetimeTo == '') this.datetimeTo = new Date()
+      if (this.datetimeFrom == "")
+        this.datetimeFrom = this.datetimeFrom = new Date(
+          new Date().setDate(new Date().getDate() - 14)
+        );
+      if (this.datetimeTo == "") this.datetimeTo = new Date();
       data.datefrom = this.getLocalDateTime(this.datetimeFrom);
       data.dateto = this.getLocalDateTime(this.datetimeTo);
       data.user_id = this.disableuser;
@@ -892,28 +932,31 @@ export default {
 .status_wrp b,
 .sel_stat {
   border-radius: 15px;
-height: 22px;
-min-width: 22px;
-text-align: center;
-display: flex;
-justify-content: center;
-align-items: center;
-font-weight: inherit;
-outline-offset: 3px;
-color: #fff;
-margin-left: 3px;
-margin-right: 4px;
-padding: 0 3px;
+  height: 22px;
+  min-width: 22px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: inherit;
+  outline-offset: 3px;
+  color: #fff;
+  margin-left: 3px;
+  margin-right: 4px;
+  padding: 0 3px;
 }
 
 .status_wrp {
   margin-right: 15px;
-display: flex;
-align-items: center;
-box-shadow:  0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
-border-radius: 16px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
+  border-radius: 16px;
 }
-.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset {
+.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
+  > .v-input__control
+  > .v-input__slot
+  fieldset {
   border: none;
   box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
 }
