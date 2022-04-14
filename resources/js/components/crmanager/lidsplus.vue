@@ -23,14 +23,25 @@
         </v-col>
         <v-col>
           <!-- statuses_lids -->
+          Фильтр по статусам
           <v-select
             ref="filterStatus"
+            color="red"
             v-model="filterStatus"
             :items="statuses"
-            label="Фильтр по статусам"
             item-text="name"
             item-value="id"
-          ></v-select>
+            class="border"
+            outlined
+            rounded =true
+          >
+                    <template v-slot:selection="{ item}">
+<i :style="{background:item.color,outline: '1px solid'+ item.color}" class="sel_stat mr-4"></i>{{item.name}}
+      </template>
+          <template v-slot:item="{ item }">
+<i :style="{background:item.color,outline: '1px solid'+ item.color}" class="sel_stat mr-4"></i>{{item.name}}
+      </template>
+          </v-select>
           <v-btn
             v-if="
               filterStatus &&
@@ -50,6 +61,8 @@
             item-text="name"
             item-value="id"
             @change="filterStatuses"
+                    outlined
+            rounded =true
           ></v-select>
         </v-col>
         <v-col>
@@ -60,6 +73,8 @@
             single-line
             hide-details
             @input="filterStatuses"
+                    outlined
+            rounded =true
           ></v-text-field>
         </v-col>
         <v-btn @click="clearFilter">X</v-btn>
@@ -71,6 +86,8 @@
             @click:append="searchInDB"
             single-line
             hide-details
+                    outlined
+            rounded =true
           ></v-text-field>
         </v-col>
         <v-spacer></v-spacer>
@@ -81,6 +98,7 @@
             label="Назначение статусов"
             item-text="name"
             item-value="id"
+
           ></v-select>
           <v-btn
             v-if="selectedStatus && selected.length"
@@ -100,8 +118,9 @@
             <div class="d-flex flex-wrap">
               <template v-for="(i, x) in Statuses">
                 <div class="status_wrp" :key="x">
-                  <span :style="{ background: i.color }">{{ i.name }}</span
-                  ><b>{{ i.hm }}</b>
+                  <b :style="{ background: i.color,outline: '1px solid'+ i.color}">{{ i.hm }}</b>
+                  <span>{{ i.name }}</span
+                  >
                 </div>
               </template>
             </div>
@@ -864,20 +883,38 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .status_wrp span {
   padding: 5px;
   word-break: break-all;
 }
 
-.status_wrp b {
-  padding: 0 8px;
+.status_wrp b,
+.sel_stat {
+  border-radius: 15px;
+height: 22px;
+min-width: 22px;
+text-align: center;
+display: flex;
+justify-content: center;
+align-items: center;
+font-weight: inherit;
+outline-offset: 3px;
+color: #fff;
+margin-left: 3px;
+margin-right: 4px;
+padding: 0 3px;
 }
 
 .status_wrp {
   margin-right: 15px;
-  border: 1px solid grey;
-  padding: 3px 0;
-  margin-bottom: 15px;
+display: flex;
+align-items: center;
+box-shadow:  0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
+border-radius: 16px;
+}
+.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset {
+  border: none;
+  box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
 }
 </style>
