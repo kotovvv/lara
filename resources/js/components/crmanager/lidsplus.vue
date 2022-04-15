@@ -144,8 +144,7 @@
     </v-container>
     <v-row>
       <v-col>
-        <v-card class="w-100">
-          <v-card-actions>
+
             <div class="d-flex flex-wrap">
               <template v-for="(i, x) in Statuses">
                 <div class="status_wrp" :key="x">
@@ -160,8 +159,6 @@
                 </div>
               </template>
             </div>
-          </v-card-actions>
-        </v-card>
       </v-col>
     </v-row>
     <v-row>
@@ -237,7 +234,7 @@
             </template>
             <template v-slot:footer.prepend>
               <v-col cols="2">
-                <v-btn tile outlined rounded @click="exportXlsx">
+                <v-btn outlined rounded @click="exportXlsx" class="border">
                   <v-icon left> mdi-file-excel </v-icon>
                   XLSX
                 </v-btn>
@@ -247,11 +244,12 @@
         </v-card>
       </v-col>
       <v-col cols="3">
-        <div class="pa-3 w-100 border wight">
-          Поиск пользователей
+        <div class="pa-5 w-100 border">
+          <div class="my-3">Поиск пользователей</div>
           <v-autocomplete
             v-model="selectedUser"
             :items="users"
+            label="Выбор"
             item-text="fio"
             item-value="id"
             :return-object="true"
@@ -276,7 +274,7 @@
                 <v-expansion-panels ref="akk" v-model="akkvalue">
                   <v-expansion-panel v-for="(item, i) in group" :key="i">
                     <v-expansion-panel-header>
-                      {{ item.fio }}
+                      pic{{ item.fio }}
                     </v-expansion-panel-header>
                     <v-expansion-panel-content>
                       <v-row
@@ -950,6 +948,10 @@ export default {
   margin-right: 15px;
   display: flex;
   align-items: center;
+  box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
+  border-radius: 16px;
+}
+.border {
   box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
   border-radius: 16px;
 }

@@ -14,6 +14,8 @@ use App\Models\Depozit;
 use DB;
 use Debugbar;
 use Hash;
+use Storage;
+use File;
 use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
@@ -89,9 +91,19 @@ class UsersController extends Controller
   public function update(Request $request)
   {
 
+    // $file = $request->validate([
+    //   'pic' => 'file|mimes:jpeg,jpg,png,gif|max:2048',
+    // ]);
+
     $data = $request->all();
-    // Debugbar::info($data);
+    DebugBar::info($data);
+
     if (isset($data['password'])) $password = Hash::make($data['password']);
+
+    // Storage::disk('public')->putFileAs('/img/uploads', new File($data['pic']), pathinfo($data['pic']->getClientOriginalName(), PATHINFO_FILENAME) . time() . '.' . $data['pic']->getClientOriginalExtension());
+
+    // $image_name = pathinfo($data['pic']->getClientOriginalName(), PATHINFO_FILENAME) . time() . '.' . $data['pic']->getClientOriginalExtension();
+
     if (isset($data['id'])) {
       if (isset($data['balans']) && $data['balans'] > 0) {
         $arr = [];
@@ -101,12 +113,13 @@ class UsersController extends Controller
         $arr['time'] = Date('h:i:s');
         Balans::insert($arr);
       }
-      //  Debugbar::info('update');
+      // Debugbar::info($data['pic']);
       $arr = [];
       $arr['name'] = $data['name'];
       $arr['active'] = $data['active'];
       $arr['role_id'] = $data['role_id'];
       $arr['fio'] = $data['fio'];
+      $arr['pic'] =$data['pic'];
       $arr['group_id'] = $data['group_id'];
       $arr['order'] = $data['order'];
       if (User::where('id', $data['id'])->update($arr)) {

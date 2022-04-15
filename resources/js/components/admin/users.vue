@@ -41,11 +41,20 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12">
+                      <v-col cols="6">
                         <v-text-field
                           v-model="editedItem.fio"
                           label="ФИО"
                         ></v-text-field>
+                      </v-col>
+                                             <v-col cols="6">
+                                                <img :src="imageUrl" height="150" v-if="imageUrl"/>
+  <v-file-input
+    label="Картинка"
+    v-model="editedItem.pic"
+
+
+  ></v-file-input>
                       </v-col>
                       <v-col cols="6">
                         <v-text-field
@@ -77,18 +86,19 @@
                           label="Группа"
                         ></v-select>
                       </v-col>
-                      <v-col cols="6">
+                      <v-col cols="4">
                         <v-switch
                           v-model="editedItem.active"
                           label="Показывать:"
                         ></v-switch>
                       </v-col>
-                      <v-col cols="6">
+                      <v-col cols="4">
                         <v-text-field
                           v-model="editedItem.order"
                           label="Номер сортировки"
                         ></v-text-field>
                       </v-col>
+
                        </v-row>
                   </v-container>
                 </v-card-text>
@@ -141,6 +151,8 @@ import statusUsers from './statusUsers'
 import axios from "axios";
 export default {
   data: () => ({
+    pic:null,
+    imageUrl:'',
     selected:[],
     dialog: false,
     dialogDelete: false,
@@ -164,6 +176,7 @@ export default {
     editedItem: {
       name: "",
       fio: "",
+      pic:'',
       role_id: 0,
       password: "",
       active: 0,
@@ -172,6 +185,7 @@ export default {
     defaultItem: {
       name: "",
       fio: "",
+      pic:'',
       role_id: 0,
       password: "",
       active: 0,
@@ -232,8 +246,14 @@ export default {
     },
     saveUsers(u) {
       let self = this;
+      const config = {
+                    headers: {
+                        'content-type': 'multipart/form-data'
+                    }
+                }
+                console.log(u)
       axios
-        .post("/api/user/update", u)
+        .post("/api/user/update", u,config)
         .then((res) => {
           console.log(res);
         })

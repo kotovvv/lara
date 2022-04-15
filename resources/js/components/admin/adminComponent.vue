@@ -55,7 +55,8 @@
       </v-card>
     </v-navigation-drawer>
 
-    <v-main class="grey lighten-2">
+    <v-main class="">
+      <!-- grey lighten-2 -->
       <v-container fluid>
         <!-- <v-row> -->
         <!-- table -->
