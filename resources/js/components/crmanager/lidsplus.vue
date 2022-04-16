@@ -144,21 +144,20 @@
     </v-container>
     <v-row>
       <v-col>
-
-            <div class="d-flex flex-wrap">
-              <template v-for="(i, x) in Statuses">
-                <div class="status_wrp" :key="x">
-                  <b
-                    :style="{
-                      background: i.color,
-                      outline: '1px solid' + i.color,
-                    }"
-                    >{{ i.hm }}</b
-                  >
-                  <span>{{ i.name }}</span>
-                </div>
-              </template>
+        <div class="d-flex flex-wrap">
+          <template v-for="(i, x) in Statuses">
+            <div class="status_wrp" :key="x">
+              <b
+                :style="{
+                  background: i.color,
+                  outline: '1px solid' + i.color,
+                }"
+                >{{ i.hm }}</b
+              >
+              <span>{{ i.name }}</span>
             </div>
+          </template>
+        </div>
       </v-col>
     </v-row>
     <v-row>
@@ -244,7 +243,7 @@
         </v-card>
       </v-col>
       <v-col cols="3">
-        <div class="pa-5 w-100 border">
+        <div class="pa-5 w-100 border wrp_users">
           <div class="my-3">Поиск пользователей</div>
           <v-autocomplete
             v-model="selectedUser"
@@ -274,7 +273,16 @@
                 <v-expansion-panels ref="akk" v-model="akkvalue">
                   <v-expansion-panel v-for="(item, i) in group" :key="i">
                     <v-expansion-panel-header>
-                      pic{{ item.fio }}
+                      <img
+                        class="v-expansion-panel-header__icon mr-1"
+                        height="60"
+                        width="60"
+                        :src="'/storage/' + item.pic"
+                        v-if="item.pic"
+                      />
+
+                      {{ item.fio }}
+                      <div></div>
                     </v-expansion-panel-header>
                     <v-expansion-panel-content>
                       <v-row
@@ -670,12 +678,23 @@ export default {
         .get(get)
         .then((res) => {
           self.users = res.data.map(
-            ({ name, id, role_id, fio, hmlids, group_id, order, statnew }) => ({
+            ({
               name,
               id,
               role_id,
               fio,
               hmlids,
+              group_id,
+              order,
+              statnew,
+              pic,
+            }) => ({
+              name,
+              id,
+              role_id,
+              fio,
+              hmlids,
+              pic,
               group_id,
               order,
               statnew,
@@ -961,5 +980,22 @@ export default {
   fieldset {
   border: none;
   box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
+}
+.wrp_users .v-expansion-panel {
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
+.wrp_users .v-expansion-panel-header {
+  padding: 0;
+}
+.wrp_users .v-expansion-panel::before {
+  border: none;
+  box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
+}
+.wrp_users .v-expansion-panels .v-expansion-panel:not(:first-child)::after {
+  border: none;
+}
+.wrp_users .v-expansion-panel-content__wrap {
+  margin-top: 20px;
 }
 </style>

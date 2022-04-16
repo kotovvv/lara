@@ -1,28 +1,27 @@
 <template>
-<v-card
-    class="mx-auto"
-  >
-    <!-- max-width="900" -->
+  <div>
+    <v-card class="mx-auto">
+      <!-- max-width="900" -->
       <v-data-table
-      v-model="selected"
+        v-model="selected"
         :headers="headers"
         :items="users"
         sort-by="role_id"
         show-select
         class="elevation-1"
-        :single-select=true
+        :single-select="true"
       >
         <template v-slot:top>
           <v-toolbar flat>
             <v-toolbar-title>Пользователи</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" max-width="500px">
+            <v-dialog v-model="dialog" max-width="600px">
               <template v-slot:activator="{ on, attrs }">
                 <!-- <v-btn color="primary" dark class="mb-2 ml-2" @click="report">
                   Отчёт
                 </v-btn> -->
-<statusUsers :o_users="selected" />
+                <statusUsers :o_users="selected" />
                 <v-btn
                   color="primary"
                   dark
@@ -47,14 +46,20 @@
                           label="ФИО"
                         ></v-text-field>
                       </v-col>
-                                             <v-col cols="6">
-                                                <img :src="imageUrl" height="150" v-if="imageUrl"/>
-  <v-file-input
-    label="Картинка"
-    v-model="editedItem.pic"
-
-
-  ></v-file-input>
+                      <v-col cols="6">
+                        <img
+                          :src="'/storage/' + editedItem.pic"
+                          height="50"
+                          v-if="
+                            (typeof editedItem.pic === 'string' ||
+                              editedItem.pic instanceof String) &&
+                            editedItem.pic != ''
+                          "
+                        />
+                        <v-file-input
+                          label="Картинка"
+                          v-model="editedItem.pic"
+                        ></v-file-input>
                       </v-col>
                       <v-col cols="6">
                         <v-text-field
@@ -98,8 +103,7 @@
                           label="Номер сортировки"
                         ></v-text-field>
                       </v-col>
-
-                       </v-row>
+                    </v-row>
                   </v-container>
                 </v-card-text>
 
@@ -143,21 +147,22 @@
           <v-btn color="primary" @click="getUsers"> Reset </v-btn>
         </template>
       </v-data-table>
-</v-card>
+    </v-card>
+  </div>
 </template>
 
 <script>
-import statusUsers from './statusUsers'
+import statusUsers from "./statusUsers";
 import axios from "axios";
 export default {
   data: () => ({
-    pic:null,
-    imageUrl:'',
-    selected:[],
+    pic: null,
+    imageUrl: "",
+    selected: [],
     dialog: false,
     dialogDelete: false,
     users: [],
-    group:[{fio:'Без группы', id:0}],
+    group: [{ fio: "Без группы", id: 0 }],
     roles: [
       { id: 1, name: "Administrator" },
       { id: 2, name: "CRM Manager" },
@@ -176,20 +181,20 @@ export default {
     editedItem: {
       name: "",
       fio: "",
-      pic:'',
+      pic: "",
       role_id: 0,
       password: "",
       active: 0,
-      order:99
+      order: 99,
     },
     defaultItem: {
       name: "",
       fio: "",
-      pic:'',
+      pic: "",
       role_id: 0,
       password: "",
       active: 0,
-      order:99
+      order: 99,
     },
   }),
 
@@ -229,7 +234,7 @@ export default {
     //   }
     // },
     rolename(user) {
-      user.role = (this.roles.find((r) => r.id == user.role_id)).name;
+      user.role = this.roles.find((r) => r.id == user.role_id).name;
     },
     getUsers() {
       let self = this;
@@ -238,22 +243,22 @@ export default {
         .then((res) => {
           self.users = res.data;
           self.users.map(function (u) {
-            u.role = (self.roles.find((r) => r.id == u.role_id)).name;
-            if (u.role_id == 2) self.group.push(u)
+            // u.role = self.roles.find((r) => r.id == u.role_id).name;
+            self.rolename(u);
+            if (u.role_id == 2) self.group.push(u);
           });
         })
         .catch((error) => console.log(error));
     },
     saveUsers(u) {
       let self = this;
-      const config = {
-                    headers: {
-                        'content-type': 'multipart/form-data'
-                    }
-                }
-                console.log(u)
+      var form_data = new FormData();
+
+      for (var key in u) {
+        form_data.append(key, u[key]);
+      }
       axios
-        .post("/api/user/update", u,config)
+        .post("/api/user/update", form_data)
         .then((res) => {
           console.log(res);
         })
@@ -274,14 +279,14 @@ export default {
 
     deleteItemConfirm() {
       axios
-      .delete("/api/user/"+ this.editedItem.id)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => console.log(error));
+        .delete("/api/user/" + this.editedItem.id)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => console.log(error));
       this.users.splice(this.editedIndex, 1);
-        this.closeDelete();
-       },
+      this.closeDelete();
+    },
 
     close() {
       this.dialog = false;
@@ -314,8 +319,8 @@ export default {
       this.close();
     },
   },
-  components:{
-    statusUsers
-  }
+  components: {
+    statusUsers,
+  },
 };
 </script>

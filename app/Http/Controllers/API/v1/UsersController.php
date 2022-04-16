@@ -90,20 +90,14 @@ class UsersController extends Controller
    */
   public function update(Request $request)
   {
-
-    // $file = $request->validate([
-    //   'pic' => 'file|mimes:jpeg,jpg,png,gif|max:2048',
-    // ]);
-
     $data = $request->all();
-    DebugBar::info($data);
 
     if (isset($data['password'])) $password = Hash::make($data['password']);
-
-    // Storage::disk('public')->putFileAs('/img/uploads', new File($data['pic']), pathinfo($data['pic']->getClientOriginalName(), PATHINFO_FILENAME) . time() . '.' . $data['pic']->getClientOriginalExtension());
-
-    // $image_name = pathinfo($data['pic']->getClientOriginalName(), PATHINFO_FILENAME) . time() . '.' . $data['pic']->getClientOriginalExtension();
-
+    $file_name = $data['pic'] == 'null' ? NULL : $data['pic'];
+    if ($data['pic'] != 'null' && is_file($data['pic'])) {
+      $file_name = pathinfo($data['pic']->getClientOriginalName(), PATHINFO_FILENAME) . time() . '.' . $data['pic']->getClientOriginalExtension();
+      Storage::disk('public')->put($file_name, File::get($data['pic']));
+    }
     if (isset($data['id'])) {
       if (isset($data['balans']) && $data['balans'] > 0) {
         $arr = [];
@@ -113,13 +107,13 @@ class UsersController extends Controller
         $arr['time'] = Date('h:i:s');
         Balans::insert($arr);
       }
-      // Debugbar::info($data['pic']);
+
       $arr = [];
       $arr['name'] = $data['name'];
       $arr['active'] = $data['active'];
       $arr['role_id'] = $data['role_id'];
       $arr['fio'] = $data['fio'];
-      $arr['pic'] =$data['pic'];
+      $arr['pic'] = $file_name;
       $arr['group_id'] = $data['group_id'];
       $arr['order'] = $data['order'];
       if (User::where('id', $data['id'])->update($arr)) {
