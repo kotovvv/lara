@@ -3,15 +3,15 @@
     <v-container fluid>
       <v-row>
         <v-col cols="1">
-          <div>Сброс</div>
+          <p>Сброс</p>
           <v-btn @click="clearFilter" class="border" outlined rounded
             ><v-icon>close</v-icon></v-btn
           >
         </v-col>
         <v-col cols="4">
           <v-row class="px-3">
-            <v-col>С Дата/время</v-col>
-            <v-col>По Дата/время</v-col>
+            <v-col><p>С Дата/время</p></v-col>
+            <v-col><p>По Дата/время</p></v-col>
           </v-row>
 
           <div class="status_wrp px-3">
@@ -41,7 +41,7 @@
 
         <v-col>
           <!-- statuses_lids -->
-          Фильтр по статусам
+          <p>Фильтр по статусам</p>
           <v-select
             ref="filterStatus"
             color="red"
@@ -49,7 +49,6 @@
             :items="statuses"
             item-text="name"
             item-value="id"
-            class="border"
             outlined
             rounded
           >
@@ -86,10 +85,10 @@
         </v-col>
 
         <v-col>
+          <p>Фильтр по поставщикам</p>
           <v-select
             v-model="filterProviders"
             :items="providers"
-            label="Фильтр по поставщикам"
             item-text="name"
             item-value="id"
             @change="filterStatuses"
@@ -98,10 +97,10 @@
           ></v-select>
         </v-col>
         <v-col>
+          <p>Телефон</p>
           <v-text-field
             v-model.lazy.trim="filtertel"
             append-icon="mdi-phone"
-            label="Первые цифры телефона"
             single-line
             hide-details
             @input="filterStatuses"
@@ -111,10 +110,10 @@
         </v-col>
 
         <v-col>
+          <p>Глобальный поиск</p>
           <v-text-field
             v-model="searchAll"
             append-icon="mdi-magnify"
-            label="Глобальный поиск"
             @click:append="searchInDB"
             single-line
             hide-details
@@ -122,29 +121,11 @@
             rounded
           ></v-text-field>
         </v-col>
-        <v-spacer></v-spacer>
-        <v-col>
-          <v-select
-            v-model="selectedStatus"
-            :items="statuses"
-            label="Назначение статусов"
-            item-text="name"
-            item-value="id"
-          ></v-select>
-          <v-btn
-            v-if="selectedStatus && selected.length"
-            class="ma-2"
-            outlined
-            @click="changeStatus"
-          >
-            Сменить статусы
-          </v-btn>
-        </v-col>
       </v-row>
     </v-container>
     <v-row>
       <v-col>
-        <div class="d-flex flex-wrap">
+        <div class="wrp__statuses">
           <template v-for="(i, x) in Statuses">
             <div class="status_wrp" :key="x">
               <b
@@ -162,7 +143,7 @@
     </v-row>
     <v-row>
       <v-col cols="9">
-        <v-card>
+        <div class="border pa-2">
           <v-data-table
             v-model.lazy.trim="selected"
             :headers="headers"
@@ -198,7 +179,7 @@
                     label="Поиск"
                     single-line
                     hide-details
-                    class="ml-3"
+                    class="border px-3"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="2" class="pl-5">
@@ -238,9 +219,29 @@
                   XLSX
                 </v-btn>
               </v-col>
+              <v-spacer></v-spacer>
+              <v-col>
+                <p>Назначение статусов</p>
+                <v-select
+                  v-model="selectedStatus"
+                  :items="statuses"
+                  item-text="name"
+                  item-value="id"
+                  outlined
+                  rounded
+                ></v-select>
+                <v-btn
+                  v-if="selectedStatus && selected.length"
+                  class="ma-2"
+                  outlined
+                  @click="changeStatus"
+                >
+                  Сменить статусы
+                </v-btn>
+              </v-col>
             </template>
           </v-data-table>
-        </v-card>
+        </div>
       </v-col>
       <v-col cols="3">
         <div class="pa-5 w-100 border wrp_users">
@@ -948,7 +949,7 @@ export default {
 
 .status_wrp b,
 .sel_stat {
-  border-radius: 15px;
+  border-radius: 30px;
   height: 22px;
   min-width: 22px;
   text-align: center;
@@ -962,17 +963,22 @@ export default {
   margin-right: 4px;
   padding: 0 3px;
 }
-
+.wrp__statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
 .status_wrp {
-  margin-right: 15px;
   display: flex;
   align-items: center;
   box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
-  border-radius: 16px;
+  border-radius: 30px;
 }
+
 .border {
   box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
-  border-radius: 16px;
+  border-radius: 30px;
+  min-height: 56px;
 }
 .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
   > .v-input__control
@@ -981,10 +987,11 @@ export default {
   border: none;
   box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
 }
-.wrp_users .v-expansion-panel {
-  border-radius: 16px;
+.wrp_users #usersradiogroup .v-expansion-panel {
+  border-radius: 20px;
   margin-bottom: 12px;
 }
+
 .wrp_users .v-expansion-panel-header {
   padding: 0;
 }
@@ -992,10 +999,24 @@ export default {
   border: none;
   box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
 }
-.wrp_users .v-expansion-panels .v-expansion-panel:not(:first-child)::after {
+.wrp_users .v-expansion-panels .v-expansion-panel:not(:first-child)::after,
+main .theme--light.v-data-table .v-data-footer,
+.theme--light.v-text-field > .v-input__control > .v-input__slot:before {
   border: none;
 }
 .wrp_users .v-expansion-panel-content__wrap {
   margin-top: 20px;
+}
+main .v-data-footer__pagination,
+.v-data-footer__icons-before,
+.v-data-footer__icons-after,
+.v-text-field__details {
+  display: none;
+}
+.theme--light.v-data-table {
+  background-color: transparent;
+}
+.v-application--is-ltr .v-expansion-panel-header__icon {
+  margin: 0;
 }
 </style>
