@@ -86,7 +86,7 @@ export default {
     selectedItem: 0,
 
     items: [
-      { text: "Импорт CSV", name: "importcsv", icon: "mdi-progress-upload" },
+      { text: "Импорт CSV", name: "importcsv", icon: "mdi-arrow-down-bold-box-outline" },
       { text: "Пользователи", name: "users", icon: "mdi-account" },
       {
         text: "Статусы лидов",

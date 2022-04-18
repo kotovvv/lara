@@ -56,7 +56,7 @@
               <i
                 :style="{
                   background: item.color,
-                  outline: '1px solid' + item.color,
+                  outline: '1px solid grey',
                 }"
                 class="sel_stat mr-4"
               ></i
@@ -66,7 +66,7 @@
               <i
                 :style="{
                   background: item.color,
-                  outline: '1px solid' + item.color,
+                  outline: '1px solid grey',
                 }"
                 class="sel_stat mr-4"
               ></i
@@ -182,17 +182,25 @@
                     class="border px-3"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="2" class="pl-5">
-                  <v-select
+                <v-col class="wrp_group">
+                  <v-row>
+                  <v-checkbox
                     v-model="filterGroups"
-                    :items="group"
-                    label="По группам"
-                    item-text="fio"
-                    item-value="id"
-                    multiple
-                  ></v-select>
-                </v-col>
-                <v-col cols="6">
+                    v-for="(groupa, index) in group"
+                    :key="index"
+                    :value="groupa.id"
+                  >
+                    <template v-slot:label>
+                      <img
+                        :src="'/storage/' + groupa.pic"
+                        :alt="groupa.fio"
+                        v-if="groupa.pic"
+                      />
+                    </template>
+                  </v-checkbox>
+                  </v-row>
+                 </v-col>
+             <v-spacer></v-spacer>
                   <v-data-footer
                     :pagination="pagination"
                     :options="options"
@@ -200,43 +208,70 @@
                     :items-per-page-options="[50, 10, 100, 250, 500, -1]"
                     :items-per-page-text="''"
                   />
-                </v-col>
+
               </v-row>
             </template>
             <template v-slot:expanded-item="{ headers, item }">
+              <!-- :colspan="headers.length" -->
               <td :colspan="headers.length" class="blackborder">
-                <v-row>
-                  <v-col cols="12">
+                <!-- <v-row>
+                  <v-col cols="12"> -->
+
                     <logtel :lid_id="item.id" :key="item.id" />
-                  </v-col>
-                </v-row>
+                  <!-- </v-col>
+                </v-row> -->
               </td>
             </template>
             <template v-slot:footer.prepend>
               <v-col cols="2">
                 <v-btn outlined rounded @click="exportXlsx" class="border">
                   <v-icon left> mdi-file-excel </v-icon>
-                  XLSX
+                  Скачать таблицу
                 </v-btn>
               </v-col>
               <v-spacer></v-spacer>
               <v-col>
                 <p>Назначение статусов</p>
-                <v-select
-                  v-model="selectedStatus"
-                  :items="statuses"
-                  item-text="name"
-                  item-value="id"
-                  outlined
-                  rounded
-                ></v-select>
+                </v-col>
+                <v-col cols="3">
+                          <v-select
+            v-model="selectedStatus"
+            :items="statuses"
+            item-text="name"
+            item-value="id"
+            outlined
+            rounded
+          >
+            <template v-slot:selection="{ item }">
+              <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid grey',
+                }"
+                class="sel_stat mr-4"
+              ></i
+              >{{ item.name }}
+            </template>
+            <template v-slot:item="{ item }">
+              <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid grey',
+                }"
+                class="sel_stat mr-4"
+              ></i
+              >{{ item.name }}
+            </template>
+          </v-select>
+                  </v-col>
+                <v-col cols="3">
                 <v-btn
-                  v-if="selectedStatus && selected.length"
-                  class="ma-2"
+                  :disable ="!selectedStatus && !selected.length"
+                  class="border ma-2"
                   outlined
                   @click="changeStatus"
                 >
-                  Сменить статусы
+                  Сменить статус
                 </v-btn>
               </v-col>
             </template>
@@ -975,7 +1010,8 @@ export default {
   border-radius: 30px;
 }
 
-.border {
+.border,
+.v-application--is-ltr .v-data-footer__select {
   box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
   border-radius: 30px;
   min-height: 56px;
@@ -1018,5 +1054,41 @@ main .v-data-footer__pagination,
 }
 .v-application--is-ltr .v-expansion-panel-header__icon {
   margin: 0;
+}
+.wrp_group .v-input--selection-controls__input {
+    position: absolute;
+    /* left: 50%;
+    bottom: 4px;
+    z-index: 3;
+    transform: translateX(-50%); */
+    opacity:0
+}
+.wrp_group .v-input img {
+
+    border-radius: 22px;
+    border: 2px solid transparent;
+    width:56px;
+    height:56px
+}
+.wrp_group .v-input.v-input--is-label-active img {
+    border: 2px dotted grey
+}
+.v-data-table tbody tr {
+    display: table-row;
+    box-shadow: 0px 0px 9.5px 0.5px rgb(118 32 223 / 20%);
+    border: none;
+    border-radius: 22px;
+    margin-bottom: 10px;
+}
+main .theme--light.v-data-table>.v-data-table__wrapper>table>tbody>tr>td:not(.v-data-table__mobile-row),
+.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th{
+  border-bottom: none !important;
+  border: 1px solid transparent !important
+}
+.blackborder .v-data-table > .v-data-table__wrapper > table {
+    width: initial;
+}
+.v-data-table tbody tr > .blackborder tr{
+  box-shadow: none;
 }
 </style>
