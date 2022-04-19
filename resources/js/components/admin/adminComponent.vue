@@ -22,7 +22,7 @@
       </v-bottom-navigation>
 
       <v-spacer></v-spacer>
-      <v-toolbar-title>В системе: {{ user.fio }}</v-toolbar-title>
+      <v-toolbar-title>{{ user.fio }}</v-toolbar-title>
 
       <v-btn @click="$emit('login', {})">ВЫХОД</v-btn>
     </v-app-bar>

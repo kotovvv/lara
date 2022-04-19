@@ -216,23 +216,10 @@ export default {
   },
 
   created() {
-    // this.initialize(),
     this.getUsers();
   },
 
   methods: {
-    // report() {
-    //   let selectedUsers = Object.keys(this.$refs.datausers.selection);
-    //   if (selectedUsers.length) {
-    //     let self = this;
-    //     axios
-    //       .post("/api/status_users", selectedUsers)
-    //       .then((res) => {
-    //         console.log(res.data);
-    //       })
-    //       .catch((error) => console.log(error));
-    //   }
-    // },
     rolename(user) {
       user.role = this.roles.find((r) => r.id == user.role_id).name;
     },

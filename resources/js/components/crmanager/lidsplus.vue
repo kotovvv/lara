@@ -172,7 +172,7 @@
               }"
             >
               <v-row>
-                <v-col cols="4">
+                <v-col cols="4" class="mt-1">
                   <v-text-field
                     v-model="search"
                     append-icon="mdi-magnify"
@@ -184,31 +184,30 @@
                 </v-col>
                 <v-col class="wrp_group">
                   <v-row>
-                  <v-checkbox
-                    v-model="filterGroups"
-                    v-for="(groupa, index) in group"
-                    :key="index"
-                    :value="groupa.id"
-                  >
-                    <template v-slot:label>
-                      <img
-                        :src="'/storage/' + groupa.pic"
-                        :alt="groupa.fio"
-                        v-if="groupa.pic"
-                      />
-                    </template>
-                  </v-checkbox>
+                    <v-checkbox
+                      v-model="filterGroups"
+                      v-for="(groupa, index) in group"
+                      :key="index"
+                      :value="groupa.id"
+                    >
+                      <template v-slot:label>
+                        <img
+                          :src="'/storage/' + groupa.pic"
+                          :alt="groupa.fio"
+                          v-if="groupa.pic"
+                        />
+                      </template>
+                    </v-checkbox>
                   </v-row>
-                 </v-col>
-             <v-spacer></v-spacer>
-                  <v-data-footer
-                    :pagination="pagination"
-                    :options="options"
-                    @update:options="updateOptions"
-                    :items-per-page-options="[50, 10, 100, 250, 500, -1]"
-                    :items-per-page-text="''"
-                  />
-
+                </v-col>
+                <!-- <v-spacer></v-spacer> -->
+                <v-data-footer
+                  :pagination="pagination"
+                  :options="options"
+                  @update:options="updateOptions"
+                  :items-per-page-options="[50, 10, 100, 250, 500, -1]"
+                  :items-per-page-text="''"
+                />
               </v-row>
             </template>
             <template v-slot:expanded-item="{ headers, item }">
@@ -217,8 +216,8 @@
                 <!-- <v-row>
                   <v-col cols="12"> -->
 
-                    <logtel :lid_id="item.id" :key="item.id" />
-                  <!-- </v-col>
+                <logtel :lid_id="item.id" :key="item.id" />
+                <!-- </v-col>
                 </v-row> -->
               </td>
             </template>
@@ -232,41 +231,41 @@
               <v-spacer></v-spacer>
               <v-col>
                 <p>Назначение статусов</p>
-                </v-col>
-                <v-col cols="3">
-                          <v-select
-            v-model="selectedStatus"
-            :items="statuses"
-            item-text="name"
-            item-value="id"
-            outlined
-            rounded
-          >
-            <template v-slot:selection="{ item }">
-              <i
-                :style="{
-                  background: item.color,
-                  outline: '1px solid grey',
-                }"
-                class="sel_stat mr-4"
-              ></i
-              >{{ item.name }}
-            </template>
-            <template v-slot:item="{ item }">
-              <i
-                :style="{
-                  background: item.color,
-                  outline: '1px solid grey',
-                }"
-                class="sel_stat mr-4"
-              ></i
-              >{{ item.name }}
-            </template>
-          </v-select>
-                  </v-col>
-                <v-col cols="3">
+              </v-col>
+              <v-col cols="3">
+                <v-select
+                  v-model="selectedStatus"
+                  :items="statuses"
+                  item-text="name"
+                  item-value="id"
+                  outlined
+                  rounded
+                >
+                  <template v-slot:selection="{ item }">
+                    <i
+                      :style="{
+                        background: item.color,
+                        outline: '1px solid grey',
+                      }"
+                      class="sel_stat mr-4"
+                    ></i
+                    >{{ item.name }}
+                  </template>
+                  <template v-slot:item="{ item }">
+                    <i
+                      :style="{
+                        background: item.color,
+                        outline: '1px solid grey',
+                      }"
+                      class="sel_stat mr-4"
+                    ></i
+                    >{{ item.name }}
+                  </template>
+                </v-select>
+              </v-col>
+              <v-col cols="3">
                 <v-btn
-                  :disable ="!selectedStatus && !selected.length"
+                  :disable="!selectedStatus && !selected.length"
                   class="border ma-2"
                   outlined
                   @click="changeStatus"
@@ -439,6 +438,7 @@ export default {
     if (localStorage.filterProviders) {
       this.filterProviders = localStorage.filterProviders;
     }
+    this.setHeader();
   },
 
   watch: {
@@ -489,6 +489,16 @@ export default {
     },
   },
   methods: {
+    setHeader() {
+      document.getElementsByTagName("header")[0].classList = "";
+      document.getElementsByTagName("header")[0].style = "";
+      document.getElementsByClassName("v-toolbar__content")[0].style.height =
+        "100vh";
+      document.getElementsByClassName("v-main")[0].style.padding = "";
+window.scroll(1, 1);
+       window.scroll(364, 364);
+
+    },
     clearFilter() {
       this.datetimeFrom = new Date(
         new Date().setDate(new Date().getDate() - 14)
@@ -976,7 +986,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoupe>
 .status_wrp span {
   padding: 5px;
   word-break: break-all;
@@ -1056,39 +1066,94 @@ main .v-data-footer__pagination,
   margin: 0;
 }
 .wrp_group .v-input--selection-controls__input {
-    position: absolute;
-    /* left: 50%;
+  position: absolute;
+  /* left: 50%;
     bottom: 4px;
     z-index: 3;
     transform: translateX(-50%); */
-    opacity:0
+  opacity: 0;
 }
 .wrp_group .v-input img {
-
-    border-radius: 22px;
-    border: 2px solid transparent;
-    width:56px;
-    height:56px
+  border-radius: 22px;
+  border: 2px solid transparent;
+  width: 56px;
+  height: 56px;
 }
 .wrp_group .v-input.v-input--is-label-active img {
-    border: 2px dotted grey
+  border: 2px dotted grey;
 }
 .v-data-table tbody tr {
-    display: table-row;
-    box-shadow: 0px 0px 9.5px 0.5px rgb(118 32 223 / 20%);
-    border: none;
-    border-radius: 22px;
-    margin-bottom: 10px;
+  display: table-row;
+  box-shadow: 0px 0px 9.5px 0.5px rgb(118 32 223 / 20%);
+  border: none;
+  border-radius: 22px;
+  margin-bottom: 10px;
 }
-main .theme--light.v-data-table>.v-data-table__wrapper>table>tbody>tr>td:not(.v-data-table__mobile-row),
-.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th{
+main
+  .theme--light.v-data-table
+  > .v-data-table__wrapper
+  > table
+  > tbody
+  > tr
+  > td:not(.v-data-table__mobile-row),
+.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
   border-bottom: none !important;
-  border: 1px solid transparent !important
+  border: 1px solid transparent !important;
 }
 .blackborder .v-data-table > .v-data-table__wrapper > table {
-    width: initial;
+  width: initial;
 }
-.v-data-table tbody tr > .blackborder tr{
+.v-data-table tbody tr > .blackborder tr {
   box-shadow: none;
 }
+.wrp_group + .v-data-footer {
+  max-width: 111px;
+}
+
+/* menu */
+
+.v-application--wrap {
+  flex-direction: row;
+}
+
+header {
+  height: 100vh;
+  width: 64px;
+  background: blueviolet !important;
+   left: 0 !important;
+}
+.theme--light.v-bottom-navigation .v-btn:not(.v-btn--active) {
+  color: #fff !important;
+}
+.v-item-group.v-bottom-navigation .v-btn.v-btn--active {
+  color: blueviolet;
+  background: #fff;
+}
+.v-application--wrap {
+  /* margin-left:-64px; */
+  padding-left: 64px;
+}
+
+.v-item-group.v-bottom-navigation {
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  justify-content: inherit;
+}
+
+.v-toolbar__content,
+.v-toolbar__extension {
+  flex-direction: column;
+}
+.v-bottom-navigation {
+  height: 100vh;
+  max-width: 64px;
+}
+.theme--light.v-icon {
+  color: blueviolet;
+}
+.v-toolbar__title {
+    width: 64px;
+}
+
 </style>
