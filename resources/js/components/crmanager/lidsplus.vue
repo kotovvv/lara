@@ -985,7 +985,7 @@ export default {
 };
 </script>
 
-<style scoupe>
+<style>
 .status_wrp span {
   padding: 5px;
   word-break: break-all;
