@@ -495,9 +495,8 @@ export default {
       document.getElementsByClassName("v-toolbar__content")[0].style.height =
         "100vh";
       document.getElementsByClassName("v-main")[0].style.padding = "";
-window.scroll(1, 1);
-       window.scroll(364, 364);
-
+      window.scroll(1, 1);
+      window.scroll(364, 364);
     },
     clearFilter() {
       this.datetimeFrom = new Date(
@@ -1109,51 +1108,4 @@ main
 .wrp_group + .v-data-footer {
   max-width: 111px;
 }
-
-/* menu */
-
-.v-application--wrap {
-  flex-direction: row;
-}
-
-header {
-  height: 100vh;
-  width: 64px;
-  background: blueviolet !important;
-   left: 0 !important;
-}
-.theme--light.v-bottom-navigation .v-btn:not(.v-btn--active) {
-  color: #fff !important;
-}
-.v-item-group.v-bottom-navigation .v-btn.v-btn--active {
-  color: blueviolet;
-  background: #fff;
-}
-.v-application--wrap {
-  /* margin-left:-64px; */
-  padding-left: 64px;
-}
-
-.v-item-group.v-bottom-navigation {
-  flex-direction: column;
-  gap: 20px;
-  align-items: center;
-  justify-content: inherit;
-}
-
-.v-toolbar__content,
-.v-toolbar__extension {
-  flex-direction: column;
-}
-.v-bottom-navigation {
-  height: 100vh;
-  max-width: 64px;
-}
-.theme--light.v-icon {
-  color: blueviolet;
-}
-.v-toolbar__title {
-    width: 64px;
-}
-
 </style>

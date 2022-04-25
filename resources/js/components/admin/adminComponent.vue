@@ -1,58 +1,45 @@
 <template>
   <v-app id="inspire">
-    <v-app-bar app>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-bottom-navigation
-        color="primary"
-        background-color="transparent"
-        max-width="50%"
-        :value="adminMenu"
-        style="box-shadow: none"
-      >
-        <v-btn
-          :value="item.name"
-          v-for="(item, i) in items"
-          :key="i"
-          @click="adminMenu = item.name"
-        >
-          <!-- <span>{{ item.text }}</span> -->
-
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-btn>
-      </v-bottom-navigation>
-
-      <v-spacer></v-spacer>
-      <v-toolbar-title>{{ user.fio }}</v-toolbar-title>
-
-      <v-btn @click="$emit('login', {})">ВЫХОД</v-btn>
-    </v-app-bar>
-
     <v-navigation-drawer
       v-model="drawer"
       fixed
-      temporary
-      @click="drawer = !drawer"
+      parmament
+      dark
+      mini-variant="true"
+      width="64px"
+      app="true"
     >
       <!-- menu -->
-      <v-card class="mx-auto" max-width="300" tile @click="drawer = !drawer">
-        <v-list>
-          <v-subheader>MENU</v-subheader>
-          <v-list-item-group v-model="selectedItem" color="primary">
-            <v-list-item
-              v-for="(item, i) in items"
-              :key="i"
-              @click="adminMenu = item.name"
-            >
-              <v-list-item-icon>
-                <v-icon v-text="item.icon"></v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title v-text="item.text"></v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-card>
+      <v-list>
+        <v-subheader></v-subheader>
+        <v-list-item-group v-model="selectedItem" color="primary">
+          <v-list-item
+            v-for="(item, i) in items"
+            :key="i"
+            @click="adminMenu = item.name"
+          >
+            <v-list-item-icon>
+              <v-icon v-text="item.icon"></v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+
+        <v-list-item-group class="mt-10">
+          <v-list-item @click="$emit('login', {})">
+            <v-list-item-icon>
+              <v-icon>mdi-logout</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>{{ user.fio }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
     </v-navigation-drawer>
 
     <v-main class="">
@@ -86,7 +73,11 @@ export default {
     selectedItem: 0,
 
     items: [
-      { text: "Импорт CSV", name: "importcsv", icon: "mdi-arrow-down-bold-box-outline" },
+      {
+        text: "Импорт CSV",
+        name: "importcsv",
+        icon: "mdi-arrow-down-bold-box-outline",
+      },
       { text: "Пользователи", name: "users", icon: "mdi-account" },
       {
         text: "Статусы лидов",
@@ -132,3 +123,118 @@ export default {
   methods: {},
 };
 </script>
+
+<style>
+.v-list-item.v-item--active {
+  background: #fff;
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+}
+#inspire .theme--dark.v-navigation-drawer {
+  background-color: #7620df;
+}
+#inspire .v-navigation-drawer {
+  overflow: inherit;
+}
+#inspire .v-navigation-drawer:before,
+#inspire .v-navigation-drawer:after,
+#inspire .v-list-item.v-item--active:before,
+#inspire .v-list-item.v-item--active:after {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  right: -16px;
+  top: 0;
+  background: #7620df;
+  clip-path: polygon(
+    0% 98%,
+    0% 98%,
+    0% 0%,
+    0% 0%,
+    100% 0%,
+    100% 0%,
+    82% 1%,
+    82% 1%,
+    78% 2%,
+    78% 2%,
+    73% 3%,
+    73% 3%,
+    68% 4%,
+    68% 4%,
+    63% 6%,
+    63% 6%,
+    58% 8%,
+    58% 8%,
+    54% 10%,
+    54% 10%,
+    50% 12%,
+    50% 12%,
+    47% 15%,
+    47% 15%,
+    43% 17%,
+    43% 17%,
+    40% 19%,
+    40% 19%,
+    36% 22%,
+    36% 22%,
+    33% 25%,
+    33% 25%,
+    30% 28%,
+    30% 28%,
+    27% 31%,
+    27% 31%,
+    24% 35%,
+    24% 35%,
+    21% 38%,
+    21% 38%,
+    18% 42%,
+    18% 42%,
+    15% 46%,
+    15% 46%,
+    13% 50%,
+    13% 50%,
+    10% 54%,
+    10% 54%,
+    8% 58%,
+    8% 58%,
+    6% 62%,
+    6% 62%,
+    5% 67%,
+    5% 67%,
+    3% 72%,
+    3% 72%,
+    2% 77%,
+    2% 77%,
+    1% 83%,
+    1% 83%
+  );
+}
+#inspire .v-navigation-drawer:before {
+  right: -16px;
+  top: 0;
+}
+#inspire .v-navigation-drawer:after {
+  right: -16px;
+  top: calc(100% - 16px);
+  transform: rotateZ(-90deg);
+}
+#inspire .v-list-item.v-item--active:before,
+#inspire .v-list-item.v-item--active:after {
+  background: #fff;
+  opacity: 1;
+}
+#inspire .v-list-item.v-item--active:before {
+  left: calc(100% - 16px);
+  transform: rotateZ(180deg);
+  top: -15px;
+}
+#inspire .v-list-item.v-item--active:after {
+  left: calc(100% - 16px);
+  transform: rotateZ(-270deg);
+  bottom: -16px;
+  min-height: auto;
+  top: unset;
+}
+</style>
