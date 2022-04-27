@@ -5,9 +5,9 @@
       fixed
       parmament
       dark
-      mini-variant="true"
+      :mini-variant="true"
       width="64px"
-      app="true"
+      :app="true"
     >
       <!-- menu -->
       <v-list>
@@ -16,7 +16,7 @@
           <v-list-item
             v-for="(item, i) in items"
             :key="i"
-            @click="adminMenu = item.name"
+            @click="managerMenu = item.name"
           >
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
@@ -42,7 +42,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-main class="grey lighten-2">
+    <v-main>
       <v-container fluid>
         <!-- <v-row> -->
         <!-- table -->
@@ -66,8 +66,8 @@ export default {
     managerMenu: "report",
 
     items: [
-      { text: "Manager", name: "mlids", icon: "mdi-phone-log-outline" },
       { text: "Отчёты", name: "report", icon: "mdi-timetable" },
+      { text: "Manager", name: "mlids", icon: "mdi-phone-log-outline" },
     ],
   }),
   computed: {

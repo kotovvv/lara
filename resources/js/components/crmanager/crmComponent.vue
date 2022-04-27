@@ -16,7 +16,7 @@
           <v-list-item
             v-for="(item, i) in items"
             :key="i"
-            @click="adminMenu = item.name"
+            @click="managerMenu = item.name"
           >
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>

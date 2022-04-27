@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="10">
+      <v-col cols="12">
         <v-row>
           <v-col cols="3">
             <v-card-title>
@@ -11,42 +11,63 @@
                 label="Поиск"
                 single-line
                 hide-details
+                outlined
+                rounded
               ></v-text-field>
             </v-card-title>
           </v-col>
-          <v-col cols="3" class="pt-3 mt-4">
+          <v-col cols="3">
+            Фильтр по поставщикам
             <v-select
               v-model="filterProviders"
               :items="providers"
-              label="Фильтр по поставщикам"
               item-text="name"
               item-value="id"
+              outlined
+              rounded
             ></v-select>
           </v-col>
           <v-col cols="3">
-            <v-card-title>
-              <v-text-field
-                v-model.lazy.trim="filtertel"
-                append-icon="mdi-phone"
-                label="Первые цифры номера"
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-card-title>
+            Первые цифры номера
+
+            <v-text-field
+              v-model.lazy.trim="filtertel"
+              append-icon="mdi-phone"
+              single-line
+              hide-details
+              outlined
+              rounded
+            ></v-text-field>
           </v-col>
-          <v-col cols="3" class="pt-3 mt-4">
+          <v-col cols="3">
+            Фильтр по статусу
             <v-select
               v-model="filterStatus"
               :items="filterstatuses"
-              label="Фильтр по статусу"
               item-text="name"
               item-value="id"
+              outlined
+              rounded
             >
+              <template v-slot:selection="{ item }">
+                <i
+                  :style="{
+                    background: item.color,
+                    outline: '1px solid grey',
+                  }"
+                  class="sel_stat mr-4"
+                ></i
+                >{{ item.name }}
+              </template>
               <template v-slot:item="{ item }">
-                <div
-                  :style="{ background: item.color, width: '100%' }"
-                  v-text="item.name"
-                ></div>
+                <i
+                  :style="{
+                    background: item.color,
+                    outline: '1px solid grey',
+                  }"
+                  class="sel_stat mr-4"
+                ></i
+                >{{ item.name }}
               </template>
             </v-select>
           </v-col>
@@ -68,57 +89,28 @@
                 hide-default-header
                 hide-default-footer
               >
-                <template v-slot:item.name="{ item }">
-                  <div :style="stylecolor(item.status_id)">{{ item.name }}</div>
-                </template>
-                <template v-slot:item.email="{ item }">
-                  <div :style="stylecolor(item.status_id)">
-                    {{ item.email }}
-                  </div>
-                </template>
-                <template v-slot:item.date="{ item }">
-                  <div :style="stylecolor(item.status_id)">{{ item.date }}</div>
-                </template>
                 <template v-slot:item.tel="{ item }">
-                  <a
-                    class="tel"
-                    @click.stop
-                    :href="'sip:' + item.tel"
-                    :style="stylecolor(item.status_id)"
-                    >{{ item.tel }}</a
-                  >
+                  <a class="tel" @click.stop :href="'sip:' + item.tel">{{
+                    item.tel
+                  }}</a>
                 </template>
 
-                <template v-slot:item.afilyator="{ item }">
-                  <div class="px-1" :style="stylecolor(item.status_id)">
-                    {{ item.afilyator }}
-                  </div>
-                </template>
-                <template v-slot:item.provider="{ item }">
-                  <div class="px-1" :style="stylecolor(item.status_id)">
-                    {{ item.provider }}
-                  </div>
-                </template>
                 <template v-slot:item.status="{ item }">
-                  <div class="px-1" :style="stylecolor(item.status_id)">
-                    {{ item.status }}
+                  <div class="status_wrp" @click.stop="dial = true">
+                    <b
+                      :style="{
+                        background: stylecolor(item.status_id),
+                        outline: '#999 solid 1px',
+                      }"
+                    ></b>
+                    <span>{{ item.status }}</span>
                   </div>
                 </template>
 
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">
-                    <v-row>
-                      <v-col cols="8">
-                        <v-textarea
-                          class="mx-2"
-                          label="Сообщение"
-                          rows="1"
-                          prepend-icon="mdi-comment"
-                          v-model="text"
-                          :value="text"
-                          @keyup.enter.native="changemes(item)"
-                        ></v-textarea>
-                      </v-col>
+                    <!-- <v-row>
+
                       <v-col cols="4">
                         <v-datetime-picker
                           label="Дата/время"
@@ -127,7 +119,7 @@
                         >
                         </v-datetime-picker>
                       </v-col>
-                    </v-row>
+                    </v-row> -->
                     <v-row>
                       <v-col cols="12">
                         <logtel :lid_id="lid_id" />
@@ -152,7 +144,7 @@
                 show-expand
                 :footer-props="{
                   'items-per-page-options': [10, 50, 100, 250, 500, -1],
-                  'items-per-page-text': 'Показать',
+                  'items-per-page-text': '',
                 }"
                 @click:row="clickrow"
               >
@@ -160,7 +152,7 @@
                   v-slot:top="{ pagination, options, updateOptions }"
                   :footer-props="{
                     'items-per-page-options': [10, 50, 100, 250, 500, -1],
-                    'items-per-page-text': 'Показать',
+                    'items-per-page-text': '',
                   }"
                 >
                   <v-data-footer
@@ -168,58 +160,34 @@
                     :options="options"
                     @update:options="updateOptions"
                     :items-per-page-options="[10, 50, 100, 250, 500, -1]"
-                    :items-per-page-text="'Показать'"
+                    :items-per-page-text="''"
                   />
                 </template>
-                <template v-slot:item.name="{ item }">
-                  <div :style="stylecolor(item.status_id)">{{ item.name }}</div>
-                </template>
-                <template v-slot:item.email="{ item }">
-                  <div :style="stylecolor(item.status_id)">
-                    {{ item.email }}
-                  </div>
-                </template>
-                <template v-slot:item.date="{ item }">
-                  <div :style="stylecolor(item.status_id)">{{ item.date }}</div>
-                </template>
+
                 <template v-slot:item.tel="{ item }">
-                  <a
-                    class="tel"
-                    @click.stop
-                    :href="'sip:' + item.tel"
-                    :style="stylecolor(item.status_id)"
-                    >{{ item.tel }}</a
-                  >
+                  <a class="tel" @click.stop :href="'sip:' + item.tel">{{
+                    item.tel
+                  }}</a>
                 </template>
-                <template v-slot:item.afilyator="{ item }">
-                  <div class="px-1" :style="stylecolor(item.status_id)">
-                    {{ item.afilyator }}
-                  </div>
-                </template>
-                <template v-slot:item.provider="{ item }">
-                  <div class="px-1" :style="stylecolor(item.status_id)">
-                    {{ item.provider }}
-                  </div>
-                </template>
-                <template v-slot:item.date_created="{ item }">
-                  <div class="px-1" :style="stylecolor(item.status_id)">
-                    {{ item.date_created }}
-                  </div>
-                </template>
+
                 <template v-slot:item.status="{ item }">
-                  <div class="px-1" :style="stylecolor(item.status_id)">
-                    {{ item.status }}
-                  </div>
-                </template>
-                <template v-slot:item.text="{ item }">
-                  <div class="px-1" :style="stylecolor(item.status_id)">
-                    {{ item.text }}
+                  <div
+                    class="status_wrp mx-1"
+                    @click="selected.length == 0 ? (dial = true) : ''"
+                  >
+                    <b
+                      :style="{
+                        background: stylecolor(item.status_id),
+                        outline: '#999 solid 1px',
+                      }"
+                    ></b>
+                    <span>{{ item.status }}</span>
                   </div>
                 </template>
 
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">
-                    <v-row>
+                    <!-- <v-row>
                       <v-col cols="8">
                         <v-textarea
                           class="mx-2"
@@ -230,7 +198,7 @@
                           :value="text"
                           @keyup.enter.native="changemes(item)"
                         ></v-textarea>
-                        <!-- @change="changemes(item)" -->
+
                       </v-col>
                       <v-col cols="4">
                         <v-datetime-picker
@@ -242,7 +210,7 @@
                         >
                         </v-datetime-picker>
                       </v-col>
-                    </v-row>
+                    </v-row> -->
                     <v-row>
                       <v-col cols="12">
                         <logtel :lid_id="lid_id" :key="componentKey" />
@@ -255,7 +223,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="2">
+      <!-- <v-col cols="2">
         <v-card height="100%" class="pa-5">
           <v-list>
             <v-radio-group
@@ -265,8 +233,6 @@
               v-model="selectedStatus"
               :disabled="selected.length == 0"
             >
-              <!-- v-bind="selected.length?selected[0].status_id:null" -->
-              <!-- v-model="selectedStatus" -->
               <v-radio
                 :label="status.name"
                 :value="status.id"
@@ -284,7 +250,7 @@
             </v-radio-group>
           </v-list>
         </v-card>
-      </v-col>
+      </v-col> -->
     </v-row>
     <v-row justify="center">
       <v-dialog v-model="depozit" persistent max-width="600px">
@@ -330,11 +296,86 @@
       {{ message }}
 
       <template v-slot:action="{ attrs }">
-        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false; getLids($props.user.id)">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="
+            snackbar = false;
+            getLids($props.user.id);
+          "
+        >
           Х
         </v-btn>
       </template>
     </v-snackbar>
+    <v-dialog v-model="dial" persistent max-width="600px">
+      <v-card rounded class="rounded-xl">
+        <v-card-title class="text-h5">
+          <!-- @change="putSelectedLidsDB" -->
+          <v-radio-group
+            ref="radiogroup"
+            id="statusesradiogroup"
+            v-model="selectedStatus"
+            :disabled="selected.length == 0"
+            row
+          >
+            <v-radio
+              :label="status.name"
+              :value="status.id"
+              v-for="status in statuses"
+              :key="status.id"
+            >
+              <!-- @click="nextdep(status.id)" -->
+              <span
+                slot="label"
+                class="px-1"
+                :style="{ background: status.color, width: '100%' }"
+                >{{ status.name }}</span
+              >
+            </v-radio>
+          </v-radio-group>
+        </v-card-title>
+
+        <v-card-text>
+          <!-- @keyup.enter.native="changemes(item)" -->
+          <v-textarea
+            class="px-2 border"
+            label="Сообщение"
+            rows="1"
+            prepend-icon="mdi-comment"
+            v-model="text"
+            :value="text"
+          ></v-textarea>
+          <v-text-field
+            v-if="selectedStatus == 10"
+            label="Сума депозиту*"
+            required
+            v-model="depozit_val"
+            class="border px-2"
+          ></v-text-field>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="dial = false">
+            Відмінити
+          </v-btn>
+
+          <v-spacer></v-spacer>
+          <v-btn
+            color="dark primary"
+            @click="
+              putSelectedLidsDB();
+              dial = false;
+            "
+          >
+            Відправити
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -348,6 +389,7 @@ export default {
   },
   props: ["user"],
   data: () => ({
+    dial: false,
     depozit: 0,
     depozit_val: "",
     componentKey: 0,
@@ -524,7 +566,7 @@ export default {
     },
     putSelectedLidsDB() {
       const self = this;
-      if(self.selectedStatus == 10 && self.depozit == false) return
+      // if (self.selectedStatus == 10 && self.depozit == false) return;
       let send = {};
       let send_el = {};
       let costil = self.filtertel;
@@ -539,6 +581,7 @@ export default {
       send.id = eli.id;
       send_el.id = eli.id;
       send_el.tel = eli.tel;
+      send_el.text = self.text;
       send_el.status_id = self.selectedStatus;
       send_el.user_id = eli.user_id;
       send.data = [];
@@ -552,8 +595,8 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-      if (send_el.status_id == "10") {
-        self.depozit = true;
+      if (this.depozit_val > 0) {
+        self.setDepozit();
       }
     },
 
@@ -581,6 +624,8 @@ export default {
       if (!row.isSelected) {
         this.tel = item.tel;
         this.lid_id = item.id;
+        this.text = "";
+        this.depozit_val = "";
       } else this.tel = "";
       row.select(!row.isSelected);
     },
@@ -646,10 +691,7 @@ export default {
     stylecolor(status_id) {
       // console.log(status_id)
       if (status_id == null) return;
-      return (
-        "padding:5px;background:" +
-        this.statuses.find((e) => e.id == status_id).color
-      );
+      return this.statuses.find((e) => e.id == status_id).color;
     },
     getProviders() {
       let self = this;
