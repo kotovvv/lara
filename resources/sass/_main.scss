@@ -253,3 +253,19 @@ main .theme--light.v-data-table>.v-data-table__wrapper>table>tbody>tr>td:not(.v-
 .v-data-table__wrapper {
   padding: .3em;
 }
+.theme--light.v-data-table>.v-data-table__wrapper>table>tbody>tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper),
+.v-data-table__expanded.v-data-table__expanded__row.v-data-table__selected {
+  background: #fff;
+  border: 3px solid #7620df !important;
+}
+.v-data-table__expanded.v-data-table__expanded__content {
+  border-radius: unset;
+  border-bottom-right-radius: 30px;
+  border-bottom-left-radius: 30px;
+}
+.v-data-table>.v-data-table__wrapper tbody tr.v-data-table__expanded__content {
+  box-shadow: inset 0 4px 8px -5px #7620df, inset 0 -4px 8px -5px #7620df;
+}
+#inspire .v-text-field__details {
+  display: none;
+}

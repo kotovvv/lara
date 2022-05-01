@@ -9,8 +9,6 @@
                 v-model="search"
                 append-icon="mdi-magnify"
                 label="Поиск"
-                single-line
-                hide-details
                 outlined
                 rounded
               ></v-text-field>
@@ -33,8 +31,6 @@
             <v-text-field
               v-model.lazy.trim="filtertel"
               append-icon="mdi-phone"
-              single-line
-              hide-details
               outlined
               rounded
             ></v-text-field>
@@ -313,28 +309,31 @@
       <v-card rounded class="rounded-xl">
         <v-card-title class="text-h5">
           <!-- @change="putSelectedLidsDB" -->
-          <v-radio-group
-            ref="radiogroup"
-            id="statusesradiogroup"
-            v-model="selectedStatus"
-            :disabled="selected.length == 0"
-            row
-          >
-            <v-radio
-              :label="status.name"
-              :value="status.id"
-              v-for="status in statuses"
-              :key="status.id"
-            >
-              <!-- @click="nextdep(status.id)" -->
-              <span
-                slot="label"
-                class="px-1"
-                :style="{ background: status.color, width: '100%' }"
-                >{{ status.name }}</span
+          <div class="wrp__statuses">
+            <template v-for="(status, ikey) in statuses">
+              <input
+                type="radio"
+                :value="status.id"
+                :id="'st' + status.id"
+                v-model="selectedStatus"
+                style="display: none"
+                :key="'i' + ikey"
+              />
+              <label
+                :for="'st' + status.id"
+                class="status_wrp v-label"
+                :key="'l' + ikey"
               >
-            </v-radio>
-          </v-radio-group>
+                <b
+                  :style="{
+                    background: status.color,
+                    outline: '1px solid grey',
+                  }"
+                ></b>
+                <span>{{ status.name }}</span>
+              </label>
+            </template>
+          </div>
         </v-card-title>
 
         <v-card-text>
@@ -343,13 +342,13 @@
             class="px-2 border"
             label="Сообщение"
             rows="1"
-            prepend-icon="mdi-comment"
             v-model="text"
             :value="text"
           ></v-textarea>
+
           <v-text-field
             v-if="selectedStatus == 10"
-            label="Сума депозиту*"
+            label="Сумма депозита*"
             required
             v-model="depozit_val"
             class="border px-2"
@@ -366,6 +365,7 @@
           <v-spacer></v-spacer>
           <v-btn
             color="dark primary"
+            x-large
             @click="
               putSelectedLidsDB();
               dial = false;
@@ -737,5 +737,22 @@ export default {
 .blackborder {
   border: 2px solid #000;
   border-top: transparent !important;
+}
+.wrp__statuses {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+}
+.wrp__statuses label {
+  border: 3px solid transparent;
+}
+.wrp__statuses input:checked + label {
+  border: 3px solid #7620df;
+  border-radius: 30px;
+}
+.status_wrp span {
+  padding: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 85px;
 }
 </style>

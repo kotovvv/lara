@@ -101,8 +101,6 @@
           <v-text-field
             v-model.lazy.trim="filtertel"
             append-icon="mdi-phone"
-            single-line
-            hide-details
             @input="filterStatuses"
             outlined
             rounded
@@ -115,8 +113,6 @@
             v-model="searchAll"
             append-icon="mdi-magnify"
             @click:append="searchInDB"
-            single-line
-            hide-details
             outlined
             rounded
           ></v-text-field>
