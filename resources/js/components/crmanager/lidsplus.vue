@@ -139,7 +139,7 @@
     </v-row>
     <v-row>
       <v-col cols="9">
-        <div class="border pa-2">
+        <div class="border pa-4">
           <v-data-table
             v-model.lazy.trim="selected"
             :headers="headers"
@@ -226,7 +226,7 @@
               </v-col>
               <v-spacer></v-spacer>
               <v-col>
-                <p>Назначение статусов</p>
+                <h6>Назначение статусов</h6>
               </v-col>
               <v-col cols="3">
                 <v-select
@@ -264,6 +264,7 @@
                   :disable="!selectedStatus && !selected.length"
                   class="border ma-2"
                   outlined
+                  rounded
                   @click="changeStatus"
                 >
                   Сменить статус

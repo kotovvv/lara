@@ -269,3 +269,18 @@ main .theme--light.v-data-table>.v-data-table__wrapper>table>tbody>tr>td:not(.v-
 #inspire .v-text-field__details {
   display: none;
 }
+
+.border .v-application--is-ltr .v-data-footer__select .v-select {
+  margin: 13px 0 13px 24px !important;
+}
+.v-input.v-input--is-label-active.v-input--is-dirty.v-input--is-readonly.theme--light.v-text-field.v-text-field--is-booted {
+  margin-top: 0;
+  padding: 9px 0;
+}
+#maintable.v-data-table tr.v-data-table__expanded tr:hover {
+  border: none !important;
+  background: #fff;
+}
+.border .theme--light.v-icon {
+  color: #7620df;
+}
