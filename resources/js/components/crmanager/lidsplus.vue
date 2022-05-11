@@ -142,6 +142,7 @@
         <div class="border pa-4">
           <v-data-table
             v-model.lazy.trim="selected"
+            id="tablids"
             :headers="headers"
             :search="search"
             :single-select="false"
@@ -983,4 +984,12 @@ export default {
 </script>
 
 <style>
+.scroll-y{
+  max-height: 60vh;
+overflow: auto;
+}
+#tablids .v-data-table__wrapper {
+  overflow: auto;
+  max-height: 54vh;
+}
 </style>
