@@ -8,32 +8,78 @@
             ><v-icon>close</v-icon></v-btn
           >
         </v-col>
-        <v-col cols="4">
+        <v-col>
           <v-row class="px-3">
-            <v-col><p>С Дата/время</p></v-col>
-            <v-col><p>По Дата/время</p></v-col>
+            <v-col><p>С Дата</p></v-col>
+            <v-col><p>По Дата</p></v-col>
           </v-row>
 
           <div class="status_wrp px-3">
             <v-row>
               <v-col>
-                <v-datetime-picker
+                <v-menu
+                  v-model="dateFrom"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="datetimeFrom"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                      @input="getLidsOnDate"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    locale="ru-ru"
+                    v-model="datetimeFrom"
+                    @input="dateFrom = false;getLidsOnDate()"
+                  ></v-date-picker>
+                </v-menu>
+                <!-- <v-datetime-picker
                   v-model="datetimeFrom"
                   clearText=""
                   scrollable
                   :date-picker-props="dateProps"
                   @input="getLidsOnDate"
                 >
-                </v-datetime-picker>
+                </v-datetime-picker> -->
               </v-col>
               <v-col>
-                <v-datetime-picker
+                                <v-menu
+                  v-model="dateTo"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="datetimeTo"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                      @input="getLidsOnDate"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    locale="ru-ru"
+                    v-model="datetimeTo"
+                    @input="dateTo = false;getLidsOnDate()"
+                  ></v-date-picker>
+                </v-menu>
+                <!-- <v-datetime-picker
                   v-model="datetimeTo"
                   clearText=""
                   @input="getLidsOnDate"
                   :date-picker-props="dateProps"
                 >
-                </v-datetime-picker>
+                </v-datetime-picker> -->
               </v-col>
             </v-row>
           </div>
@@ -372,8 +418,13 @@ export default {
     selectedUser: {},
     group: null,
     modal: false,
+    dateFrom: false,
+    dateTo: false,
+
     dateProps: { locale: "ru-RU", format: "24hr" },
-    datetimeFrom: "",
+    datetimeFrom: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .substr(0, 10),
     datetimeTo: "",
     userid: null,
     users: [],
@@ -428,15 +479,21 @@ export default {
       this.filtertel = localStorage.tel;
     }
     if (localStorage.datetimeFrom) {
-      this.datetimeFrom = new Date(localStorage.datetimeFrom);
+      // this.datetimeFrom = new Date(localStorage.datetimeFrom);
+      this.datetimeFrom = new Date(localStorage.datetimeFrom)
+      .toISOString()
+      .substr(0, 10);
     }
     if (localStorage.datetimeTo) {
-      this.datetimeTo = new Date(localStorage.datetimeTo);
+      // this.datetimeTo = new Date(localStorage.datetimeTo);
+      this.datetimeTo = new Date(localStorage.datetimeTo)
+      .toISOString()
+      .substr(0, 10);
     }
     if (localStorage.filterProviders) {
       this.filterProviders = localStorage.filterProviders;
     }
-    this.setHeader();
+    // this.setHeader();
   },
 
   watch: {
@@ -487,20 +544,22 @@ export default {
     },
   },
   methods: {
-    setHeader() {
-      document.getElementsByTagName("header")[0].classList = "";
-      document.getElementsByTagName("header")[0].style = "";
-      document.getElementsByClassName("v-toolbar__content")[0].style.height =
-        "100vh";
-      document.getElementsByClassName("v-main")[0].style.padding = "";
-      window.scroll(1, 1);
-      window.scroll(364, 364);
-    },
+    // setHeader() {
+    //   document.getElementsByTagName("header")[0].classList = "";
+    //   document.getElementsByTagName("header")[0].style = "";
+    //   document.getElementsByClassName("v-toolbar__content")[0].style.height =
+    //     "100vh";
+    //   document.getElementsByClassName("v-main")[0].style.padding = "";
+    //   window.scroll(1, 1);
+    //   window.scroll(364, 364);
+    // },
     clearFilter() {
       this.datetimeFrom = new Date(
         new Date().setDate(new Date().getDate() - 14)
-      );
-      this.datetimeTo = new Date();
+      ).toISOString()
+      .substr(0, 10);
+      this.datetimeTo = new Date().toISOString()
+      .substr(0, 10);
       this.filterStatus = 0;
       this.filterProviders = 0;
       this.filtertel = "";
@@ -984,9 +1043,9 @@ export default {
 </script>
 
 <style>
-.scroll-y{
+.scroll-y {
   max-height: 60vh;
-overflow: auto;
+  overflow: auto;
 }
 #tablids .v-data-table__wrapper {
   overflow: auto;

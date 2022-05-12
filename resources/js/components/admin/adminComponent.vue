@@ -5,9 +5,9 @@
       fixed
       parmament
       dark
-      mini-variant="true"
+      :mini-variant=true
       width="64px"
-      app="true"
+      :app=true
     >
       <!-- menu -->
       <v-list>
