@@ -306,7 +306,7 @@
       </template>
     </v-snackbar>
     <v-dialog v-model="dial" persistent max-width="600px">
-      <v-card rounded class="rounded-xl">
+      <v-card rounded class="rounded-xl pa-4">
         <v-card-title class="text-h5">
           <!-- @change="putSelectedLidsDB" -->
           <div class="wrp__statuses">
@@ -338,41 +338,64 @@
 
         <v-card-text>
           <!-- @keyup.enter.native="changemes(item)" -->
+          Сообщение
           <v-textarea
-            class="px-2 border"
-            label="Сообщение"
+            class="px-2 border mb-4"
             rows="1"
             v-model="text"
             :value="text"
           ></v-textarea>
-
-          <v-text-field
-            v-if="selectedStatus == 10"
-            label="Сумма депозита*"
-            required
-            v-model="depozit_val"
-            class="border px-2"
-          ></v-text-field>
+          <v-row>
+            <v-col v-if="selectedStatus == 10">
+              Сумма депозита*
+              <v-text-field
+                required
+                v-model="depozit_val"
+                class="border px-2 mb-4"
+              ></v-text-field
+            ></v-col>
+            <v-col>
+              Дата/время
+              <div class="border px-2">
+                <v-datetime-picker
+                  ref="datetime"
+                  @input="setTime"
+                  v-model="datetime"
+                  :datetime="datetime"
+                >
+                </v-datetime-picker></div
+            ></v-col>
+          </v-row>
         </v-card-text>
-
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-btn color="blue darken-1" text @click="dial = false">
-            Відмінити
-          </v-btn>
+          <v-row>
+            <v-col>
+              <v-btn
+                color="darken-1"
+                block
+class="border"
+                @click="dial = false"
+              >
+                Відмінити
+              </v-btn>
+            </v-col>
 
-          <v-spacer></v-spacer>
-          <v-btn
-            color="dark primary"
-            x-large
-            @click="
-              putSelectedLidsDB();
-              dial = false;
-            "
-          >
-            Відправити
-          </v-btn>
+            <v-col>
+              <v-btn
+                color="dark primary"
+                block
+                height="100%"
+                @click="
+                  putSelectedLidsDB();
+                  dial = false;
+                "
+              >
+                Відправити
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -623,6 +646,8 @@ export default {
     clickrow(item, row) {
       if (!row.isSelected) {
         this.tel = item.tel;
+        this.$refs.datetime._data.date = null;
+
         this.lid_id = item.id;
         this.text = "";
         this.depozit_val = "";
@@ -722,7 +747,7 @@ export default {
 
 #maintable.v-data-table >>> tr:hover,
 #maintable.v-data-table >>> tr.v-data-table__selected {
-  border: 2px solid #000;
+  /* border: 2px solid #000; */
   cursor: pointer;
 }
 #maintable.v-data-table >>> tr.v-data-table__selected {
@@ -735,7 +760,7 @@ export default {
   padding: 0 !important;
 }
 .blackborder {
-  border: 2px solid #000;
+  /* border: 2px solid #000; */
   border-top: transparent !important;
 }
 .wrp__statuses {
@@ -744,6 +769,7 @@ export default {
 }
 .wrp__statuses label {
   border: 3px solid transparent;
+  font-size: 14px;
 }
 .wrp__statuses input:checked + label {
   border: 3px solid #7620df;

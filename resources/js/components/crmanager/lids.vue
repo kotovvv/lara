@@ -2,14 +2,37 @@
   <div>
     <v-container fluid>
       <v-row>
-        <v-col cols="1" class="pt-3 mt-4">
+        <v-col cols="2">
+          Фильтр по статусам
           <v-select
             v-model="filterStatus"
             :items="statuses"
-            label="Фильтр по статусам"
             item-text="name"
             item-value="id"
-          ></v-select>
+            outlined
+            rounded
+          >
+                      <template v-slot:selection="{ item }">
+              <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid grey',
+                }"
+                class="sel_stat mr-4"
+              ></i
+              >{{ item.name }}
+            </template>
+            <template v-slot:item="{ item }">
+              <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid grey',
+                }"
+                class="sel_stat mr-4"
+              ></i
+              >{{ item.name }}
+            </template>
+          </v-select>
           <v-btn
             v-if="
               filterStatus &&
@@ -20,62 +43,108 @@
             <v-icon small @click="deleteItem()"> mdi-delete </v-icon>
           </v-btn>
         </v-col>
-        <v-col cols="2" class="pt-3 mt-4">
+        <v-col cols="2">
+          Глобальный статус
           <v-select
             v-model="filterGStatus"
             :items="statuses"
-            label="Глобальный фильтр по статусам"
             item-text="name"
             item-value="id"
-          ></v-select>
+            outlined
+            rounded
+          >
+                      <template v-slot:selection="{ item }">
+              <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid grey',
+                }"
+                class="sel_stat mr-4"
+              ></i
+              >{{ item.name }}
+            </template>
+            <template v-slot:item="{ item }">
+              <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid grey',
+                }"
+                class="sel_stat mr-4"
+              ></i
+              >{{ item.name }}
+            </template>
+          </v-select>
         </v-col>
 
-        <v-col cols="2" class="pt-3 mt-4">
+        <v-col cols="2">
+  Фильтр по поставщикам
           <v-select
             v-model="filterProviders"
             :items="providers"
-            label="Фильтр по поставщикам"
             item-text="name"
             item-value="id"
+            outlined
+            rounded
           ></v-select>
         </v-col>
 
         <v-col cols="2">
-          <v-card-title>
+  Глобальный поиск
             <v-text-field
               v-model="searchAll"
               append-icon="mdi-magnify"
-              label="Глобальный поиск"
               @click:append="searchInDB"
               single-line
               hide-details
+              class="border px-2"
             ></v-text-field>
-          </v-card-title>
         </v-col>
         <v-col cols="2">
-          <v-card-title>
+
+  Телефон
             <v-text-field
               v-model.lazy.trim="filtertel"
               append-icon="mdi-phone"
-              label="Первые цифры телефона"
-              single-line
-              hide-details
+              class="border px-2"
             ></v-text-field>
-          </v-card-title>
+
         </v-col>
 
-        <v-col cols="3" class="pt-3 mt-4">
+        <v-col cols="2">
+    Назначение статусов
           <v-select
             v-model="selectedStatus"
             :items="statuses"
-            label="Назначение статусов"
-            item-text="name"
+              item-text="name"
             item-value="id"
-          ></v-select>
+            outlined
+            rounded
+          >
+                      <template v-slot:selection="{ item }">
+              <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid grey',
+                }"
+                class="sel_stat mr-4"
+              ></i
+              >{{ item.name }}
+            </template>
+            <template v-slot:item="{ item }">
+              <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid grey',
+                }"
+                class="sel_stat mr-4"
+              ></i
+              >{{ item.name }}
+            </template>
+          </v-select>
           <v-btn
             v-if="selectedStatus && selected.length"
-            class="ma-2"
-            outlined
+            color="dark primary"
+            x-large
             @click="changeStatus"
           >
             Сменить статусы
@@ -86,8 +155,10 @@
 
     <v-row>
       <v-col cols="9">
-        <v-card>
+        <div class="border pa-4">
+
           <v-data-table
+          id="tablids"
             v-model.lazy.trim="selected"
             :headers="headers"
             :search="search"
@@ -99,14 +170,14 @@
             ref="datatable"
             :footer-props="{
               'items-per-page-options': [50, 10, 100, 250, 500, -1],
-              'items-per-page-text': 'Показать',
+              'items-per-page-text': '',
             }"
           >
             <template
               v-slot:top="{ pagination, options, updateOptions }"
               :footer-props="{
                 'items-per-page-options': [50, 10, 100, 250, 500, -1],
-                'items-per-page-text': 'Показать',
+                'items-per-page-text': '',
               }"
             >
               <v-row>
@@ -117,8 +188,8 @@
                     label="Поиск"
                     single-line
                     hide-details
-                    class="ml-3"
-                  ></v-text-field>
+                    class="ml-3 border px-2"
+                    ></v-text-field>
                 </v-col>
                 <!-- v-if="telsDuplicates.length > 0" -->
                 <v-col cols="2">
@@ -142,80 +213,98 @@
                     :options="options"
                     @update:options="updateOptions"
                     :items-per-page-options="[50, 10, 100, 250, 500, -1]"
-                    :items-per-page-text="'Показать'"
+                    :items-per-page-text="''"
                   />
                 </v-col>
               </v-row>
             </template>
           </v-data-table>
-        </v-card>
-      </v-col>
-      <v-col cols="3">
-        <div class="row">
-          <v-card class="pa-5 w-100">
-            Укажите пользователя
-            <v-card-text class="scroll-y">
-              <v-list>
-                <v-radio-group
-                  @change="changeLidsUser"
-                  ref="radiogroup"
-                  v-model="userid"
-                  v-bind="users"
-                  id="usersradiogroup"
-                >
-                  <v-expansion-panels>
-                    <v-expansion-panel v-for="(item, i) in group" :key="i">
-                      <v-expansion-panel-header>
-                        {{ item.fio }}
-                      </v-expansion-panel-header>
-                      <v-expansion-panel-content>
-                        <v-row
-                          v-for="user in users.filter(function (i) {
-                            return i.group_id == item.group_id;
-                          })"
-                          :key="user.id"
-                        >
-                          <v-radio
-                            :label="user.fio"
-                            :value="user.id"
-                            :disabled="disableuser == user.id"
-                          >
-                          </v-radio>
 
-                          <v-btn
-                            class="ml-3"
-                            small
-                            :color="usercolor(user)"
-                            @click="getLids(user.id)"
-                            :value="user.hmlids"
-                            :disabled="disableuser == user.id"
-                            >{{ user.hmlids }}</v-btn
-                          >
-                          <v-chip v-if="user.statnew" label small>
-                            {{ user.statnew }}
-                          </v-chip>
-                        </v-row>
-                      </v-expansion-panel-content>
-                    </v-expansion-panel>
-                  </v-expansion-panels>
-                </v-radio-group>
-              </v-list>
-            </v-card-text>
-          </v-card>
-          <v-card class="pa-5 mt-1 w-100">
-            <div class="tel">Тел: {{ clickedItemTel }}</div>
-            <v-list dense>
-              <v-subheader>Статусы лида</v-subheader>
-              <v-list-item-group color="primary">
-                <v-list-item v-for="(item, i) in clickedItemStatuses" :key="i">
-                  <v-list-item-content :style="{ background: item.color }">
-                    <v-list-item-title
-                      v-text="item.name + ' ' + item.uname + ' ' + item.cdate"
-                    ></v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
+        </div>
+      </v-col>
+      <v-col cols="3" class="mt-4 wrp_users">
+        <div class="row">
+          <v-card rounded class="rounded-xl pa-5 w-100">
+            Укажите пользователя
+          <div class="scroll-y">
+            <v-list>
+              <v-radio-group
+                @change="changeLidsUser"
+                ref="radiogroup"
+                v-model="userid"
+                v-bind="users"
+                id="usersradiogroup"
+              >
+                <v-expansion-panels ref="akk" v-model="akkvalue">
+                  <v-expansion-panel v-for="(item, i) in group" :key="i">
+                    <v-expansion-panel-header>
+                      <img
+                        class="v-expansion-panel-header__icon mr-1"
+                        height="60"
+                        width="60"
+                        :src="'/storage/' + item.pic"
+                        v-if="item.pic"
+                      />
+
+                      {{ item.fio }}
+                      <div></div>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <v-row
+                        v-for="user in users.filter(function (i) {
+                          return i.group_id == item.group_id;
+                        })"
+                        :key="user.id"
+                      >
+                        <v-radio
+                          :label="user.fio"
+                          :value="user.id"
+                          :disabled="disableuser == user.id"
+                        >
+                        </v-radio>
+
+                        <v-btn
+                          class="ml-3"
+                          small
+                          :color="usercolor(user)"
+                          @click="
+                            disableuser = user.id;
+                            getLids(user.id);
+                          "
+                          :value="user.hmlids"
+                          :disabled="disableuser == user.id"
+                          >{{ user.hmlids }}</v-btn
+                        >
+                        <v-chip v-if="user.statnew" label small>
+                          {{ user.statnew }}
+                        </v-chip>
+                      </v-row>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-radio-group>
             </v-list>
+          </div>
+          </v-card>
+          <v-card class="border pa-5 mt-1 w-100">
+            <div class="tel">Тел: {{ clickedItemTel }}</div>
+
+
+              <div class="mt-4">
+                <div v-for="(item, i) in clickedItemStatuses" :key="i"  class="blk_statuses">
+                  <span class="status_wrp">
+                  <b
+                    :style="{
+                      background: item.color,
+                      outline: '#999 solid 1px',
+                    }"
+                    ></b
+                  >
+                  <span>{{item.name}}</span>
+                </span><span>{{item.uname}}</span> <span>{{ item.cdate }}</span>
+                </div>
+              </div>
+
           </v-card>
         </div>
       </v-col>
@@ -230,6 +319,7 @@ import _ from "lodash";
 export default {
   props: ["user"],
   data: () => ({
+    akkvalue: null,
     datetime: "",
     userid: null,
     users: [],
@@ -458,7 +548,7 @@ export default {
         .get(get)
         .then((res) => {
           self.users = res.data.map(
-            ({ name, id, role_id, fio, hmlids, group_id, order, statnew }) => ({
+            ({ name, id, role_id, fio, hmlids, group_id, order, statnew, pic }) => ({
               name,
               id,
               role_id,
@@ -467,6 +557,7 @@ export default {
               group_id,
               order,
               statnew,
+               pic
             })
           );
           // self.users.sort(function (a, b) {
@@ -613,8 +704,63 @@ export default {
 </script>
 
 <style scoped>
+.blk_statuses {
+  display: flex;
+  grid-gap: 10px;
+}
+.blk_statuses .status_wrp{
+  display:inline-flex;
+
+}
 .v-card__text.scroll-y {
   overflow-y: auto;
   height: 60vh;
+}
+.tel:hover {
+  cursor: url(/img/phone-forward.svg) 10 10, none;
+  text-decoration: none;
+}
+.tel {
+  display: block;
+  color: #000;
+}
+#maintable.v-data-table >>> tr {
+  outline: 2px solid transparent;
+}
+
+#maintable.v-data-table >>> tr:hover,
+#maintable.v-data-table >>> tr.v-data-table__selected {
+  /* border: 2px solid #000; */
+  cursor: pointer;
+}
+#maintable.v-data-table >>> tr.v-data-table__selected {
+  border-bottom: transparent !important;
+}
+#maintable.v-data-table >>> tr.v-data-table__expanded tr:hover {
+  border: none;
+}
+#maintable >>> .text-start {
+  padding: 0 !important;
+}
+.blackborder {
+  /* border: 2px solid #000; */
+  border-top: transparent !important;
+}
+.wrp__statuses {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+}
+.wrp__statuses label {
+  border: 3px solid transparent;
+}
+.wrp__statuses input:checked + label {
+  border: 3px solid #7620df;
+  border-radius: 30px;
+}
+.status_wrp span {
+  padding: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 85px;
 }
 </style>
