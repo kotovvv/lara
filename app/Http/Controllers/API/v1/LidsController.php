@@ -126,7 +126,7 @@ class LidsController extends Controller
 
       $a_lid['lid_id'] = $lid['id'];
       $a_lid['tel'] = $lid['tel'];
-      $a_lid['text'] = $lid['text'];
+      $a_lid['text'] = $lid['text'] ?$lid['text']:'';
       $a_lid['created_at'] = Now();
 
       DB::table('logs')->insert($a_lid);

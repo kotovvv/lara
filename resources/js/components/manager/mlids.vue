@@ -375,8 +375,11 @@
               <v-btn
                 color="darken-1"
                 block
-class="border"
-                @click="dial = false"
+                class="border"
+                @click="
+                  dial = false;
+                  selected = [];
+                "
               >
                 Відмінити
               </v-btn>
