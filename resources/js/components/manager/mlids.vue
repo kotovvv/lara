@@ -74,7 +74,7 @@
               <v-data-table
                 id="ontime"
                 v-model.lazy.trim="selected"
-                :headers="headers"
+                :headers="headerstime"
                 :single-select="true"
                 item-key="id"
                 show-select
@@ -102,20 +102,11 @@
                     <span>{{ item.status }}</span>
                   </div>
                 </template>
-
+                <template v-slot:item.actions="{ item }">
+                  <v-icon small @click="deleteTime(item)"> mdi-delete </v-icon>
+                </template>
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">
-                    <!-- <v-row>
-
-                      <v-col cols="4">
-                        <v-datetime-picker
-                          label="Дата/время"
-                          v-model="datetime"
-                          :datetime="datetime"
-                        >
-                        </v-datetime-picker>
-                      </v-col>
-                    </v-row> -->
                     <v-row>
                       <v-col cols="12">
                         <logtel :lid_id="lid_id" />
@@ -183,33 +174,9 @@
 
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">
-                    <!-- <v-row>
-                      <v-col cols="8">
-                        <v-textarea
-                          class="mx-2"
-                          label="Сообщение"
-                          rows="2"
-                          prepend-icon="mdi-comment"
-                          v-model="text"
-                          :value="text"
-                          @keyup.enter.native="changemes(item)"
-                        ></v-textarea>
-
-                      </v-col>
-                      <v-col cols="4">
-                        <v-datetime-picker
-                          ref="datetime"
-                          label="Дата/время"
-                          @input="setTime"
-                          v-model="datetime"
-                          :datetime="datetime"
-                        >
-                        </v-datetime-picker>
-                      </v-col>
-                    </v-row> -->
                     <v-row>
                       <v-col cols="12">
-                        <logtel :lid_id="lid_id" :key="componentKey" />
+                        <logtel :lid_id="lid_id" :key="item.id" />
                       </v-col>
                     </v-row>
                   </td>
@@ -219,36 +186,8 @@
           </v-col>
         </v-row>
       </v-col>
-      <!-- <v-col cols="2">
-        <v-card height="100%" class="pa-5">
-          <v-list>
-            <v-radio-group
-              @change="putSelectedLidsDB"
-              ref="radiogroup"
-              id="statusesradiogroup"
-              v-model="selectedStatus"
-              :disabled="selected.length == 0"
-            >
-              <v-radio
-                :label="status.name"
-                :value="status.id"
-                v-for="status in statuses"
-                :key="status.id"
-                @click="nextdep(status.id)"
-              >
-                <span
-                  slot="label"
-                  class="px-1"
-                  :style="{ background: status.color, width: '100%' }"
-                  >{{ status.name }}</span
-                >
-              </v-radio>
-            </v-radio-group>
-          </v-list>
-        </v-card>
-      </v-col> -->
     </v-row>
-    <v-row justify="center">
+    <!-- <v-row justify="center">
       <v-dialog v-model="depozit" persistent max-width="600px">
         <v-card>
           <v-card-title>
@@ -287,7 +226,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-    </v-row>
+    </v-row> -->
     <v-snackbar v-model="snackbar" :bottom="true" :rigth="true" timeout="-1">
       {{ message }}
 
@@ -337,7 +276,6 @@
         </v-card-title>
 
         <v-card-text>
-          <!-- @keyup.enter.native="changemes(item)" -->
           Сообщение
           <v-textarea
             class="px-2 border mb-4"
@@ -357,10 +295,10 @@
             <v-col>
               Дата/время
               <div class="border px-2">
+                <!-- @input="setTime" -->
                 <v-datetime-picker
                   ref="datetime"
-                  @input="setTime"
-                  v-model="datetime"
+                  :time-picker-props="timeProps"
                   :datetime="datetime"
                 >
                 </v-datetime-picker></div
@@ -415,6 +353,7 @@ export default {
   },
   props: ["user"],
   data: () => ({
+    timeProps: { format: "24hr" },
     dial: false,
     depozit: 0,
     depozit_val: "",
@@ -450,6 +389,18 @@ export default {
       { text: "Дата", value: "date" },
       { text: "Сообщение", value: "text" },
     ],
+    headerstime: [
+      { text: "Имя", value: "name" },
+      { text: "Email", value: "email" },
+      { text: "Телефон.", align: "start", value: "tel" },
+      { text: "Афилятор", value: "afilyator" },
+      { text: "Поставщик", value: "provider" },
+      { text: "Создан", value: "date_created" },
+      { text: "Статус", value: "status" },
+      { text: "Дата", value: "date" },
+      { text: "Сообщение", value: "text" },
+      { text: "", value: "actions", sortable: false },
+    ],
     parse_header: [],
     sortOrders: {},
     sortKey: "tel",
@@ -472,14 +423,14 @@ export default {
       } else {
         this.selectedStatus = newval[0].status_id;
         this.expanded = this.selected;
-        this.datetime =
-          newval[0].ontime != "0000-00-00 00:00:00" && newval[0].ontime != null
-            ? newval[0].ontime.substring(0, 16)
-            : "";
+        // this.datetime =
+        //   newval[0].ontime != "0000-00-00 00:00:00" && newval[0].ontime != null
+        //     ? newval[0].ontime.substring(0, 16)
+        //     : "";
       }
     },
     datetime: function (newval, oldval) {
-      if ((newval == null || newval != oldval) && this.tel != "") {
+      if ((newval == null || newval != oldval) && this.lid_id != "") {
         this.setTime();
       }
     },
@@ -491,7 +442,9 @@ export default {
         return (
           (!this.filterStatus || i.status_id == this.filterStatus) &&
           (!this.filterProviders || i.provider_id == this.filterProviders) &&
-          (!this.filtertel || reg.test(i.tel))
+          (!this.filtertel || reg.test(i.tel)) &&
+          (!this.todayItems ||
+            !this.todayItems.filter((e) => e.id == i.id).length)
         );
       });
     },
@@ -527,28 +480,37 @@ export default {
     forceRerender() {
       this.componentKey += 1;
     },
+    deleteTime(item) {
+      let self = this;
+      let send = {};
+      send.ontime = null;
+      send.id = item.id;
+      axios
+        .post("api/Lid/ontime", send)
+        .then(function (response) {
+          item.ontime = null;
+          self.todaylids();
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     setTime() {
       const self = this;
       let send = {};
-
-      send.ontime =
-        this.datetime == null
-          ? ""
-          : this.datetime.toString().length > 0 &&
-            this.datetime.toString().length > 20
-          ? new Date(
-              this.datetime.getTime() -
-                this.datetime.getTimezoneOffset() * 60000
-            ).toISOString()
-          : this.datetime;
-
-      // if (this.datetime == null) send.ontime = "";
+      if (
+        this.$refs.datetime == undefined ||
+        this.$refs.datetime.formattedDatetime == ""
+      )
+        return;
+      send.ontime = this.$refs.datetime.formattedDatetime;
       send.id = this.lid_id;
-      self.selected = [];
+
       axios
         .post("api/Lid/ontime", send)
         .then(function (response) {
           //console.log(response);
+          self.$refs.datetime.clearHandler();
           self.getLids(self.$props.user.id);
         })
         .catch(function (error) {
@@ -567,29 +529,7 @@ export default {
       // create the format you want
       return yyyy + "-" + MM + "-" + dd + " " + time;
     },
-    changemes(eli) {
-      const self = this;
-      let send = {};
-      let send_el = {};
-      send_el.tel = eli.tel;
-      send_el.lid_id = eli.id;
-      send_el.text = self.text;
-      send_el.user_id = eli.user_id;
-      send.lid_id = eli.id;
-      send.data = send_el;
 
-      axios
-        .post("api/log/add", send_el)
-        .then(function (response) {
-          // console.log(response);
-          self.text = null;
-          self.lids.find((f) => f.id == send_el.lid_id).text = send_el.text;
-          self.forceRerender();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
     putSelectedLidsDB() {
       const self = this;
       // if (self.selectedStatus == 10 && self.depozit == false) return;
@@ -599,7 +539,7 @@ export default {
       self.filtertel = 1;
       self.filtertel = costil;
 
-      let eli = self.lids.find((obj) => obj.id == self.selected[0].id);
+      let eli = self.lids.find((obj) => obj.id == self.lid_id);
 
       eli.status = self.statuses.find((s) => s.id == self.selectedStatus).name;
       eli.status_id = self.selectedStatus;
@@ -621,6 +561,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+      this.setTime();
       if (this.depozit_val > 0) {
         self.setDepozit();
       }
@@ -649,8 +590,10 @@ export default {
     clickrow(item, row) {
       if (!row.isSelected) {
         this.tel = item.tel;
-        this.$refs.datetime._data.date = null;
-
+        this.keytime += 1;
+        if (item.ontime != null) {
+          this.datetime = item.ontime.substring(0, 16);
+        }
         this.lid_id = item.id;
         this.text = "";
         this.depozit_val = "";
@@ -691,17 +634,28 @@ export default {
             e.date = e.updated_at.substring(0, 10);
             e.date_created = e.created_at.substring(0, 10);
             // e.mess = e.text;
-            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
+
             if (e.status_id) {
               e.status =
                 self.statuses.find((s) => s.id == e.status_id).name || "";
             }
           });
+
           self.todaylids();
           // setInterval(function () {
           //   self.getHm();
           // }, 180000);
         })
+        .then(
+          () =>
+            function (e) {
+              self.lids.map(function (e) {
+                e.provider = self.providers.find(
+                  (p) => p.id == e.provider_id
+                ).name;
+              });
+            }
+        )
         .catch((error) => console.log(error));
     },
     todaylids() {

@@ -126,7 +126,7 @@ class LidsController extends Controller
 
       $a_lid['lid_id'] = $lid['id'];
       $a_lid['tel'] = $lid['tel'];
-      $a_lid['text'] = $lid['text'] ?$lid['text']:'';
+      $a_lid['text'] = $lid['text'] ? $lid['text'] : '';
       $a_lid['created_at'] = Now();
 
       DB::table('logs')->insert($a_lid);
@@ -186,7 +186,7 @@ class LidsController extends Controller
 
   public function userLids($id)
   {
-    return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)->orderBy('lids.created_at', 'desc')->get();
+    return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)->orderBy('lids.created_at', 'desc')->groupBy('lids.id')->get();
   }
 
   public function statusLids($id)
