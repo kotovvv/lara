@@ -4,7 +4,7 @@
       <v-col cols="4">
         <h2>Месяц</h2>
         <div>
-          <ve-line :data="chartData" :settings='settings'></ve-line>
+          <ve-line :data="chartData" :settings="settings"></ve-line>
         </div>
       </v-col>
       <v-col cols="8">
@@ -89,9 +89,8 @@ import "v-charts/lib/style.css";
 export default {
   components: { VeLine },
   data: () => ({
-    settings:{
-'xAxisType': 'value',
-
+    settings: {
+      xAxisType: "value",
     },
     todayReport: {
       ftd: "",
@@ -109,12 +108,11 @@ export default {
     StatusesMonth: {},
     DepozitsMonth: {},
 
-chartData: {
-      columns: ['date',"balans"],
+    chartData: {
+      columns: ["date", "balans"],
 
-      rows: [ ]
+      rows: [],
     },
-
   }),
   mounted: function () {
     this.getBalansMonth();
@@ -136,10 +134,9 @@ chartData: {
             "balans"
           );
           self.monthReport.sum = _.sumBy(res.data, "balans");
-          self.BalansMonth.map((i,ix) => {
-            self.chartData.rows.push({'balans': i.balans,'date': i.date });
+          self.BalansMonth.map((i, ix) => {
+            self.chartData.rows.push({ balans: i.balans, date: i.date });
           });
-
         })
         .catch(function (error) {
           console.log(error);
