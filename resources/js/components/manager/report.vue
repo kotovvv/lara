@@ -4,7 +4,7 @@
       <v-col cols="4">
         <h2>Месяц</h2>
         <div>
-          <ve-line :data="chartData"></ve-line>
+          <ve-line :data="chartData" :settings='settings'></ve-line>
         </div>
       </v-col>
       <v-col cols="8">
@@ -83,12 +83,16 @@
 <script>
 import axios from "axios";
 import _ from "lodash";
-import VeLine from "v-charts/lib/line.common";
-
+// import VeLine from "v-charts/lib/line.common";
+import VeLine from "v-charts/lib/bar.common";
 import "v-charts/lib/style.css";
 export default {
   components: { VeLine },
   data: () => ({
+    settings:{
+'xAxisType': 'value',
+
+    },
     todayReport: {
       ftd: "",
       sum: "",
@@ -104,10 +108,13 @@ export default {
     BalansMonth: {},
     StatusesMonth: {},
     DepozitsMonth: {},
-    chartData: {
-      columns: ["date", "balans"],
-      rows: [],
+
+chartData: {
+      columns: ['date',"balans"],
+
+      rows: [ ]
     },
+
   }),
   mounted: function () {
     this.getBalansMonth();
@@ -129,10 +136,10 @@ export default {
             "balans"
           );
           self.monthReport.sum = _.sumBy(res.data, "balans");
-          self.BalansMonth.map((i) => {
-            self.chartData.rows.push({ date: i.date, balans: i.balans });
+          self.BalansMonth.map((i,ix) => {
+            self.chartData.rows.push({'balans': i.balans,'date': i.date });
           });
-          // if (self.chartData.length == 1) self.chartData.unshift(0);
+
         })
         .catch(function (error) {
           console.log(error);

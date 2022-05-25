@@ -103,7 +103,7 @@
                   </div>
                 </template>
                 <template v-slot:item.actions="{ item }">
-                  <v-icon small @click="deleteTime(item)"> mdi-delete </v-icon>
+                  <v-icon small @click.stop="deleteTime(item)"> mdi-delete </v-icon>
                 </template>
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">

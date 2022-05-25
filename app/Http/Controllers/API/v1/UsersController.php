@@ -341,7 +341,7 @@ class UsersController extends Controller
 
   public function getDepozitsMonth($id)
   {
-    $dateto = date('Y-m-d h:i:s');
+    $dateto = date('Y-m-d');
     $datefrom = date('Y-m-d h:i:s', strtotime("-30 days"));
     $getDeposits = Depozit::where('user_id', $id)->whereDate('created_at', '>=', $datefrom)->whereDate('created_at', '<=', $dateto)->get();
     return $getDeposits;
