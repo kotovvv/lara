@@ -12,6 +12,7 @@
           <v-row class="px-4">
             <v-col><p>С Дата</p></v-col>
             <v-col><p>По Дата</p></v-col>
+            <v-col><p>начальные/помнить</p></v-col>
           </v-row>
 
           <div class="status_wrp wrp_date px-3">
@@ -31,7 +32,6 @@
                       readonly
                       v-bind="attrs"
                       v-on="on"
-                      @input="getLidsOnDate"
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -59,7 +59,7 @@
                       readonly
                       v-bind="attrs"
                       v-on="on"
-                      @input="getLidsOnDate"
+                      @input="getLidsOnDate()"
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -72,9 +72,11 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
+
               <v-btn @click="cleardate" small text class="mt-6"
                 ><v-icon>close</v-icon></v-btn
               >
+              <v-checkbox v-model="savedates" class="mt-5"></v-checkbox>
             </v-row>
           </div>
         </v-col>
@@ -407,6 +409,7 @@ import logtel from "../manager/logtel";
 export default {
   props: ["user"],
   data: () => ({
+    savedates: true,
     akkvalue: null,
     loading: false,
     selectedUser: {},
@@ -469,20 +472,23 @@ export default {
     if (localStorage.filterStatus) {
       this.filterStatus = localStorage.filterStatus;
     }
+    if (localStorage.savedates) {
+      this.savedates = localStorage.savedates == "true" ? true : false;
+    }
     if (localStorage.tel) {
       this.filtertel = localStorage.tel;
     }
-    if (localStorage.datetimeFrom) {
-      // this.datetimeFrom = new Date(localStorage.datetimeFrom);
-      this.datetimeFrom = new Date(localStorage.datetimeFrom)
-        .toISOString()
-        .substr(0, 10);
-    }
-    if (localStorage.datetimeTo) {
-      // this.datetimeTo = new Date(localStorage.datetimeTo);
-      this.datetimeTo = new Date(localStorage.datetimeTo)
-        .toISOString()
-        .substr(0, 10);
+    if (this.savedates == true) {
+      if (localStorage.datetimeFrom) {
+        this.datetimeFrom = new Date(localStorage.datetimeFrom)
+          .toISOString()
+          .substring(0, 10);
+      }
+      if (localStorage.datetimeTo) {
+        this.datetimeTo = new Date(localStorage.datetimeTo)
+          .toISOString()
+          .substring(0, 10);
+      }
     }
     if (localStorage.filterProviders) {
       this.filterProviders = localStorage.filterProviders;
@@ -503,11 +509,19 @@ export default {
     filterStatus(newName) {
       localStorage.filterStatus = newName;
     },
+    savedates(newName) {
+      localStorage.savedates = newName;
+    },
+
     datetimeFrom(newName) {
-      localStorage.datetimeFrom = newName;
+      if (this.savedates == true) {
+        localStorage.datetimeFrom = newName;
+      }
     },
     datetimeTo(newName) {
-      localStorage.datetimeTo = newName;
+      if (this.savedates == true) {
+        localStorage.datetimeTo = newName;
+      }
     },
     filtertel(newName) {
       localStorage.tel = newName;
@@ -541,26 +555,24 @@ export default {
     cleardate() {
       this.datetimeFrom = new Date(
         new Date().setDate(new Date().getDate() - 14)
-      );
-      this.datetimeTo = new Date();
-      getLidsOnDate();
+      )
+        .toISOString()
+        .substring(0, 10);
+      this.datetimeTo = new Date().toISOString().substring(0, 10);
+      if (this.savedates != true) {
+        localStorage.removeItem("datetimeTo");
+        localStorage.removeItem("datetimeFrom");
+      }
+      this.getLidsOnDate();
     },
-    // setHeader() {
-    //   document.getElementsByTagName("header")[0].classList = "";
-    //   document.getElementsByTagName("header")[0].style = "";
-    //   document.getElementsByClassName("v-toolbar__content")[0].style.height =
-    //     "100vh";
-    //   document.getElementsByClassName("v-main")[0].style.padding = "";
-    //   window.scroll(1, 1);
-    //   window.scroll(364, 364);
-    // },
+
     clearFilter() {
       this.datetimeFrom = new Date(
         new Date().setDate(new Date().getDate() - 14)
       )
         .toISOString()
-        .substr(0, 10);
-      this.datetimeTo = new Date().toISOString().substr(0, 10);
+        .substring(0, 10);
+      this.datetimeTo = new Date().toISOString().substring(0, 10);
       this.filterStatus = 0;
       this.filterProviders = 0;
       this.filtertel = "";
@@ -803,15 +815,6 @@ export default {
               statnew,
             })
           );
-          // self.users.sort(function (a, b) {
-          //   if (a.order > b.order) {
-          //     return 1;
-          //   }
-          //   if (a.order < b.order) {
-          //     return -1;
-          //   }
-          //   return 0;
-          // });
           if (self.$props.user.role_id != 1) {
             self.users = self.users.filter(
               (f) => f.group_id == self.$props.user.group_id
@@ -887,8 +890,11 @@ export default {
       if (this.datetimeFrom == "")
         this.datetimeFrom = new Date(
           new Date().setDate(new Date().getDate() - 14)
-        );
-      if (this.datetimeTo == "") this.datetimeTo = new Date();
+        )
+          .toISOString()
+          .substring(0, 10);
+      if (this.datetimeTo == "")
+        this.datetimeTo = new Date().toISOString().substring(0, 10);
       data.datefrom = this.getLocalDateTime(this.datetimeFrom);
       data.dateto = this.getLocalDateTime(this.datetimeTo);
       data.user_id = this.disableuser;
