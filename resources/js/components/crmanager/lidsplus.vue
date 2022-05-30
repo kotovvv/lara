@@ -12,7 +12,6 @@
           <v-row class="px-4">
             <v-col><p>С Дата</p></v-col>
             <v-col><p>По Дата</p></v-col>
-            <v-col><p>начальные/помнить</p></v-col>
           </v-row>
 
           <div class="status_wrp wrp_date px-3">
@@ -211,6 +210,21 @@
               }"
             >
               <v-row>
+                <v-col>
+                  <v-row class="mb-5">
+                    <span class="ml-7 mt-5 mx-4 d-flex align-center"
+                      >Отбор
+                      <v-text-field
+                        class="mx-2 mt-0 pt-0 talign-center nn"
+                        @input="selectRow"
+                        :max="filteredItems.length"
+                        v-model.number.lazy="hmrow"
+                        hide-details="auto"
+                        color="#004D40"
+                      ></v-text-field>
+                    </span>
+                  </v-row>
+                </v-col>
                 <v-col cols="4" class="mt-1">
                   <v-text-field
                     v-model="search"
@@ -239,6 +253,7 @@
                     </v-checkbox>
                   </v-row>
                 </v-col>
+
                 <!-- <v-spacer></v-spacer> -->
                 <v-data-footer
                   :pagination="pagination"
@@ -464,6 +479,7 @@ export default {
     singleExpand: true,
     componentKey: 0,
     Statuses: [],
+    hmrow: "",
   }),
   mounted: function () {
     this.getUsers();
@@ -552,6 +568,9 @@ export default {
     },
   },
   methods: {
+    selectRow() {
+      this.selected = this.filteredItems.slice(0, this.hmrow);
+    },
     cleardate() {
       this.datetimeFrom = new Date(
         new Date().setDate(new Date().getDate() - 14)
@@ -1061,5 +1080,9 @@ export default {
 .wrp_date .v-text-field > .v-input__control > .v-input__slot {
   margin-top: 5px;
   margin-bottom: 0;
+}
+.nn input {
+  width: 3rem;
+  border-bottom: 1px solid gray;
 }
 </style>
