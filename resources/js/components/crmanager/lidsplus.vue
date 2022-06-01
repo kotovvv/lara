@@ -15,7 +15,7 @@
           </v-row>
 
           <div class="status_wrp wrp_date px-3">
-            <v-row>
+            <v-row align="center">
               <v-col>
                 <v-menu
                   v-model="dateFrom"
@@ -72,10 +72,10 @@
                 </v-menu>
               </v-col>
 
-              <v-btn @click="cleardate" small text class="mt-6"
+              <v-btn @click="cleardate" small text
                 ><v-icon>close</v-icon></v-btn
               >
-              <v-checkbox v-model="savedates" class="mt-5"></v-checkbox>
+              <v-checkbox v-model="savedates"></v-checkbox>
             </v-row>
           </div>
         </v-col>
@@ -210,9 +210,9 @@
               }"
             >
               <v-row>
-                <v-col>
+                <v-col cols="2">
                   <v-row class="mb-5">
-                    <span class="ml-7 mt-5 mx-4 d-flex align-center"
+                    <span class="ml-7 mt-5 mx-4 d-flex px-2 align-center border"
                       >Отбор
                       <v-text-field
                         class="mx-2 mt-0 pt-0 talign-center nn"
@@ -225,7 +225,7 @@
                     </span>
                   </v-row>
                 </v-col>
-                <v-col cols="4" class="mt-1">
+                <v-col cols="2" class="mt-1">
                   <v-text-field
                     v-model="search"
                     append-icon="mdi-magnify"
@@ -916,6 +916,11 @@ export default {
         this.datetimeTo = new Date().toISOString().substring(0, 10);
       data.datefrom = this.getLocalDateTime(this.datetimeFrom);
       data.dateto = this.getLocalDateTime(this.datetimeTo);
+      if (this.disableuser > 0 && this.savedates == false) {
+        this.cleardate();
+        data.datefrom = this.getLocalDateTime(this.datetimeFrom);
+        data.dateto = this.getLocalDateTime(this.datetimeTo);
+      }
       data.user_id = this.disableuser;
 
       axios
@@ -1078,11 +1083,14 @@ export default {
   max-height: 54vh;
 }
 .wrp_date .v-text-field > .v-input__control > .v-input__slot {
-  margin-top: 5px;
+  margin-top: 3px;
   margin-bottom: 0;
 }
 .nn input {
   width: 3rem;
   border-bottom: 1px solid gray;
+}
+.v-application--is-ltr .v-data-footer__select {
+  margin-top: -12px;
 }
 </style>
