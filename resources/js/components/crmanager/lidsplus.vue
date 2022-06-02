@@ -58,7 +58,6 @@
                       readonly
                       v-bind="attrs"
                       v-on="on"
-                      @input="getLidsOnDate()"
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -801,6 +800,7 @@ export default {
           self.getUsers();
           // self.getLids(cur_user_id);
           self.getLidsOnDate();
+          self.hmrow = ''
         })
         .catch(function (error) {
           console.log(error);
@@ -910,11 +910,6 @@ export default {
 
       let data = {};
 
-      if (this.disableuser > 0 && this.savedates == false) {
-        this.cleardate();
-        data.datefrom = this.getLocalDateTime(this.datetimeFrom);
-        data.dateto = this.getLocalDateTime(this.datetimeTo);
-      } else {
         if (this.datetimeFrom == "")
           this.datetimeFrom = new Date(
             new Date().setDate(new Date().getDate() - 14)
@@ -925,13 +920,12 @@ export default {
           this.datetimeTo = new Date().toISOString().substring(0, 10);
         data.datefrom = this.getLocalDateTime(this.datetimeFrom);
         data.dateto = this.getLocalDateTime(this.datetimeTo);
-        if (this.disableuser > 0 && this.savedates == false) {
-          this.cleardate();
-          data.datefrom = this.getLocalDateTime(this.datetimeFrom);
-          data.dateto = this.getLocalDateTime(this.datetimeTo);
-        }
-      }
 
+
+      if(this.savedates == false && this.disableuser > 0){
+        data.datefrom = ''
+        data.dateto= ''
+      }
       data.user_id = this.disableuser;
 
       axios
