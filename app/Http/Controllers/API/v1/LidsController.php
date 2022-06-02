@@ -236,12 +236,12 @@ class LidsController extends Controller
 
 
     $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '';
-    $sql = "SELECT l.*,d.depozit FROM lids l LEFT JOIN depozits d ON (l.id = d.lid_id) WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
+    $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l  WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
     return DB::select(DB::raw($sql));
 
 
     // if (count($date) == 2) {
-    $sql = "SELECT l.*,d.depozit FROM lids l LEFT JOIN depozits d ON (l.id = d.lid_id) WHERE l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
+    $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l WHERE l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "' ";
     return DB::select(DB::raw($sql));
     // } else {
     //   return Lid::whereDate('created_at', $date[0])->get();

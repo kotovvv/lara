@@ -582,7 +582,9 @@ export default {
         localStorage.removeItem("datetimeTo");
         localStorage.removeItem("datetimeFrom");
       }
-      this.getLidsOnDate();
+      if (this.disableuser == 0) {
+        this.getLidsOnDate();
+      }
     },
 
     clearFilter() {
@@ -905,22 +907,31 @@ export default {
     getLidsOnDate() {
       let self = this;
       this.loading = true;
+
       let data = {};
-      if (this.datetimeFrom == "")
-        this.datetimeFrom = new Date(
-          new Date().setDate(new Date().getDate() - 14)
-        )
-          .toISOString()
-          .substring(0, 10);
-      if (this.datetimeTo == "")
-        this.datetimeTo = new Date().toISOString().substring(0, 10);
-      data.datefrom = this.getLocalDateTime(this.datetimeFrom);
-      data.dateto = this.getLocalDateTime(this.datetimeTo);
+
       if (this.disableuser > 0 && this.savedates == false) {
         this.cleardate();
         data.datefrom = this.getLocalDateTime(this.datetimeFrom);
         data.dateto = this.getLocalDateTime(this.datetimeTo);
+      } else {
+        if (this.datetimeFrom == "")
+          this.datetimeFrom = new Date(
+            new Date().setDate(new Date().getDate() - 14)
+          )
+            .toISOString()
+            .substring(0, 10);
+        if (this.datetimeTo == "")
+          this.datetimeTo = new Date().toISOString().substring(0, 10);
+        data.datefrom = this.getLocalDateTime(this.datetimeFrom);
+        data.dateto = this.getLocalDateTime(this.datetimeTo);
+        if (this.disableuser > 0 && this.savedates == false) {
+          this.cleardate();
+          data.datefrom = this.getLocalDateTime(this.datetimeFrom);
+          data.dateto = this.getLocalDateTime(this.datetimeTo);
+        }
       }
+
       data.user_id = this.disableuser;
 
       axios
