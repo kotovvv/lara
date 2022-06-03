@@ -10155,13 +10155,6 @@ main .theme--light.v-data-table .v-data-footer,
   margin-top: 20px;
 }
 
-main .v-data-footer__pagination,
-.v-data-footer__icons-before,
-.v-data-footer__icons-after,
-.v-text-field__details {
-  display: none;
-}
-
 .theme--light.v-data-table {
   background-color: transparent;
 }
@@ -10212,8 +10205,8 @@ main .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr > 
   box-shadow: none;
 }
 
-.wrp_group + .v-data-footer {
-  max-width: 111px;
+#tablids .v-data-footer .v-data-footer__select {
+  margin-left: 1rem;
 }
 
 .v-data-table__wrapper {

@@ -254,6 +254,7 @@
                 </v-col>
 
                 <!-- <v-spacer></v-spacer> -->
+                <v-col cols="3" class="mt-3">
                 <v-data-footer
                   :pagination="pagination"
                   :options="options"
@@ -261,6 +262,7 @@
                   :items-per-page-options="[50, 10, 100, 250, 500, -1]"
                   :items-per-page-text="''"
                 />
+                </v-col>
               </v-row>
             </template>
             <template v-slot:expanded-item="{ headers, item }">
@@ -800,7 +802,7 @@ export default {
           self.getUsers();
           // self.getLids(cur_user_id);
           self.getLidsOnDate();
-          self.hmrow = ''
+
         })
         .catch(function (error) {
           console.log(error);
@@ -961,7 +963,10 @@ export default {
             self.filterProviders = parseInt(localStorage.filterProviders);
           }
           // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
-
+if(self.hmrow > 0){
+  self.hmrow = self.hmrow
+  self.selectRow()
+}
           // self.getDuplicates();
         })
         .catch((error) => console.log(error));
