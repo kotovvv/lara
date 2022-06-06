@@ -78,3 +78,5 @@ Route::get('get_zaliv_all', [LidsController::class,'get_zaliv_all'])->name('get_
 Route::get('get_zaliv_allTime', [LidsController::class,'get_zaliv_allTime'])->name('get_zaliv_allTime');
 Route::post('setDepozit', [LidsController::class,'setDepozit'])->name('setDepozit');
 Route::get('getHmLidsUser/{id}', [LidsController::class,'getHmLidsUser'])->name('getHmLidsUser');
+Route::post('InfoDeposit', [LidsController::class,'InfoDeposit'])->name('InfoDeposit');
+Route::post('AllDeposits', [LidsController::class,'AllDeposits'])->name('AllDeposits');

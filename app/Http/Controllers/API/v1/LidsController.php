@@ -194,6 +194,42 @@ class LidsController extends Controller
     return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.status_id', $id)->orderBy('lids.created_at', 'desc')->get();
   }
 
+ public function InfoDeposit(Request $request)
+  {
+    $getparams = $request->all();
+    $f_key =   DB::table('apikeys')->where('api_key', $getparams['api_key'])->first();
+    if (!$f_key) return response(['status' => 'Key incorect'], 403);
+$sql ='SELECT  "Success" AS status,"1" AS status_code, `lid_id` AS order_lead_id, `created_at` AS ftd_date, "FTD=1" AS description  FROM `depozits` WHERE `lid_id` = ' .(int) $getparams['id'];
+return  DB::select(DB::raw($sql));
+
+  }
+
+
+  public function AllDeposits(Request $request)
+  {
+    $getparams = $request->all();
+    $date = [$getparams['from_date'], $getparams['to_date']];
+    // if ($getlid['api_key'] != env('API_KEY')) return response(['status'=>'Key incorect'], 403);
+    $f_key =   DB::table('apikeys')->where('api_key', $getparams['api_key'])->first();
+    if (!$f_key) return response(['status' => 'Key incorect'], 403);
+    $sql = "SELECT
+    d.`lid_id` AS `order_lead_id`
+    , d.`created_at` AS `ftd_date`
+    ,'FTD=1' AS description
+FROM
+    `depozits` d
+    INNER JOIN `lids` l
+        ON (d.`lid_id` = l.`id`)
+WHERE (l.`provider_id` = '".$f_key."'
+    AND d.`created_at` BETWEEN '".$date[0]."' AND  '".$date[1]."')";
+    $leads =  DB::select(DB::raw($sql));
+    $response = [];
+    $response["status"] ="Success";
+    $response["status_code"] ="1";
+    $response["leads"] = $leads;
+    return response($response) ;
+  }
+
   public function getuserLids(Request $request, $id)
   {
     $getlid = $request->all();
