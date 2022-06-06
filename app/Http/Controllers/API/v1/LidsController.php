@@ -194,23 +194,26 @@ class LidsController extends Controller
     return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.status_id', $id)->orderBy('lids.created_at', 'desc')->get();
   }
 
- public function InfoDeposit(Request $request)
+  public function InfoDeposit(Request $request)
   {
     $getparams = $request->all();
     $f_key =   DB::table('apikeys')->where('api_key', $getparams['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-$sql ='SELECT  "Success" AS status,"1" AS status_code, `lid_id` AS order_lead_id, `created_at` AS ftd_date, "FTD=1" AS description  FROM `depozits` WHERE `lid_id` = ' .(int) $getparams['id'];
-return  DB::select(DB::raw($sql));
-
+    // $sql = 'SELECT  "Success" AS status,"1" AS status_code, `lid_id` AS order_lead_id, `created_at` AS ftd_date, "FTD=1" AS description  FROM `depozits` WHERE `lid_id` = ' . (int) $getparams['id'];
+    return Depozit::select(DB::raw('"Success" as status, 1 as status_code, `lid_id` as  order_lead_id, `created_at` as ftd_date, "FTD=1" as description'))->where('lid_id', (int) $getparams['id'])->first();
+    return  response(DB::select(DB::raw($sql)));
   }
 
 
   public function AllDeposits(Request $request)
   {
     $getparams = $request->all();
+
+
     $date = [$getparams['from_date'], $getparams['to_date']];
     // if ($getlid['api_key'] != env('API_KEY')) return response(['status'=>'Key incorect'], 403);
-    $f_key =   DB::table('apikeys')->where('api_key', $getparams['api_key'])->first();
+    $f_key =  DB::table('apikeys')->where('api_key', $getparams['api_key'])->first();
+
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     $sql = "SELECT
     d.`lid_id` AS `order_lead_id`
@@ -220,14 +223,15 @@ FROM
     `depozits` d
     INNER JOIN `lids` l
         ON (d.`lid_id` = l.`id`)
-WHERE (l.`provider_id` = '".$f_key."'
-    AND d.`created_at` BETWEEN '".$date[0]."' AND  '".$date[1]."')";
+WHERE (l.`provider_id` = '" . $f_key->id . "'
+    AND d.`created_at` BETWEEN '" . $date[0] . "' AND  '" . $date[1] . "')";
+
     $leads =  DB::select(DB::raw($sql));
     $response = [];
-    $response["status"] ="Success";
-    $response["status_code"] ="1";
+    $response["status"] = "Success";
+    $response["status_code"] = "1";
     $response["leads"] = $leads;
-    return response($response) ;
+    return response($response);
   }
 
   public function getuserLids(Request $request, $id)
@@ -271,7 +275,7 @@ WHERE (l.`provider_id` = '".$f_key."'
     $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ';
     $date = [$req['datefrom'], $req['dateto']];
     if ($date[0] == '' || $date[1] == '') {
-      $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id ) depozit FROM lids l  WHERE l.user_id = '" . (int) $req['user_id'] ."'";
+      $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id ) depozit FROM lids l  WHERE l.user_id = '" . (int) $req['user_id'] . "'";
     } else {
       $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l  WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
     }
