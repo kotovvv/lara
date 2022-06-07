@@ -40,7 +40,7 @@ class LidsController extends Controller
     $n_lid->name = $insertItem['umcfields']['name'];
     $n_lid->email = $insertItem['umcfields']['email'];
     $n_lid->afilyator = $insertItem['umcfields']['affiliate_user'];
-    $n_lid->provider_id = $insertItem['afilat_id'];
+    $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $insertItem['user_id'];
     $n_lid->created_at = Now();
     $n_lid->updated_at = Now();
@@ -253,7 +253,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $a_lid = [
       'tel' => $getlidid['umcfields']['phone'],
       'afilyator' => $getlidid['umcfields']['affiliate_user'],
-      'provider_id' => $getlidid['provider_id'],
+      'provider_id' => $f_key,
     ];
     return Lid::select('id')->where($a_lid)->get();
   }
@@ -275,7 +275,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ';
     $date = [$req['datefrom'], $req['dateto']];
 
-      $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l  WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
+    $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l  WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
 
 
     return DB::select(DB::raw($sql));
@@ -376,7 +376,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
 
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
-    $n_lid->provider_id = $req['afilat_id'];
+    $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $req['user_id'];
     $n_lid->created_at = Now();
 
@@ -425,7 +425,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
 
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
-    $n_lid->provider_id = $req['afilat_id'];
+    $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $req['user_id'];
     $n_lid->created_at = Now();
 
@@ -470,7 +470,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
     $n_lid->email = $req['umcfields']['email'];
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
-    $n_lid->provider_id = $req['afilat_id'];
+    $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $req['user_id'];
     $n_lid->created_at = Now();
 
