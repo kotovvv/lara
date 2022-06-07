@@ -274,21 +274,15 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ';
     $date = [$req['datefrom'], $req['dateto']];
-    if ($date[0] == '' || $date[1] == '') {
-      $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id ) depozit FROM lids l  WHERE l.user_id = '" . (int) $req['user_id'] . "'";
-    } else {
+
       $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l  WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
-    }
+
 
     return DB::select(DB::raw($sql));
 
+    // $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l WHERE l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "' ";
+    // return DB::select(DB::raw($sql));
 
-    // if (count($date) == 2) {
-    $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l WHERE l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "' ";
-    return DB::select(DB::raw($sql));
-    // } else {
-    //   return Lid::whereDate('created_at', $date[0])->get();
-    // }
   }
 
   public function getlidonid(Request $request, $id)

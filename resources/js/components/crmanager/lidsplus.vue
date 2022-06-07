@@ -24,6 +24,7 @@
                   transition="scale-transition"
                   offset-y
                   min-width="auto"
+                  :disabled="savedates == false"
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field
@@ -51,6 +52,7 @@
                   transition="scale-transition"
                   offset-y
                   min-width="auto"
+                  :disabled="savedates == false"
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field
@@ -255,13 +257,13 @@
 
                 <!-- <v-spacer></v-spacer> -->
                 <v-col cols="3" class="mt-3">
-                <v-data-footer
-                  :pagination="pagination"
-                  :options="options"
-                  @update:options="updateOptions"
-                  :items-per-page-options="[50, 10, 100, 250, 500, -1]"
-                  :items-per-page-text="''"
-                />
+                  <v-data-footer
+                    :pagination="pagination"
+                    :options="options"
+                    @update:options="updateOptions"
+                    :items-per-page-options="[50, 10, 100, 250, 500, -1]"
+                    :items-per-page-text="''"
+                  />
                 </v-col>
               </v-row>
             </template>
@@ -348,7 +350,7 @@
             rounded
             @click:append="
               disableuser = value || 0;
-              getLidsOnDate();
+              getLidsOnUserOrDate();
               selectedUser = {};
             "
           ></v-autocomplete>
@@ -395,7 +397,7 @@
                           :color="usercolor(user)"
                           @click="
                             disableuser = user.id;
-                            getLidsOnDate();
+                            getLidsOnUserOrDate();
                           "
                           :value="user.hmlids"
                           :disabled="disableuser == user.id"
@@ -506,7 +508,9 @@ export default {
           .toISOString()
           .substring(0, 10);
       }
+      this.getLidsOnDate();
     }
+
     if (localStorage.filterProviders) {
       this.filterProviders = localStorage.filterProviders;
     }
@@ -520,7 +524,7 @@ export default {
         return;
       }
       this.disableuser = user.id;
-      this.getLidsOnDate();
+      // this.getLidsOnDate();
       this.akkvalue = _.findIndex(this.group, { group_id: user.group_id });
     },
     filterStatus(newName) {
@@ -528,6 +532,7 @@ export default {
     },
     savedates(newName) {
       localStorage.savedates = newName;
+      this.getLidsOnUserOrDate();
     },
 
     datetimeFrom(newName) {
@@ -569,6 +574,15 @@ export default {
     },
   },
   methods: {
+    getLidsOnUserOrDate() {
+      if (this.savedates == false) {
+        let user_id =
+          this.disableuser > 0 ? this.disableuser : this.$props.user.id;
+        this.getLids(user_id);
+      } else {
+        this.getLidsOnDate();
+      }
+    },
     selectRow() {
       this.selected = this.filteredItems.slice(0, this.hmrow);
     },
@@ -584,7 +598,7 @@ export default {
         localStorage.removeItem("datetimeFrom");
       }
       if (this.disableuser == 0) {
-        this.getLidsOnDate();
+        this.getLidsOnUserOrDate();
       }
     },
 
@@ -599,7 +613,7 @@ export default {
       this.filterProviders = 0;
       this.filtertel = "";
       this.disableuser = 0;
-      this.getLidsOnDate();
+      this.getLidsOnUserOrDate();
     },
     getGroup() {
       return _.filter(this.users, function (o) {
@@ -766,7 +780,6 @@ export default {
     },
     changeLidsUser() {
       const self = this;
-      let cur_user_id = this.disableuser;
       let send = {};
       send.user_id = this.userid;
       send.data = [];
@@ -800,9 +813,7 @@ export default {
           self.selected = [];
           // self.filterStatus = 0;
           self.getUsers();
-          // self.getLids(cur_user_id);
-          self.getLidsOnDate();
-
+          self.getLidsOnUserOrDate();
         })
         .catch(function (error) {
           console.log(error);
@@ -912,21 +923,20 @@ export default {
 
       let data = {};
 
-        if (this.datetimeFrom == "")
-          this.datetimeFrom = new Date(
-            new Date().setDate(new Date().getDate() - 14)
-          )
-            .toISOString()
-            .substring(0, 10);
-        if (this.datetimeTo == "")
-          this.datetimeTo = new Date().toISOString().substring(0, 10);
-        data.datefrom = this.getLocalDateTime(this.datetimeFrom);
-        data.dateto = this.getLocalDateTime(this.datetimeTo);
+      if (this.datetimeFrom == "")
+        this.datetimeFrom = new Date(
+          new Date().setDate(new Date().getDate() - 14)
+        )
+          .toISOString()
+          .substring(0, 10);
+      if (this.datetimeTo == "")
+        this.datetimeTo = new Date().toISOString().substring(0, 10);
+      data.datefrom = this.getLocalDateTime(this.datetimeFrom);
+      data.dateto = this.getLocalDateTime(this.datetimeTo);
 
-
-      if(this.savedates == false && this.disableuser > 0){
-        data.datefrom = ''
-        data.dateto= ''
+      if (this.savedates == false && this.disableuser > 0) {
+        data.datefrom = "";
+        data.dateto = "";
       }
       data.user_id = this.disableuser;
 
@@ -963,10 +973,10 @@ export default {
             self.filterProviders = parseInt(localStorage.filterProviders);
           }
           // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
-if(self.hmrow > 0){
-  self.hmrow = self.hmrow
-  self.selectRow()
-}
+          if (self.hmrow > 0) {
+            self.hmrow = self.hmrow;
+            self.selectRow();
+          }
           // self.getDuplicates();
         })
         .catch((error) => console.log(error));
@@ -1072,7 +1082,7 @@ if(self.hmrow > 0){
         .then((res) => {
           self.providers = res.data.map(({ name, id }) => ({ name, id }));
           self.providers.unshift({ name: "выбор", id: 0 });
-          self.getLidsOnDate();
+          // self.getLidsOnDate();
         })
         .catch((error) => console.log(error));
     },
