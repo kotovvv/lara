@@ -24,7 +24,6 @@
                   transition="scale-transition"
                   offset-y
                   min-width="auto"
-                  :disabled="savedates == false"
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field
@@ -52,7 +51,6 @@
                   transition="scale-transition"
                   offset-y
                   min-width="auto"
-                  :disabled="savedates == false"
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field
@@ -437,10 +435,10 @@ export default {
     dateTo: false,
 
     dateProps: { locale: "ru-RU", format: "24hr" },
-    datetimeFrom: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    datetimeFrom: new Date(new Date().setDate(new Date().getDate() - 14))
       .toISOString()
-      .substr(0, 10),
-    datetimeTo: "",
+      .substring(0, 10),
+    datetimeTo: new Date().toISOString().substring(0, 10),
     userid: null,
     users: [],
     disableuser: 0,
@@ -934,10 +932,6 @@ export default {
       data.datefrom = this.getLocalDateTime(this.datetimeFrom);
       data.dateto = this.getLocalDateTime(this.datetimeTo);
 
-      if (this.savedates == false && this.disableuser > 0) {
-        data.datefrom = "";
-        data.dateto = "";
-      }
       data.user_id = this.disableuser;
 
       axios
@@ -1101,6 +1095,13 @@ export default {
 #tablids .v-data-table__wrapper {
   overflow: auto;
   max-height: 54vh;
+}
+#tablids .v-data-footer .v-data-footer__select {
+  margin-left: 0;
+  margin-right: 0;
+}
+#tablids .v-application--is-ltr .v-data-footer__pagination {
+  margin: 0;
 }
 .wrp_date .v-text-field > .v-input__control > .v-input__slot {
   margin-top: 3px;

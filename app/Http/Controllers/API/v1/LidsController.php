@@ -377,7 +377,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
-    $n_lid->user_id = $req['user_id'];
+    $n_lid->user_id = (int) $req['user_id'];
     $n_lid->created_at = Now();
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
