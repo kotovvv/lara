@@ -273,7 +273,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $req = $request->all();
 
     $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ';
-    $date = [$req['datefrom'], $req['dateto']];
+    $date = [date('Y-m-d', strtotime($req['datefrom'])) . ' ' . date("H:i:s", mktime(0, 0, 0)), date('Y-m-d', strtotime($req['dateto'])) . ' ' . date("H:i:s", mktime(23, 59, 59))];
 
     $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l  WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
 

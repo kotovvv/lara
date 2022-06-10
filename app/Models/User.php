@@ -21,7 +21,8 @@ class User extends Authenticatable
         'role_id',
         'fio',
         'active',
-        'order'
+        'order',
+        'pic'
     ];
 
     /**
@@ -45,19 +46,19 @@ class User extends Authenticatable
 
     public function roleName()
     {
-      return $this->role->name;
+        return $this->role->name;
     }
-    public function role_() {
+    public function role_()
+    {
         return $this->belongsTo('App\Models\Role');
         // return $this->hasOne('App\Models\Role');
     }
     public function role()
-{
-    return $this->belongsTo('App\Models\Role');
-}
-public function getRoleName($user)
-{
-    return $user->role->where('id','=',$user->id)->first()->name;
-}
-
+    {
+        return $this->belongsTo('App\Models\Role');
+    }
+    public function getRoleName($user)
+    {
+        return $user->role->where('id', '=', $user->id)->first()->name;
+    }
 }
