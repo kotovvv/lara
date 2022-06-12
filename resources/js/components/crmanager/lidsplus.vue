@@ -243,11 +243,12 @@
                       :value="groupa.id"
                     >
                       <template v-slot:label>
-                        <img
+                        <div class="img">{{ groupa.fio.slice(0, 3) }}</div>
+                        <!-- <img
                           :src="'/storage/' + groupa.pic"
                           :alt="groupa.fio"
                           v-if="groupa.pic"
-                        />
+                        /> -->
                       </template>
                     </v-checkbox>
                   </v-row>
@@ -364,13 +365,20 @@
                 <v-expansion-panels ref="akk" v-model="akkvalue">
                   <v-expansion-panel v-for="(item, i) in group" :key="i">
                     <v-expansion-panel-header>
-                      <img
+                      <div
+                        height="60"
+                        width="60"
+                        class="img v-expansion-panel-header__icon mr-1"
+                      >
+                        {{ item.fio.slice(0, 3) }}
+                      </div>
+                      <!-- <img
                         class="v-expansion-panel-header__icon mr-1"
                         height="60"
                         width="60"
                         :src="'/storage/' + item.pic"
                         v-if="item.pic"
-                      />
+                      /> -->
 
                       {{ item.fio }}
                       <div></div>
@@ -1113,5 +1121,29 @@ export default {
 }
 .v-application--is-ltr .v-data-footer__select {
   margin-top: -12px;
+}
+#usersradiogroup .img,
+.wrp_group .img {
+  height: 60px;
+  width: 60px;
+  background: #7620df;
+  border-radius: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-weight: bold;
+}
+.wrp_group .row {
+  gap: 0.7rem;
+}
+.wrp_group .img {
+  height: 54px;
+  width: 34px;
+}
+.v-input--is-label-active .img {
+  border: 1px solid #7620df;
+  background: #fff;
+  color: #7620df;
 }
 </style>

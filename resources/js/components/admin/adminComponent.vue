@@ -5,9 +5,9 @@
       fixed
       parmament
       dark
-      :mini-variant=true
+      :mini-variant="true"
       width="64px"
-      :app=true
+      :app="true"
     >
       <!-- menu -->
       <v-list>
@@ -87,7 +87,7 @@ export default {
       {
         text: "Поставщики",
         name: "providers",
-        icon: "mdi-contact-phone-outline",
+        icon: "mdi-library",
       },
       // { text: "Рабочие места", name: "workPlaces", icon: "mdi-sitemap" },
       { text: "Распределение", name: "lids", icon: "mdi-account-arrow-left" },

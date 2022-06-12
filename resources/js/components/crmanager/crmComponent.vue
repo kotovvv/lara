@@ -5,9 +5,9 @@
       fixed
       parmament
       dark
-      mini-variant="true"
+      :mini-variant="true"
       width="64px"
-      app="true"
+      :app="true"
     >
       <!-- menu -->
       <v-list>
@@ -42,7 +42,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-main class="grey lighten-2">
+    <v-main class="lighten-2">
       <v-container fluid>
         <!-- <v-row> -->
         <!-- table -->

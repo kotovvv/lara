@@ -46,7 +46,7 @@
                           label="ФИО"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="6">
+                      <!-- <v-col cols="6">
                         <img
                           :src="'/storage/' + editedItem.pic"
                           height="50"
@@ -60,7 +60,7 @@
                           label="Картинка"
                           v-model="editedItem.pic"
                         ></v-file-input>
-                      </v-col>
+                      </v-col> -->
                       <v-col cols="6">
                         <v-text-field
                           v-model="editedItem.name"
