@@ -113,6 +113,9 @@ export default {
   mounted: function () {
     if (localStorage.adminMenu) {
       this.adminMenu = localStorage.adminMenu;
+      this.selectedItem = this.items
+        .map((i) => i.name)
+        .indexOf(localStorage.adminMenu);
     }
   },
   watch: {
