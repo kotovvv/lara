@@ -71,18 +71,20 @@
         <v-row>
           <v-col>
             <v-card>
+              <!-- 
+                -->
               <v-data-table
                 id="ontime"
                 v-model.lazy.trim="selected"
                 :headers="headerstime"
                 :single-select="true"
                 item-key="id"
+                :expanded="expanded"
+                @click:row="clickrow"
                 show-select
                 :items="todayItems"
                 ref="todaytable"
                 :items-per-page="100"
-                :expanded="expanded"
-                @click:row="clickrow"
                 hide-default-header
                 hide-default-footer
               >
@@ -93,7 +95,13 @@
                 </template>
 
                 <template v-slot:item.status="{ item }">
-                  <div class="status_wrp" @click.stop="openDialog(item)">
+                  <div
+                    class="status_wrp"
+                    @click.stop="
+                      selected = [];
+                      openDialog(item);
+                    "
+                  >
                     <b
                       :style="{
                         background: stylecolor(item.status_id),
@@ -120,6 +128,7 @@
               </v-data-table>
             </v-card>
             <v-card>
+              <!--  -->
               <v-data-table
                 id="maintable"
                 v-model.lazy.trim="selected"
@@ -131,12 +140,12 @@
                 :items="filteredItems"
                 ref="datatable"
                 :expanded="expanded"
+                @click:row="clickrow"
                 show-expand
                 :footer-props="{
                   'items-per-page-options': [10, 50, 100, 250, 500, -1],
                   'items-per-page-text': '',
                 }"
-                @click:row="clickrow"
               >
                 <template
                   v-slot:top="{ pagination, options, updateOptions }"
@@ -161,7 +170,13 @@
                 </template>
 
                 <template v-slot:item.status="{ item }">
-                  <div class="status_wrp mx-1" @click="openDialog(item)">
+                  <div
+                    class="status_wrp mx-1"
+                    @click="
+                      selected = [];
+                      openDialog(item);
+                    "
+                  >
                     <b
                       :style="{
                         background: stylecolor(item.status_id),
@@ -317,6 +332,7 @@
                 @click="
                   dial = false;
                   selected = [];
+                  closeDialog();
                 "
               >
                 Відмінити
@@ -331,6 +347,8 @@
                 @click="
                   putSelectedLidsDB();
                   dial = false;
+                  closeDialog();
+                  selected = [];
                 "
               >
                 Відправити
@@ -454,10 +472,17 @@ export default {
     openDialog(i) {
       let self = this;
       if (self.selected.length == 0) {
+        self.selected = [i];
         self.dial = true;
-        self.$refs.datetime.date = i.ontime.substring(0, 10);
-        self.$refs.datetime.time = i.ontime.substring(11, 16);
+        self.$refs.datetime.date =
+          i.ontime != null ? i.ontime.substring(0, 10) : "";
+        self.$refs.datetime.time =
+          i.ontime != null ? i.ontime.substring(11, 16) : "";
       }
+    },
+    closeDialog() {
+      this.$refs.datetime.date = "";
+      this.$refs.datetime.time = "";
     },
     getHm() {
       let self = this;
@@ -724,6 +749,8 @@ export default {
 #maintable.v-data-table >>> tr:hover,
 #maintable.v-data-table >>> tr.v-data-table__selected {
   /* border: 2px solid #000; */
+}
+td .status_wrp {
   cursor: pointer;
 }
 #maintable.v-data-table >>> tr.v-data-table__selected {
