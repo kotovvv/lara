@@ -80,6 +80,7 @@
                 show-select
                 :items="todayItems"
                 ref="todaytable"
+                :items-per-page="100"
                 :expanded="expanded"
                 @click:row="clickrow"
                 hide-default-header
@@ -92,7 +93,7 @@
                 </template>
 
                 <template v-slot:item.status="{ item }">
-                  <div class="status_wrp" @click.stop="dial = true">
+                  <div class="status_wrp" @click.stop="openDialog(item)">
                     <b
                       :style="{
                         background: stylecolor(item.status_id),
@@ -103,7 +104,9 @@
                   </div>
                 </template>
                 <template v-slot:item.actions="{ item }">
-                  <v-icon small @click.stop="deleteTime(item)"> mdi-delete </v-icon>
+                  <v-icon small @click.stop="deleteTime(item)">
+                    mdi-delete
+                  </v-icon>
                 </template>
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">
@@ -158,10 +161,7 @@
                 </template>
 
                 <template v-slot:item.status="{ item }">
-                  <div
-                    class="status_wrp mx-1"
-                    @click="selected.length == 0 ? (dial = true) : ''"
-                  >
+                  <div class="status_wrp mx-1" @click="openDialog(item)">
                     <b
                       :style="{
                         background: stylecolor(item.status_id),
@@ -420,6 +420,7 @@ export default {
         this.selectedStatus = null;
         this.expanded = [];
         this.tel = "";
+        // this.datetime = "";
       } else {
         this.selectedStatus = newval[0].status_id;
         this.expanded = this.selected;
@@ -450,6 +451,14 @@ export default {
     },
   },
   methods: {
+    openDialog(i) {
+      let self = this;
+      if (self.selected.length == 0) {
+        self.dial = true;
+        self.$refs.datetime.date = i.ontime.substring(0, 10);
+        self.$refs.datetime.time = i.ontime.substring(11, 16);
+      }
+    },
     getHm() {
       let self = this;
       axios
@@ -668,6 +677,16 @@ export default {
       });
       self.todayItems.map(function (t) {
         t.date = new Date(t.ontime).toLocaleTimeString().substring(0, 5);
+      });
+      self.todayItems.sort(function (a, b) {
+        if (a.date > b.date) {
+          return 1;
+        }
+        if (a.date < b.date) {
+          return -1;
+        }
+        // a должно быть равным b
+        return 0;
       });
     },
     stylecolor(status_id) {

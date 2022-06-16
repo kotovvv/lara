@@ -126,7 +126,8 @@ class LidsController extends Controller
 
       $a_lid['lid_id'] = $lid['id'];
       $a_lid['tel'] = $lid['tel'];
-      $a_lid['text'] = $lid['text'] ? $lid['text'] : '';
+
+      $a_lid['text'] = isset($lid['text']) ? $lid['text'] : '';
       $a_lid['created_at'] = Now();
 
       DB::table('logs')->insert($a_lid);
@@ -303,16 +304,18 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   public function ontime(Request $request)
   {
     $data = $request->all();
-    // Debugbar::info($data);
+    //Debugbar::info($data);
 
+    if (!$data['ontime']) $data['ontime'] = null;
     $a_lid = [
+      //ontime' => substr(str_replace('T',' ',$data['ontime']),0,16),
       'ontime' => $data['ontime'],
       'updated_at' => Now()
     ];
 
     DB::table('lids')->where('id', $data['id'])->update($a_lid);
 
-    return response('Lids add ontime', 200);
+    return response('Lids add ontime' . $data['ontime'], 200);
   }
 
   /**
@@ -351,6 +354,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   public function set_zaliv(Request $request)
   {
     $req = $request->all();
+
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
