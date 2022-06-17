@@ -71,7 +71,7 @@
         <v-row>
           <v-col>
             <v-card>
-              <!-- 
+              <!-- @click:row="clickrow"
                 -->
               <v-data-table
                 id="ontime"
@@ -80,7 +80,6 @@
                 :single-select="true"
                 item-key="id"
                 :expanded="expanded"
-                @click:row="clickrow"
                 show-select
                 :items="todayItems"
                 ref="todaytable"
@@ -95,13 +94,7 @@
                 </template>
 
                 <template v-slot:item.status="{ item }">
-                  <div
-                    class="status_wrp"
-                    @click.stop="
-                      selected = [];
-                      openDialog(item);
-                    "
-                  >
+                  <div class="status_wrp" @click.stop="openDialog(item)">
                     <b
                       :style="{
                         background: stylecolor(item.status_id),
@@ -120,7 +113,7 @@
                   <td :colspan="headers.length" class="blackborder">
                     <v-row>
                       <v-col cols="12">
-                        <logtel :lid_id="lid_id" />
+                        <logtel :lid_id="lid_id" :key="componentKey" />
                       </v-col>
                     </v-row>
                   </td>
@@ -128,7 +121,7 @@
               </v-data-table>
             </v-card>
             <v-card>
-              <!--  -->
+              <!--  @click:row="clickrow" -->
               <v-data-table
                 id="maintable"
                 v-model.lazy.trim="selected"
@@ -140,7 +133,6 @@
                 :items="filteredItems"
                 ref="datatable"
                 :expanded="expanded"
-                @click:row="clickrow"
                 show-expand
                 :footer-props="{
                   'items-per-page-options': [10, 50, 100, 250, 500, -1],
@@ -170,13 +162,7 @@
                 </template>
 
                 <template v-slot:item.status="{ item }">
-                  <div
-                    class="status_wrp mx-1"
-                    @click="
-                      selected = [];
-                      openDialog(item);
-                    "
-                  >
+                  <div class="status_wrp mx-1" @click="openDialog(item)">
                     <b
                       :style="{
                         background: stylecolor(item.status_id),
@@ -191,7 +177,7 @@
                   <td :colspan="headers.length" class="blackborder">
                     <v-row>
                       <v-col cols="12">
-                        <logtel :lid_id="lid_id" :key="item.id" />
+                        <logtel :lid_id="lid_id" :key="componentKey" />
                       </v-col>
                     </v-row>
                   </td>
@@ -348,7 +334,6 @@
                   putSelectedLidsDB();
                   dial = false;
                   closeDialog();
-                  selected = [];
                 "
               >
                 Відправити
@@ -431,23 +416,23 @@ export default {
     this.getStatuses();
   },
   watch: {
-    selected: function (newval, oldval) {
-      //  console.log(newval)
-      //  console.log(oldval)
-      if (this.selected.length == 0) {
-        this.selectedStatus = null;
-        this.expanded = [];
-        this.tel = "";
-        // this.datetime = "";
-      } else {
-        this.selectedStatus = newval[0].status_id;
-        this.expanded = this.selected;
-        // this.datetime =
-        //   newval[0].ontime != "0000-00-00 00:00:00" && newval[0].ontime != null
-        //     ? newval[0].ontime.substring(0, 16)
-        //     : "";
-      }
-    },
+    // selected: function (newval, oldval) {
+    //   //  console.log(newval)
+    //   //  console.log(oldval)
+    //   if (this.selected.length == 0) {
+    //     this.selectedStatus = null;
+    //     this.expanded = [];
+    //     this.tel = "";
+    //     // this.datetime = "";
+    //   } else {
+    //     this.selectedStatus = newval[0].status_id;
+    //     this.expanded = this.selected;
+    //     // this.datetime =
+    //     //   newval[0].ontime != "0000-00-00 00:00:00" && newval[0].ontime != null
+    //     //     ? newval[0].ontime.substring(0, 16)
+    //     //     : "";
+    //   }
+    // },
     datetime: function (newval, oldval) {
       if ((newval == null || newval != oldval) && this.lid_id != "") {
         this.setTime();
@@ -471,14 +456,22 @@ export default {
   methods: {
     openDialog(i) {
       let self = this;
-      if (self.selected.length == 0) {
-        self.selected = [i];
-        self.dial = true;
-        self.$refs.datetime.date =
-          i.ontime != null ? i.ontime.substring(0, 10) : "";
-        self.$refs.datetime.time =
-          i.ontime != null ? i.ontime.substring(11, 16) : "";
+      if (self.selected.length > 0 && self.selected[0].id != i.id) {
+        this.selected = this.expanded = [];
       }
+      this.lid_id = i.id;
+      this.selected = [i];
+      // console.log(self.selected);
+      this.selectedStatus = i.status_id;
+      this.expanded = this.selected;
+      self.dial = true;
+      setTimeout(() => {
+        let self2 = self;
+        self2.$refs.datetime.date =
+          i.ontime != null ? i.ontime.substring(0, 10) : "";
+        self2.$refs.datetime.time =
+          i.ontime != null ? i.ontime.substring(11, 16) : "";
+      }, 400);
     },
     closeDialog() {
       this.$refs.datetime.date = "";
@@ -573,9 +566,11 @@ export default {
       self.filtertel = 1;
       self.filtertel = costil;
 
-      let eli = self.lids.find((obj) => obj.id == self.lid_id);
+      let eli = self.lids.find((obj) => obj.id == self.selected[0].id);
 
-      eli.status = self.statuses.find((s) => s.id == self.selectedStatus).name;
+      let st = self.statuses.find((s) => s.id == self.selectedStatus);
+      // console.log(st);
+      eli.status = st.name;
       eli.status_id = self.selectedStatus;
       eli.updated_at = self.currentDateTime();
       send.id = eli.id;
@@ -590,7 +585,6 @@ export default {
         .post("api/Lid/updatelids", send)
         .then(function (response) {
           self.forceRerender();
-          // console.log(response);
         })
         .catch(function (error) {
           console.log(error);
@@ -621,19 +615,19 @@ export default {
       return user.role_id == 2 ? "green" : "blue";
     },
 
-    clickrow(item, row) {
-      if (!row.isSelected) {
-        this.tel = item.tel;
-        this.keytime += 1;
-        if (item.ontime != null) {
-          this.datetime = item.ontime.substring(0, 16);
-        }
-        this.lid_id = item.id;
-        this.text = "";
-        this.depozit_val = "";
-      } else this.tel = "";
-      row.select(!row.isSelected);
-    },
+    // clickrow(item, row) {
+    //   if (!row.isSelected) {
+    //     this.tel = item.tel;
+    //     this.keytime += 1;
+    //     if (item.ontime != null) {
+    //       this.datetime = item.ontime.substring(0, 16);
+    //     }
+    //     this.lid_id = item.id;
+    //     this.text = "";
+    //     this.depozit_val = "";
+    //   } else this.tel = "";
+    //   row.select(!row.isSelected);
+    // },
 
     getStatuses() {
       let self = this;
