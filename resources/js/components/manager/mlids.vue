@@ -459,6 +459,7 @@ export default {
       if (self.selected.length > 0 && self.selected[0].id != i.id) {
         this.selected = this.expanded = [];
       }
+      this.text = "";
       this.lid_id = i.id;
       this.selected = [i];
       // console.log(self.selected);
