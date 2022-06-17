@@ -72,17 +72,17 @@
           <v-col>
             <v-card>
               <!-- @click:row="clickrow"
-                -->
+              :expanded="expanded" show-expand     show-select -->
               <v-data-table
                 id="ontime"
                 v-model.lazy.trim="selected"
                 :headers="headerstime"
-                :single-select="true"
                 item-key="id"
-                :expanded="expanded"
-                show-select
+                :single-select="true"
+                :single-expand="true"
                 :items="todayItems"
                 ref="todaytable"
+                @click:row="clickrow"
                 :items-per-page="100"
                 hide-default-header
                 hide-default-footer
@@ -113,7 +113,7 @@
                   <td :colspan="headers.length" class="blackborder">
                     <v-row>
                       <v-col cols="12">
-                        <logtel :lid_id="lid_id" :key="componentKey" />
+                        <logtel :lid_id="lid_id" :key="lid_id" />
                       </v-col>
                     </v-row>
                   </td>
@@ -121,19 +121,18 @@
               </v-data-table>
             </v-card>
             <v-card>
-              <!--  @click:row="clickrow" -->
+              <!-- show-expand show-select @click:row="clickrow" :expanded="expanded"-->
               <v-data-table
                 id="maintable"
                 v-model.lazy.trim="selected"
                 :headers="headers"
+                item-key="id"
                 :search="search"
                 :single-select="true"
-                item-key="id"
-                show-select
+                :single-expand="true"
                 :items="filteredItems"
                 ref="datatable"
-                :expanded="expanded"
-                show-expand
+                @click:row="clickrow"
                 :footer-props="{
                   'items-per-page-options': [10, 50, 100, 250, 500, -1],
                   'items-per-page-text': '',
@@ -188,46 +187,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <!-- <v-row justify="center">
-      <v-dialog v-model="depozit" persistent max-width="600px">
-        <v-card>
-          <v-card-title>
-            <span class="text-h5">Введіть суму депозиту</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    label="Сума депозиту*"
-                    required
-                    v-model="depozit_val"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-container>
-            <small>*Заповніть обов'язкове поле</small>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="blue darken-1" text @click="depozit = false">
-              Відмінити
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="blue darken-1"
-              text
-              @click="
-                setDepozit();
-                putSelectedLidsDB();
-                depozit = false;
-              "
-            >
-              Зберегти
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-row> -->
+
     <v-snackbar v-model="snackbar" :bottom="true" :rigth="true" timeout="-1">
       {{ message }}
 
@@ -557,7 +517,13 @@ export default {
       // create the format you want
       return yyyy + "-" + MM + "-" + dd + " " + time;
     },
+    clickrow(i, row) {
+      this.$refs.todaytable.expansion = {};
+      this.$refs.datatable.expansion = {};
 
+      this.lid_id = i.id;
+      row.expand(!row.isExpanded);
+    },
     putSelectedLidsDB() {
       const self = this;
       // if (self.selectedStatus == 10 && self.depozit == false) return;
