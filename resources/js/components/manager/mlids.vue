@@ -70,9 +70,9 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-card>
+            <v-card :class="{ 'd-none': todayItems.length == 0 }">
               <!-- @click:row="clickrow"
-              :expanded="expanded" show-expand     show-select -->
+              :expanded="expanded" show-expand  hide-default-header   show-select -->
               <v-data-table
                 id="ontime"
                 v-model.lazy.trim="selected"
@@ -84,7 +84,6 @@
                 ref="todaytable"
                 @click:row="clickrow"
                 :items-per-page="100"
-                hide-default-header
                 hide-default-footer
               >
                 <template v-slot:item.tel="{ item }">
@@ -121,7 +120,7 @@
               </v-data-table>
             </v-card>
             <v-card>
-              <!-- show-expand show-select @click:row="clickrow" :expanded="expanded"-->
+              <!-- show-expand show-select  :expanded="expanded"-->
               <v-data-table
                 id="maintable"
                 v-model.lazy.trim="selected"
@@ -155,9 +154,12 @@
                 </template>
 
                 <template v-slot:item.tel="{ item }">
-                  <a class="tel" @click.stop :href="'sip:' + item.tel">{{
-                    item.tel
-                  }}</a>
+                  <a
+                    class="tel"
+                    @click="lid_id = item.id"
+                    :href="'sip:' + item.tel"
+                    >{{ item.tel }}</a
+                  >
                 </template>
 
                 <template v-slot:item.status="{ item }">
@@ -291,6 +293,7 @@
                 block
                 height="100%"
                 @click="
+                  writeText();
                   putSelectedLidsDB();
                   dial = false;
                   closeDialog();
@@ -350,6 +353,7 @@ export default {
       { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status" },
       { text: "Дата", value: "date" },
+      //{ text: "Перезвон", value: "ontime" },
       { text: "Сообщение", value: "text" },
     ],
     headerstime: [
@@ -414,6 +418,11 @@ export default {
     },
   },
   methods: {
+    writeText() {
+      if (this.text.length > 0) {
+        this.lids.find((i) => i.id == this.lid_id).text = this.text;
+      }
+    },
     openDialog(i) {
       let self = this;
       if (self.selected.length > 0 && self.selected[0].id != i.id) {
@@ -634,6 +643,11 @@ export default {
               e.status =
                 self.statuses.find((s) => s.id == e.status_id).name || "";
             }
+            if (self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            }
           });
 
           self.todaylids();
@@ -659,6 +673,9 @@ export default {
         return (
           new Date(l.ontime).toLocaleDateString() ==
           new Date().toLocaleDateString()
+          // new Date(l.ontime).getTime() > 0 &&
+          // new Date(l.ontime).getTime() <=
+          //   new Date().setUTCHours(23, 59, 59, 999)
         );
       });
       self.todayItems.map(function (t) {

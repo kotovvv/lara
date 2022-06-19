@@ -121,6 +121,9 @@ class LidsController extends Controller
         'user_id' => $lid['user_id'],
         'updated_at' => Now()
       ];
+      if (strlen(trim($lid['text'])) > 0) {
+        $a_lid['text'] = $lid['text'];
+      }
       $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
 
 
@@ -133,7 +136,6 @@ class LidsController extends Controller
       DB::table('logs')->insert($a_lid);
     }
     if ($res) {
-
       return response('Lids updated', 200);
     }
   }
@@ -187,7 +189,7 @@ class LidsController extends Controller
 
   public function userLids($id)
   {
-    return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)->orderBy('lids.created_at', 'desc')->get();
+    return Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)->orderBy('lids.created_at', 'desc')->get();
   }
 
   public function statusLids($id)
