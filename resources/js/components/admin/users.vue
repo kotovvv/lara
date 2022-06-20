@@ -172,7 +172,7 @@ export default {
       { text: "Логин", value: "name" },
       { text: "ФИО", value: "fio" },
       { text: "Роль", value: "role" },
-      { text: "Группа", value: "group_id" },
+      { text: "Группа", value: "group" },
       { text: "Показывать", value: "active" },
       { text: "Действия", value: "actions", sortable: false },
     ],
@@ -234,6 +234,8 @@ export default {
             // u.role = self.roles.find((r) => r.id == u.role_id).name;
             self.rolename(u);
             if (u.role_id == 2) self.group.push(u);
+             u.group = ''
+            if(u.group_id > 0) u.group = self.users.find(e=>e.id==u.group_id).fio
           });
         })
         .catch((error) => console.log(error));
