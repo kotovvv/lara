@@ -1024,6 +1024,10 @@ export default {
           // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
           // self.getDuplicates();
           self.loading = false;
+          if (self.hmrow > 0) {
+            self.hmrow = self.hmrow;
+            self.selectRow();
+          }
         })
         .catch((error) => console.log(error));
     },
