@@ -179,6 +179,7 @@ export default {
 
     editedIndex: -1,
     editedItem: {
+      id:0,
       name: "",
       fio: "",
       pic: "",
