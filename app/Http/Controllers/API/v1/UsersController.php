@@ -98,7 +98,7 @@ class UsersController extends Controller
       $file_name = pathinfo($data['pic']->getClientOriginalName(), PATHINFO_FILENAME) . time() . '.' . $data['pic']->getClientOriginalExtension();
       Storage::disk('public')->put($file_name, File::get($data['pic']));
     }
-    if (isset($data['id'])) {
+    if (isset($data['id']) && $data['id'] > 0) {
       if (isset($data['balans']) && $data['balans'] > 0) {
         $arr = [];
         $arr['user_id'] = $data['id'];
@@ -116,6 +116,7 @@ class UsersController extends Controller
       $arr['pic'] = $file_name;
       $arr['group_id'] = $data['group_id'];
       $arr['order'] = $data['order'];
+
       if (User::where('id', $data['id'])->update($arr)) {
         if (isset($data['password'])) {
           $user = User::find($data['id']);

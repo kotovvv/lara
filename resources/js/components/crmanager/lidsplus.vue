@@ -36,7 +36,7 @@
                   <v-date-picker
                     locale="ru-ru"
                     v-model="datetimeFrom"
-                    @input="dateFrom = false"
+                    @input="dateFrom = false; getLidsOnDate();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -535,6 +535,7 @@ export default {
     },
     savedates(newName) {
       localStorage.savedates = newName;
+       this.getLidsOnDate();
       // this.getLidsOnUserOrDate();
     },
 

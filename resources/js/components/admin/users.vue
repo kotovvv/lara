@@ -185,15 +185,18 @@ export default {
       pic: "",
       role_id: 0,
       password: "",
+      group_id:'',
       active: 0,
       order: 99,
     },
     defaultItem: {
+
       name: "",
       fio: "",
       pic: "",
       role_id: 0,
       password: "",
+      group_id:'',
       active: 0,
       order: 99,
     },
