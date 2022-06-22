@@ -36,7 +36,10 @@
                   <v-date-picker
                     locale="ru-ru"
                     v-model="datetimeFrom"
-                    @input="dateFrom = false; getLidsOnDate();"
+                    @input="
+                      dateFrom = false;
+                      getLidsOnDate();
+                    "
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -110,15 +113,15 @@
               >{{ item.name }}
             </template>
           </v-select>
-          <v-btn
+          <!--  <v-btn
             v-if="
               filterStatus &&
               $props.user.role_id == 1 &&
               filteredItems.length > 0
             "
           >
-            <!-- <v-icon small @click="deleteItem()"> mdi-delete </v-icon> -->
-          </v-btn>
+             <v-icon small @click="deleteItem()"> mdi-delete </v-icon> 
+          </v-btn>-->
         </v-col>
 
         <v-col>
@@ -532,10 +535,11 @@ export default {
     },
     filterStatus(newName) {
       localStorage.filterStatus = newName;
+      this.selectRow();
     },
     savedates(newName) {
       localStorage.savedates = newName;
-       this.getLidsOnDate();
+      this.getLidsOnDate();
       // this.getLidsOnUserOrDate();
     },
 
@@ -588,7 +592,10 @@ export default {
       }
     },
     selectRow() {
-      this.selected = this.filteredItems.slice(0, this.hmrow);
+      this.selected = this.$refs.datatable.internalCurrentItems.slice(
+        0,
+        this.hmrow
+      );
     },
     cleardate() {
       this.datetimeFrom = new Date(
