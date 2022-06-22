@@ -40,7 +40,7 @@
               filteredItems.length > 0
             "
           >
-            <v-icon small @click="deleteItem()"> mdi-delete </v-icon>
+            <!-- <v-icon small @click="deleteItem()"> mdi-delete </v-icon> -->
           </v-btn>
         </v-col>
         <v-col cols="2">

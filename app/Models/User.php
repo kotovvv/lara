@@ -21,6 +21,7 @@ class User extends Authenticatable
         'role_id',
         'fio',
         'active',
+        'group_id',
         'order',
         'pic'
     ];
