@@ -539,8 +539,8 @@ export default {
     },
     savedates(newName) {
       localStorage.savedates = newName;
-      this.getLidsOnDate();
-      // this.getLidsOnUserOrDate();
+
+      this.getLidsOnUserOrDate();
     },
 
     datetimeFrom(newName) {
