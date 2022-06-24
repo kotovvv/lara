@@ -1,119 +1,113 @@
 <template>
-<v-card
- class="mx-auto"
- max-width="500"
->
-  <v-data-table
-    :headers="headers"
-    :items="providers"
-    sort-by="role_id"
-    class="elevation-1"
-  >
-    <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>Поставщики</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-              Добавить поставщика
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close"> Отмена </v-btn>
-              <v-btn color="blue darken-1" text @click="save">
-                Сохранить
+  <v-card class="mx-auto" max-width="500">
+    <v-data-table
+      :headers="headers"
+      :items="providers"
+      sort-by="role_id"
+      class="elevation-1"
+    >
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title>Поставщики</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-spacer></v-spacer>
+          <v-dialog v-model="dialog" max-width="500px">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+                Добавить поставщика
               </v-btn>
-            </v-card-actions>
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12">
-                    <v-text-field
-                      v-model="editedItem.name"
-                      label="Наименование"
-                    ></v-text-field>
-                  </v-col>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">{{ formTitle }}</span>
+              </v-card-title>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="close">
+                  Отмена
+                </v-btn>
+                <v-btn color="blue darken-1" text @click="save">
+                  Сохранить
+                </v-btn>
+              </v-card-actions>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field
+                        v-model="editedItem.name"
+                        label="Наименование"
+                      ></v-text-field>
+                    </v-col>
 
-                  <!-- <v-col cols="6">
+                    <!-- <v-col cols="6">
                     <v-switch
                       v-model="editedItem.active"
                       label="Показывать:"
                     ></v-switch>
                   </v-col> -->
-                  <v-col cols="12">
-                        <v-select
+                    <v-col cols="12">
+                      <v-select
                         multiple
-                          :items="users"
-                          v-model="editedItem.related_users_id"
-                          item-text="name"
-                          item-value="id"
-                          label="Связанные пользователи"
-                        ></v-select>
-                      </v-col>
-                                        <v-col cols="12">
-                    <v-text-field
-                      v-model="editedItem.tel"
-                      label="ApiKey"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="headline"
-              >Удалить поставщика?</v-card-title
-            >
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete"
-                >Нет</v-btn
-              >
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                >Да</v-btn
-              >
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
-    </template>
+                        :items="users"
+                        v-model="editedItem.related_users_id"
+                        item-text="name"
+                        item-value="id"
+                        label="Связанные пользователи"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                        v-model="editedItem.tel"
+                        label="ApiKey"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="dialogDelete" max-width="500px">
+            <v-card>
+              <v-card-title class="headline">Удалить поставщика?</v-card-title>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="closeDelete"
+                  >Нет</v-btn
+                >
+                <v-btn color="blue darken-1" text @click="deleteItemConfirm"
+                  >Да</v-btn
+                >
+                <v-spacer></v-spacer>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
+        <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+      </template>
       <template v-slot:item.report="{ item }">
-    <statusesProvider :provider="item" />
+        <statusesProvider :provider="item" />
       </template>
       <!-- <template v-slot:item.report="{ item }">
       <v-icon small class="mr-2" @click="report(item)"> mdi-file-chart-outline </v-icon>
       <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
     </template> -->
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="getProvider"> Reset </v-btn>
-    </template>
-  </v-data-table>
-</v-card>
-
+      <template v-slot:no-data>
+        <v-btn color="primary" @click="getProvider"> Reset </v-btn>
+      </template>
+    </v-data-table>
+  </v-card>
 </template>
 
 <script>
-import statusesProvider from './statusProvider'
+import statusesProvider from "./statusProvider";
 import axios from "axios";
 export default {
   data: () => ({
-    provider:{},
+    provider: {},
     dialog: false,
     dialogDelete: false,
     providers: [],
@@ -127,20 +121,24 @@ export default {
 
     editedIndex: -1,
     editedItem: {
+      id: 0,
       name: "",
+      related_users_id: [],
       active: 0,
-
     },
     defaultItem: {
+      id: 0,
       name: "",
       active: 1,
-
+      related_users_id: [],
     },
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Новый поставщик" : "Редактировать поставщика";
+      return this.editedIndex === -1
+        ? "Новый поставщик"
+        : "Редактировать поставщика";
     },
   },
 
@@ -153,14 +151,14 @@ export default {
     },
   },
 
-  created() {
+  mounted() {
     // this.initialize(),
     this.getProvider();
     this.getUsers();
   },
 
   methods: {
-        getUsers() {
+    getUsers() {
       let self = this;
       axios
         .get("/api/users")
@@ -169,9 +167,12 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    report(item){
-      if (this.provider == item) {this.provider = {}; return}
-      this.provider = item
+    report(item) {
+      if (this.provider == item) {
+        this.provider = {};
+        return;
+      }
+      this.provider = item;
     },
     getProvider() {
       let self = this;
@@ -179,10 +180,11 @@ export default {
         .get("/api/providerall")
         .then((res) => {
           self.providers = res.data;
-          self.providers = self.providers.map(function(p) {
-            if(p.related_users_id.length > 0) p.related_users_id = JSON.parse(p.related_users_id);
+          self.providers = self.providers.map(function (p) {
+            if (p.related_users_id.length > 0)
+              p.related_users_id = JSON.parse(p.related_users_id);
             return p;
-            })
+          });
         })
         .catch((error) => console.log(error));
     },
@@ -200,7 +202,8 @@ export default {
     editItem(item) {
       this.editedIndex = this.providers.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      if(!Array.isArray(item.related_users_id)) this.editedItem.related_users_id = [];
+      if (!Array.isArray(item.related_users_id))
+        this.editedItem.related_users_id = [];
       this.dialog = true;
     },
     deleteItem(item) {
@@ -211,11 +214,11 @@ export default {
 
     deleteItemConfirm() {
       axios
-      .delete("/api/provider/"+ this.editedItem.id)
-      .then((res) => {
-        // console.log(res);
-      })
-      .catch((error) => console.log(error));
+        .delete("/api/provider/" + this.editedItem.id)
+        .then((res) => {
+          // console.log(res);
+        })
+        .catch((error) => console.log(error));
       this.providers.splice(this.editedIndex, 1);
       this.closeDelete();
     },
@@ -241,14 +244,14 @@ export default {
         this.saveProvider(this.editedItem);
         Object.assign(this.providers[this.editedIndex], this.editedItem);
       } else {
-          this.saveProvider(this.editedItem);
+        this.saveProvider(this.editedItem);
         this.providers.push(this.editedItem);
       }
       this.close();
     },
   },
-  components:{
-    statusesProvider
-  }
+  components: {
+    statusesProvider,
+  },
 };
 </script>
