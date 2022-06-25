@@ -514,7 +514,7 @@ export default {
           .toISOString()
           .substring(0, 10);
       }
-      this.getLidsOnDate();
+      // this.getLidsOnDate();
     }
 
     if (localStorage.filterProviders) {
@@ -539,8 +539,8 @@ export default {
     },
     savedates(newName) {
       localStorage.savedates = newName;
-
-      this.getLidsOnUserOrDate();
+      console.log("tut");
+      if (this.savedates != false) this.getLidsOnUserOrDate();
     },
 
     datetimeFrom(newName) {
