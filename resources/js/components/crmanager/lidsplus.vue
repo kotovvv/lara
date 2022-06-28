@@ -120,7 +120,7 @@
               filteredItems.length > 0
             "
           >
-             <v-icon small @click="deleteItem()"> mdi-delete </v-icon> 
+             <v-icon small @click="deleteItem()"> mdi-delete </v-icon>
           </v-btn>-->
         </v-col>
 
@@ -539,8 +539,7 @@ export default {
     },
     savedates(newName) {
       localStorage.savedates = newName;
-      console.log("tut");
-      if (this.savedates != false) this.getLidsOnUserOrDate();
+this.getLidsOnUserOrDate();
     },
 
     datetimeFrom(newName) {
