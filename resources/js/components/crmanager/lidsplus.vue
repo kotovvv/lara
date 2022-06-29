@@ -798,20 +798,23 @@ this.getLidsOnUserOrDate();
       }
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
         send.data = this.selected;
-      } else if (
-        (this.search !== "" ||
-          this.filtertel !== "" ||
-          this.filterStatus !== 0 ||
-          this.filterGStatus !== 0) &&
-        this.$refs.datatable.$children[0].filteredItems.length > 0
-      ) {
-        send.data = this.$refs.datatable.$children[0].filteredItems;
+      } else {
+        return false
       }
+      // if (
+      //   (this.search !== "" ||
+      //     this.filtertel !== "" ||
+      //     this.filterStatus !== 0 ||
+      //     this.filterGStatus !== 0) &&
+      //   this.$refs.datatable.$children[0].filteredItems.length > 0
+      // ) {
+      //   send.data = this.$refs.datatable.$children[0].filteredItems;
+      // }
       if (self.$props.user.role_id == 2) {
         //CallBack user not change
         send.data = send.data.filter((f) => f.status_id != 9);
       }
-      if (send.data.length == 0) send.data = this.lids;
+      // if (send.data.length == 0) send.data = this.lids;
 
       axios
         .post("api/Lid/changelidsuser", send)
