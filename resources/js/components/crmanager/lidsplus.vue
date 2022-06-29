@@ -495,7 +495,7 @@ export default {
     this.getProviders();
     this.getStatuses();
     if (localStorage.filterStatus) {
-      this.filterStatus = localStorage.filterStatus;
+      this.filterStatus = parseInt(localStorage.filterStatus);
     }
     if (localStorage.savedates) {
       this.savedates = localStorage.savedates == "true" ? true : false;
@@ -518,7 +518,7 @@ export default {
     }
 
     if (localStorage.filterProviders) {
-      this.filterProviders = localStorage.filterProviders;
+      this.filterProviders = parseInt(localStorage.filterProviders);
     }
     // this.setHeader();
   },
@@ -539,7 +539,9 @@ export default {
     },
     savedates(newName) {
       localStorage.savedates = newName;
-this.getLidsOnUserOrDate();
+      if (this.disableuser != 0) {
+        this.getLidsOnUserOrDate();
+      }
     },
 
     datetimeFrom(newName) {
@@ -799,7 +801,9 @@ this.getLidsOnUserOrDate();
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
         send.data = this.selected;
       } else {
-        return false
+        console.log("tut");
+        this.userid = null;
+        return false;
       }
       // if (
       //   (this.search !== "" ||
