@@ -209,9 +209,9 @@
               }"
             >
               <v-row>
-                <v-col cols="2">
+                <v-col cols="1">
                   <v-row class="mb-5">
-                    <span class="ml-7 mt-5 mx-4 d-flex px-2 align-center border"
+                    <span class="mt-5 d-flex pl-2 align-center border"
                       >Отбор
                       <v-text-field
                         class="mx-2 mt-0 pt-0 talign-center nn"
@@ -231,7 +231,7 @@
                     label="Поиск"
                     single-line
                     hide-details
-                    class="border px-3"
+                    class="border px-2"
                   ></v-text-field>
                 </v-col>
                 <v-col class="wrp_group">
@@ -1160,5 +1160,8 @@ export default {
   border: 1px solid #7620df;
   background: #fff;
   color: #7620df;
+}
+#app .v-application--is-ltr .v-data-footer__pagination {
+  margin: 0 12px 0 12px;
 }
 </style>

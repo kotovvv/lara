@@ -203,14 +203,14 @@ class LidsController extends Controller
     $f_key =   DB::table('apikeys')->where('api_key', $getparams['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     // $sql = 'SELECT  "Success" AS status,"1" AS status_code, `lid_id` AS order_lead_id, `created_at` AS ftd_date, "FTD=1" AS description  FROM `depozits` WHERE `lid_id` = ' . (int) $getparams['id'];
-    $leads =Depozit::select(DB::raw('"Success" as status, 1 as status_code, `lid_id` as  order_lead_id, `created_at` as ftd_date, "FTD=1" as description'))->where('lid_id', (int) $getparams['id'])->first();
-
+    $leads = Depozit::select(DB::raw('"Success" as status, 1 as status_code, `lid_id` as  order_lead_id, `created_at` as ftd_date, "FTD=1" as description'))->where('lid_id', (int) $getparams['id'])->first();
+    $leads['dateAdd'] = date('Y-m-d H:i:s', strtotime(Lid::where('id', (int) $getparams['id'])->value('created_at')));
     $response = [];
     $response["status"] = "Success";
     $response["status_code"] = "1";
-    if ($leads){
+    if ($leads) {
       $response["leads"] = $leads;
-    }else{
+    } else {
       $response["leads"] = 'no lids';
     }
     return response($response);
@@ -230,6 +230,7 @@ class LidsController extends Controller
     $sql = "SELECT
     d.`lid_id` AS `order_lead_id`
     , d.`created_at` AS `ftd_date`
+    , l.`created_at` AS 'dateAdd'
     ,'FTD=1' AS description
 FROM
     `depozits` d
@@ -242,9 +243,9 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $response = [];
     $response["status"] = "Success";
     $response["status_code"] = "1";
-    if ($leads){
+    if ($leads) {
       $response["leads"] = $leads;
-    }else{
+    } else {
       $response["leads"] = 'no lids';
     }
     return response($response);
