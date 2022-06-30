@@ -241,6 +241,7 @@
                       v-for="(groupa, index) in group"
                       :key="index"
                       :value="groupa.id"
+                      class="pt-4"
                     >
                       <template v-slot:label>
                         <div class="img">{{ groupa.fio.slice(0, 3) }}</div>
@@ -1153,7 +1154,7 @@ export default {
   gap: 0.7rem;
 }
 .wrp_group .img {
-  height: 54px;
+  height: 34px;
   width: 34px;
 }
 .v-input--is-label-active .img {
