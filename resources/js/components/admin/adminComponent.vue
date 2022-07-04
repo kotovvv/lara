@@ -17,10 +17,13 @@
             v-for="(item, i) in items"
             :key="i"
             @click="adminMenu = item.name"
+            :title="item.text"
           >
-            <v-list-item-icon>
-              <v-icon v-text="item.icon"></v-icon>
-            </v-list-item-icon>
+            <div>
+              <v-list-item-icon>
+                <v-icon v-text="item.icon"></v-icon>
+              </v-list-item-icon>
+            </div>
             <v-list-item-content>
               <v-list-item-title></v-list-item-title>
             </v-list-item-content>
@@ -28,12 +31,12 @@
         </v-list-item-group>
 
         <v-list-item-group class="mt-10">
-          <v-list-item @click="$emit('login', {})">
+          <v-list-item @click="$emit('login', {})" title="Exit">
             <v-list-item-icon>
               <v-icon>mdi-logout</v-icon>
             </v-list-item-icon>
           </v-list-item>
-          <v-list-item>
+          <v-list-item :title="user.fio">
             <v-list-item-content>
               <v-list-item-title>{{ user.fio }}</v-list-item-title>
             </v-list-item-content>
