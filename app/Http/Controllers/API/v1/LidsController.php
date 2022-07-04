@@ -416,6 +416,75 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     return response($res);
   }
 
+  public function set_zaliv_post(Request $request)
+  {
+    $req = $request->all();
+
+    $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+
+    if (!$f_key) return response(['status' => 'Key incorect'], 403);
+
+    $n_lid = new Lid;
+
+$fio = $req['namedata'];
+$lastn = $req['lnamedata'];
+$email = $req['emaildata'];
+$phonestr = $req['phoneData'];
+$affiliate = $req['affiliatedata'];
+$fio = htmlspecialchars($fio);
+$lastn = htmlspecialchars($lastn);
+$email = htmlspecialchars($email);
+$affiliate = htmlspecialchars($affiliate);
+$fio = urldecode($fio);
+$lastn = urldecode($lastn);
+$email = urldecode($email);
+$affiliate = urldecode($affiliate);
+$phonestr = urldecode($phonestr);
+$fio = trim($fio);
+$lastn = trim($lastn);
+$email = trim($email);
+$phonestr = trim($phonestr);
+$affiliate = trim($affiliate);
+
+    if ($fio) {
+      $n_lid->name =  $fio;
+    } else {
+      $n_lid->name = time();
+    }
+
+    if ($phonestr) {
+      $n_lid->tel =  $phonestr;
+    } else {
+      $n_lid->tel = time();
+    }
+
+    if ($email) {
+      $n_lid->email = $email;
+    } else {
+      $n_lid->email = time() . '@none.com';
+    }
+
+    $n_lid->afilyator = $affiliate;
+    $n_lid->provider_id = $f_key->id;
+    $n_lid->user_id = (int) $req['user_id'];
+    $n_lid->created_at = Now();
+
+    $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
+
+    if (!$f_lid->isEmpty()) {
+      return response('duplicate');
+    }
+
+    $n_lid->save();
+    $id = $n_lid->id;
+    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
+
+    $res['status'] = 'OK';
+    $res['id'] = $id;
+    $res['insert'] = $insert;
+    return response($res);
+  }
+
 
   public function set_zalivjs(Request $request)
   {
