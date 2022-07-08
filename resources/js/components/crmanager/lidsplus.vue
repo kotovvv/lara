@@ -38,7 +38,7 @@
                     v-model="datetimeFrom"
                     @input="
                       dateFrom = false;
-                      getLidsOnDate();
+                      savedates == true ? getLidsOnDate() : null;
                     "
                   ></v-date-picker>
                 </v-menu>
@@ -992,7 +992,7 @@ export default {
             self.hmrow = self.hmrow;
             self.selectRow();
           }
-          self.filterStatuses()
+          self.filterStatuses();
         })
         .catch((error) => console.log(error));
     },
@@ -1044,7 +1044,7 @@ export default {
             self.hmrow = self.hmrow;
             self.selectRow();
           }
-          self.filterStatuses()
+          self.filterStatuses();
         })
         .catch((error) => console.log(error));
     },
