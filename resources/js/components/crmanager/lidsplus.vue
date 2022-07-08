@@ -86,6 +86,7 @@
             ref="filterStatus"
             color="red"
             v-model="filterStatus"
+            @change="filterStatuses"
             :items="statuses"
             item-text="name"
             item-value="id"
@@ -991,7 +992,7 @@ export default {
             self.hmrow = self.hmrow;
             self.selectRow();
           }
-          // self.getDuplicates();
+          self.filterStatuses()
         })
         .catch((error) => console.log(error));
     },
@@ -1043,6 +1044,7 @@ export default {
             self.hmrow = self.hmrow;
             self.selectRow();
           }
+          self.filterStatuses()
         })
         .catch((error) => console.log(error));
     },
