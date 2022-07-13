@@ -103,6 +103,13 @@
                     <span>{{ item.status }}</span>
                   </div>
                 </template>
+                <template v-slot:item.text="{ item }">
+                  <span
+                    class="fixwidth"
+                    :title="item.text"
+                    >{{ item.text }}</span
+                  >
+                </template>
                 <template v-slot:item.actions="{ item }">
                   <v-icon small @click.stop="deleteTime(item)">
                     mdi-delete
@@ -173,7 +180,13 @@
                     <span>{{ item.status }}</span>
                   </div>
                 </template>
-
+<template v-slot:item.text="{ item }">
+                  <span
+                    class="fixwidth"
+                    :title="item.text"
+                    >{{ item.text }}</span
+                  >
+                </template>
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">
                     <v-row>
@@ -761,5 +774,18 @@ td .status_wrp {
   white-space: nowrap;
   overflow: hidden;
   max-width: 85px;
+}
+.blackborder .row .col {
+  margin-top: 1rem;
+}
+#maintable .v-data-table__wrapper tr td:last-child,
+#ontime .v-data-table__wrapper tr td:last-child {
+  width: 120px;
+}
+.fixwidth{
+  width: 120px;
+  height: 45px;
+  overflow-x: auto;
+  display: block;
 }
 </style>
