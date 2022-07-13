@@ -218,7 +218,7 @@
                         class="mx-2 mt-0 pt-0 talign-center nn"
                         @input="selectRow"
                         :max="filteredItems.length"
-                        v-model.number.lazy="hmrow"
+                        v-model.number="hmrow"
                         hide-details="auto"
                         color="#004D40"
                       ></v-text-field>
@@ -988,10 +988,13 @@ export default {
             self.filterProviders = parseInt(localStorage.filterProviders);
           }
           // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
+            self.filterStatuses();
           if (self.hmrow > 0) {
+            const temp = self.hmrow;
+            self.hmrow = "";
+            self.hmrow = temp;
             self.selectRow();
           }
-          self.filterStatuses();
         })
         .catch((error) => console.log(error));
     },
@@ -1039,10 +1042,15 @@ export default {
           // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
           // self.getDuplicates();
           self.loading = false;
-          if (self.hmrow > 0) {
+            self.filterStatuses();
+
+        }).then(()=>{
+                    if (self.hmrow > 0) {
+            const temp = self.hmrow;
+            self.hmrow = "";
+            self.hmrow = temp;
             self.selectRow();
           }
-          self.filterStatuses();
         })
         .catch((error) => console.log(error));
     },
