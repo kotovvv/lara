@@ -989,7 +989,9 @@ export default {
           }
           // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
             self.filterStatuses();
-          if (self.hmrow > 0) {
+
+        }).then(()=>{
+                    if (self.hmrow > 0) {
             const temp = self.hmrow;
             self.hmrow = "";
             self.hmrow = temp;
