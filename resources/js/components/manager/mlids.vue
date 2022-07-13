@@ -785,7 +785,7 @@ td .status_wrp {
 .fixwidth{
   width: 120px;
   height: 45px;
-  overflow-x: auto;
+  overflow: hidden;
   display: block;
 }
 </style>
