@@ -989,7 +989,6 @@ export default {
           }
           // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
           if (self.hmrow > 0) {
-            self.hmrow = self.hmrow;
             self.selectRow();
           }
           self.filterStatuses();
@@ -1041,7 +1040,6 @@ export default {
           // self.getDuplicates();
           self.loading = false;
           if (self.hmrow > 0) {
-            self.hmrow = self.hmrow;
             self.selectRow();
           }
           self.filterStatuses();
