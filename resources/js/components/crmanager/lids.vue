@@ -12,7 +12,7 @@
             outlined
             rounded
           >
-                      <template v-slot:selection="{ item }">
+            <template v-slot:selection="{ item }">
               <i
                 :style="{
                   background: item.color,
@@ -53,7 +53,7 @@
             outlined
             rounded
           >
-                      <template v-slot:selection="{ item }">
+            <template v-slot:selection="{ item }">
               <i
                 :style="{
                   background: item.color,
@@ -77,7 +77,7 @@
         </v-col>
 
         <v-col cols="2">
-  Фильтр по поставщикам
+          Фильтр по поставщикам
           <v-select
             v-model="filterProviders"
             :items="providers"
@@ -89,38 +89,36 @@
         </v-col>
 
         <v-col cols="2">
-  Глобальный поиск
-            <v-text-field
-              v-model="searchAll"
-              append-icon="mdi-magnify"
-              @click:append="searchInDB"
-              single-line
-              hide-details
-              class="border px-2"
-            ></v-text-field>
+          Глобальный поиск
+          <v-text-field
+            v-model="searchAll"
+            append-icon="mdi-magnify"
+            @click:append="searchInDB"
+            single-line
+            hide-details
+            class="border px-2"
+          ></v-text-field>
         </v-col>
         <v-col cols="2">
-
-  Телефон
-            <v-text-field
-              v-model.lazy.trim="filtertel"
-              append-icon="mdi-phone"
-              class="border px-2"
-            ></v-text-field>
-
+          Телефон
+          <v-text-field
+            v-model.lazy.trim="filtertel"
+            append-icon="mdi-phone"
+            class="border px-2"
+          ></v-text-field>
         </v-col>
 
         <v-col cols="2">
-    Назначение статусов
+          Назначение статусов
           <v-select
             v-model="selectedStatus"
             :items="statuses"
-              item-text="name"
+            item-text="name"
             item-value="id"
             outlined
             rounded
           >
-                      <template v-slot:selection="{ item }">
+            <template v-slot:selection="{ item }">
               <i
                 :style="{
                   background: item.color,
@@ -156,9 +154,8 @@
     <v-row>
       <v-col cols="9">
         <div class="border pa-4">
-
           <v-data-table
-          id="tablids"
+            id="tablids"
             v-model.lazy.trim="selected"
             :headers="headers"
             :search="search"
@@ -189,7 +186,7 @@
                     single-line
                     hide-details
                     class="ml-3 border px-2"
-                    ></v-text-field>
+                  ></v-text-field>
                 </v-col>
                 <!-- v-if="telsDuplicates.length > 0" -->
                 <v-col cols="2">
@@ -219,92 +216,92 @@
               </v-row>
             </template>
           </v-data-table>
-
         </div>
       </v-col>
       <v-col cols="3" class="mt-4 wrp_users">
         <div class="row">
           <v-card rounded class="rounded-xl pa-5 w-100">
             Укажите пользователя
-          <div class="scroll-y">
-            <v-list>
-              <v-radio-group
-                @change="changeLidsUser"
-                ref="radiogroup"
-                v-model="userid"
-                v-bind="users"
-                id="usersradiogroup"
-              >
-                <v-expansion-panels ref="akk" v-model="akkvalue">
-                  <v-expansion-panel v-for="(item, i) in group" :key="i">
-                    <v-expansion-panel-header>
-                      <img
-                        class="v-expansion-panel-header__icon mr-1"
-                        height="60"
-                        width="60"
-                        :src="'/storage/' + item.pic"
-                        v-if="item.pic"
-                      />
+            <div class="scroll-y">
+              <v-list>
+                <v-radio-group
+                  @change="changeLidsUser"
+                  ref="radiogroup"
+                  v-model="userid"
+                  v-bind="users"
+                  id="usersradiogroup"
+                >
+                  <v-expansion-panels ref="akk" v-model="akkvalue">
+                    <v-expansion-panel v-for="(item, i) in group" :key="i">
+                      <v-expansion-panel-header>
+                        <img
+                          class="v-expansion-panel-header__icon mr-1"
+                          height="60"
+                          width="60"
+                          :src="'/storage/' + item.pic"
+                          v-if="item.pic"
+                        />
 
-                      {{ item.fio }}
-                      <div></div>
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <v-row
-                        v-for="user in users.filter(function (i) {
-                          return i.group_id == item.group_id;
-                        })"
-                        :key="user.id"
-                      >
-                        <v-radio
-                          :label="user.fio"
-                          :value="user.id"
-                          :disabled="disableuser == user.id"
+                        {{ item.fio }}
+                        <div></div>
+                      </v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        <v-row
+                          v-for="user in users.filter(function (i) {
+                            return i.group_id == item.group_id;
+                          })"
+                          :key="user.id"
                         >
-                        </v-radio>
+                          <v-radio
+                            :label="user.fio"
+                            :value="user.id"
+                            :disabled="disableuser == user.id"
+                          >
+                          </v-radio>
 
-                        <v-btn
-                          class="ml-3"
-                          small
-                          :color="usercolor(user)"
-                          @click="
-                            disableuser = user.id;
-                            getLids(user.id);
-                          "
-                          :value="user.hmlids"
-                          :disabled="disableuser == user.id"
-                          >{{ user.hmlids }}</v-btn
-                        >
-                        <v-chip v-if="user.statnew" label small>
-                          {{ user.statnew }}
-                        </v-chip>
-                      </v-row>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-              </v-radio-group>
-            </v-list>
-          </div>
+                          <v-btn
+                            class="ml-3"
+                            small
+                            :color="usercolor(user)"
+                            @click="
+                              disableuser = user.id;
+                              getLids(user.id);
+                            "
+                            :value="user.hmlids"
+                            :disabled="disableuser == user.id"
+                            >{{ user.hmlids }}</v-btn
+                          >
+                          <v-chip v-if="user.statnew" label small>
+                            {{ user.statnew }}
+                          </v-chip>
+                        </v-row>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                </v-radio-group>
+              </v-list>
+            </div>
           </v-card>
           <v-card class="border pa-5 mt-1 w-100">
             <div class="tel">Тел: {{ clickedItemTel }}</div>
 
-
-              <div class="mt-4">
-                <div v-for="(item, i) in clickedItemStatuses" :key="i"  class="blk_statuses">
-                  <span class="status_wrp">
+            <div class="mt-4">
+              <div
+                v-for="(item, i) in clickedItemStatuses"
+                :key="i"
+                class="blk_statuses"
+              >
+                <span class="status_wrp">
                   <b
                     :style="{
                       background: item.color,
                       outline: '#999 solid 1px',
                     }"
-                    ></b
-                  >
-                  <span>{{item.name}}</span>
-                </span><span>{{item.uname}}</span> <span>{{ item.cdate }}</span>
-                </div>
+                  ></b>
+                  <span>{{ item.name }}</span> </span
+                ><span>{{ item.uname }}</span> <span>{{ item.cdate }}</span>
               </div>
-
+            </div>
           </v-card>
         </div>
       </v-col>
@@ -461,20 +458,14 @@ export default {
       }
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
         send.data = this.selected || this.lids;
-      } else if (
-        (this.search !== "" ||
-          this.filtertel !== "" ||
-          this.filterStatus !== 0 ||
-          this.filterGStatus !== 0) &&
-        this.$refs.datatable.$children[0].filteredItems.length > 0
-      ) {
-        send.data = this.$refs.datatable.$children[0].filteredItems;
+      } else {
+        this.userid = null;
+        return false;
       }
       if (self.$props.user.role_id == 2) {
         //CallBack user not change
         send.data = send.data.filter((f) => f.status_id != 9);
       }
-      if (send.data.length == 0) send.data = this.lids;
       axios
         .post("api/Lid/changelidsuser", send)
         .then(function (response) {
@@ -548,7 +539,7 @@ export default {
         .get(get)
         .then((res) => {
           self.users = res.data.map(
-            ({ name, id, role_id, fio, hmlids, group_id, order, statnew, pic }) => ({
+            ({
               name,
               id,
               role_id,
@@ -557,7 +548,17 @@ export default {
               group_id,
               order,
               statnew,
-               pic
+              pic,
+            }) => ({
+              name,
+              id,
+              role_id,
+              fio,
+              hmlids,
+              group_id,
+              order,
+              statnew,
+              pic,
             })
           );
           // self.users.sort(function (a, b) {
@@ -708,9 +709,8 @@ export default {
   display: flex;
   grid-gap: 10px;
 }
-.blk_statuses .status_wrp{
-  display:inline-flex;
-
+.blk_statuses .status_wrp {
+  display: inline-flex;
 }
 .v-card__text.scroll-y {
   overflow-y: auto;

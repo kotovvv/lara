@@ -803,7 +803,6 @@ export default {
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
         send.data = this.selected;
       } else {
-        console.log("tut");
         this.userid = null;
         return false;
       }
@@ -988,10 +987,10 @@ export default {
             self.filterProviders = parseInt(localStorage.filterProviders);
           }
           // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
-            self.filterStatuses();
-
-        }).then(()=>{
-                    if (self.hmrow > 0) {
+          self.filterStatuses();
+        })
+        .then(() => {
+          if (self.hmrow > 0) {
             const temp = self.hmrow;
             self.hmrow = "";
             self.hmrow = temp;
@@ -1044,10 +1043,10 @@ export default {
           // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
           // self.getDuplicates();
           self.loading = false;
-            self.filterStatuses();
-
-        }).then(()=>{
-                    if (self.hmrow > 0) {
+          self.filterStatuses();
+        })
+        .then(() => {
+          if (self.hmrow > 0) {
             const temp = self.hmrow;
             self.hmrow = "";
             self.hmrow = temp;
