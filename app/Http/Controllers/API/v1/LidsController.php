@@ -405,7 +405,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if (!$f_lid->isEmpty()) {
       $n_lid->afilyator = 'no name';
       $n_lid->provider_id = 75;
-      $n_lid->user_id = 89;
+      $n_lid->user_id = 252;
       $n_lid->save();
       return response('duplicate');
     }
@@ -479,7 +479,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if (!$f_lid->isEmpty()) {
       $n_lid->afilyator = 'no name';
       $n_lid->provider_id = 75;
-      $n_lid->user_id = 89;
+      $n_lid->user_id = 252;
       $n_lid->save();
       return response('duplicate');
     }
@@ -531,7 +531,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if (!$f_lid->isEmpty()) {
       $n_lid->afilyator = 'no name';
       $n_lid->provider_id = 75;
-      $n_lid->user_id = 89;
+      $n_lid->user_id = 252;
       $n_lid->save();
       $res['status'] = 'duplicate';
       return response($res);
