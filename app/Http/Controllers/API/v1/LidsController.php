@@ -403,6 +403,10 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
 
     if (!$f_lid->isEmpty()) {
+      $n_lid->afilyator = 'no name';
+      $n_lid->provider_id = 999;
+      $n_lid->user_id = 89;
+      $n_lid->save();
       return response('duplicate');
     }
 
@@ -413,6 +417,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $res['status'] = 'OK';
     $res['id'] = $id;
     $res['insert'] = $insert;
+
+
     return response($res);
   }
 
@@ -426,25 +432,25 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $n_lid = new Lid;
 
-$fio = $req['namedata'];
-$lastn = $req['lnamedata'];
-$email = $req['emaildata'];
-$phonestr = $req['phoneData'];
-$affiliate = $req['affiliatedata'];
-$fio = htmlspecialchars($fio);
-$lastn = htmlspecialchars($lastn);
-$email = htmlspecialchars($email);
-$affiliate = htmlspecialchars($affiliate);
-$fio = urldecode($fio);
-$lastn = urldecode($lastn);
-$email = urldecode($email);
-$affiliate = urldecode($affiliate);
-$phonestr = urldecode($phonestr);
-$fio = trim($fio);
-$lastn = trim($lastn);
-$email = trim($email);
-$phonestr = trim($phonestr);
-$affiliate = trim($affiliate);
+    $fio = $req['namedata'];
+    $lastn = $req['lnamedata'];
+    $email = $req['emaildata'];
+    $phonestr = $req['phoneData'];
+    $affiliate = $req['affiliatedata'];
+    $fio = htmlspecialchars($fio);
+    $lastn = htmlspecialchars($lastn);
+    $email = htmlspecialchars($email);
+    $affiliate = htmlspecialchars($affiliate);
+    $fio = urldecode($fio);
+    $lastn = urldecode($lastn);
+    $email = urldecode($email);
+    $affiliate = urldecode($affiliate);
+    $phonestr = urldecode($phonestr);
+    $fio = trim($fio);
+    $lastn = trim($lastn);
+    $email = trim($email);
+    $phonestr = trim($phonestr);
+    $affiliate = trim($affiliate);
 
     if ($fio) {
       $n_lid->name =  $fio;
@@ -470,11 +476,13 @@ $affiliate = trim($affiliate);
     $n_lid->created_at = Now();
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
-
     if (!$f_lid->isEmpty()) {
+      $n_lid->afilyator = 'no name';
+      $n_lid->provider_id = 99;
+      $n_lid->user_id = 89;
+      $n_lid->save();
       return response('duplicate');
     }
-
     $n_lid->save();
     $id = $n_lid->id;
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
@@ -482,6 +490,7 @@ $affiliate = trim($affiliate);
     $res['status'] = 'OK';
     $res['id'] = $id;
     $res['insert'] = $insert;
+
     return response($res);
   }
 
@@ -519,13 +528,14 @@ $affiliate = trim($affiliate);
     $n_lid->created_at = Now();
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
-
     if (!$f_lid->isEmpty()) {
-
+      $n_lid->afilyator = 'no name';
+      $n_lid->provider_id = 99;
+      $n_lid->user_id = 89;
+      $n_lid->save();
       $res['status'] = 'duplicate';
       return response($res);
     }
-
     $n_lid->save();
     $id = $n_lid->id;
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
@@ -533,6 +543,7 @@ $affiliate = trim($affiliate);
     $res['status'] = 'OK';
     $res['id'] = $id;
     $res['insert'] = $insert;
+
     return response($res);
   }
 
