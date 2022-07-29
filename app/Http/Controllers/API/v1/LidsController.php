@@ -404,7 +404,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     if (!$f_lid->isEmpty()) {
       $n_lid->afilyator = 'no name';
-      $n_lid->provider_id = 999;
+      $n_lid->provider_id = 75;
       $n_lid->user_id = 89;
       $n_lid->save();
       return response('duplicate');
@@ -478,7 +478,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
     if (!$f_lid->isEmpty()) {
       $n_lid->afilyator = 'no name';
-      $n_lid->provider_id = 99;
+      $n_lid->provider_id = 75;
       $n_lid->user_id = 89;
       $n_lid->save();
       return response('duplicate');
@@ -530,7 +530,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
     if (!$f_lid->isEmpty()) {
       $n_lid->afilyator = 'no name';
-      $n_lid->provider_id = 99;
+      $n_lid->provider_id = 75;
       $n_lid->user_id = 89;
       $n_lid->save();
       $res['status'] = 'duplicate';
