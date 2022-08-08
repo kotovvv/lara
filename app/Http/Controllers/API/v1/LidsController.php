@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Lid;
 use App\Models\Log;
 use App\Models\Depozit;
+use App\Models\Provider;
 use DB;
 use Debugbar;
 
@@ -403,7 +404,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
 
     if (!$f_lid->isEmpty()) {
-      $n_lid->afilyator = 'no name';
+      $name = Provider::find($f_key->id)->value('name');
+      $n_lid->afilyator = $name;
       $n_lid->provider_id = 75;
       $n_lid->user_id = 252;
       $n_lid->save();
@@ -477,7 +479,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
     if (!$f_lid->isEmpty()) {
-      $n_lid->afilyator = 'no name';
+      $name = Provider::find($f_key->id)->value('name');
+      $n_lid->afilyator = $name;
       $n_lid->provider_id = 75;
       $n_lid->user_id = 252;
       $n_lid->save();
@@ -529,6 +532,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
     if (!$f_lid->isEmpty()) {
+      $name = Provider::find($f_key->id)->value('name');
+      $n_lid->afilyator = $name;
       $n_lid->provider_id = 75;
       $n_lid->user_id = 252;
       $n_lid->save();
