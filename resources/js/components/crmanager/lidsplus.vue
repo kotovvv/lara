@@ -92,6 +92,7 @@
             item-value="id"
             outlined
             rounded
+            :multiple=true
           >
             <template v-slot:selection="{ item }">
               <i
@@ -135,6 +136,7 @@
             @change="filterStatuses"
             outlined
             rounded
+            multiple
           ></v-select>
         </v-col>
         <v-col>
@@ -454,9 +456,9 @@ export default {
     disableuser: 0,
     statuses: [],
     selectedStatus: 0,
-    filterStatus: 0,
+    filterStatus: [],
     filterGStatus: 0,
-    filterProviders: 0,
+    filterProviders: [],
     filterGroups: [],
     selected: [],
     lids: [],
@@ -497,7 +499,7 @@ export default {
     this.getProviders();
     this.getStatuses();
     if (localStorage.filterStatus) {
-      this.filterStatus = parseInt(localStorage.filterStatus);
+      this.filterStatus = localStorage.filterStatus.split().map(el => parseInt(el));
     }
     if (localStorage.savedates) {
       this.savedates = localStorage.savedates == "true" ? true : false;
@@ -520,7 +522,7 @@ export default {
     }
 
     if (localStorage.filterProviders) {
-      this.filterProviders = parseInt(localStorage.filterProviders);
+      this.filterProviders = localStorage.filterProviders.split().map(el => parseInt(el));
     }
     // this.setHeader();
   },
@@ -536,7 +538,7 @@ export default {
       this.akkvalue = _.findIndex(this.group, { group_id: user.group_id });
     },
     filterStatus(newName) {
-      localStorage.filterStatus = newName;
+      localStorage.filterStatus = newName.toString();
       this.selectRow();
     },
     savedates(newName) {
@@ -560,7 +562,7 @@ export default {
       localStorage.tel = newName;
     },
     filterProviders(newName) {
-      localStorage.filterProviders = newName;
+      localStorage.filterProviders = newName.toString();
     },
     filterGStatus: function (newval, oldval) {
       if (newval == 0) {
@@ -575,8 +577,8 @@ export default {
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
         return (
-          (!this.filterStatus || i.status_id == this.filterStatus) &&
-          (!this.filterProviders || i.provider_id == this.filterProviders) &&
+          (!this.filterStatus.length  ||  this.filterStatus.includes(i.status_id)) &&
+          (!this.filterProviders.length || this.filterProviders.includes(i.provider_id)) &&
           (!this.filtertel || reg.test(i.tel)) &&
           (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
           (!this.filterGroups.length || this.filterGroups.includes(i.group_id))
@@ -623,7 +625,7 @@ export default {
         .toISOString()
         .substring(0, 10);
       this.datetimeTo = new Date().toISOString().substring(0, 10);
-      this.filterStatus = 0;
+      this.filterStatus = [];
       this.filterProviders = 0;
       this.filtertel = "";
       this.disableuser = 0;
@@ -727,7 +729,7 @@ export default {
         .then(function (response) {
           self.getUsers();
           // self.getLids(send.user_id);
-          self.filterStatus = 0;
+          self.filterStatus = [];
         })
         .catch(function (error) {
           console.log(error);
@@ -889,14 +891,14 @@ export default {
             color,
             order,
           }));
-          self.statuses.unshift({ name: "выбор", id: 0 });
+          // self.statuses.unshift({ name: "выбор", id: 0 });
         })
         .catch((error) => console.log(error));
     },
 
     getStatusLids(id) {
       let self = this;
-      self.filterStatus = 0;
+      self.filterStatus = [];
       self.search = "";
       self.filtertel = "";
       axios
@@ -920,7 +922,7 @@ export default {
           self.orderStatus();
           self.searchAll = "";
           if (localStorage.filterStatus) {
-            self.filterStatus = parseInt(localStorage.filterStatus);
+            self.filterStatus = localStorage.filterStatus.split().map(el => parseInt(el));
           }
           // self.getDuplicates();
         })
@@ -981,7 +983,7 @@ export default {
           self.orderStatus();
           self.searchAll = "";
           if (localStorage.filterStatus) {
-            self.filterStatus = parseInt(localStorage.filterStatus);
+            self.filterStatus = localStorage.filterStatus.split().map(el => parseInt(el));
           }
           if (localStorage.filterProviders) {
             self.filterProviders = parseInt(localStorage.filterProviders);
@@ -1036,7 +1038,7 @@ export default {
           if (localStorage.filterStatus) {
             self.$refs.filterStatus.selectedItems = [
               self.statuses.find(function (i) {
-                return i.id == localStorage.filterStatus;
+                return  localStorage.filterStatus.split().map(el => parseInt(el)).includes(i.id);
               }),
             ];
           }
@@ -1108,7 +1110,7 @@ export default {
         .get("/api/provider")
         .then((res) => {
           self.providers = res.data.map(({ name, id }) => ({ name, id }));
-          self.providers.unshift({ name: "выбор", id: 0 });
+          // self.providers.unshift({ name: "выбор", id: 0 });
           // self.getLidsOnDate();
         })
         .catch((error) => console.log(error));
