@@ -82,6 +82,14 @@
         <v-col>
           <!-- statuses_lids -->
           <p>Фильтр по статусам</p>
+          <!-- <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid grey',
+                }"
+                class="sel_stat mr-4"
+              ></i
+              >           -->
           <v-select
             ref="filterStatus"
             color="red"
@@ -92,19 +100,22 @@
             item-value="id"
             outlined
             rounded
-            :multiple=true
+            :multiple="true"
           >
-            <template v-slot:selection="{ item }">
-              <i
-                :style="{
-                  background: item.color,
-                  outline: '1px solid grey',
-                }"
-                class="sel_stat mr-4"
-              ></i
-              >{{ item.name }}
+            <template v-slot:selection="{ item, index }">
+              <span v-if="index === 0">{{ item.name }} </span>
+              <span v-if="index === 1" class="grey--text text-caption">
+                (+{{ filterStatus.length - 1 }} )
+              </span>
             </template>
-            <template v-slot:item="{ item }">
+            <template v-slot:item="{ item, attrs }">
+     <v-badge
+
+        :value="attrs['aria-selected'] == 'true'"
+        color="#7620df"
+  dot
+  left
+      >
               <i
                 :style="{
                   background: item.color,
@@ -112,7 +123,9 @@
                 }"
                 class="sel_stat mr-4"
               ></i
-              >{{ item.name }}
+              >
+              </v-badge>
+              {{ item.name }}
             </template>
           </v-select>
           <!--  <v-btn
@@ -137,7 +150,24 @@
             outlined
             rounded
             multiple
-          ></v-select>
+          >
+            <template v-slot:selection="{ item, index }">
+              <span v-if="index === 0">{{ item.name }} </span>
+              <span v-if="index === 1" class="grey--text text-caption">
+                (+{{ filterProviders.length - 1 }} )
+              </span>
+            </template>
+                        <template v-slot:item="{ item, attrs }">
+     <v-badge
+        :value="attrs['aria-selected'] == 'true'"
+        color="#7620df"
+  dot
+  left
+      >
+              {{ item.name }}
+              </v-badge>
+            </template>
+          </v-select>
         </v-col>
         <v-col>
           <p>Телефон</p>
@@ -499,7 +529,9 @@ export default {
     this.getProviders();
     this.getStatuses();
     if (localStorage.filterStatus) {
-      this.filterStatus = localStorage.filterStatus.split().map(el => parseInt(el));
+      this.filterStatus = localStorage.filterStatus
+        .split()
+        .map((el) => parseInt(el));
     }
     if (localStorage.savedates) {
       this.savedates = localStorage.savedates == "true" ? true : false;
@@ -522,7 +554,9 @@ export default {
     }
 
     if (localStorage.filterProviders) {
-      this.filterProviders = localStorage.filterProviders.split().map(el => parseInt(el));
+      this.filterProviders = localStorage.filterProviders
+        .split()
+        .map((el) => parseInt(el));
     }
     // this.setHeader();
   },
@@ -577,8 +611,10 @@ export default {
       let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
         return (
-          (!this.filterStatus.length  ||  this.filterStatus.includes(i.status_id)) &&
-          (!this.filterProviders.length || this.filterProviders.includes(i.provider_id)) &&
+          (!this.filterStatus.length ||
+            this.filterStatus.includes(i.status_id)) &&
+          (!this.filterProviders.length ||
+            this.filterProviders.includes(i.provider_id)) &&
           (!this.filtertel || reg.test(i.tel)) &&
           (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
           (!this.filterGroups.length || this.filterGroups.includes(i.group_id))
@@ -587,6 +623,10 @@ export default {
     },
   },
   methods: {
+    checked(at){
+      console.log(at['aria-selected'])
+return at['aria-selected']
+    },
     getLidsOnUserOrDate() {
       if (this.savedates == false) {
         let user_id =
@@ -922,7 +962,9 @@ export default {
           self.orderStatus();
           self.searchAll = "";
           if (localStorage.filterStatus) {
-            self.filterStatus = localStorage.filterStatus.split().map(el => parseInt(el));
+            self.filterStatus = localStorage.filterStatus
+              .split()
+              .map((el) => parseInt(el));
           }
           // self.getDuplicates();
         })
@@ -983,7 +1025,9 @@ export default {
           self.orderStatus();
           self.searchAll = "";
           if (localStorage.filterStatus) {
-            self.filterStatus = localStorage.filterStatus.split().map(el => parseInt(el));
+            self.filterStatus = localStorage.filterStatus
+              .split()
+              .map((el) => parseInt(el));
           }
           if (localStorage.filterProviders) {
             self.filterProviders = parseInt(localStorage.filterProviders);
@@ -1038,7 +1082,10 @@ export default {
           if (localStorage.filterStatus) {
             self.$refs.filterStatus.selectedItems = [
               self.statuses.find(function (i) {
-                return  localStorage.filterStatus.split().map(el => parseInt(el)).includes(i.id);
+                return localStorage.filterStatus
+                  .split()
+                  .map((el) => parseInt(el))
+                  .includes(i.id);
               }),
             ];
           }
