@@ -33,7 +33,7 @@ class LidsController extends Controller
     $n_lid = new Lid;
     $n_lid->tel = $insertItem['umcfields']['phone'];
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
-    if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '13') {
+    if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
       $n_lid->status_id = 22;
     } else {
       $n_lid->status_id = 8;
@@ -183,7 +183,7 @@ class LidsController extends Controller
       if (!$f_lid->isEmpty()) {
         $n_lid->status_id = 22;
       }
-      if ($n_lid->provider_id == '13') {
+      if ($n_lid->provider_id == '76') {
         $n_lid->status_id = 8;
       }
       $n_lid->save();
@@ -406,7 +406,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
 
-    if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '13') {
+    if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
       $name = Provider::find($f_key->id)->value('name');
       $n_lid->afilyator = $name;
       $n_lid->provider_id = 75;
@@ -481,7 +481,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $n_lid->created_at = Now();
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
-    if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '13') {
+    if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
       $name = Provider::find($f_key->id)->value('name');
       $n_lid->afilyator = $name;
       $n_lid->provider_id = 75;
@@ -534,7 +534,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $n_lid->created_at = Now();
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
-    if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '13') {
+    if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
       $name = Provider::find($f_key->id)->value('name');
       $n_lid->afilyator = $name;
       $n_lid->provider_id = 75;
@@ -586,7 +586,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if (!$f_lid->isEmpty()) {
       $n_lid->status_id = 22;
     }
-     if ($n_lid->provider_id == '13') {
+     if ($n_lid->provider_id == '76') {
       $n_lid->status_id = 8;
     }
 
