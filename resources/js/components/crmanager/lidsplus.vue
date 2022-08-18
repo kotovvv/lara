@@ -666,7 +666,7 @@ return at['aria-selected']
         .substring(0, 10);
       this.datetimeTo = new Date().toISOString().substring(0, 10);
       this.filterStatus = [];
-      this.filterProviders = 0;
+      this.filterProviders = [];
       this.filtertel = "";
       this.disableuser = 0;
       this.getLidsOnUserOrDate();
@@ -1030,7 +1030,8 @@ return at['aria-selected']
               .map((el) => parseInt(el));
           }
           if (localStorage.filterProviders) {
-            self.filterProviders = parseInt(localStorage.filterProviders);
+            self.filterProviders = localStorage.filterProviders.split()
+        .map((el) => parseInt(el));
           }
           // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
           self.filterStatuses();
