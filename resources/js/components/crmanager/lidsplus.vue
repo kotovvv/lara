@@ -1024,19 +1024,21 @@ return at['aria-selected']
           });
           self.orderStatus();
           self.searchAll = "";
+        }).then(() =>{
           if (localStorage.filterStatus) {
             self.filterStatus = localStorage.filterStatus
-              .split()
+              .split(',')
               .map((el) => parseInt(el));
           }
-          if (localStorage.filterProviders) {
-            self.filterProviders = localStorage.filterProviders.split()
+           self.filterStatuses();
+     } ).then(()=>{
+      if (localStorage.filterProviders) {
+            self.filterProviders = localStorage.filterProviders.split(',')
         .map((el) => parseInt(el));
           }
-          // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
-          self.filterStatuses();
-        })
+     })
         .then(() => {
+
           if (self.hmrow > 0) {
             const temp = self.hmrow;
             self.hmrow = "";
