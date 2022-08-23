@@ -21,19 +21,21 @@ export default {
       if (this.user.role_id == 1) return admincomponent;
       if (this.user.role_id == 2) return crmcomponent;
       if (this.user.role_id == 3) return managercomponent;
+      if (this.user.role_id == 4) console.log('4444444444444');return managercomponent;
     },
   },
   methods: {
 onLogin (data) {
   this.user = data
-  if(this.user.role_id == undefined) localStorage.clear()
+  if(this.user.role_id == undefined && localStorage.user != undefined) localStorage.clear()
   },
   isExist(user) {
     return (!!localStorage[user])
 }
   },
 mounted: function () {
-  if (this.isExist('user')) this.user = JSON.parse(localStorage.user)
+  const local_user = JSON.parse(localStorage.user)
+  if (this.isExist('user') && this.user.name == local_user.name) this.user = local_user
 }
 };
 </script>
