@@ -4,14 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use HasApiTokens;
 
-class Provider extends Model
+class Provider extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory,Notifiable;
+
+    protected $guard = 'provs';
+
     protected $fillable = [
       'name',
       'tel',
       'active',
-      'related_users_id'
+      'related_users_id',
+      'remember_token'
+  ];
+
+    protected $hidden = [
+      'password',
+      'remember_token',
+      'remember_token'
   ];
 }

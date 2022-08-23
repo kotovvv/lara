@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Auth;
 use App\User;
 class LoginController extends Controller
 {
@@ -41,19 +41,20 @@ class LoginController extends Controller
 
     public function vuelogin(Request $request)
     {
-        if(Auth::attempt(['name' => $request->name, 'password' => $request->password])){ 
+      //
+
+        if(Auth::attempt(['name' => $request->name, 'password' => $request->password]) || Auth::guard('provider')->attempt(['name' => $request->name, 'password' => $request->password])){
           $user                  = Auth::user();
           $user = $user->name;
           return response()->json([
             'status'   => 'success',
             'user' => $user,
-
-          ]); 
-        } else { 
+          ]);
+        } else {
           return response()->json([
             'status' => 'error',
             'user'   => 'Unauthorized Access'
-          ]); 
-        } 
+          ]);
+        }
     }
 }

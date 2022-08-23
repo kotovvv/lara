@@ -33,13 +33,16 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12">
+                    <v-col cols="6">
                       <v-text-field
                         v-model="editedItem.name"
                         label="Наименование"
                       ></v-text-field>
                     </v-col>
-
+<v-text-field
+                        v-model="editedItem.password"
+                        label="Пароль"
+                      ></v-text-field>
                     <!-- <v-col cols="6">
                     <v-switch
                       v-model="editedItem.active"
@@ -125,12 +128,14 @@ export default {
       name: "",
       related_users_id: [],
       active: 0,
+      password:''
     },
     defaultItem: {
       id: 0,
       name: "",
       active: 1,
       related_users_id: [],
+      password:''
     },
   }),
 
