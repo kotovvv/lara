@@ -637,7 +637,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       $date = $req['date'] == 'y' ? ', l.created_at , l.updated_at' : '';
     }
 
-    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName " . $date . " FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . ")";
+    // $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName " . $date . " FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . ")";
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName " . $date . " FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id )";
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
       $res['data'] = [];
@@ -674,7 +675,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key = DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     $res['result'] = 'Error';
-    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . " AND DATE(`upload_time`) >= " . $req['startDate'] . " AND DATE(`upload_time`) <= " . $req['endDate'] . " )";
+    // $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . " AND DATE(`upload_time`) >= " . $req['startDate'] . " AND DATE(`upload_time`) <= " . $req['endDate'] . " )";
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE DATE(l.`created_at`) >= " . $req['startDate'] . " AND DATE(l.`created_at`) <= " . $req['endDate'];
 
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
