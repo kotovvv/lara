@@ -18,13 +18,11 @@ class Provider extends Authenticatable
       'name',
       'tel',
       'active',
-      'related_users_id',
-      'remember_token'
+      'related_users_id'
   ];
 
     protected $hidden = [
       'password',
-      'remember_token',
       'remember_token'
   ];
 }
