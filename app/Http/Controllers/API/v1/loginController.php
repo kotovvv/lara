@@ -22,14 +22,16 @@ class loginController extends Controller
   }
   public function login(Request $request)
   {
-    $request->validate([
-      'name' => 'required', 'string', 'max:255',
-      'password' => 'required|string',//|min:6|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
-    ]);
-    $password = Hash::make($request->password);
-    $provider = Provider::where('password', $password)->where('name', $request->name);
+    // $request->validate([
+    //   'name' => 'required', 'string', 'max:255',
+    //   'password' => 'required|string',//|min:6|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
+    // ]);
+    // $password = Hash::make($request->password);
+    // $password = bcrypt($request->password);
+    $provider = Provider::where('name', $request->name)->first();
+
 Debugbar::Info($provider);
-    if ($provider) {
+    if ($provider && Hash::check($request->password, $provider['password'])) {
       $provider->role_id = 4;
       return response()->json([
         'status'   => 'success',

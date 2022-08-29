@@ -9,6 +9,7 @@ const logincomponent = () => import("./components/loginComponent");
 const admincomponent = () => import("./components/admin/adminComponent");
 const crmcomponent = () => import("./components/crmanager/crmComponent");
 const managercomponent = () => import("./components/manager/managerComponent");
+const providercomponent = () => import("./components/provider/providerComponent");
 export default {
   //  name:'main',
   data: () => ({
@@ -21,7 +22,7 @@ export default {
       if (this.user.role_id == 1) return admincomponent;
       if (this.user.role_id == 2) return crmcomponent;
       if (this.user.role_id == 3) return managercomponent;
-      if (this.user.role_id == 4) console.log('4444444444444');return managercomponent;
+      if (this.user.role_id == 4) return providercomponent;
     },
   },
   methods: {
