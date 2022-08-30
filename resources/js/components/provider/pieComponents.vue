@@ -70,7 +70,7 @@ export default {
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins:{legend:{position: "bottom"}}
+        plugins:{legend:{display:false,position: "bottom"}}
 
 
       }

@@ -67,7 +67,7 @@ export default {
     tellog(lid_id) {
       const self = this;
       self.loading = true;
-      console.log(lid_id);
+      // console.log(lid_id);
       axios
         .post("api/log/tellog", { lid_id: lid_id })
         .then(function (res) {

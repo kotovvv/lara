@@ -102,9 +102,9 @@ class ProvidersController extends Controller
     ]);
 
     $data = $request->all();
-      if (isset($data['password'])) {
-        $data['password'] = Hash::make($data['password']);
-      }
+    if (isset($data['password'])) {
+      $data['password'] = Hash::make($data['password']);
+    }
     if (isset($data['id'])) {
       if (Provider::where('id', $data['id'])->update($data)) {
       }
@@ -142,6 +142,58 @@ class ProvidersController extends Controller
     }
 
     return $provider;
+  }
+
+  // Get all lids for provider
+  public function pieAll($id)
+  {
+    $sql = "SELECT `status_id`,s.`name`,s.`color`,COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `provider_id` = '" . (int) $id . "' GROUP BY `status_id` ORDER BY s.order ASC";
+    $providerAllLids = DB::select(DB::raw($sql));
+
+    $labels = [];
+    $backgroundColor = [];
+    $data = [];
+    foreach ($providerAllLids as $row) {
+      $labels[] = $row->name;
+      $backgroundColor[] = $row->color;
+      $data[] = $row->hm;
+    }
+
+    $sql = "SELECT CAST(MIN(`created_at`) AS DATE) start_date FROM `lids` WHERE `provider_id` = " . (int) $id;
+    $res = DB::select(DB::raw($sql));
+    $start_date = $res[0]->start_date;
+
+    return response()->json([
+      "status" => 'ok',
+      "statuses" => $providerAllLids,
+      "labels" => $labels,
+      "backgroundColor" => $backgroundColor,
+      "data" => $data,
+      "start_date" => $start_date
+    ])->setStatusCode(200);
+  }
+  // Get lids for time provider
+  public function pieTime($id,$start_day,$stop_day)
+  {
+    $sql = "SELECT `status_id`,s.`name`,s.`color`,COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `provider_id` = " . (int) $id . " AND CAST(l.`created_at` AS DATE) BETWEEN '".$start_day."' AND '".$stop_day."' GROUP BY `status_id` ORDER BY s.order ASC";
+    $providerTimeLids = DB::select(DB::raw($sql));
+
+    $labels = [];
+    $backgroundColor = [];
+    $data = [];
+    foreach ($providerTimeLids as $row) {
+      $labels[] = $row->name;
+      $backgroundColor[] = $row->color;
+      $data[] = $row->hm;
+    }
+
+    return response()->json([
+      "status" => 'ok',
+      "statuses" => $providerTimeLids,
+      "labels" => $labels,
+      "backgroundColor" => $backgroundColor,
+      "data" => $data,
+    ])->setStatusCode(200);
   }
 
   /**
