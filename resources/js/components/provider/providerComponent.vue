@@ -9,6 +9,11 @@
       <v-row>
         <v-col cols="6">
           <div class="title_all">All time</div>
+          <v-progress-linear
+            :active="pie1"
+            :indeterminate="pie1"
+            color="deep-purple accent-4"
+          ></v-progress-linear>
           <PieChart :datap="chartDataAll" />
           <v-row>
             <v-col>
@@ -31,7 +36,7 @@
           </v-row>
         </v-col>
         <v-col cols="6">
-          <v-row>
+          <v-row class="mb-1">
             <v-col cols="6">
               <v-menu
                 v-model="dateShowFrom"
@@ -48,6 +53,8 @@
                     readonly
                     v-bind="attrs"
                     v-on="on"
+                    hide-details
+                    class="border pl-10"
                   ></v-text-field>
                 </template>
                 <v-date-picker
@@ -75,6 +82,8 @@
                     readonly
                     v-bind="attrs"
                     v-on="on"
+                    hide-details
+                    class="border pl-10"
                   ></v-text-field>
                 </template>
                 <v-date-picker
@@ -87,6 +96,11 @@
               </v-menu>
             </v-col>
           </v-row>
+          <v-progress-linear
+            :active="pie2"
+            :indeterminate="pie2"
+            color="deep-purple accent-4"
+          ></v-progress-linear>
           <PieChart :datap="chartDataTime" />
           <v-row>
             <v-col>
@@ -111,8 +125,7 @@
       </v-row>
     </v-container>
 
-    <v-container fluid class="mt-5">
-
+    <v-container fluid class="mt-10">
       <v-row>
         <v-col cols="col-4">
           <v-menu
@@ -130,6 +143,8 @@
                 readonly
                 v-bind="attrs"
                 v-on="on"
+                class="border pl-10"
+                hide-details
               ></v-text-field>
             </template>
             <v-date-picker
@@ -152,14 +167,17 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="tablDateTo"
-                label="Start day"
+                label="Stop day"
                 readonly
                 v-bind="attrs"
                 v-on="on"
+                class="border pl-10"
+                hide-details
               ></v-text-field>
             </template>
             <v-date-picker
               v-model="tablDateTo"
+              class="border"
               @input="
                 tablDateShowTo = false;
                 getDataTime();
@@ -169,22 +187,25 @@
         <v-col cols="col-4"
           ><v-text-field
             label="Text search"
+            class="border px-5 mt-0"
             hide-details="auto"
             single-line
             v-model="text_search"
           ></v-text-field
         ></v-col>
         <v-col cols="col-4">
-            <!-- @change="filterStatuses" -->
-           <v-select
+          <!-- @change="filterStatuses" -->
+          <v-select
             ref="filterStatus"
             color="red"
             v-model="filterStatus"
             :items="statuses"
             item-text="name"
             item-value="id"
+            label="Status filter"
             outlined
             rounded
+            hide-details
             :multiple="true"
           >
             <template v-slot:selection="{ item, index }">
@@ -215,12 +236,46 @@
       </v-row>
       <v-row>
         <v-col cols="12">
+          <v-progress-linear
+            :active="loading"
+            :indeterminate="loading"
+            color="deep-purple accent-4"
+          ></v-progress-linear>
           <v-data-table
             :headers="headers"
-            :items="lids"
+            :items="filteredItems"
             :search="text_search"
+            @click:row="clickrow"
           ></v-data-table>
         </v-col>
+        <v-dialog v-model="popup" max-width="500">
+          <v-card>
+            <v-card-title class="text-h5"> History statuses </v-card-title>
+          <v-progress-linear
+            :active="history_load"
+            :indeterminate="history_load"
+            color="deep-purple accent-4"
+          ></v-progress-linear>
+            <v-card-text>
+              <v-simple-table>
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Date</th>
+                      <th class="text-left">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="item in history" :key="item.id">
+                      <td>{{ item.date }}</td>
+                      <td>{{ item.status }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
       </v-row>
     </v-container>
   </v-app>
@@ -229,11 +284,17 @@
 <script>
 import PieChart from "./pieComponents";
 import axios from "axios";
+import _ from "lodash";
 export default {
   components: {
     PieChart,
   },
   data: () => ({
+    popup: false,
+    pie1: false,
+    pie2: false,
+    loading: false,
+    history_load: false,
     user: {},
     dateFrom: new Date(new Date().setDate(new Date().getDate() - 7))
       .toISOString()
@@ -256,7 +317,8 @@ export default {
     allLidsAll: "0",
     allLidsTime: "0",
     text_search: "",
-    filterStatus:[],
+    filterStatus: [],
+    history: [],
     headers: [
       { text: "Name", value: "name" },
       { text: "Email", value: "email" },
@@ -285,29 +347,41 @@ export default {
       ],
     },
   }),
+  computed: {
+    filteredItems() {
+      return this.lids.filter((i) => {
+        return (
+          !this.filterStatus.length || this.filterStatus.includes(i.status_id)
+        );
+      });
+    },
+  },
   methods: {
+    clickrow(item, row) {
+      const self = this;
+      self.history = []
+      self.history_load = true
+      axios
+        .get("api/historyLid/" + item.id)
+        .then(function (res) {
+          self.history = res.data.history;
+          if (item.status_id != 10) {
+            self.history = self.history.filter((el) => el.status_id != 10);
+          }
+          self.history_load = false
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      this.popup = true;
+    },
     setUser() {
       this.user = this.$attrs.user;
     },
-    //     filterStatuses() {
-    //   const self = this;
-    //   self.Statuses = [];
-    //   let stord = this.filteredItems;
-    //   stord = Object.entries(_.groupBy(stord, "status"));
-    //   stord.map(function (i) {
-    //     let el = self.statuses.find((s) => s.name == i[0]);
-    //     self.Statuses.push({
-    //       name: i[0],
-    //       hm: i[1].length,
-    //       order: el.order,
-    //       color: el.color,
-    //     });
-    //   });
-    //   self.Statuses = _.orderBy(self.Statuses, "order");
-    // },
     getDataTime() {
       const self = this;
       const provider_id = this.user.id;
+      self.loading = true;
       axios
         .get(
           "api/getDataTime/" +
@@ -319,6 +393,17 @@ export default {
         )
         .then(function (res) {
           self.lids = res.data.data;
+          let g_status = [];
+          g_status = Object.entries(_.groupBy(self.lids, "status_name"));
+          g_status.forEach((el) => {
+            self.statuses.push({
+              name: el[0],
+              color: el[1][0].color,
+              id: el[1][0].status_id,
+            });
+          });
+
+          self.loading = false;
         })
         .catch(function (error) {
           console.log(error);
@@ -327,6 +412,7 @@ export default {
     getPieAll() {
       const self = this;
       const provider_id = this.user.id;
+      self.pie1 = true;
       axios
         .get("api/pieAll/" + provider_id)
         .then(function (res) {
@@ -340,6 +426,7 @@ export default {
             (all, el) => all + el.hm,
             0
           );
+          self.pie1 = false;
         })
         .catch(function (error) {
           console.log(error);
@@ -348,6 +435,7 @@ export default {
     getPieTime() {
       const self = this;
       const provider_id = this.user.id;
+      self.pie2 = true;
       axios
         .get(
           "api/pieTime/" + provider_id + "/" + self.dateFrom + "/" + self.dateTo
@@ -362,6 +450,7 @@ export default {
             (all, el) => all + el.hm,
             0
           );
+          self.pie2 = false;
         })
         .catch(function (error) {
           console.log(error);

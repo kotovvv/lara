@@ -82,6 +82,7 @@ Route::get('getHmLidsUser/{id}', [LidsController::class, 'getHmLidsUser'])->name
 Route::get('InfoDeposit', [LidsController::class, 'InfoDeposit'])->name('InfoDeposit');
 Route::get('AllDeposits', [LidsController::class, 'AllDeposits'])->name('AllDeposits');
 
+Route::get('historyLid/{id}', [ProvidersController::class, 'historyLid'])->name('historyLid');
 Route::get('pieAll/{id}', [ProvidersController::class, 'pieAll'])->name('pieAll');
 Route::get('pieTime/{id}/{start_day}/{stop_day}', [ProvidersController::class, 'pieTime'])->name('pieTime');
 Route::get('getDataTime/{id}/{start_day}/{stop_day}', [ProvidersController::class, 'getDataTime'])->name('getDataTime');

@@ -172,6 +172,7 @@ class ProvidersController extends Controller
       "start_date" => $start_date
     ])->setStatusCode(200);
   }
+
   // Get lids for time provider
   public function pieTime($id,$start_day,$stop_day)
   {
@@ -207,6 +208,19 @@ class ProvidersController extends Controller
       "data" => $providerTimeLids,
     ])->setStatusCode(200);
   }
+
+  public function historyLid($id)
+  {
+    $sql = "SELECT l.id, CAST(l.`created_at` AS DATE) date, s.`name` status,s.`color` color FROM `logs` l LEFT JOIN `statuses` s ON (l.`status_id` = s.`id`) WHERE `lid_id` = ".(int) $id." AND s.`name` IS NOT NULL ORDER BY DATE ASC";
+    $history = DB::select(DB::raw($sql));
+
+    return response()->json([
+      "status" => 'ok',
+      "history" => $history
+    ])->setStatusCode(200);
+  }
+
+
 
   /**
    * Show the form for editing the specified resource.
