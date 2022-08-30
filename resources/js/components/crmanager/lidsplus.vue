@@ -82,14 +82,6 @@
         <v-col>
           <!-- statuses_lids -->
           <p>Фильтр по статусам</p>
-          <!-- <i
-                :style="{
-                  background: item.color,
-                  outline: '1px solid grey',
-                }"
-                class="sel_stat mr-4"
-              ></i
-              >           -->
           <v-select
             ref="filterStatus"
             color="red"

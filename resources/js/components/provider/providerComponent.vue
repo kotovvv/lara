@@ -79,7 +79,10 @@
                 </template>
                 <v-date-picker
                   v-model="dateTo"
-                  @input="dateShowTo = false; getPieTime()"
+                  @input="
+                    dateShowTo = false;
+                    getPieTime();
+                  "
                 ></v-date-picker>
               </v-menu>
             </v-col>
@@ -107,70 +110,116 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-container fluid>
+
+    <v-container fluid class="mt-5">
+
       <v-row>
-        <v-col cols="col-4"><v-text-field
-      label="Text search"
-      hide-details="auto"
-    ></v-text-field></v-col>
-        <v-col cols="col-4">              <v-menu
-                v-model="tablDateShowFrom"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
+        <v-col cols="col-4">
+          <v-menu
+            v-model="tablDateShowFrom"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="tablDateFrom"
+                label="Start day"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="tablDateFrom"
+              @input="
+                tablDateShowFrom = false;
+                getDataTime();
+              "
+            ></v-date-picker> </v-menu
+        ></v-col>
+        <v-col cols="col-4">
+          <v-menu
+            v-model="tablDateShowTo"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="tablDateTo"
+                label="Start day"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="tablDateTo"
+              @input="
+                tablDateShowTo = false;
+                getDataTime();
+              "
+            ></v-date-picker> </v-menu
+        ></v-col>
+        <v-col cols="col-4"
+          ><v-text-field
+            label="Text search"
+            hide-details="auto"
+            single-line
+            v-model="text_search"
+          ></v-text-field
+        ></v-col>
+        <v-col cols="col-4">
+            <!-- @change="filterStatuses" -->
+           <v-select
+            ref="filterStatus"
+            color="red"
+            v-model="filterStatus"
+            :items="statuses"
+            item-text="name"
+            item-value="id"
+            outlined
+            rounded
+            :multiple="true"
+          >
+            <template v-slot:selection="{ item, index }">
+              <span v-if="index === 0">{{ item.name }} </span>
+              <span v-if="index === 1" class="grey--text text-caption">
+                (+{{ filterStatus.length - 1 }} )
+              </span>
+            </template>
+            <template v-slot:item="{ item, attrs }">
+              <v-badge
+                :value="attrs['aria-selected'] == 'true'"
+                color="#7620df"
+                dot
+                left
               >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="tablDateFrom"
-                    label="Start day"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="tablDateFrom"
-                  @input="
-                    tablDateShowFrom = false;
-                    getDataTime();
-                  "
-                ></v-date-picker>
-              </v-menu></v-col>
-        <v-col cols="col-4">              <v-menu
-                v-model="tablDateShowTo"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="tablDateTo"
-                    label="Start day"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="tablDateTo"
-                  @input="
-                    tablDateShowTo = false;
-                    getDataTime();
-                  "
-                ></v-date-picker>
-              </v-menu></v-col>
-        <v-col cols="col-4"><v-text-field
-      label="Main input"
-      hide-details="auto"
-    ></v-text-field></v-col>
+                <i
+                  :style="{
+                    background: item.color,
+                    outline: '1px solid grey',
+                  }"
+                  class="sel_stat mr-4"
+                ></i>
+              </v-badge>
+              {{ item.name }}
+            </template>
+          </v-select>
+        </v-col>
       </v-row>
       <v-row>
         <v-col cols="12">
-
+          <v-data-table
+            :headers="headers"
+            :items="lids"
+            :search="text_search"
+          ></v-data-table>
         </v-col>
       </v-row>
     </v-container>
@@ -203,8 +252,20 @@ export default {
     dateTime: [],
     statuses_all: [],
     statuses_time: [],
+    statuses: [],
     allLidsAll: "0",
     allLidsTime: "0",
+    text_search: "",
+    filterStatus:[],
+    headers: [
+      { text: "Name", value: "name" },
+      { text: "Email", value: "email" },
+      { text: "Phone.", value: "tel" },
+      { text: "Start data", value: "created_at" },
+      { text: "Edit date", value: "updated_at" },
+      { text: "Status", value: "status_name" },
+    ],
+    lids: [],
     chartDataAll: {
       labels: [],
       datasets: [
@@ -228,13 +289,36 @@ export default {
     setUser() {
       this.user = this.$attrs.user;
     },
-    getDataTime(){
-            const self = this;
+    //     filterStatuses() {
+    //   const self = this;
+    //   self.Statuses = [];
+    //   let stord = this.filteredItems;
+    //   stord = Object.entries(_.groupBy(stord, "status"));
+    //   stord.map(function (i) {
+    //     let el = self.statuses.find((s) => s.name == i[0]);
+    //     self.Statuses.push({
+    //       name: i[0],
+    //       hm: i[1].length,
+    //       order: el.order,
+    //       color: el.color,
+    //     });
+    //   });
+    //   self.Statuses = _.orderBy(self.Statuses, "order");
+    // },
+    getDataTime() {
+      const self = this;
       const provider_id = this.user.id;
       axios
-        .get("api/getDataTime/" + provider_id + "/" + self.tablDateFrom + "/" + self.tablDateTo)
+        .get(
+          "api/getDataTime/" +
+            provider_id +
+            "/" +
+            self.tablDateFrom +
+            "/" +
+            self.tablDateTo
+        )
         .then(function (res) {
-
+          self.lids = res.data.data;
         })
         .catch(function (error) {
           console.log(error);
@@ -288,6 +372,7 @@ export default {
     this.setUser();
     this.getPieAll();
     this.getPieTime();
+    this.getDataTime();
   },
 };
 </script>

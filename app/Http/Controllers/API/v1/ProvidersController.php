@@ -196,6 +196,18 @@ class ProvidersController extends Controller
     ])->setStatusCode(200);
   }
 
+  // Get lids for time provider
+  public function getDataTime($id,$start_day,$stop_day)
+  {
+    $sql = "SELECT l.id, l.`name`, l.`tel`, l.`email`, cast(l.`created_at` as date) created_at, cast(l.`updated_at` as date) updated_at, l.`status_id`, s.`name` status_name, s.`color` FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `provider_id` = " . (int) $id . " AND CAST(l.`created_at` AS DATE) BETWEEN '".$start_day."' AND '".$stop_day."'  ORDER BY s.order ASC";
+    $providerTimeLids = DB::select(DB::raw($sql));
+
+    return response()->json([
+      "status" => 'ok',
+      "data" => $providerTimeLids,
+    ])->setStatusCode(200);
+  }
+
   /**
    * Show the form for editing the specified resource.
    *
