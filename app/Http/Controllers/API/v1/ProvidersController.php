@@ -12,6 +12,7 @@ use App\Models\Lid;
 use App\Models\Log;
 use App\Models\Import;
 
+
 class ProvidersController extends Controller
 {
   /**
@@ -102,15 +103,17 @@ class ProvidersController extends Controller
     ]);
 
     $data = $request->all();
-    if (isset($data['password'])) {
+    $data['related_users_id'] = json_encode($data['related_users_id']);
+
+    if (isset($data['password']) && $data['password'] != NULL) {
       $data['password'] = Hash::make($data['password']);
     }
-    if (isset($data['id'])) {
+
+    if (isset($data['id']) && $data['id'] > 0) {
       if (Provider::where('id', $data['id'])->update($data)) {
       }
     } else {
-      if (Provider::create($data)) {
-      }
+      $provider = Provider::create($data);
     }
     $name_key = Provider::select('id', 'name', 'tel')->get();
     $sql = 'TRUNCATE TABLE `apikeys`';
@@ -123,6 +126,12 @@ class ProvidersController extends Controller
       $i++;
     }
     DB::select(DB::raw($sql));
+    if(!isset($data['id'])) {
+      return response()->json([
+        "status" => true,
+        "provider" => $provider
+      ])->setStatusCode(200);
+    }
   }
 
   /**

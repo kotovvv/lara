@@ -124,18 +124,16 @@ export default {
 
     editedIndex: -1,
     editedItem: {
-      id: 0,
       name: "",
-      related_users_id: [],
-      active: 0,
-      password:''
-    },
-    defaultItem: {
-      id: 0,
-      name: "",
+      password:'',
       active: 1,
       related_users_id: [],
-      password:''
+    },
+    defaultItem: {
+      name: "",
+      password:'',
+      active: 1,
+      related_users_id: [],
     },
   }),
 
@@ -195,15 +193,16 @@ export default {
     },
     saveProvider(provider) {
       let self = this;
-      // if(Array.isArray(provider.related_users_id)) provider.related_users_id = JSON.parse(provider.related_users_id)
       axios
         .post("/api/provider", provider)
         .then((res) => {
-          // console.log(res);
+          if(provider.id == undefined){
+            let idx = self.providers.indexOf(provider)
+            Object.assign(self.providers[idx] , res.data.provider)
+          }
         })
         .catch((error) => console.log(error));
     },
-    // initialize() {},
     editItem(item) {
       this.editedIndex = this.providers.indexOf(item);
       this.editedItem = Object.assign({}, item);
