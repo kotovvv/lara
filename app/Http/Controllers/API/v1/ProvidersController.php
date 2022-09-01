@@ -105,15 +105,23 @@ class ProvidersController extends Controller
     $data = $request->all();
     $data['related_users_id'] = json_encode($data['related_users_id']);
 
-    if (isset($data['password']) && $data['password'] != NULL) {
-      $data['password'] = Hash::make($data['password']);
-    }
 
     if (isset($data['id']) && $data['id'] > 0) {
+      if ($data['password'] == '') {
+        $data['password'] = '';
+      } else {
+        $data['password'] = Hash::make($data['password']);
+      }
       if (Provider::where('id', $data['id'])->update($data)) {
       }
     } else {
       $provider = Provider::create($data);
+      if ($data['password'] == '') {
+        $provider->password = '';
+      } else {
+        $provider->password = Hash::make($data['password']);
+      }
+      $provider->save();
     }
     $name_key = Provider::select('id', 'name', 'tel')->get();
     $sql = 'TRUNCATE TABLE `apikeys`';
@@ -126,7 +134,7 @@ class ProvidersController extends Controller
       $i++;
     }
     DB::select(DB::raw($sql));
-    if(!isset($data['id'])) {
+    if (!isset($data['id'])) {
       return response()->json([
         "status" => true,
         "provider" => $provider
@@ -183,9 +191,9 @@ class ProvidersController extends Controller
   }
 
   // Get lids for time provider
-  public function pieTime($id,$start_day,$stop_day)
+  public function pieTime($id, $start_day, $stop_day)
   {
-    $sql = "SELECT `status_id`,s.`name`,s.`color`,COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `provider_id` = " . (int) $id . " AND CAST(l.`created_at` AS DATE) BETWEEN '".$start_day."' AND '".$stop_day."' GROUP BY `status_id` ORDER BY s.order ASC";
+    $sql = "SELECT `status_id`,s.`name`,s.`color`,COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `provider_id` = " . (int) $id . " AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "' GROUP BY `status_id` ORDER BY s.order ASC";
     $providerTimeLids = DB::select(DB::raw($sql));
 
     $labels = [];
@@ -207,9 +215,9 @@ class ProvidersController extends Controller
   }
 
   // Get lids for time provider
-  public function getDataTime($id,$start_day,$stop_day)
+  public function getDataTime($id, $start_day, $stop_day)
   {
-    $sql = "SELECT l.id, l.`name`, l.`tel`, l.`email`, cast(l.`created_at` as date) created_at, cast(l.`updated_at` as date) updated_at, l.`status_id`, s.`name` status_name, s.`color` FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `provider_id` = " . (int) $id . " AND CAST(l.`created_at` AS DATE) BETWEEN '".$start_day."' AND '".$stop_day."'  ORDER BY s.order ASC";
+    $sql = "SELECT l.id, l.`name`, l.`tel`, l.`email`, cast(l.`created_at` as date) created_at, cast(l.`updated_at` as date) updated_at, l.`status_id`, s.`name` status_name, s.`color` FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `provider_id` = " . (int) $id . " AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "'  ORDER BY s.order ASC";
     $providerTimeLids = DB::select(DB::raw($sql));
 
     return response()->json([
@@ -220,7 +228,7 @@ class ProvidersController extends Controller
 
   public function historyLid($id)
   {
-    $sql = "SELECT l.id, CAST(l.`created_at` AS DATE) date, s.`name` status,s.`color` color FROM `logs` l LEFT JOIN `statuses` s ON (l.`status_id` = s.`id`) WHERE `lid_id` = ".(int) $id." AND s.`name` IS NOT NULL ORDER BY DATE ASC";
+    $sql = "SELECT l.id, CAST(l.`created_at` AS DATE) date, s.`name` status,s.`color` color FROM `logs` l LEFT JOIN `statuses` s ON (l.`status_id` = s.`id`) WHERE `lid_id` = " . (int) $id . " AND s.`name` IS NOT NULL ORDER BY DATE ASC";
     $history = DB::select(DB::raw($sql));
 
     return response()->json([
