@@ -35,8 +35,14 @@ onLogin (data) {
 }
   },
 mounted: function () {
-  const local_user = JSON.parse(localStorage.user)
-  if (this.isExist('user') && this.user.name == local_user.name) this.user = local_user
+
+    const local_user = JSON.parse(localStorage.user)
+
+  if (this.isExist('user') ) this.user = local_user
+  if(this.user.role_id == 4) {
+    localStorage.clear()
+    this.user = {}
+  }
 }
 };
 </script>
