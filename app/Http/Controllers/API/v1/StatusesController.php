@@ -49,7 +49,7 @@ class StatusesController extends Controller
                 return response('Status updated', 200);
             } else return response('Status updated error', 301);
         } else {
-            // Debugbar::info('save');
+            $data['updated_at'] = Now();
             if (Status::create($data)) {
                 return response('Status added', 200);
             } else return response('Status add error', 301);
