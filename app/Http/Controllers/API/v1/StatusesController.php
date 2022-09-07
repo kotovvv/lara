@@ -45,6 +45,8 @@ class StatusesController extends Controller
         // Debugbar::info($data);
         if (isset($data['id'])) {
             // Debugbar::info('update');
+            unset($data['created_at']);
+            $data['updated_at'] = Now();
             if (Status::where('id', $data['id'])->update($data)) {
                 return response('Status updated', 200);
             } else return response('Status updated error', 301);
