@@ -374,11 +374,10 @@
             outlined
             rounded
             @click:append="
-              disableuser = value || 0;
-              getLidsOnUserOrDate();
-              selectedUser = {};
+              clearuser()
             "
           ></v-autocomplete>
+
           <div class="scroll-y">
             <v-list>
               <v-radio-group
@@ -615,6 +614,11 @@ export default {
     },
   },
   methods: {
+    clearuser(){
+       this.disableuser = this.selectedUser.id || 0;
+       this.getLidsOnUserOrDate()
+       this.selectedUser = {};
+    },
     checked(at){
       console.log(at['aria-selected'])
 return at['aria-selected']
@@ -828,6 +832,7 @@ return at['aria-selected']
     },
     changeLidsUser() {
       const self = this;
+      self.disableuser = this.userid
       let send = {};
       send.user_id = this.userid;
       send.data = [];
