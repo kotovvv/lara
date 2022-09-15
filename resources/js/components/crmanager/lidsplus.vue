@@ -615,7 +615,7 @@ export default {
   },
   methods: {
     clearuser(){
-       this.disableuser = this.selectedUser.id || 0;
+       this.disableuser = 0;
        this.getLidsOnUserOrDate()
        this.selectedUser = {};
     },
