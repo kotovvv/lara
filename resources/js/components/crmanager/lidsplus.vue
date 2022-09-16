@@ -101,21 +101,19 @@
               </span>
             </template>
             <template v-slot:item="{ item, attrs }">
-     <v-badge
-
-        :value="attrs['aria-selected'] == 'true'"
-        color="#7620df"
-  dot
-  left
-      >
-              <i
-                :style="{
-                  background: item.color,
-                  outline: '1px solid grey',
-                }"
-                class="sel_stat mr-4"
-              ></i
+              <v-badge
+                :value="attrs['aria-selected'] == 'true'"
+                color="#7620df"
+                dot
+                left
               >
+                <i
+                  :style="{
+                    background: item.color,
+                    outline: '1px solid grey',
+                  }"
+                  class="sel_stat mr-4"
+                ></i>
               </v-badge>
               {{ item.name }}
             </template>
@@ -149,14 +147,14 @@
                 (+{{ filterProviders.length - 1 }} )
               </span>
             </template>
-                        <template v-slot:item="{ item, attrs }">
-     <v-badge
-        :value="attrs['aria-selected'] == 'true'"
-        color="#7620df"
-  dot
-  left
-      >
-              {{ item.name }}
+            <template v-slot:item="{ item, attrs }">
+              <v-badge
+                :value="attrs['aria-selected'] == 'true'"
+                color="#7620df"
+                dot
+                left
+              >
+                {{ item.name }}
               </v-badge>
             </template>
           </v-select>
@@ -373,9 +371,7 @@
             append-icon="mdi-close"
             outlined
             rounded
-            @click:append="
-              clearuser()
-            "
+            @click:append="clearuser()"
           ></v-autocomplete>
 
           <div class="scroll-y">
@@ -614,14 +610,14 @@ export default {
     },
   },
   methods: {
-    clearuser(){
-       this.disableuser = 0;
-       this.getLidsOnUserOrDate()
-       this.selectedUser = {};
+    clearuser() {
+      this.disableuser = 0;
+      this.getLidsOnUserOrDate();
+      this.selectedUser = {};
     },
-    checked(at){
-      console.log(at['aria-selected'])
-return at['aria-selected']
+    checked(at) {
+      console.log(at["aria-selected"]);
+      return at["aria-selected"];
     },
     getLidsOnUserOrDate() {
       if (this.savedates == false) {
@@ -818,23 +814,14 @@ return at['aria-selected']
         this.expanded = [item];
       } else this.tel = "";
       row.select(!row.isSelected);
-      // ===============
-      // let self = this;
-      // this.clickedItemTel = item.tel;
-      // this.clickedItemStatuses = [];
-      // axios
-      //   .get("/api/StasusesOfId/" + item.id)
-      //   .then((res) => {
-      //     self.clickedItemStatuses = res.data;
-      //   })
-      //   .catch((error) => console.log(error));
-      // ====================
     },
     changeLidsUser() {
       const self = this;
-      self.disableuser = this.userid
       let send = {};
+
+      //self.disableuser = this.userid;
       send.user_id = this.userid;
+
       send.data = [];
       if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
@@ -845,30 +832,18 @@ return at['aria-selected']
         this.userid = null;
         return false;
       }
-      // if (
-      //   (this.search !== "" ||
-      //     this.filtertel !== "" ||
-      //     this.filterStatus !== 0 ||
-      //     this.filterGStatus !== 0) &&
-      //   this.$refs.datatable.$children[0].filteredItems.length > 0
-      // ) {
-      //   send.data = this.$refs.datatable.$children[0].filteredItems;
-      // }
       if (self.$props.user.role_id == 2) {
         //CallBack user not change
         send.data = send.data.filter((f) => f.status_id != 9);
       }
-      // if (send.data.length == 0) send.data = this.lids;
-
       axios
         .post("api/Lid/changelidsuser", send)
         .then(function (response) {
           self.search = "";
-          // self.filtertel = "";
           self.userid = null;
+          self.disableuser = 0
           self.$refs.radiogroup.lazyValue = null;
           self.selected = [];
-          // self.filterStatus = 0;
           self.getUsers();
           self.getLidsOnUserOrDate();
         })
@@ -928,7 +903,6 @@ return at['aria-selected']
             color,
             order,
           }));
-          // self.statuses.unshift({ name: "выбор", id: 0 });
         })
         .catch((error) => console.log(error));
     },
@@ -941,9 +915,7 @@ return at['aria-selected']
       axios
         .get("/api/statuslids/" + id)
         .then((res) => {
-          // console.log(res.data);
           self.lids = Object.entries(res.data).map((e) => e[1]);
-
           self.lids.map(function (e) {
             e.date_created = e.created_at.substring(0, 10);
             e.date_updated = e.updated_at.substring(0, 10);
@@ -963,7 +935,6 @@ return at['aria-selected']
               .split()
               .map((el) => parseInt(el));
           }
-          // self.getDuplicates();
         })
         .catch((error) => console.log(error));
     },
@@ -994,11 +965,10 @@ return at['aria-selected']
       data.dateto = this.getLocalDateTime(this.datetimeTo);
 
       data.user_id = this.disableuser;
-
+      console.log(data.user_id);
       axios
         .post("/api/getLidsOnDate", data)
         .then((res) => {
-          // console.log(res.data);
           self.loading = false;
           self.lids = Object.entries(res.data).map((e) => e[1]);
           self.lids.map(function (e) {
@@ -1021,21 +991,23 @@ return at['aria-selected']
           });
           self.orderStatus();
           self.searchAll = "";
-        }).then(() =>{
+        })
+        .then(() => {
           if (localStorage.filterStatus) {
             self.filterStatus = localStorage.filterStatus
-              .split(',')
+              .split(",")
               .map((el) => parseInt(el));
           }
-           self.filterStatuses();
-     } ).then(()=>{
-      if (localStorage.filterProviders) {
-            self.filterProviders = localStorage.filterProviders.split(',')
-        .map((el) => parseInt(el));
-          }
-     })
+          self.filterStatuses();
+        })
         .then(() => {
-
+          if (localStorage.filterProviders) {
+            self.filterProviders = localStorage.filterProviders
+              .split(",")
+              .map((el) => parseInt(el));
+          }
+        })
+        .then(() => {
           if (self.hmrow > 0) {
             const temp = self.hmrow;
             self.hmrow = "";
@@ -1047,9 +1019,7 @@ return at['aria-selected']
     },
     getLids(id) {
       let self = this;
-      // self.filterStatus = 0;
       self.search = "";
-      // self.filtertel = "";
       self.disableuser = id;
       self.Statuses = [];
       self.loading = true;
@@ -1073,10 +1043,6 @@ return at['aria-selected']
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
-          // self.statuses_lids = _.uniqBy(self.lids, "status_id").map((i) => ({
-          //   status_id: i.status_id,
-          //   status: i.status,
-          // }));
           self.orderStatus();
           self.searchAll = "";
           if (localStorage.filterStatus) {
@@ -1089,8 +1055,6 @@ return at['aria-selected']
               }),
             ];
           }
-          // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
-          // self.getDuplicates();
           self.loading = false;
           self.filterStatuses();
         })
