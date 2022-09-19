@@ -819,7 +819,7 @@ export default {
       const self = this;
       let send = {};
 
-      //self.disableuser = this.userid;
+      self.disableuser = this.userid;
       send.user_id = this.userid;
 
       send.data = [];
