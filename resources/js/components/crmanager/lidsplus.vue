@@ -816,11 +816,9 @@ export default {
     changeLidsUser() {
       const self = this;
       let send = {};
-
+      send.data = [];
       self.disableuser = this.userid;
       send.user_id = this.userid;
-
-      send.data = [];
 
       if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
