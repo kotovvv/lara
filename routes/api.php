@@ -43,7 +43,7 @@ Route::post('getusers', [UsersController::class, 'getrelatedusers'])->name('getr
 Route::get('users/getroles', [UsersController::class, 'getroless'])->name('user.getroles');
 Route::post('user/update', [UsersController::class, 'update'])->name('user.update');
 Route::get('userlids/{id}', [LidsController::class, 'userLids'])->name('userlids');
-Route::get('statuslids/{id}', [LidsController::class, 'statusLids'])->name('statuslids');
+Route::post('statuslids', [LidsController::class, 'statusLids'])->name('statuslids');
 Route::get('getuserlids/{id}', [LidsController::class, 'getuserLids'])->name('getuserlids');
 Route::delete('provider/{id}', [ProvidersController::class, 'destroy']);
 Route::delete('user/{id}', [UsersController::class, 'deleteuser']);
@@ -57,7 +57,7 @@ Route::get('getDataDay/{id}', [UsersController::class, 'getDataDay']);
 
 Route::post('Lid/newlids', [LidsController::class, 'newlids'])->name('Lid.newlids');
 Route::post('Lid/updatelids', [LidsController::class, 'updatelids'])->name('Lid.updatelids');
-Route::get('Lid/searchlids', [LidsController::class, 'searchlids'])->name('Lid.searchlids');
+Route::post('Lid/searchlids', [LidsController::class, 'searchlids'])->name('Lid.searchlids');
 Route::get('getlidid', [LidsController::class, 'getlidid'])->name('getlidid');
 Route::get('getlidsontime', [LidsController::class, 'getlidsontime'])->name('getlidsontime');
 Route::post('getLidsOnDate', [LidsController::class, 'getLidsOnDate'])->name('getLidsOnDate');

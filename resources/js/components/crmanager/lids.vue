@@ -43,7 +43,7 @@
             <!-- <v-icon small @click="deleteItem()"> mdi-delete </v-icon> -->
           </v-btn>
         </v-col>
-        <v-col cols="2" v-if="$props.user.role_id == 1">
+        <v-col cols="2">
           Глобальный статус
           <v-select
             v-model="filterGStatus"
@@ -88,7 +88,7 @@
           ></v-select>
         </v-col>
 
-        <v-col cols="2"  v-if="$props.user.role_id == 1">
+        <v-col cols="2">
           Глобальный поиск
           <v-text-field
             v-model="searchAll"
@@ -402,8 +402,12 @@ export default {
     },
     searchInDB() {
       let self = this;
+      const send = {}
+      send.group_id = self.$props.user.group_id
+      send.role_id = self.$props.user.role_id
+      send.search = self.searchAll
       axios
-        .get("api/Lid/searchlids?search=" + self.searchAll)
+        .post("api/Lid/searchlids",send )
         .then((res) => {
           // console.log(res.data);
           self.lids = Object.entries(res.data).map((e) => e[1]);
@@ -601,8 +605,12 @@ export default {
       self.filterStatus = 0;
       self.search = "";
       self.filtertel = "";
+            const send = {}
+      send.group_id = self.$props.user.group_id
+      send.role_id = self.$props.user.role_id
+      send.id = id
       axios
-        .get("/api/statuslids/" + id)
+        .post("/api/statuslids",send)
         .then((res) => {
           // console.log(res.data);
           self.lids = Object.entries(res.data).map((e) => e[1]);

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Lid;
 use App\Models\Log;
 use App\Models\Depozit;
+use App\Models\User;
 use App\Models\Provider;
 use DB;
 use Debugbar;
@@ -58,16 +59,27 @@ class LidsController extends Controller
 
   public function searchlids(Request $request)
   {
-    $searchTerm = $request->all();
+    $data = $request->all();
     //  Debugbar::info($searchTerm);
-    //SELECT * FROM lids WHERE `tel` LIKE '%488%' OR `name` LIKE '%488%' OR email LIKE '%488%' OR `text` LIKE '%488%'
-
-    return Lid::select('*')
-      ->where('name', 'like', "%{$searchTerm['search']}%")
-      ->orwhere('tel', 'like', "%{$searchTerm['search']}%")
-      ->orwhere('email', 'like', "%{$searchTerm['search']}%")
-      ->orwhere('text', 'like', "%{$searchTerm['search']}%")
+if(isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2){
+  $a_user_ids = User::select('id')->where('group_id',$data['group_id']);
+  return Lid::select('*')
+  ->whereIn('user_id', $a_user_ids)
+  ->where('name', 'like', "%{$data['search']}%")
+  ->orwhere('tel', 'like', "%{$data['search']}%")
+  ->orwhere('email', 'like', "%{$data['search']}%")
+  ->orwhere('text', 'like', "%{$data['search']}%")
+  ->get();
+}else{
+      return Lid::select('*')
+      ->where('name', 'like', "%{$data['search']}%")
+      ->orwhere('tel', 'like', "%{$data['search']}%")
+      ->orwhere('email', 'like', "%{$data['search']}%")
+      ->orwhere('text', 'like', "%{$data['search']}%")
       ->get();
+}
+
+
   }
 
   /**
@@ -196,9 +208,15 @@ class LidsController extends Controller
     return Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)->orderBy('lids.created_at', 'desc')->get();
   }
 
-  public function statusLids($id)
+  public function statusLids(Request $request)
   {
-    return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.status_id', $id)->orderBy('lids.created_at', 'desc')->get();
+    $data = $request->all();
+    if(isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2){
+      $a_user_ids = User::select('id')->where('group_id',$data['group_id']);
+      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->whereIn('lids.user_id',$a_user_ids)->where('lids.status_id', $data['id'])->orderBy('lids.created_at', 'desc')->get();
+    }else{
+      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.status_id', $data['id'])->orderBy('lids.created_at', 'desc')->get();
+    }
   }
 
   public function InfoDeposit(Request $request)

@@ -724,8 +724,12 @@ export default {
     },
     searchInDB() {
       let self = this;
+      const send = {};
+      send.group_id = self.$props.user.group_id;
+      send.role_id = self.$props.user.role_id;
+      send.search = self.searchAll;
       axios
-        .get("api/Lid/searchlids?search=" + self.searchAll)
+        .post("api/Lid/searchlids", send)
         .then((res) => {
           // console.log(res.data);
           self.lids = Object.entries(res.data).map((e) => e[1]);
@@ -838,7 +842,7 @@ export default {
         .then(function (response) {
           self.search = "";
           self.userid = null;
-          self.disableuser = 0
+          self.disableuser = 0;
           self.$refs.radiogroup.lazyValue = null;
           self.selected = [];
           self.getUsers();
@@ -907,8 +911,12 @@ export default {
       self.filterStatus = [];
       self.search = "";
       self.filtertel = "";
+      const send = {};
+      send.group_id = self.$props.user.group_id;
+      send.role_id = self.$props.user.role_id;
+      send.id = id;
       axios
-        .get("/api/statuslids/" + id)
+        .post("/api/statuslids", send)
         .then((res) => {
           self.lids = Object.entries(res.data).map((e) => e[1]);
           self.lids.map(function (e) {
