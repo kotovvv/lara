@@ -43,7 +43,7 @@
             <!-- <v-icon small @click="deleteItem()"> mdi-delete </v-icon> -->
           </v-btn>
         </v-col>
-        <v-col cols="2">
+        <v-col cols="2" v-if="$props.user.role_id == 1">
           Глобальный статус
           <v-select
             v-model="filterGStatus"
@@ -88,7 +88,7 @@
           ></v-select>
         </v-col>
 
-        <v-col cols="2">
+        <v-col cols="2"  v-if="$props.user.role_id == 1">
           Глобальный поиск
           <v-text-field
             v-model="searchAll"

@@ -170,7 +170,7 @@
           ></v-text-field>
         </v-col>
 
-        <v-col>
+        <v-col v-if="$props.user.role_id == 1">
           <p>Глобальный поиск</p>
           <v-text-field
             v-model="searchAll"
@@ -816,9 +816,12 @@ export default {
     changeLidsUser() {
       const self = this;
       let send = {};
-      send.data = [];
-      // self.disableuser = this.userid;
+
+      self.disableuser = this.userid;
       send.user_id = this.userid;
+
+      send.data = [];
+
       if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
       }
@@ -836,11 +839,10 @@ export default {
         .post("api/Lid/changelidsuser", send)
         .then(function (response) {
           self.search = "";
-          // self.filtertel = "";
           self.userid = null;
+          self.disableuser = 0
           self.$refs.radiogroup.lazyValue = null;
           self.selected = [];
-          // self.filterStatus = 0;
           self.getUsers();
           self.getLidsOnUserOrDate();
         })
@@ -899,7 +901,6 @@ export default {
             color,
             order,
           }));
-          // self.statuses.unshift({ name: "выбор", id: 0 });
         })
         .catch((error) => console.log(error));
     },
@@ -911,9 +912,7 @@ export default {
       axios
         .get("/api/statuslids/" + id)
         .then((res) => {
-          // console.log(res.data);
           self.lids = Object.entries(res.data).map((e) => e[1]);
-
           self.lids.map(function (e) {
             e.date_created = e.created_at.substring(0, 10);
             e.date_updated = e.updated_at.substring(0, 10);
@@ -933,7 +932,6 @@ export default {
               .split()
               .map((el) => parseInt(el));
           }
-          // self.getDuplicates();
         })
         .catch((error) => console.log(error));
     },
@@ -964,7 +962,6 @@ export default {
       axios
         .post("/api/getLidsOnDate", data)
         .then((res) => {
-          // console.log(res.data);
           self.loading = false;
           self.lids = Object.entries(res.data).map((e) => e[1]);
           self.lids.map(function (e) {
@@ -1015,9 +1012,7 @@ export default {
     },
     getLids(id) {
       let self = this;
-      // self.filterStatus = 0;
       self.search = "";
-      // self.filtertel = "";
       self.disableuser = id;
       self.Statuses = [];
       self.loading = true;
@@ -1041,10 +1036,6 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
-          // self.statuses_lids = _.uniqBy(self.lids, "status_id").map((i) => ({
-          //   status_id: i.status_id,
-          //   status: i.status,
-          // }));
           self.orderStatus();
           self.searchAll = "";
           if (localStorage.filterStatus) {
@@ -1057,8 +1048,6 @@ export default {
               }),
             ];
           }
-          // self.lidaddates = Object.keys(_.groupBy(self.lids, "date_created"));
-          // self.getDuplicates();
           self.loading = false;
           self.filterStatuses();
         })
