@@ -170,7 +170,7 @@
           ></v-text-field>
         </v-col>
 
-        <v-col>
+        <v-col v-if="$props.user.role_id == 1">
           <p>Глобальный поиск</p>
           <v-text-field
             v-model="searchAll"
