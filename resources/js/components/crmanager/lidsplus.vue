@@ -377,11 +377,11 @@
           <div class="scroll-y">
             <v-list>
               <v-radio-group
-                @change="changeLidsUser"
+                id="usersradiogroup"
                 ref="radiogroup"
                 v-model="userid"
                 v-bind="users"
-                id="usersradiogroup"
+                @change="changeLidsUser"
               >
                 <v-expansion-panels ref="akk" v-model="akkvalue">
                   <v-expansion-panel v-for="(item, i) in group" :key="i">
@@ -393,13 +393,6 @@
                       >
                         {{ item.fio.slice(0, 3) }}
                       </div>
-                      <!-- <img
-                        class="v-expansion-panel-header__icon mr-1"
-                        height="60"
-                        width="60"
-                        :src="'/storage/' + item.pic"
-                        v-if="item.pic"
-                      /> -->
 
                       {{ item.fio }}
                       <div></div>
@@ -821,7 +814,6 @@ export default {
       const self = this;
       let send = {};
       send.data = [];
-      //self.disableuser = this.userid;
       send.user_id = this.userid;
 
       if (this.selectedStatus !== 0) {
@@ -841,12 +833,16 @@ export default {
         .post("api/Lid/changelidsuser", send)
         .then(function (response) {
           self.search = "";
-          self.userid = null;
-          self.disableuser = 0;
           self.$refs.radiogroup.lazyValue = null;
           self.selected = [];
+          if (self.savedates == true) {
+            self.disableuser = 0;
+          } else {
+            self.disableuser = self.userid;
+          }
           self.getUsers();
           self.getLidsOnUserOrDate();
+          self.userid = null;
         })
         .catch(function (error) {
           console.log(error);
