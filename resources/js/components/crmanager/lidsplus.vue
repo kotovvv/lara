@@ -616,7 +616,7 @@ export default {
       this.selectedUser = {};
     },
     checked(at) {
-      console.log(at["aria-selected"]);
+      //console.log(at["aria-selected"]);
       return at["aria-selected"];
     },
     getLidsOnUserOrDate() {
@@ -821,7 +821,7 @@ export default {
       const self = this;
       let send = {};
       send.data = [];
-      self.disableuser = this.userid;
+      //self.disableuser = this.userid;
       send.user_id = this.userid;
 
       if (this.selectedStatus !== 0) {
