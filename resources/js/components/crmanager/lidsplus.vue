@@ -416,6 +416,7 @@
                           small
                           :color="usercolor(user)"
                           @click="
+                            savedates = false;
                             disableuser = user.id;
                             getLidsOnUserOrDate();
                           "
@@ -837,8 +838,6 @@ export default {
           self.selected = [];
           if (self.savedates == true) {
             self.disableuser = 0;
-          } else {
-            self.disableuser = self.userid;
           }
           self.getUsers();
           self.getLidsOnUserOrDate();
