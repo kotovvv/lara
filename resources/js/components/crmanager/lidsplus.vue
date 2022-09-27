@@ -837,9 +837,8 @@ export default {
           self.selected = [];
           if (self.savedates == true) {
             self.disableuser = 0;
-          } else {
-            self.disableuser = self.userid;
           }
+
           self.getUsers();
           self.getLidsOnUserOrDate();
           self.userid = null;
