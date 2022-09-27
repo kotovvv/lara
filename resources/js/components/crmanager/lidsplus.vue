@@ -416,6 +416,7 @@
                           small
                           :color="usercolor(user)"
                           @click="
+                            savedates = false;
                             disableuser = user.id;
                             getLidsOnUserOrDate();
                           "
@@ -557,9 +558,12 @@ export default {
     },
     savedates(newName) {
       localStorage.savedates = newName;
-      if (this.disableuser != 0) {
+      if(newName == true){
+        this.disableuser = 0
+        this.userid = null
         this.getLidsOnUserOrDate();
       }
+
     },
 
     datetimeFrom(newName) {
