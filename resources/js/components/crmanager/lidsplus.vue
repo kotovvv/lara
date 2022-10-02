@@ -443,7 +443,6 @@
                           small
                           :color="usercolor(user)"
                           @click="
-                            savedates = false;
                             disableuser = user.id;
                             getLidsOnUserOrDate();
                           "
@@ -639,6 +638,7 @@ export default {
     },
     changeFilterProviders(el){
       this.filterProviders = this.filterProviders.filter(i => i != el)
+      this.filterStatuses();
     },
     changeFilterStatus(el_id){
       this.filterStatus = this.filterStatus.filter(i => i != el_id)
@@ -1230,5 +1230,12 @@ export default {
 .wrp__providers {
   display: flex;
   gap: 1rem;
+}
+.provider_wrp {
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
+  border-radius: 30px;
+  padding: 3px 5px;
 }
 </style>
