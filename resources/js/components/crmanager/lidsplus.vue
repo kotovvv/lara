@@ -75,6 +75,9 @@
                 ><v-icon>close</v-icon></v-btn
               >
               <v-checkbox v-model="savedates"></v-checkbox>
+              <v-btn @click="clearuser" small text
+                ><v-icon>refresh</v-icon></v-btn
+              >
             </v-row>
           </div>
         </v-col>
