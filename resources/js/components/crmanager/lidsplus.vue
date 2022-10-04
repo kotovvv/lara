@@ -199,32 +199,28 @@
               >
               <span>{{ i.name }}</span>
               <v-btn
-              v-if="filterStatus.length > 0"
-              icon
-              x-small
-              @click="changeFilterStatus(i.id)"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
+                v-if="filterStatus.length > 0"
+                icon
+                x-small
+                @click="changeFilterStatus(i.id)"
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
             </div>
           </template>
         </div>
       </v-col>
     </v-row>
-        <v-row v-if="filterProviders.length > 0">
+    <v-row v-if="filterProviders.length > 0">
       <v-col>
         <div class="wrp__providers">
           <template v-for="(i, x) in filterProviders">
             <div class="provider_wrp" :key="x">
               {{ getProviderName(i) }}
               {{ i.name }}
-              <v-btn
-              icon
-              x-small
-              @click="changeFilterProviders(i)"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
+              <v-btn icon x-small @click="changeFilterProviders(i)">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
             </div>
           </template>
         </div>
@@ -587,12 +583,11 @@ export default {
     },
     savedates(newName) {
       localStorage.savedates = newName;
-      if(newName == true){
-        this.disableuser = 0
-        this.userid = null
-        this.getLidsOnUserOrDate();
+      if (newName == true) {
+        //this.disableuser = 0;
+        //this.userid = null;
       }
-
+      this.getLidsOnUserOrDate();
     },
 
     datetimeFrom(newName) {
@@ -636,15 +631,15 @@ export default {
     },
   },
   methods: {
-    getProviderName(i){
-      return this.providers.find(el => el.id == i).name
+    getProviderName(i) {
+      return this.providers.find((el) => el.id == i).name;
     },
-    changeFilterProviders(el){
-      this.filterProviders = this.filterProviders.filter(i => i != el)
+    changeFilterProviders(el) {
+      this.filterProviders = this.filterProviders.filter((i) => i != el);
       this.filterStatuses();
     },
-    changeFilterStatus(el_id){
-      this.filterStatus = this.filterStatus.filter(i => i != el_id)
+    changeFilterStatus(el_id) {
+      this.filterStatus = this.filterStatus.filter((i) => i != el_id);
       this.filterStatuses();
     },
     clearuser() {
@@ -714,7 +709,7 @@ export default {
         //i[1]//array
         let el = self.statuses.find((s) => s.name == i[0]);
         self.Statuses.push({
-          id:el.id,
+          id: el.id,
           name: i[0],
           hm: i[1].length,
           order: el.order,
@@ -1117,7 +1112,7 @@ export default {
         //i[1]//array
         let el = self.statuses.find((s) => s.name == i[0]);
         self.Statuses.push({
-          id:el.id,
+          id: el.id,
           name: i[0],
           hm: i[1].length,
           order: el.order,
@@ -1227,8 +1222,8 @@ export default {
 #app .v-application--is-ltr .v-data-footer__pagination {
   margin: 0 12px 0 12px;
 }
-.v-menu__content.menuable__content__active{
-  min-height:650px
+.v-menu__content.menuable__content__active {
+  min-height: 650px;
 }
 .wrp__providers {
   display: flex;
