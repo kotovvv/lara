@@ -875,13 +875,13 @@ export default {
           self.search = "";
           self.$refs.radiogroup.lazyValue = null;
           self.selected = [];
-          if (self.savedates == true) {
-            self.disableuser = 0;
-          }
+          // if (self.savedates == true) {
+          //   self.disableuser = 0;
+          // }
 
           self.getUsers();
           self.getLidsOnUserOrDate();
-          self.userid = null;
+          // self.userid = null;
         })
         .catch(function (error) {
           console.log(error);
