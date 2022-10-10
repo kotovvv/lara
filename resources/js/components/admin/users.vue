@@ -1,6 +1,9 @@
 <template>
-  <div>
-    <v-card class="mx-auto">
+<div>
+  <v-container fluid>
+  <v-row >
+    <v-col cols="9">
+    <!-- <v-card class="mx-auto"> -->
       <!-- max-width="900" -->
       <v-data-table
         v-model="selected"
@@ -8,7 +11,7 @@
         :items="users"
         sort-by="role_id"
         show-select
-        class="elevation-1"
+        class="border"
         :single-select="true"
       >
         <template v-slot:top>
@@ -147,7 +150,19 @@
           <v-btn color="primary" @click="getUsers"> Reset </v-btn>
         </template>
       </v-data-table>
-    </v-card>
+    <!-- </v-card> -->
+    </v-col>
+    <v-col cols="3">
+      <v-data-table
+          :headers="headers_office"
+        :items="office"
+        class="border"
+        :single-select="true"
+      >
+      </v-data-table>
+    </v-col>
+  </v-row >
+  </v-container>
   </div>
 </template>
 
@@ -176,7 +191,11 @@ export default {
       { text: "Показывать", value: "active" },
       { text: "Действия", value: "actions", sortable: false },
     ],
-
+headers_office: [
+      { text: "Имя", value: "name" , sortable: false},
+      { text: "", value: "actions", sortable: false },
+    ],
+    office:[],
     editedIndex: -1,
     editedItem: {
       id:0,
@@ -221,6 +240,7 @@ export default {
 
   created() {
     this.getUsers();
+    this.getOffices();
   },
 
   methods: {
@@ -240,6 +260,15 @@ export default {
              u.group = ''
             if(u.group_id > 0) u.group = self.users.find(e=>e.id==u.group_id).fio
           });
+        })
+        .catch((error) => console.log(error));
+    },
+    getOffices() {
+      let self = this;
+      axios
+        .get("/api/getOffices")
+        .then((res) => {
+          self.offices = res.data;
         })
         .catch((error) => console.log(error));
     },

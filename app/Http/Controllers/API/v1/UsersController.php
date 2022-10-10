@@ -38,6 +38,13 @@ class UsersController extends Controller
       ->get();
   }
 
+  public function getOffices()
+  {
+    $sql = 'SELECT * FROM `offices` ORDER BY NAME';
+    return DB::select(DB::raw($sql));
+  }
+
+
   /**
    * Show the form for creating a new resource.
    *
