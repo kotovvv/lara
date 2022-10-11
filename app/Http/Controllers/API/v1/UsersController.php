@@ -44,6 +44,18 @@ class UsersController extends Controller
     return DB::select(DB::raw($sql));
   }
 
+  public function updateOffice(Request $request)
+  {
+    $data = $request->all();
+if(!isset($data['id']) || $data['id'] == 0){
+  $sql = "INSERT into `offices` (`name`,`created_at`,`updated_at`) values ('$data[name]','".date("Y-m-d H:i:s")."','".date("Y-m-d H:i:s")."')";
+  DB::insert(DB::raw($sql));
+}elseif($data['id'] > 0){
+  $sql = "UPDATE `offices` set `name` = '$data[name]', `updated_at` = '".date("Y-m-d H:i:s")."' WHERE `id` = ".(int) $data['id'] ;
+  DB::update(DB::raw($sql));
+}
+
+  }
 
   /**
    * Show the form for creating a new resource.
@@ -87,6 +99,7 @@ class UsersController extends Controller
   {
     //
   }
+
 
   /**
    * Update the specified resource in storage.
@@ -141,8 +154,8 @@ class UsersController extends Controller
       $user->password = $password;
       $user->save();
       return response('User added', 200);
-      }
     }
+  }
 
   public function status_users(Request $request)
   {

@@ -23,7 +23,8 @@ class User extends Authenticatable
         'active',
         'group_id',
         'order',
-        'pic'
+        'pic',
+        'office_id'
     ];
 
     /**
