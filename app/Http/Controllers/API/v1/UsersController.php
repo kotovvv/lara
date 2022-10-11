@@ -17,6 +17,7 @@ use Hash;
 use Storage;
 use File;
 use Illuminate\Support\Facades\Auth;
+use Session;
 
 class UsersController extends Controller
 {
@@ -27,14 +28,9 @@ class UsersController extends Controller
    */
   public function index()
   {
-    // return User::All();
+    Debugbar::info(session()->get('office_id'));
     return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
-
-      // ->where('users.role_id', '>', 1)
-      // ->where('users.active', 1)
-      // ->leftJoin('lids', 'users.id', '=', 'lids.user_id')
       ->orderBy('users.order', 'asc')
-      // ->groupBy('users.id')
       ->get();
   }
 

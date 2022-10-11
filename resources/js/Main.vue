@@ -1,6 +1,11 @@
 <template>
   <div>
-    <component ref="main" :user="user" v-on:login="onLogin" :is="theComponent" />
+    <component
+      ref="main"
+      :user="user"
+      v-on:login="onLogin"
+      :is="theComponent"
+    />
   </div>
 </template>
 
@@ -9,9 +14,10 @@ const logincomponent = () => import("./components/loginComponent");
 const admincomponent = () => import("./components/admin/adminComponent");
 const crmcomponent = () => import("./components/crmanager/crmComponent");
 const managercomponent = () => import("./components/manager/managerComponent");
-const providercomponent = () => import("./components/provider/providerComponent");
+const providercomponent = () =>
+  import("./components/provider/providerComponent");
+  import axios from "axios";
 export default {
-  //  name:'main',
   data: () => ({
     theMenu: "login",
     user: {},
@@ -26,23 +32,33 @@ export default {
     },
   },
   methods: {
-onLogin (data) {
-  this.user = data
-  if(this.user.role_id == undefined && localStorage.user != undefined) localStorage.clear()
+    onLogin(data) {
+      this.user = data;
+      if (this.user.role_id == undefined && localStorage.user != undefined)
+        localStorage.clear();
+    },
+    isExist(user) {
+      return !!localStorage[user];
+    },
   },
-  isExist(user) {
-    return (!!localStorage[user])
-}
+  mounted: function () {
+
+    if (this.isExist("user")) {
+      const local_user = JSON.parse(localStorage.user);
+      this.user = local_user;
+      if (this.user.role_id != 4) {
+        axios
+          .post("/api/session", local_user)
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((error) => console.log(error));
+      }
+    }
+    if (this.user.role_id == 4) {
+      localStorage.clear();
+      this.user = {};
+    }
   },
-mounted: function () {
-
-    const local_user = JSON.parse(localStorage.user)
-
-  if (this.isExist('user') ) this.user = local_user
-  if(this.user.role_id == 4) {
-    localStorage.clear()
-    this.user = {}
-  }
-}
 };
 </script>

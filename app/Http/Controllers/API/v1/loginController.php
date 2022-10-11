@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Hash;
 use App\Models\Provider;
+use Session;
 
 class loginController extends Controller
 {
@@ -32,6 +33,8 @@ class loginController extends Controller
     }
     if (Auth::attempt(['name' => $request->name, 'password' => $request->password])) {
       $user                  = Auth::user();
+      session()->put('office_id', $user['office_id']);
+    session()->put('user_id', $user['id']);
       return response()->json([
         'status'   => 'success',
         'user' => $user,
@@ -42,6 +45,13 @@ class loginController extends Controller
         'user'   => 'Unauthorized Access'
       ]);
     }
+  }
+
+  public function session(Request $request)
+  {
+    $data = $request->all();
+    session()->put('office_id', $data['office_id']);
+    session()->put('user_id', $data['id']);
   }
 
   /**
