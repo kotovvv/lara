@@ -16,11 +16,17 @@ use Debugbar;
 use Hash;
 use Storage;
 use File;
-use Illuminate\Support\Facades\Auth;
 use Session;
 
 class UsersController extends Controller
 {
+  protected $office_id;
+
+  public function __construct()
+  {
+        $this->office_id = session()->get('office_id');
+  }
+
   /**
    * Display a listing of the resource.
    *
@@ -28,15 +34,18 @@ class UsersController extends Controller
    */
   public function index()
   {
-    Debugbar::info(session()->get('office_id'));
+    //$this->office_id = session()->get('office_id');
     return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
       ->orderBy('users.order', 'asc')
+      ->when($this->office_id > 0, function($query) {return $query->where('office_id',$this->office_id);})
       ->get();
   }
 
   public function getOffices()
   {
-    $sql = 'SELECT * FROM `offices` ORDER BY NAME';
+    DebugBar::info($this->office_id);
+    $where = $this->office_id > 0? " where `id` = ".$this->office_id:"";
+    $sql = 'SELECT * FROM `offices` '.$where.' ORDER BY NAME';
     return DB::select(DB::raw($sql));
   }
 
