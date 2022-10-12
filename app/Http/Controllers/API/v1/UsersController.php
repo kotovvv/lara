@@ -20,12 +20,6 @@ use Session;
 
 class UsersController extends Controller
 {
-  protected $office_id;
-
-  public function __construct()
-  {
-        $this->office_id = session()->get('office_id');
-  }
 
   /**
    * Display a listing of the resource.
@@ -34,17 +28,17 @@ class UsersController extends Controller
    */
   public function index()
   {
-    //$this->office_id = session()->get('office_id');
+    $office_id = session()->get('office_id');
     return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
       ->orderBy('users.order', 'asc')
-      ->when($this->office_id > 0, function($query) {return $query->where('office_id',$this->office_id);})
+      ->when($office_id > 0, function($query) use ($office_id){return $query->where('office_id',$office_id);})
       ->get();
   }
 
   public function getOffices()
   {
-    DebugBar::info($this->office_id);
-    $where = $this->office_id > 0? " where `id` = ".$this->office_id:"";
+    $office_id = session()->get('office_id');
+    $where = $office_id > 0? " where `id` = ".$office_id:"";
     $sql = 'SELECT * FROM `offices` '.$where.' ORDER BY NAME';
     return DB::select(DB::raw($sql));
   }
@@ -221,54 +215,32 @@ if(!isset($data['id']) || $data['id'] == 0){
       $col[] = $count_status;
       $repoprt[] = ['color' => $status->color, 'col' => $col];
     }
-    // $repoprt[] = $row_status;
 
-    // SELECT id, NAME,color FROM `statuses` WHERE `active` = 1 ORDER BY `order`
-    // $statuses = DB::select(DB::raw("SELECT id, `name`, color FROM `statuses` WHERE `active` = 1 ORDER BY `order` ASC"));
-    // foreach ($statuses as $status) {
-    //   $sql = "SELECT '" . $status->color . "' color,'" . $status->name . "'  text ";
-    //   if ($status->id == 8) {
-    //     foreach ($a_users as $user_id) {
-    //       $sql .= ",(SELECT COUNT(*) FROM `lids` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `status_id` = 8) u" . $user_id;
-    //     }
-    //   } else {
-    //     foreach ($a_users as $user_id) {
-    //       $sql .= ",(SELECT COUNT(*) FROM `logs` WHERE `user_id` = " . $user_id . " AND DATE(`updated_at`) BETWEEN '" . $datefrom . "' AND '" . $dateto . "' AND `status_id` = " . $status->id . ") u" . $user_id;
-    //     }
-    //   }
-    //   $sts = DB::select(DB::raw($sql));
-    //   $repoprt['status'] =  $sts[0];
-    // }
     return $repoprt;
   }
 
 
   public function getusers()
   {
-
+    $office_id = session()->get('office_id');
     return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
-      // return User::select(['users.*', DB::raw('(SELECT COUNT(l.user_id) FROM lids l WHERE l.user_id = users.id) as hmlids')])
-
       ->where('users.role_id', '>', 1)
       ->where('users.active', 1)
-      // ->leftJoin('lids', 'users.id', '=', 'lids.user_id')
+      ->when($office_id > 0, function($query) use ($office_id){return $query->where('office_id',$office_id);})
       ->orderBy('users.order', 'asc')
-      // ->groupBy('users.id')
       ->get();
   }
+
   public function getrelatedusers(Request $request)
   {
     $related_users = $request->All();
     if (count($related_users) == 0) return false;
 
     return User::select(['users.*', DB::raw('(SELECT COUNT(user_id) FROM lids WHERE lids.user_id = users.id) as hmlids ')])
-
       ->where('users.role_id', '>', 1)
       ->where('users.active', 1)
       ->whereIn('id', $related_users)
-      // ->leftJoin('lids', 'users.id', '=', 'lids.user_id')
       ->orderBy('users.role_id', 'asc')
-      // ->groupBy('users.id')
       ->get();
   }
 
@@ -335,17 +307,6 @@ if(!isset($data['id']) || $data['id'] == 0){
     `role_id`
     FROM `users` u
     WHERE `active` = 1 AND `role_id` > 1 AND `group_id` > 0 ORDER BY `group_id`,`role_id`"));
-
-    // $getDataDay=[];
-    // $date = date('Y-m-d');
-    // $getBalans = Balans::select('balans', 'date')->where('user_id', '=', $id)->whereDate('date','=',$date)->orderBy('time', 'DESC')->get();
-    // $getDataDay['balans'] = $getBalans;
-    // $getStatuses = Log::select('logs.status_id','statuses.name','statuses.color')->leftJoin('statuses', 'statuses.id', '=', 'logs.status_id')->where('logs.user_id', $id)->where('logs.status_id','>',0)->whereDate('logs.created_at','>=',$date)->orderBy('statuses.order', 'ASC')->get();
-    // $getDataDay['statuses'] = $getStatuses;
-    // $getDeposits = Depozit::where('user_id', $id)->whereDate('created_at','>=',$date)->get();
-    // $getDataDay['deposits'] = $getDeposits;
-    // $getCallDay = DB::select(DB::Raw("SELECT SUM(COUNT)as count ,SUM(duration) as duration FROM `calls` WHERE user_id = $id AND CAST(timecall as date) = CURDATE()"));
-    // $getDataDay['calls'] = $getCallDay;
     return response($getDataDay);
   }
 

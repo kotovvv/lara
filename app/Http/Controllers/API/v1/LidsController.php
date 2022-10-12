@@ -27,7 +27,7 @@ class LidsController extends Controller
   public function importlid(Request $request)
   {
     $insertItem = $request->all();
-    // if ($insertItem['api_key'] != env('API_KEY')) return response(['status'=>'Key incorect'], 403);
+
     $f_key =   DB::table('apikeys')->where('api_key', $insertItem['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
 
@@ -44,14 +44,11 @@ class LidsController extends Controller
     $n_lid->afilyator = $insertItem['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $insertItem['user_id'];
+    $n_lid->office_id = User::where('id', (int) $insertItem['user_id'])->value('office_id');;
     $n_lid->created_at = Now();
     $n_lid->updated_at = Now();
     $n_lid->active = 1;
     $n_lid->save();
-
-    // $res= DB::table('lids')->insert($a_lid);
-    //$res = Lid::updateOrCreate(['tel' => $a_lid['tel'], 'provider_id' => $a_lid['provider_id'], 'afilyator' =>  $a_lid['afilyator']], $a_lid);
-
 
     return response('Lid inserted', 200);
   }
@@ -60,26 +57,23 @@ class LidsController extends Controller
   public function searchlids(Request $request)
   {
     $data = $request->all();
-    //  Debugbar::info($searchTerm);
-if(isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2){
-  $a_user_ids = User::select('id')->where('group_id',$data['group_id']);
-  return Lid::select('*')
-  ->whereIn('user_id', $a_user_ids)
-  ->where('name', 'like', "%{$data['search']}%")
-  ->orwhere('tel', 'like', "%{$data['search']}%")
-  ->orwhere('email', 'like', "%{$data['search']}%")
-  ->orwhere('text', 'like', "%{$data['search']}%")
-  ->get();
-}else{
+    if (isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2) {
+      $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
       return Lid::select('*')
-      ->where('name', 'like', "%{$data['search']}%")
-      ->orwhere('tel', 'like', "%{$data['search']}%")
-      ->orwhere('email', 'like', "%{$data['search']}%")
-      ->orwhere('text', 'like', "%{$data['search']}%")
-      ->get();
-}
-
-
+        ->whereIn('user_id', $a_user_ids)
+        ->where('name', 'like', "%{$data['search']}%")
+        ->orwhere('tel', 'like', "%{$data['search']}%")
+        ->orwhere('email', 'like', "%{$data['search']}%")
+        ->orwhere('text', 'like', "%{$data['search']}%")
+        ->get();
+    } else {
+      return Lid::select('*')
+        ->where('name', 'like', "%{$data['search']}%")
+        ->orwhere('tel', 'like', "%{$data['search']}%")
+        ->orwhere('email', 'like', "%{$data['search']}%")
+        ->orwhere('text', 'like', "%{$data['search']}%")
+        ->get();
+    }
   }
 
   /**
@@ -103,6 +97,7 @@ if(isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2)
     //
     Log::alert($request);
   }
+
   public function changelidsuser(Request $request)
   {
     $data = $request->all();
@@ -211,10 +206,10 @@ if(isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2)
   public function statusLids(Request $request)
   {
     $data = $request->all();
-    if(isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2){
-      $a_user_ids = User::select('id')->where('group_id',$data['group_id']);
-      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->whereIn('lids.user_id',$a_user_ids)->where('lids.status_id', $data['id'])->orderBy('lids.created_at', 'desc')->get();
-    }else{
+    if (isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2) {
+      $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
+      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->whereIn('lids.user_id', $a_user_ids)->where('lids.status_id', $data['id'])->orderBy('lids.created_at', 'desc')->get();
+    } else {
       return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.status_id', $data['id'])->orderBy('lids.created_at', 'desc')->get();
     }
   }
@@ -319,7 +314,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     return DB::select(DB::raw($sql));
   }
 
-   public function getlidonid(Request $request, $id)
+  public function getlidonid(Request $request, $id)
   {
     $req = $request->all();
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
@@ -599,7 +594,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if (!$f_lid->isEmpty()) {
       $n_lid->status_id = 22;
     }
-     if ($n_lid->provider_id == '76') {
+    if ($n_lid->provider_id == '76') {
       $n_lid->status_id = 8;
     }
 
