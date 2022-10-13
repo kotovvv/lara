@@ -17,6 +17,7 @@ class Lid extends Model
         'provider_id',
         'user_id',
         'text',
-        'active'
+        'active',
+        'office_id'
     ];
 }

@@ -44,7 +44,7 @@ class LidsController extends Controller
     $n_lid->afilyator = $insertItem['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $insertItem['user_id'];
-    $n_lid->office_id = User::where('id', (int) $insertItem['user_id'])->value('office_id');;
+    $n_lid->office_id = User::where('id', (int) $insertItem['user_id'])->value('office_id');
     $n_lid->created_at = Now();
     $n_lid->updated_at = Now();
     $n_lid->active = 1;
@@ -58,22 +58,26 @@ class LidsController extends Controller
   {
     $data = $request->all();
     if (isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2) {
-      $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
+        $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
+        return Lid::select('*')
+          ->whereIn('user_id', $a_user_ids)
+          ->where('name', 'like', "%{$data['search']}%")
+          ->orwhere('tel', 'like', "%{$data['search']}%")
+          ->orwhere('email', 'like', "%{$data['search']}%")
+          ->orwhere('text', 'like', "%{$data['search']}%")
+          ->get();
+      } else {
+      $office_id = session()->get('office_id');
       return Lid::select('*')
-        ->whereIn('user_id', $a_user_ids)
+      ->when($office_id > 0, function ($query) use ($office_id) {
+        return $query->where('office_id', $office_id);
+      })
         ->where('name', 'like', "%{$data['search']}%")
         ->orwhere('tel', 'like', "%{$data['search']}%")
         ->orwhere('email', 'like', "%{$data['search']}%")
         ->orwhere('text', 'like', "%{$data['search']}%")
         ->get();
-    } else {
-      return Lid::select('*')
-        ->where('name', 'like', "%{$data['search']}%")
-        ->orwhere('tel', 'like', "%{$data['search']}%")
-        ->orwhere('email', 'like', "%{$data['search']}%")
-        ->orwhere('text', 'like', "%{$data['search']}%")
-        ->get();
-    }
+     }
   }
 
   /**
@@ -105,6 +109,7 @@ class LidsController extends Controller
     foreach ($data['data'] as $lid) {
       $a_lid = [
         'user_id' => $data['user_id'],
+        'office_id' => User::where('id', (int) $data['user_id'])->value('office_id'),
         'updated_at' => Now()
       ];
       if (isset($data['status_id'])) $a_lid['status_id'] = $data['status_id'];
@@ -127,6 +132,7 @@ class LidsController extends Controller
       $a_lid = [
         'status_id' => $lid['status_id'],
         'user_id' => $lid['user_id'],
+        'office_id' => User::where('id', (int) $lid['user_id'])->value('office_id'),
         'updated_at' => Now()
       ];
       if (strlen(trim($lid['text'])) > 0) {
@@ -176,6 +182,7 @@ class LidsController extends Controller
 
 
       $n_lid->user_id = $data['user_id'];
+      $n_lid->office_id = User::where('id', (int) $data['user_id'])->value('office_id');
       $n_lid->created_at = Now();
 
       if (isset($lid['afilyator'])) {
@@ -210,7 +217,10 @@ class LidsController extends Controller
       $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
       return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->whereIn('lids.user_id', $a_user_ids)->where('lids.status_id', $data['id'])->orderBy('lids.created_at', 'desc')->get();
     } else {
-      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.status_id', $data['id'])->orderBy('lids.created_at', 'desc')->get();
+      $office_id = session()->get('office_id');
+      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.status_id', $data['id'])->when($office_id > 0, function ($query) use ($office_id) {
+        return $query->where('office_id', $office_id);
+      })->orderBy('lids.created_at', 'desc')->get();
     }
   }
 

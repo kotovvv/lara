@@ -326,8 +326,9 @@ export default {
       user.role = this.roles.find((r) => r.id == user.role_id).name;
     },
     fio(user) {
-      console.log(this.group)
-        user.group =  this.group.find(({id}) => id === user.group_id).fio;
+      user.group = this.group.find((el) => {
+        return el.id == user.group_id;
+      }).fio;
     },
     getUsers() {
       let self = this;
@@ -336,8 +337,8 @@ export default {
         .then((res) => {
           self.users = res.data;
         })
-.then(()=>{
-            self.users.map(function (u) {
+        .then(() => {
+          self.users.map(function (u) {
             // u.role = self.roles.find((r) => r.id == u.role_id).name;
             self.rolename(u);
             if (u.role_id == 2) self.group.push({ fio: u.fio, id: u.id });
@@ -348,7 +349,7 @@ export default {
               self.fio(u);
             }
           });
-})
+        })
         .catch((error) => console.log(error));
     },
     getOffices() {
@@ -357,7 +358,7 @@ export default {
         .get("/api/getOffices")
         .then((res) => {
           self.offices = res.data;
-          if (self.$attrs.user.role_id == 1) {
+          if (self.$attrs.user.role_id == 1 && self.$attrs.user.office_id == 0) {
             self.offices.unshift({ name: "SuperOffice", id: 0 });
           }
         })
