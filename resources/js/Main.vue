@@ -50,7 +50,6 @@ export default {
         axios
           .post("/api/session", local_user)
           .then((res) => {
-            console.log(res);
           })
           .catch((error) => console.log(error));
       }

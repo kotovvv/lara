@@ -91,6 +91,15 @@
                               label="Группа"
                             ></v-select>
                           </v-col>
+                          <v-col cols="6">
+                            <v-select
+                              :items="offices"
+                              v-model="editedItem.office_id"
+                              item-text="name"
+                              item-value="id"
+                              label="Office"
+                            ></v-select>
+                          </v-col>
                           <!-- <v-col cols="4">
                             <v-switch
                               v-model="editedItem.active"
@@ -207,11 +216,10 @@
                 </v-dialog>
               </v-toolbar>
             </template>
-                        <template v-slot:item.actions="{ item }">
+            <template v-slot:item.actions="{ item }">
               <v-icon small class="mr-2" @click="editItemOffice(item)">
                 mdi-pencil
               </v-icon>
-
             </template>
           </v-data-table>
         </v-col>
@@ -243,6 +251,7 @@ export default {
       { text: "ФИО", value: "fio" },
       { text: "Роль", value: "role" },
       { text: "Группа", value: "group" },
+      // { text: "Office", value: "office_id" },
       // { text: "Показывать", value: "active" },
       { text: "Действия", value: "actions", sortable: false },
     ],
@@ -261,7 +270,6 @@ export default {
       role_id: 0,
       password: "",
       group_id: "",
-
       order: 99,
     },
     editedItemOffice: {
@@ -317,21 +325,30 @@ export default {
     rolename(user) {
       user.role = this.roles.find((r) => r.id == user.role_id).name;
     },
+    fio(user) {
+      console.log(this.group)
+        user.group =  this.group.find(({id}) => id === user.group_id).fio;
+    },
     getUsers() {
       let self = this;
       axios
         .get("/api/users")
         .then((res) => {
           self.users = res.data;
-          self.users.map(function (u) {
+        })
+.then(()=>{
+            self.users.map(function (u) {
             // u.role = self.roles.find((r) => r.id == u.role_id).name;
             self.rolename(u);
-            if (u.role_id == 2) self.group.push(u);
+            if (u.role_id == 2) self.group.push({ fio: u.fio, id: u.id });
             u.group = "";
-            if (u.group_id > 0)
-              u.group = self.users.find((e) => e.id == u.group_id).fio;
           });
-        })
+          self.users.map((u) => {
+            if (u.group_id > 0) {
+              self.fio(u);
+            }
+          });
+})
         .catch((error) => console.log(error));
     },
     getOffices() {
@@ -340,6 +357,9 @@ export default {
         .get("/api/getOffices")
         .then((res) => {
           self.offices = res.data;
+          if (self.$attrs.user.role_id == 1) {
+            self.offices.unshift({ name: "SuperOffice", id: 0 });
+          }
         })
         .catch((error) => console.log(error));
     },
@@ -352,9 +372,7 @@ export default {
       }
       axios
         .post("/api/user/update", form_data)
-        .then((res) => {
-          console.log(res);
-        })
+        .then((res) => {})
         .catch((error) => console.log(error));
     },
     saveOffice(u) {
@@ -366,9 +384,7 @@ export default {
       }
       axios
         .post("/api/office/update", form_data)
-        .then((res) => {
-          console.log(res);
-        })
+        .then((res) => {})
         .catch((error) => console.log(error));
     },
 
@@ -392,9 +408,7 @@ export default {
     deleteItemConfirm() {
       axios
         .delete("/api/user/" + this.editedItem.id)
-        .then((res) => {
-          console.log(res);
-        })
+        .then((res) => {})
         .catch((error) => console.log(error));
       this.users.splice(this.editedIndex, 1);
       this.closeDelete();
@@ -439,10 +453,17 @@ export default {
       this.close();
     },
     saveOfficeBtn() {
-      if(this.editedItemOffice.name == '' || this.offices.find((el)=>el.name == this.editedItemOffice.name)) return
+      if (
+        this.editedItemOffice.name == "" ||
+        this.offices.find((el) => el.name == this.editedItemOffice.name)
+      )
+        return;
       if (this.editedIndexOffice > -1) {
         this.saveOffice(this.editedItemOffice);
-        Object.assign(this.offices[this.editedIndexOffice], this.editedItemOffice);
+        Object.assign(
+          this.offices[this.editedIndexOffice],
+          this.editedItemOffice
+        );
       } else {
         this.saveOffice(this.editedItemOffice);
         this.offices.push(this.editedItemOffice);

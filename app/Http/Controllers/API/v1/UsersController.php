@@ -31,29 +31,30 @@ class UsersController extends Controller
     $office_id = session()->get('office_id');
     return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
       ->orderBy('users.order', 'asc')
-      ->when($office_id > 0, function($query) use ($office_id){return $query->where('office_id',$office_id);})
+      ->when($office_id > 0, function ($query) use ($office_id) {
+        return $query->where('office_id', $office_id);
+      })
       ->get();
   }
 
   public function getOffices()
   {
     $office_id = session()->get('office_id');
-    $where = $office_id > 0? " where `id` = ".$office_id:"";
-    $sql = 'SELECT * FROM `offices` '.$where.' ORDER BY NAME';
+    $where = $office_id > 0 ? " where `id` = " . $office_id : "";
+    $sql = 'SELECT * FROM `offices` ' . $where . ' ORDER BY NAME';
     return DB::select(DB::raw($sql));
   }
 
   public function updateOffice(Request $request)
   {
     $data = $request->all();
-if(!isset($data['id']) || $data['id'] == 0){
-  $sql = "INSERT into `offices` (`name`,`created_at`,`updated_at`) values ('$data[name]','".date("Y-m-d H:i:s")."','".date("Y-m-d H:i:s")."')";
-  DB::insert(DB::raw($sql));
-}elseif($data['id'] > 0){
-  $sql = "UPDATE `offices` set `name` = '$data[name]', `updated_at` = '".date("Y-m-d H:i:s")."' WHERE `id` = ".(int) $data['id'] ;
-  DB::update(DB::raw($sql));
-}
-
+    if (!isset($data['id']) || $data['id'] == 0) {
+      $sql = "INSERT into `offices` (`name`,`created_at`,`updated_at`) values ('$data[name]','" . date("Y-m-d H:i:s") . "','" . date("Y-m-d H:i:s") . "')";
+      DB::insert(DB::raw($sql));
+    } elseif ($data['id'] > 0) {
+      $sql = "UPDATE `offices` set `name` = '$data[name]', `updated_at` = '" . date("Y-m-d H:i:s") . "' WHERE `id` = " . (int) $data['id'];
+      DB::update(DB::raw($sql));
+    }
   }
 
   /**
@@ -134,6 +135,7 @@ if(!isset($data['id']) || $data['id'] == 0){
       $arr['fio'] = $data['fio'];
       $arr['pic'] = $file_name;
       $arr['group_id'] = $data['group_id'];
+      $arr['office_id'] = $data['office_id'];
       $arr['order'] = $data['order'];
 
       if (User::where('id', $data['id'])->update($arr)) {
@@ -150,6 +152,7 @@ if(!isset($data['id']) || $data['id'] == 0){
       $user->fio = $data["fio"];
       $user->role_id = $data["role_id"];
       $user->pic = $file_name;
+      $user->office_id = $data['office_id'];
       $user->password = $password;
       $user->save();
       return response('User added', 200);
@@ -226,7 +229,9 @@ if(!isset($data['id']) || $data['id'] == 0){
     return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
       ->where('users.role_id', '>', 1)
       ->where('users.active', 1)
-      ->when($office_id > 0, function($query) use ($office_id){return $query->where('office_id',$office_id);})
+      ->when($office_id > 0, function ($query) use ($office_id) {
+        return $query->where('office_id', $office_id);
+      })
       ->orderBy('users.order', 'asc')
       ->get();
   }
@@ -287,8 +292,8 @@ if(!isset($data['id']) || $data['id'] == 0){
 
   public function getDataDay($user_id)
   {
-    //get group
-    // SELECT `group_id`,fio FROM `users` WHERE `role_id` = 2 AND `group_id` > 0 AND `id` = `group_id`
+    //get office
+    // SELECT officep_id`,fio FROM `users` WHERE `role_id` = 2 AND `group_id` > 0 AND `id` = `group_id`
     $date = date('Y-m-d');
     $datefrom = date('Y-m-d', strtotime("-30 days"));
     if ($user_id) {

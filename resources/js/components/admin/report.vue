@@ -16,8 +16,8 @@
           >
             <v-expansion-panel-header>
               <v-row>
-              <v-col cols="3">{{ item.fio }}</v-col>
-              <v-col cols="3">{{ sumGroup( item.group_id)}}</v-col>
+                <v-col cols="3">{{ item.fio }}</v-col>
+                <v-col cols="3">{{ sumGroup(item.group_id) }}</v-col>
               </v-row>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -39,11 +39,11 @@
                   }
                 "
               >
-                <template v-slot:item.mbalans="{ item }" >
-{{item.mbalans}}
+                <template v-slot:item.mbalans="{ item }">
+                  {{ item.mbalans }}
                 </template>
                 <template v-slot:item.balans="{ item }">
-{{item.balans}}
+                  {{ item.balans }}
                 </template>
                 <template v-slot:item.setbalans="{ item }">
                   <v-text-field
@@ -91,10 +91,10 @@
       <v-col>
         <v-card>
           <v-card-title primary-title>
-                        <v-row>
+            <v-row>
               <v-col cols="3"></v-col>
-              <v-col cols="3">{{ sumAll()}}</v-col>
-              </v-row>
+              <v-col cols="3">{{ sumAll() }}</v-col>
+            </v-row>
           </v-card-title>
         </v-card>
       </v-col>
@@ -159,11 +159,20 @@ export default {
   },
   computed: {},
   methods: {
-    sumAll(){
-            return _.sumBy(this.tableData,function(i){return parseInt(i.balans||0)})
+    sumAll() {
+      return _.sumBy(this.tableData, function (i) {
+        return parseInt(i.balans || 0);
+      });
     },
-    sumGroup(group_id){
-      return _.sumBy(_.filter(this.tableData, function(i){return i.group_id ==group_id && i.balans >0}),function(i){return parseInt(i.balans)})
+    sumGroup(group_id) {
+      return _.sumBy(
+        _.filter(this.tableData, function (i) {
+          return i.group_id == group_id && i.balans > 0;
+        }),
+        function (i) {
+          return parseInt(i.balans);
+        }
+      );
     },
     delDataUser() {
       let self = this;
@@ -185,11 +194,11 @@ export default {
             self.StatusesDay = Object.entries(_.groupBy(res.data, "name"));
           } else {
             self.tableData = res.data;
-            self.tableData = self.tableData.map(function(i){
-          let t = (((i.alltime)/60)/60).toFixed(2).toString().split('.')
-          i.alltime = t[0]+' час. '+ t[1]+' мин.'
-              return i
-            })
+            self.tableData = self.tableData.map(function (i) {
+              let t = (i.alltime / 60 / 60).toFixed(2).toString().split(".");
+              i.alltime = t[0] + " час. " + t[1] + " мин.";
+              return i;
+            });
           }
           self.loading = false;
         })
@@ -208,16 +217,16 @@ export default {
         .post("/api/setBalans", data)
         .then((res) => {
           let elm = self.tableData.find((i) => i.id == user_id);
-          elm.balans = (parseInt(elm.balans||0) + parseInt(balans)).toString();
+          elm.balans = (
+            parseInt(elm.balans || 0) + parseInt(balans)
+          ).toString();
         })
         .catch((error) => console.log(error));
     },
   },
   computed: {
     group() {
-      return this.tableData.filter(
-        (i) => i.group_id == i.id
-      );
+      return this.tableData.filter((i) => i.group_id == i.id);
     },
   },
 };
