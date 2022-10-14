@@ -305,7 +305,6 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   public function getlidsontime(Request $request)
   {
     $req = $request->all();
-    // if ($req['api_key'] != env('API_KEY')) return response(['status'=>'Key incorect'], 403);
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     return Lid::select('id')->whereBetween('created_at', [$req['start'], $req['end']])->get();
@@ -315,8 +314,9 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   public function getLidsOnDate(Request $request)
   {
     $req = $request->all();
-
-    $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ';
+    $office_id = session()->get('office_id');
+    $where = $office_id > 0 ? "  `l.office_id` = " . $office_id." AND " : "";
+    $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND '.$where;
     $date = [date('Y-m-d', strtotime($req['datefrom'])) . ' ' . date("H:i:s", mktime(0, 0, 0)), date('Y-m-d', strtotime($req['dateto'])) . ' ' . date("H:i:s", mktime(23, 59, 59))];
 
     $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l  WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
@@ -342,11 +342,9 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   public function ontime(Request $request)
   {
     $data = $request->all();
-    //Debugbar::info($data);
 
     if (!$data['ontime']) $data['ontime'] = null;
     $a_lid = [
-      //ontime' => substr(str_replace('T',' ',$data['ontime']),0,16),
       'ontime' => $data['ontime'],
       'updated_at' => Now()
     ];
@@ -420,6 +418,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = (int) $req['user_id'];
+    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
+
     $n_lid->created_at = Now();
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
@@ -429,6 +429,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       // $n_lid->afilyator = $name;
       $n_lid->provider_id = 75;
       $n_lid->user_id = 252;
+      $n_lid->office_id = User::where('id', 252)->value('office_id');
       $n_lid->save();
       return response('duplicate');
     }
@@ -496,6 +497,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $n_lid->afilyator = $affiliate;
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = (int) $req['user_id'];
+    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
+
     $n_lid->created_at = Now();
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
@@ -549,6 +552,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $req['user_id'];
+    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
     $n_lid->created_at = Now();
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
@@ -597,6 +601,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $req['user_id'];
+    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
     $n_lid->created_at = Now();
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
@@ -693,7 +698,6 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key = DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     $res['result'] = 'Error';
-    // $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . " AND DATE(`upload_time`) >= " . $req['startDate'] . " AND DATE(`upload_time`) <= " . $req['endDate'] . " )";
     $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE DATE(l.`created_at`) >= " . $req['startDate'] . " AND DATE(l.`created_at`) <= " . $req['endDate'];
 
     $lids = DB::select(DB::raw($sql));

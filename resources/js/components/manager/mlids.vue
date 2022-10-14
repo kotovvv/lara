@@ -104,11 +104,9 @@
                   </div>
                 </template>
                 <template v-slot:item.text="{ item }">
-                  <span
-                    class="fixwidth"
-                    :title="item.text"
-                    >{{ item.text }}</span
-                  >
+                  <span class="fixwidth" :title="item.text">{{
+                    item.text
+                  }}</span>
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-icon small @click.stop="deleteTime(item)">
@@ -180,12 +178,10 @@
                     <span>{{ item.status }}</span>
                   </div>
                 </template>
-<template v-slot:item.text="{ item }">
-                  <span
-                    class="fixwidth"
-                    :title="item.text"
-                    >{{ item.text }}</span
-                  >
+                <template v-slot:item.text="{ item }">
+                  <span class="fixwidth" :title="item.text">{{
+                    item.text
+                  }}</span>
                 </template>
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">
@@ -237,6 +233,7 @@
               <label
                 :for="'st' + status.id"
                 class="status_wrp v-label"
+                :class="{ hideStatus: hideStatus(status.id) }"
                 :key="'l' + ikey"
               >
                 <b
@@ -431,6 +428,12 @@ export default {
     },
   },
   methods: {
+    hideStatus(id) {
+      if(this.selected.length && this.selected[0].status_id == 9){
+        if(id != 9 && id != 10) {return true}
+      }
+      return false;
+    },
     writeText() {
       if (this.text.length > 0) {
         this.lids.find((i) => i.id == this.lid_id).text = this.text;
@@ -459,6 +462,8 @@ export default {
     closeDialog() {
       this.$refs.datetime.date = "";
       this.$refs.datetime.time = "";
+      this.selected = []
+      this.selectedStatus = 0
     },
     getHm() {
       let self = this;
@@ -782,10 +787,13 @@ td .status_wrp {
 #ontime .v-data-table__wrapper tr td:last-child {
   width: 120px;
 }
-.fixwidth{
+.fixwidth {
   width: 120px;
   height: 45px;
   overflow: hidden;
   display: block;
+}
+.hideStatus{
+  display:none
 }
 </style>
