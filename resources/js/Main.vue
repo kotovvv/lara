@@ -16,7 +16,7 @@ const crmcomponent = () => import("./components/crmanager/crmComponent");
 const managercomponent = () => import("./components/manager/managerComponent");
 const providercomponent = () =>
   import("./components/provider/providerComponent");
-  import axios from "axios";
+import axios from "axios";
 export default {
   data: () => ({
     theMenu: "login",
@@ -40,23 +40,29 @@ export default {
     isExist(user) {
       return !!localStorage[user];
     },
+    clear() {
+      localStorage.clear();
+      this.user = {};
+    },
   },
   mounted: function () {
-
     if (this.isExist("user")) {
+      const self = this;
       const local_user = JSON.parse(localStorage.user);
       this.user = local_user;
       if (this.user.role_id != 4) {
         axios
           .post("/api/session", local_user)
           .then((res) => {
+            if (res.data == "create") {
+              self.clear();
+            }
           })
           .catch((error) => console.log(error));
       }
     }
     if (this.user.role_id == 4) {
-      localStorage.clear();
-      this.user = {};
+      this.clear();
     }
   },
 };

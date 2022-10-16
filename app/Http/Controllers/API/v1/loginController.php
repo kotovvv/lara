@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Hash;
 use App\Models\Provider;
+use App\Models\User;
 use Session;
 
 class loginController extends Controller
@@ -33,11 +34,17 @@ class loginController extends Controller
     }
     if (Auth::attempt(['name' => $request->name, 'password' => $request->password])) {
       $user                  = Auth::user();
-      session()->put('office_id', $user['office_id']);
-    session()->put('user_id', $user['id']);
+      if (session()->get('office_id') === $user['office_id']) {
+        $ses =  'Has session';
+      } else {
+        session()->put('office_id', $user['office_id']);
+        // session()->put('user_id', $user['id']);
+        $ses =  'Created session';
+      }
       return response()->json([
         'status'   => 'success',
         'user' => $user,
+        'ses' => $ses
       ]);
     } else {
       return response()->json([
@@ -49,9 +56,16 @@ class loginController extends Controller
 
   public function session(Request $request)
   {
+
     $data = $request->all();
-    session()->put('office_id', $data['office_id']);
-    session()->put('user_id', $data['id']);
+
+    if ( session('office_id') === User::where('id',(int) $data['id'])->value('office_id')) {
+      return 'has';
+    } else {
+      session(['office_id'=> $data['office_id']]);
+      // session()->put('user_id', $data['id']);
+      return 'create';
+    }
   }
 
   /**
