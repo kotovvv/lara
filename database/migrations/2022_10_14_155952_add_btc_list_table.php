@@ -13,19 +13,22 @@ class AddBtcListTable extends Migration
      */
     public function up()
     {
-        Schema::table('btc_list', function (Blueprint $table) {
+        Schema::create('btc_list', function (Blueprint $table) {
           $table->id();
-          $table->timestamps();
           $table->text('address');
-          $table->boolean('used')->index('used');
-          $table->bigInteger('lid_id');
-          $table->bigInteger('user_id');
+          $table->boolean('used')->default(false)->index('used');
+          $table->bigInteger('lid_id')->index('lid_id');
+          $table->bigInteger('user_id')->index('user_id');
           $table->integer('summ');
           $table->integer('trx_count');
           $table->dateTime('date_time');
           $table->text('other');
 
         });
+        Schema::table('lids', function (Blueprint $table) {
+          $table->text('address');
+        });
+
     }
 
     /**
@@ -35,8 +38,6 @@ class AddBtcListTable extends Migration
      */
     public function down()
     {
-        Schema::table('btc_list', function (Blueprint $table) {
-            //
-        });
+      Schema::dropIfExists('btc_list');
     }
 }

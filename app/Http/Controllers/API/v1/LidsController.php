@@ -58,26 +58,26 @@ class LidsController extends Controller
   {
     $data = $request->all();
     if (isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2) {
-        $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
-        return Lid::select('*')
-          ->whereIn('user_id', $a_user_ids)
-          ->where('name', 'like', "%{$data['search']}%")
-          ->orwhere('tel', 'like', "%{$data['search']}%")
-          ->orwhere('email', 'like', "%{$data['search']}%")
-          ->orwhere('text', 'like', "%{$data['search']}%")
-          ->get();
-      } else {
-      $office_id = session()->get('office_id');
+      $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
       return Lid::select('*')
-      ->when($office_id > 0, function ($query) use ($office_id) {
-        return $query->where('office_id', $office_id);
-      })
+        ->whereIn('user_id', $a_user_ids)
         ->where('name', 'like', "%{$data['search']}%")
         ->orwhere('tel', 'like', "%{$data['search']}%")
         ->orwhere('email', 'like', "%{$data['search']}%")
         ->orwhere('text', 'like', "%{$data['search']}%")
         ->get();
-     }
+    } else {
+      $office_id = session()->get('office_id');
+      return Lid::select('*')
+        ->when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('office_id', $office_id);
+        })
+        ->where('name', 'like', "%{$data['search']}%")
+        ->orwhere('tel', 'like', "%{$data['search']}%")
+        ->orwhere('email', 'like', "%{$data['search']}%")
+        ->orwhere('text', 'like', "%{$data['search']}%")
+        ->get();
+    }
   }
 
   /**
@@ -146,6 +146,7 @@ class LidsController extends Controller
 
       $a_lid['text'] = isset($lid['text']) ? $lid['text'] : '';
       $a_lid['created_at'] = Now();
+      unset( $a_lid['office_id']);
 
       DB::table('logs')->insert($a_lid);
     }
@@ -315,8 +316,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   {
     $req = $request->all();
     $office_id = session()->get('office_id');
-    $where = $office_id > 0 ? "  `l.office_id` = " . $office_id." AND " : "";
-    $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND '.$where;
+    $where = $office_id > 0 ? "  `l.office_id` = " . $office_id . " AND " : "";
+    $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ' . $where;
     $date = [date('Y-m-d', strtotime($req['datefrom'])) . ' ' . date("H:i:s", mktime(0, 0, 0)), date('Y-m-d', strtotime($req['dateto'])) . ' ' . date("H:i:s", mktime(23, 59, 59))];
 
     $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l  WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
@@ -734,10 +735,37 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
   public function getHmLidsUser($id)
   {
-
     $hm = Lid::where('user_id', $id)->count();
-
     return response($hm);
+  }
+
+  public function getBTC(Request $request)
+  {
+    $req = $request->all();
+
+    $res = [];
+    $res['message'] = 'no free used';
+
+    $sql = "SELECT id, address FROM `btc_list` where `used` = false order by `id` ASC LIMIT 1";
+    $btc = DB::select(DB::raw($sql));
+
+    if ($btc) {
+      $sql = "UPDATE `btc_list` SET `used` = true, `lid_id` = ". $req['id'].", `user_id` = ".$req['user_id'].", `date_time` = NOW() WHERE `id` = ".$btc[0]->id;
+      DB::select(DB::raw($sql));
+      $sql = "UPDATE `lids` SET `address` = ".$btc[0]->address." WHERE `id` = ".$req['id'];
+      DB::select(DB::raw($sql));
+
+      $log = new Log;
+      $log->tel = $req['tel'];
+      $log->lid_id = $req['id'];
+      $log->user_id = $req['user_id'];
+      $log->text = $btc[0]->address;
+      $log->save();
+
+      $res['address'] = $btc[0]->address;
+      $res['message'] = 'Used address ' . $btc[0]->address;
+    }
+    return response($res);
   }
 
   /**

@@ -81,6 +81,7 @@ Route::post('setDepozit', [LidsController::class, 'setDepozit'])->name('setDepoz
 Route::get('getHmLidsUser/{id}', [LidsController::class, 'getHmLidsUser'])->name('getHmLidsUser');
 Route::get('InfoDeposit', [LidsController::class, 'InfoDeposit'])->name('InfoDeposit');
 Route::get('AllDeposits', [LidsController::class, 'AllDeposits'])->name('AllDeposits');
+Route::post('getBTC', [LidsController::class, 'getBTC'])->name('getBTC');
 
 Route::get('historyLid/{id}', [ProvidersController::class, 'historyLid'])->name('historyLid');
 Route::get('pieAll/{id}', [ProvidersController::class, 'pieAll'])->name('pieAll');
