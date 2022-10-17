@@ -108,6 +108,13 @@
                     item.text
                   }}</span>
                 </template>
+                <template v-slot:item.address="{ item }">
+                  <v-btn small class="teal lighten-4"
+                    @click.stop="copyTo(item.address)"
+                    v-if="item.address"
+                    >{{ item.address }}</v-btn
+                  >
+                </template>
                 <template v-slot:item.actions="{ item }">
                   <v-icon small @click.stop="deleteTime(item)">
                     mdi-delete
@@ -183,6 +190,13 @@
                     item.text
                   }}</span>
                 </template>
+                <template v-slot:item.address="{ item }" v-if="">
+                  <v-btn small class="teal lighten-4"
+                    @click.stop="copyTo(item.address)"
+                    v-if="item.address"
+                    >{{ item.address }}</v-btn
+                  >
+                </template>
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">
                     <v-row>
@@ -199,7 +213,7 @@
       </v-col>
     </v-row>
 
-    <v-snackbar v-model="snackbar" :bottom="true" :rigth="true" timeout="-1">
+    <v-snackbar v-model="snackbar" :top=true :rigth=true timeout="2000">
       {{ message }}
 
       <template v-slot:action="{ attrs }">
@@ -233,9 +247,9 @@
               <label
                 :for="'st' + status.id"
                 class="status_wrp v-label"
-                :class="{ hideStatus: hideStatus(status.id) }"
                 :key="'l' + ikey"
               >
+                <!-- :class="{ hideStatus: hideStatus(status.id) }" -->
                 <b
                   :style="{
                     background: status.color,
@@ -265,6 +279,9 @@
                 class="border px-2 mb-4"
               ></v-text-field
             ></v-col>
+            <v-col class="pt-9">
+              <v-btn class="border" @click="getBTC">Отримати BTC</v-btn>
+            </v-col>
             <v-col>
               Дата/время
               <div class="border px-2">
@@ -365,6 +382,7 @@ export default {
       { text: "Дата", value: "date" },
       { text: "Перезвон", value: "ontime" },
       { text: "Сообщение", value: "text" },
+      { text: "Адрес", value: "address" },
     ],
     headerstime: [
       { text: "Имя", value: "name" },
@@ -376,6 +394,7 @@ export default {
       { text: "Статус", value: "status" },
       { text: "Дата", value: "date" },
       { text: "Сообщение", value: "text" },
+      { text: "Адрес", value: "address" },
       { text: "", value: "actions", sortable: false },
     ],
     parse_header: [],
@@ -428,9 +447,50 @@ export default {
     },
   },
   methods: {
+    copyTo(address) {
+        this.message = "Copy to clipboard"
+        this.snackbar = true
+      if (navigator.clipboard && window.isSecureContext) {
+
+        // navigator clipboard api method'
+        return navigator.clipboard.writeText(address);
+      } else {
+        // text area method
+        let textArea = document.createElement("textarea");
+        textArea.value = address;
+        // make the textarea out of viewport
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        return new Promise((res, rej) => {
+          // here the magic happens
+          document.execCommand("copy") ? res() : rej();
+          textArea.remove();
+        });
+      }
+
+    },
+    getBTC() {
+      const self = this;
+      let data = {};
+      data.id = this.selected[0].id;
+      data.user_id = this.selected[0].user_id;
+      data.tel = this.selected[0].tel;
+      axios
+        .post("/api/getBTC", data)
+        .then((res) => {
+          self.lids.find((i) => i.id == data.id).address = res.data.address;
+        })
+        .catch((error) => console.log(error));
+    },
     hideStatus(id) {
-      if(this.selected.length && this.selected[0].status_id == 9){
-        if(id != 9 && id != 10) {return true}
+      if (this.selected.length && this.selected[0].status_id == 9) {
+        if (id != 9 && id != 10) {
+          return true;
+        }
       }
       return false;
     },
@@ -462,8 +522,8 @@ export default {
     closeDialog() {
       this.$refs.datetime.date = "";
       this.$refs.datetime.time = "";
-      this.selected = []
-      this.selectedStatus = 0
+      this.selected = [];
+      this.selectedStatus = 0;
     },
     getHm() {
       let self = this;
@@ -793,7 +853,7 @@ td .status_wrp {
   overflow: hidden;
   display: block;
 }
-.hideStatus{
-  display:none
+.hideStatus {
+  display: none;
 }
 </style>
