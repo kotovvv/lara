@@ -213,17 +213,16 @@
       </v-col>
     </v-row>
 
-    <v-snackbar v-model="snackbar" :top=true :rigth=true timeout="2000">
+    <v-snackbar v-model="snackbar" top rigth timeout="2000" color="success"
+      dark>
       {{ message }}
-
       <template v-slot:action="{ attrs }">
         <v-btn
-          color="pink"
+          color="white"
           text
           v-bind="attrs"
           @click="
             snackbar = false;
-            getLids($props.user.id);
           "
         >
           Х
@@ -448,7 +447,7 @@ export default {
   },
   methods: {
     copyTo(address) {
-        this.message = "Copy to clipboard"
+        this.message = "Copied to clipboard"
         this.snackbar = true
       if (navigator.clipboard && window.isSecureContext) {
 
