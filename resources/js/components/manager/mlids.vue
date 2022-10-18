@@ -247,8 +247,8 @@
                 :for="'st' + status.id"
                 class="status_wrp v-label"
                 :key="'l' + ikey"
+                :class="{ hideStatus: hideStatus(status.id) }"
               >
-                <!-- :class="{ hideStatus: hideStatus(status.id) }" -->
                 <b
                   :style="{
                     background: status.color,
@@ -486,11 +486,18 @@ export default {
         .catch((error) => console.log(error));
     },
     hideStatus(id) {
-      if (this.selected.length && this.selected[0].status_id == 9) {
-        if (id != 9 && id != 10) {
+      // show only deposit
+      if (this.selected.length && this.selected[0].status_id == 10) {
+        if (id != 10) {
           return true;
         }
       }
+      // show only deposit & callback
+      // if (this.selected.length && this.selected[0].status_id == 9) {
+      //   if (id != 9 && id != 10) {
+      //     return true;
+      //   }
+      // }
       return false;
     },
     writeText() {
