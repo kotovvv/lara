@@ -201,27 +201,6 @@
             :loading="loading"
             loading-text="Загружаю... Ожидайте"
           >
-            <template
-              v-slot:top="{ pagination, options, updateOptions }"
-              :footer-props="{
-                'items-per-page-options': [50, 10, 100, 250, 500, -1],
-                'items-per-page-text': '',
-              }"
-            >
-              <v-row>
-
-                <!-- <v-spacer></v-spacer> -->
-                <v-col cols="3" class="mt-3">
-                  <v-data-footer
-                    :pagination="pagination"
-                    :options="options"
-                    @update:options="updateOptions"
-                    :items-per-page-options="[50, 10, 100, 250, 500, -1]"
-                    :items-per-page-text="''"
-                  />
-                </v-col>
-              </v-row>
-            </template>
             <template v-slot:expanded-item="{ headers, item }">
               <td :colspan="headers.length" class="blackborder">
                 <logtel :lid_id="item.id" :key="item.id" />
@@ -325,7 +304,6 @@ export default {
       data.datefrom = this.getLocalDateTime(this.dateTimeFrom);
       data.dateto = this.getLocalDateTime(this.dateTimeTo);
       data.office_ids = this.selected_office_ids;
-      console.log(data);
       axios
         .post("/api/getLidsOnDate", data)
         .then((res) => {
