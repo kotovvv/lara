@@ -158,9 +158,8 @@
           color="deep-purple accent-4"
         ></v-progress-linear>
       </v-row>
-
     </v-container>
-      <v-row>
+    <v-row>
       <v-col>
         <div class="wrp__statuses">
           <template v-for="(i, x) in Statuses">
@@ -178,8 +177,8 @@
         </div>
       </v-col>
     </v-row>
-        <v-row>
-      <v-col cols="9">
+    <v-row>
+      <v-col cols="12">
         <div class="border pa-4">
           <v-data-table
             v-model.lazy.trim="selected"
@@ -210,51 +209,6 @@
               }"
             >
               <v-row>
-                <v-col cols="1">
-                  <v-row class="mb-5">
-                    <span class="mt-5 d-flex pl-2 align-center border"
-                      >Отбор
-                      <v-text-field
-                        class="mx-2 mt-0 pt-0 talign-center nn"
-                        @input="selectRow"
-                        :max="filteredItems.length"
-                        v-model.number="hmrow"
-                        hide-details="auto"
-                        color="#004D40"
-                      ></v-text-field>
-                    </span>
-                  </v-row>
-                </v-col>
-                <v-col cols="2" class="mt-1">
-                  <v-text-field
-                    v-model="search"
-                    append-icon="mdi-magnify"
-                    label="Поиск"
-                    single-line
-                    hide-details
-                    class="border px-2"
-                  ></v-text-field>
-                </v-col>
-                <v-col class="wrp_group">
-                  <v-row>
-                    <v-checkbox
-                      v-model="filterGroups"
-                      v-for="(groupa, index) in group"
-                      :key="index"
-                      :value="groupa.id"
-                      class="pt-4"
-                    >
-                      <template v-slot:label>
-                        <div class="img">{{ groupa.fio.slice(0, 3) }}</div>
-                        <!-- <img
-                          :src="'/storage/' + groupa.pic"
-                          :alt="groupa.fio"
-                          v-if="groupa.pic"
-                        /> -->
-                      </template>
-                    </v-checkbox>
-                  </v-row>
-                </v-col>
 
                 <!-- <v-spacer></v-spacer> -->
                 <v-col cols="3" class="mt-3">
@@ -269,148 +223,11 @@
               </v-row>
             </template>
             <template v-slot:expanded-item="{ headers, item }">
-              <!-- :colspan="headers.length" -->
               <td :colspan="headers.length" class="blackborder">
-                <!-- <v-row>
-                  <v-col cols="12"> -->
-
                 <logtel :lid_id="item.id" :key="item.id" />
-                <!-- </v-col>
-                </v-row> -->
               </td>
             </template>
-            <template v-slot:footer.prepend>
-              <v-col cols="2">
-                <v-btn outlined rounded @click="exportXlsx" class="border">
-                  <v-icon left> mdi-file-excel </v-icon>
-                  Скачать таблицу
-                </v-btn>
-              </v-col>
-              <v-spacer></v-spacer>
-              <v-col>
-                <h6>Назначение статусов</h6>
-              </v-col>
-              <v-col cols="3">
-                <v-select
-                  v-model="selectedStatus"
-                  :items="statuses"
-                  item-text="name"
-                  item-value="id"
-                  outlined
-                  rounded
-                >
-                  <template v-slot:selection="{ item }">
-                    <i
-                      :style="{
-                        background: item.color,
-                        outline: '1px solid grey',
-                      }"
-                      class="sel_stat mr-4"
-                    ></i
-                    >{{ item.name }}
-                  </template>
-                  <template v-slot:item="{ item }">
-                    <i
-                      :style="{
-                        background: item.color,
-                        outline: '1px solid grey',
-                      }"
-                      class="sel_stat mr-4"
-                    ></i
-                    >{{ item.name }}
-                  </template>
-                </v-select>
-              </v-col>
-              <v-col cols="3">
-                <v-btn
-                  :disable="!selectedStatus && !selected.length"
-                  class="border ma-2"
-                  outlined
-                  rounded
-                  @click="changeStatus"
-                >
-                  Сменить статус
-                </v-btn>
-              </v-col>
-            </template>
           </v-data-table>
-        </div>
-      </v-col>
-      <v-col cols="3">
-        <div class="pa-5 w-100 border wrp_users">
-          <div class="my-3">Поиск пользователей</div>
-          <v-autocomplete
-            v-model="selectedUser"
-            :items="users"
-            label="Выбор"
-            item-text="fio"
-            item-value="id"
-            :return-object="true"
-            append-icon="mdi-close"
-            outlined
-            rounded
-            @click:append="clearuser()"
-          ></v-autocomplete>
-
-          <div class="scroll-y">
-            <v-list>
-              <v-radio-group
-                id="usersradiogroup"
-                ref="radiogroup"
-                v-model="userid"
-                v-bind="users"
-                @change="changeLidsUser"
-              >
-                <v-expansion-panels ref="akk" v-model="akkvalue">
-                  <v-expansion-panel v-for="(item, i) in group" :key="i">
-                    <v-expansion-panel-header>
-                      <div
-                        height="60"
-                        width="60"
-                        class="img v-expansion-panel-header__icon mr-1"
-                      >
-                        {{ item.fio.slice(0, 3) }}
-                      </div>
-
-                      {{ item.fio }}
-                      <div></div>
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <v-row
-                        v-for="user in users.filter(function (i) {
-                          return i.group_id == item.group_id;
-                        })"
-                        :key="user.id"
-                      >
-                        <v-radio
-                          :label="user.fio"
-                          :value="user.id"
-                          :disabled="disableuser == user.id"
-                        >
-                        </v-radio>
-
-                        <v-btn
-                          class="ml-3"
-                          small
-                          :color="usercolor(user)"
-                          @click="
-                            disableuser = user.id;
-                            getLidsOnUserOrDate();
-                          "
-                          :value="user.hmlids"
-                          :disabled="disableuser == user.id"
-                          >{{ user.hmlids }}</v-btn
-                        >
-                        <v-chip v-if="user.statnew" label small>
-                          {{ user.statnew }}
-                        </v-chip>
-                      </v-row>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-              </v-radio-group>
-            </v-list>
-          </div>
         </div>
       </v-col>
     </v-row>
@@ -441,6 +258,24 @@ export default {
     filterProviders: [],
     offices: [],
     selected_office_ids: [],
+    headers: [
+      { text: "Имя", value: "name" },
+      { text: "Email", value: "email" },
+      { text: "Телефон.", align: "start", value: "tel" },
+      { text: "Поставщик", value: "provider" },
+      { text: "Статус", value: "status" },
+      { text: "Создан", value: "date_created" },
+      { text: "Изменён", value: "date_updated" },
+      { text: "Депозит", value: "depozit" },
+      // { text: "Менеджер", value: "user" },
+      // { text: "Афилятор", value: "afilyator" },
+      // { text: "Сообщение", value: "text" },
+    ],
+    lids: [],
+    expanded: [],
+    selected: [],
+    search: "",
+    searchAll: "",
   }),
   computed: {
     filteredItems() {
@@ -466,7 +301,7 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-        getLocalDateTime(DateTime) {
+    getLocalDateTime(DateTime) {
       return new Date(
         new Date(DateTime).getTime() -
           new Date(DateTime).getTimezoneOffset() * 60 * 1000
@@ -475,7 +310,7 @@ export default {
         .slice(0, 16)
         .replace("T", " ");
     },
-        getLidsOnDate() {
+    getLidsOnDate() {
       let self = this;
       this.loading = true;
       let data = {};
@@ -490,7 +325,7 @@ export default {
       data.datefrom = this.getLocalDateTime(this.dateTimeFrom);
       data.dateto = this.getLocalDateTime(this.dateTimeTo);
       data.office_ids = this.selected_office_ids;
-      console.log(data)
+      console.log(data);
       axios
         .post("/api/getLidsOnDate", data)
         .then((res) => {
@@ -554,9 +389,17 @@ export default {
             color,
             order,
           }));
-          self.filterStatus.push(10)
+          self.filterStatus.push(10);
         })
         .catch((error) => console.log(error));
+    },
+    clickrow(item, row) {
+      if (!row.isSelected) {
+        this.tel = item.tel;
+        this.lid_id = item.id;
+        this.expanded = [item];
+      } else this.tel = "";
+      row.select(!row.isSelected);
     },
     getProviders() {
       let self = this;
