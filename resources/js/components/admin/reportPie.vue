@@ -151,13 +151,6 @@
           </v-select>
         </v-col>
       </v-row>
-      <v-row no-gutters justify="space-around">
-        <v-progress-linear
-          :active="loading"
-          :indeterminate="loading"
-          color="deep-purple accent-4"
-        ></v-progress-linear>
-      </v-row>
     </v-container>
     <v-row>
       <v-col>
@@ -221,6 +214,7 @@ export default {
     this.getOffices();
     this.getProviders();
     this.getStatuses();
+    this.getLidsOnDate()
   },
   data: () => ({
     loading: false,
