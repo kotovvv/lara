@@ -98,7 +98,7 @@ export default {
       { text: "Распределение2", name: "lidsplus", icon: "mdi-filter-outline" },
       { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
       { text: "Отчёт", name: "report", icon: "mdi-receipt" },
-      { text: "Отчёты", name: "reportPie", icon: "mdi-chart-pie" },
+      { text: "Отчёты", name: "reportPie", icon: "mdi-timetable" },
     ],
     adminMenu: "",
   }),

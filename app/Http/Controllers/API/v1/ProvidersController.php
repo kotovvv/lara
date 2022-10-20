@@ -192,41 +192,7 @@ class ProvidersController extends Controller
     ])->setStatusCode(200);
   }
 
-  // Get lids for time provider
-  public function pieTimeOffice($ids, $start_day, $stop_day)
-  {
-if(count($ids) == 0) return response()->json([
-  "status" => '404',
-  "statuses" => [],
-  "labels" => [],
-  "backgroundColor" => [],
-  "data" => [],
-])->setStatusCode(404);
 
-    $sql = "SELECT `status_id`,s.`name`,s.`color`,COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE l.status_id != 10 AND `office_id` in " . (int) $ids . " AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "' GROUP BY `status_id` ORDER BY s.order ASC";
-    $providerTimeLidsNoDep = DB::select(DB::raw($sql));
-    $sql = "SELECT `status_id`,s.`name`,s.`color`,COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE l.status_id = 10 AND `office_id` in " . (int) $ids . " AND CAST(l.`updated_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "' GROUP BY `status_id` ORDER BY s.order ASC";
-    $providerTimeLidsDep = DB::select(DB::raw($sql));
-
-    $providerTimeLids = array_merge($providerTimeLidsNoDep,$providerTimeLidsDep);
-
-    $labels = [];
-    $backgroundColor = [];
-    $data = [];
-    foreach ($providerTimeLids as $row) {
-      $labels[] = $row->name;
-      $backgroundColor[] = $row->color;
-      $data[] = $row->hm;
-    }
-
-    return response()->json([
-      "status" => 'ok',
-      "statuses" => $providerTimeLids,
-      "labels" => $labels,
-      "backgroundColor" => $backgroundColor,
-      "data" => $data,
-    ])->setStatusCode(200);
-  }
 
   // Get lids for time provider
   public function pieTime($id, $start_day, $stop_day)
