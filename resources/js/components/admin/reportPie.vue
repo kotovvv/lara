@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container>
+    <v-container fluid>
       <v-row no-gutters justify="space-around">
         <v-col cols="2">
           <p>Offices</p>
@@ -9,6 +9,7 @@
             v-model="selected_office_ids"
             item-text="name"
             item-value="id"
+            @change="getLidsOnDate()"
             multiple
             class="border px-5"
           ></v-select>
@@ -173,6 +174,7 @@
     <v-row>
       <v-col cols="12">
         <div class="border pa-4">
+            <!-- show-select -->
           <v-data-table
             v-model.lazy.trim="selected"
             id="tablids"
@@ -180,7 +182,6 @@
             :search="search"
             :single-select="false"
             item-key="id"
-            show-select
             show-expand
             @click:row="clickrow"
             :items="filteredItems"
@@ -209,12 +210,15 @@
 <script>
 import axios from "axios";
 import _ from "lodash";
+import logtel from "../manager/logtel";
 export default {
+    components: {
+    logtel,
+  },
   mounted: function () {
     this.getOffices();
     this.getProviders();
     this.getStatuses();
-    this.getLidsOnDate()
   },
   data: () => ({
     loading: false,
@@ -229,6 +233,7 @@ export default {
     filterStatus: [],
     providers: [],
     filterProviders: [],
+    filterGroups: [],
     offices: [],
     selected_office_ids: [],
     headers: [
@@ -271,6 +276,7 @@ export default {
         .then((res) => {
           self.offices = res.data;
           self.selected_office_ids.push(self.offices[0].id);
+          self.getLidsOnDate();
         })
         .catch((error) => console.log(error));
     },
@@ -309,11 +315,6 @@ export default {
             if (e.status_id) {
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
             }
-            if (self.users.find((u) => u.id == e.user_id)) {
-              let luser = self.users.find((u) => u.id == e.user_id);
-              e.user = luser.fio;
-              e.group_id = luser.group_id;
-            }
 
             if (self.providers.find((p) => p.id == e.provider_id)) {
               e.provider = self.providers.find(
@@ -348,6 +349,25 @@ export default {
           }
         })
         .catch((error) => console.log(error));
+    },
+    orderStatus() {
+      const self = this;
+      let stord = [];
+      self.Statuses = [];
+      stord = Object.entries(_.groupBy(self.lids, "status"));
+      stord.map(function (i) {
+        //i[0]//name
+        //i[1]//array
+        let el = self.statuses.find((s) => s.name == i[0]);
+        self.Statuses.push({
+          id: el.id,
+          name: i[0],
+          hm: i[1].length,
+          order: el.order,
+          color: el.color,
+        });
+      });
+      self.Statuses = _.orderBy(self.Statuses, "order");
     },
     getStatuses() {
       let self = this;
