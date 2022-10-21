@@ -10,6 +10,7 @@ use App\Models\Log;
 use App\Models\Depozit;
 use App\Models\User;
 use App\Models\Provider;
+use Barryvdh\Debugbar\Twig\Extension\Debug;
 use DB;
 use Debugbar;
 
@@ -659,6 +660,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   {
     $req = $request->all();
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     $res['result'] = 'Error';
     $date = '';
@@ -666,8 +668,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       $date = $req['date'] == 'y' ? ', l.created_at , l.updated_at' : '';
     }
 
-    // $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName " . $date . " FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $f_key->id . ")";
-    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName " . $date . " FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id )";
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName " . $date . " FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) where l.`provider_id` = '".$f_key->id."'";
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
       $res['data'] = [];
