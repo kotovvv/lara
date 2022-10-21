@@ -263,7 +263,8 @@ export default {
             this.filterStatus.includes(i.status_id)) &&
           (!this.filterProviders.length ||
             this.filterProviders.includes(i.provider_id)) &&
-          (!this.filterGroups.length || this.filterGroups.includes(i.group_id))
+          (!this.filterGroups.length || this.filterGroups.includes(i.group_id)) &&
+          (!this.selected_office_ids.length || this.selected_office_ids.includes(i.office_id))
         );
       });
     },
