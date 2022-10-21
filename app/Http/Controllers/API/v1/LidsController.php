@@ -705,7 +705,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key = DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     $res['result'] = 'Error';
-    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE DATE(l.`created_at`) >= " . $req['startDate'] . " AND DATE(l.`created_at`) <= " . $req['endDate'];
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE DATE(l.`created_at`) >= " . $req['startDate'] . " AND DATE(l.`created_at`) <= " . $req['endDate']." AND l.`provider_id` = '".$f_key->id."'";
 
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
