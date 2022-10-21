@@ -209,7 +209,8 @@ class LidsController extends Controller
 
   public function userLids($id)
   {
-    return Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)->orderBy('lids.created_at', 'desc')->get();
+    $office_id = session()->get('office_id');
+    return Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)->when($office_id > 0, function ($query) use ($office_id) {return $query->where('office_id', $office_id);})->orderBy('lids.created_at', 'desc')->get();
   }
 
   public function statusLids(Request $request)
@@ -283,10 +284,13 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   public function getuserLids(Request $request, $id)
   {
     $getlid = $request->all();
+    $office_id = session()->get('office_id');
     // if ($getlid['api_key'] != env('API_KEY')) return response(['status'=>'Key incorect'], 403);
     $f_key =   DB::table('apikeys')->where('api_key', $getlid['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-    return Lid::all()->where('user_id', $id);
+    return Lid::all()->where('user_id', $id)->when($office_id > 0, function ($query) use ($office_id) {
+      return $query->where('office_id', $office_id);
+    });
   }
 
   public function getlidid(Request $request)
@@ -309,7 +313,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $req = $request->all();
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-    return Lid::select('id')->whereBetween('created_at', [$req['start'], $req['end']])->get();
+    return Lid::select('id')->where('provider_id',$f_key->id)->whereBetween('created_at', [$req['start'], $req['end']])->get();
   }
 
 
@@ -337,7 +341,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
 
-    return Lid::where('id', $id)->get();
+    return Lid::where('id', $id)->where('provider_id',$f_key->id)->get();
   }
 
   /**
@@ -741,7 +745,10 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
   public function getHmLidsUser($id)
   {
-    $hm = Lid::where('user_id', $id)->count();
+    $office_id = session()->get('office_id');
+    $hm = Lid::where('user_id', $id)->when($office_id > 0, function ($query) use ($office_id) {
+      return $query->where('office_id', $office_id);
+    })->count();
     return response($hm);
   }
 
