@@ -513,6 +513,7 @@ export default {
       { text: "Статус", value: "status" },
       { text: "Депозит", value: "depozit" },
       { text: "Сообщение", value: "text" },
+      { text: "Звонков", value: "qtytel" },
     ],
     parse_header: [],
     sortOrders: {},

@@ -18,6 +18,8 @@ class Lid extends Model
         'user_id',
         'text',
         'active',
-        'office_id'
+        'office_id',
+        'address',
+        'qtytel',
     ];
 }

@@ -210,7 +210,9 @@ class LidsController extends Controller
   public function userLids($id)
   {
     $office_id = session()->get('office_id');
-    return Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)->when($office_id > 0, function ($query) use ($office_id) {return $query->where('office_id', $office_id);})->orderBy('lids.created_at', 'desc')->get();
+    return Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)->when($office_id > 0, function ($query) use ($office_id) {
+      return $query->where('office_id', $office_id);
+    })->orderBy('lids.created_at', 'desc')->get();
   }
 
   public function statusLids(Request $request)
@@ -313,7 +315,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $req = $request->all();
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-    return Lid::select('id')->where('provider_id',$f_key->id)->whereBetween('created_at', [$req['start'], $req['end']])->get();
+    return Lid::select('id')->where('provider_id', $f_key->id)->whereBetween('created_at', [$req['start'], $req['end']])->get();
   }
 
 
@@ -321,7 +323,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   {
     $req = $request->all();
     if (isset($req['office_ids'])) {
-      $where_user = count($req['office_ids']) > 0 ? "  `office_id` in (" . implode(',',$req['office_ids']) . ") AND " : "";
+      $where_user = count($req['office_ids']) > 0 ? "  `office_id` in (" . implode(',', $req['office_ids']) . ") AND " : "";
     } else {
       $office_id = session()->get('office_id');
       $where = $office_id > 0 ? "  `l.office_id` = " . $office_id . " AND " : "";
@@ -341,7 +343,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
 
-    return Lid::where('id', $id)->where('provider_id',$f_key->id)->get();
+    return Lid::where('id', $id)->where('provider_id', $f_key->id)->get();
   }
 
   /**
@@ -672,7 +674,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       $date = $req['date'] == 'y' ? ', l.created_at , l.updated_at' : '';
     }
 
-    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName " . $date . " FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) where l.`provider_id` = '".$f_key->id."'";
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName " . $date . " FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) where l.`provider_id` = '" . $f_key->id . "'";
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
       $res['data'] = [];
@@ -709,7 +711,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key = DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     $res['result'] = 'Error';
-    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE DATE(l.`created_at`) >= " . $req['startDate'] . " AND DATE(l.`created_at`) <= " . $req['endDate']." AND l.`provider_id` = '".$f_key->id."'";
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE DATE(l.`created_at`) >= " . $req['startDate'] . " AND DATE(l.`created_at`) <= " . $req['endDate'] . " AND l.`provider_id` = '" . $f_key->id . "'";
 
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
@@ -779,6 +781,18 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       $res['message'] = 'Used address ' . $btc[0]->address;
     }
     return response($res);
+  }
+
+  public function qtytel(Request $request)
+  {
+    $req = $request->all();
+
+    $sql = "INSERT INTO `qtytel` (`lid_id`,`user_id`,`date_time`) value ('" . $req['lid_id'] . "','" . $req['user_id'] . "',NOW())";
+    DB::select(DB::raw($sql));
+    Lid::where('id', $req['lid_id'])->increment('qtytel');
+    $qtytel = Lid::where('id', $req['lid_id'])->value('qtytel');
+
+    return response($qtytel);
   }
 
   /**

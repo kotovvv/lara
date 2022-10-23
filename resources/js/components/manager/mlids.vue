@@ -87,9 +87,12 @@
                 hide-default-footer
               >
                 <template v-slot:item.tel="{ item }">
-                  <a class="tel" @click.stop :href="'sip:' + item.tel">{{
-                    item.tel
-                  }}</a>
+                  <a
+                    class="tel"
+                    :href="'sip:' + item.tel"
+                    @click.stop="qtytel(item.id)"
+                    >{{ item.tel }}
+                    </a>
                 </template>
 
                 <template v-slot:item.status="{ item }">
@@ -109,7 +112,9 @@
                   }}</span>
                 </template>
                 <template v-slot:item.address="{ item }">
-                  <v-btn small class="teal lighten-4"
+                  <v-btn
+                    small
+                    class="teal lighten-4"
                     @click.stop="copyTo(item.address)"
                     v-if="item.address"
                     >{{ item.address }}</v-btn
@@ -168,10 +173,13 @@
                 <template v-slot:item.tel="{ item }">
                   <a
                     class="tel"
-                    @click="lid_id = item.id"
                     :href="'sip:' + item.tel"
-                    >{{ item.tel }}</a
-                  >
+                    @click.prevent="
+                      qtytel(item.id);
+                      lid_id = item.id;
+                    "
+                    >{{ item.tel }}
+                    </a>
                 </template>
 
                 <template v-slot:item.status="{ item }">
@@ -191,7 +199,9 @@
                   }}</span>
                 </template>
                 <template v-slot:item.address="{ item }" v-if="">
-                  <v-btn small class="teal lighten-4"
+                  <v-btn
+                    small
+                    class="teal lighten-4"
                     @click.stop="copyTo(item.address)"
                     v-if="item.address"
                     >{{ item.address }}</v-btn
@@ -213,18 +223,17 @@
       </v-col>
     </v-row>
 
-    <v-snackbar v-model="snackbar" top rigth timeout="2000" color="success"
-      dark>
+    <v-snackbar
+      v-model="snackbar"
+      top
+      rigth
+      timeout="2000"
+      color="success"
+      dark
+    >
       {{ message }}
       <template v-slot:action="{ attrs }">
-        <v-btn
-          color="white"
-          text
-          v-bind="attrs"
-          @click="
-            snackbar = false;
-          "
-        >
+        <v-btn color="white" text v-bind="attrs" @click="snackbar = false">
           Х
         </v-btn>
       </template>
@@ -382,6 +391,7 @@ export default {
       { text: "Перезвон", value: "ontime" },
       { text: "Сообщение", value: "text" },
       { text: "Адрес", value: "address" },
+
     ],
     headerstime: [
       { text: "Имя", value: "name" },
@@ -394,6 +404,7 @@ export default {
       { text: "Дата", value: "date" },
       { text: "Сообщение", value: "text" },
       { text: "Адрес", value: "address" },
+
       { text: "", value: "actions", sortable: false },
     ],
     parse_header: [],
@@ -446,11 +457,22 @@ export default {
     },
   },
   methods: {
+    qtytel(id) {
+      const self = this;
+      let data = {};
+      data.lid_id = id;
+      data.user_id = this.$props.user.id;
+      axios
+        .post("/api/qtytel", data)
+        .then((res) => {
+          // self.lids.find((i) => i.id == data.lid_id).qtytel = res.data;
+        })
+        .catch((error) => console.log(error));
+    },
     copyTo(address) {
-        this.message = "Copied to clipboard"
-        this.snackbar = true
+      this.message = "Copied to clipboard";
+      this.snackbar = true;
       if (navigator.clipboard && window.isSecureContext) {
-
         // navigator clipboard api method'
         return navigator.clipboard.writeText(address);
       } else {
@@ -470,7 +492,6 @@ export default {
           textArea.remove();
         });
       }
-
     },
     getBTC() {
       const self = this;

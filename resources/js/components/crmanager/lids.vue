@@ -341,6 +341,7 @@ export default {
       { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status" },
       { text: "Сообщение", value: "text" },
+      { text: "Звонков", value: "qtytel" },
     ],
     parse_header: [],
     sortOrders: {},
