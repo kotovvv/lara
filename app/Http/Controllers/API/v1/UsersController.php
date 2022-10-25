@@ -113,11 +113,11 @@ class UsersController extends Controller
     $data = $request->all();
 
     if (isset($data['password'])) $password = Hash::make($data['password']);
-    $file_name = $data['pic'] == 'null' ? NULL : $data['pic'];
-    if ($data['pic'] != 'null' && is_file($data['pic'])) {
-      $file_name = pathinfo($data['pic']->getClientOriginalName(), PATHINFO_FILENAME) . time() . '.' . $data['pic']->getClientOriginalExtension();
-      Storage::disk('public')->put($file_name, File::get($data['pic']));
-    }
+    // $file_name = $data['pic'] == 'null' ? NULL : $data['pic'];
+    // if ($data['pic'] != 'null' && is_file($data['pic'])) {
+    //   $file_name = pathinfo($data['pic']->getClientOriginalName(), PATHINFO_FILENAME) . time() . '.' . $data['pic']->getClientOriginalExtension();
+    //   Storage::disk('public')->put($file_name, File::get($data['pic']));
+    // }
     if (isset($data['id']) && $data['id'] > 0) {
       if (isset($data['balans']) && $data['balans'] > 0) {
         $arr = [];
@@ -133,7 +133,7 @@ class UsersController extends Controller
       $arr['active'] = $data['active'];
       $arr['role_id'] = $data['role_id'];
       $arr['fio'] = $data['fio'];
-      $arr['pic'] = $file_name;
+      // $arr['pic'] = $file_name;
       $arr['group_id'] = $data['group_id'];
       $arr['office_id'] = $data['office_id'];
       $arr['order'] = $data['order'];
