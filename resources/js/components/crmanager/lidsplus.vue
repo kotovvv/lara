@@ -162,6 +162,27 @@
             </template>
           </v-select>
         </v-col>
+        <v-col v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
+          <p>Фильтр office</p>
+          <v-select
+            v-model="filterOffices"
+            :items="offices"
+            item-text="name"
+            item-value="id"
+            outlined
+            rounded
+            multiple
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip v-if="index === 0">
+                <span>{{ item.name }}</span>
+              </v-chip>
+              <span v-if="index === 1" class="grey--text text-caption">
+                (+{{ filterOffices.length - 1 }} )
+              </span>
+            </template>
+          </v-select>
+        </v-col>
         <v-col>
           <p>Телефон</p>
           <v-text-field
@@ -530,11 +551,14 @@ export default {
     componentKey: 0,
     Statuses: [],
     hmrow: "",
+    offices: [],
+    filterOffices: [],
   }),
   mounted: function () {
     this.getUsers();
     this.getProviders();
     this.getStatuses();
+    this.getOffices();
     if (localStorage.filterStatus) {
       this.filterStatus = localStorage.filterStatus
         .split()
@@ -626,12 +650,26 @@ export default {
             this.filterProviders.includes(i.provider_id)) &&
           (!this.filtertel || reg.test(i.tel)) &&
           (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
-          (!this.filterGroups.length || this.filterGroups.includes(i.group_id))
+          (!this.filterGroups.length ||
+            this.filterGroups.includes(i.group_id)) &&
+          (!this.filterOffices || this.filterOffices.includes(i.office_id))
         );
       });
     },
   },
   methods: {
+    getOffices() {
+      let self = this;
+      if (self.$props.user.role_id == 1 && self.$props.user.office_id == 0) {
+        axios
+          .get("/api/getOffices")
+          .then((res) => {
+            self.offices = res.data;
+            self.filterOffices.push(self.offices[0].id);
+          })
+          .catch((error) => console.log(error));
+      }
+    },
     getProviderName(i) {
       return this.providers.find((el) => el.id == i).name;
     },

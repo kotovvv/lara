@@ -2,7 +2,7 @@
   <div>
     <v-container fluid>
       <v-row>
-        <v-col cols="2">
+        <v-col>
           Фильтр по статусам
           <v-select
             v-model="filterStatus"
@@ -43,7 +43,7 @@
             <!-- <v-icon small @click="deleteItem()"> mdi-delete </v-icon> -->
           </v-btn>
         </v-col>
-        <v-col cols="2">
+        <v-col>
           Глобальный статус
           <v-select
             v-model="filterGStatus"
@@ -76,7 +76,7 @@
           </v-select>
         </v-col>
 
-        <v-col cols="2">
+        <v-col>
           Фильтр по поставщикам
           <v-select
             v-model="filterProviders"
@@ -87,8 +87,29 @@
             rounded
           ></v-select>
         </v-col>
+        <v-col v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
+          Фильтр office
+          <v-select
+            v-model="filterOffices"
+            :items="offices"
+            item-text="name"
+            item-value="id"
+            outlined
+            rounded
+            multiple
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip v-if="index === 0">
+                <span>{{ item.name }}</span>
+              </v-chip>
+              <span v-if="index === 1" class="grey--text text-caption">
+                (+{{ filterOffices.length - 1 }} )
+              </span>
+            </template>
+          </v-select>
+        </v-col>
 
-        <v-col cols="2">
+        <v-col>
           Глобальный поиск
           <v-text-field
             v-model="searchAll"
@@ -99,7 +120,7 @@
             class="border px-2"
           ></v-text-field>
         </v-col>
-        <v-col cols="2">
+        <v-col>
           Телефон
           <v-text-field
             v-model.lazy.trim="filtertel"
@@ -108,7 +129,7 @@
           ></v-text-field>
         </v-col>
 
-        <v-col cols="2">
+        <v-col>
           Назначение статусов
           <v-select
             v-model="selectedStatus"
@@ -351,11 +372,14 @@ export default {
     telsDuplicates: [],
     clickedItemStatuses: [],
     clickedItemTel: "",
+    offices: [],
+    filterOffices: [],
   }),
   mounted: function () {
     this.getProviders();
     this.getUsers();
     this.getStatuses();
+    this.getOffices();
   },
   watch: {
     filterGStatus: function (newval, oldval) {
@@ -382,12 +406,25 @@ export default {
           (!this.filterStatus || i.status_id == this.filterStatus) &&
           (!this.filterProviders || i.provider_id == this.filterProviders) &&
           (!this.filtertel || reg.test(i.tel)) &&
-          (!this.showDuplicates || this.telsDuplicates.includes(i.id))
+          (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
+          (!this.filterOffices || this.filterOffices.includes(i.office_id))
         );
       });
     },
   },
   methods: {
+    getOffices() {
+      let self = this;
+      if (self.$props.user.role_id == 1 && self.$props.user.office_id == 0) {
+        axios
+          .get("/api/getOffices")
+          .then((res) => {
+            self.offices = res.data;
+            self.filterOffices.push(self.offices[0].id);
+          })
+          .catch((error) => console.log(error));
+      }
+    },
     getDuplicates() {
       this.telsDuplicates = this.lids
         .filter(this.duplicatesOnly)
@@ -403,12 +440,12 @@ export default {
     },
     searchInDB() {
       let self = this;
-      const send = {}
-      send.group_id = self.$props.user.group_id
-      send.role_id = self.$props.user.role_id
-      send.search = self.searchAll
+      const send = {};
+      send.group_id = self.$props.user.group_id;
+      send.role_id = self.$props.user.role_id;
+      send.search = self.searchAll;
       axios
-        .post("api/Lid/searchlids",send )
+        .post("api/Lid/searchlids", send)
         .then((res) => {
           // console.log(res.data);
           self.lids = Object.entries(res.data).map((e) => e[1]);
@@ -606,12 +643,12 @@ export default {
       self.filterStatus = 0;
       self.search = "";
       self.filtertel = "";
-            const send = {}
-      send.group_id = self.$props.user.group_id
-      send.role_id = self.$props.user.role_id
-      send.id = id
+      const send = {};
+      send.group_id = self.$props.user.group_id;
+      send.role_id = self.$props.user.role_id;
+      send.id = id;
       axios
-        .post("/api/statuslids",send)
+        .post("/api/statuslids", send)
         .then((res) => {
           // console.log(res.data);
           self.lids = Object.entries(res.data).map((e) => e[1]);
