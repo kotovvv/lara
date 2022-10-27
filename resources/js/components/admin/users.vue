@@ -251,7 +251,7 @@ export default {
       { text: "ФИО", value: "fio" },
       { text: "Роль", value: "role" },
       { text: "Группа", value: "group" },
-      // { text: "Office", value: "office_id" },
+      { text: "Office", value: "office" },
       // { text: "Показывать", value: "active" },
       { text: "Действия", value: "actions", sortable: false },
     ],
@@ -317,7 +317,7 @@ export default {
   },
 
   created() {
-    this.getUsers();
+
     this.getOffices();
   },
 
@@ -343,6 +343,7 @@ export default {
             self.rolename(u);
             if (u.role_id == 2) self.group.push({ fio: u.fio, id: u.id });
             u.group = "";
+            u.office = self.offices.find((o)=>{return o.id == u.office_id}).name
           });
           self.users.map((u) => {
             if (u.group_id > 0) {
@@ -361,6 +362,7 @@ export default {
           if (self.$attrs.user.role_id == 1 && self.$attrs.user.office_id == 0) {
             self.offices.unshift({ name: "SuperOffice", id: 0 });
           }
+          this.getUsers();
         })
         .catch((error) => console.log(error));
     },

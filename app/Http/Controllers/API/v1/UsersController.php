@@ -35,31 +35,11 @@ class UsersController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
+        ->orderBy('office_id')
+        ->orderBy('role_id')
+        ->orderBy('group_id')
+        ->orderBy('order')
         ->get();
-    }
-  }
-
-  public function usersTree()
-  {
-    if (session()->has('office_id')) {
-      $office_id = session()->get('office_id');
-      $users =  User::select(['office_id','role_id','group_id','order'])
-      ->when($office_id > 0, function ($query) use ($office_id) {
-        return $query->where('office_id', $office_id);
-      })
-        ->orderBy('users.office_id', 'asc')
-        ->orderBy('users.role_id', 'asc')
-        ->orderBy('users.group_id', 'asc')
-        ->orderBy('users.order', 'asc')
-        ->get();
-        $offices = [];
-
-        foreach($users as $user){
-          $offices[$user->office_id][$user->role_id][$user->group_id]=$user;
-
-        }
-        // return array_unique(array_column((array) $users,'office_id'));
-return $offices;
     }
   }
 
