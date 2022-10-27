@@ -31,13 +31,12 @@ class UsersController extends Controller
     if (session()->has('office_id')) {
       $office_id = session()->get('office_id');
       return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
-        ->orderBy('users.order', 'asc')
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->orderBy('office_id')
         ->orderBy('role_id')
-        ->orderBy('group_id')
+        ->orderBy('office_id')
+        // ->orderBy('group_id')
         ->orderBy('order')
         ->get();
     }
