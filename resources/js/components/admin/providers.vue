@@ -39,10 +39,10 @@
                         label="Наименование"
                       ></v-text-field>
                     </v-col>
-<v-text-field
-                        v-model="editedItem.password"
-                        label="Пароль"
-                      ></v-text-field>
+                    <v-text-field
+                      v-model="editedItem.password"
+                      label="Пароль"
+                    ></v-text-field>
                     <!-- <v-col cols="6">
                     <v-switch
                       v-model="editedItem.active"
@@ -64,6 +64,15 @@
                         v-model="editedItem.tel"
                         label="ApiKey"
                       ></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-select
+                        :items="offices"
+                        v-model="editedItem.office_id"
+                        item-text="name"
+                        item-value="id"
+                        label="Office"
+                      ></v-select>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -125,16 +134,19 @@ export default {
     editedIndex: -1,
     editedItem: {
       name: "",
-      password:'',
+      password: "",
       active: 1,
       related_users_id: [],
+      office_id: "",
     },
     defaultItem: {
       name: "",
-      password:'',
+      password: "",
       active: 1,
       related_users_id: [],
+      office_id: "",
     },
+    offices: [],
   }),
 
   computed: {
@@ -156,11 +168,21 @@ export default {
 
   mounted() {
     // this.initialize(),
-    this.getProvider();
+    this.getOffices();
     this.getUsers();
+    this.getProvider();
   },
 
   methods: {
+    getOffices() {
+      let self = this;
+      axios
+        .get("/api/getOffices")
+        .then((res) => {
+          self.offices = res.data;
+        })
+        .catch((error) => console.log(error));
+    },
     getUsers() {
       let self = this;
       axios
@@ -196,9 +218,9 @@ export default {
       axios
         .post("/api/provider", provider)
         .then((res) => {
-          if(provider.id == undefined){
-            let idx = self.providers.indexOf(provider)
-            Object.assign(self.providers[idx] , res.data.provider)
+          if (provider.id == undefined) {
+            let idx = self.providers.indexOf(provider);
+            Object.assign(self.providers[idx], res.data.provider);
           }
         })
         .catch((error) => console.log(error));

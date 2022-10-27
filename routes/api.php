@@ -90,4 +90,5 @@ Route::get('pieTime/{id}/{start_day}/{stop_day}', [ProvidersController::class, '
 Route::get('getDataTime/{id}/{start_day}/{stop_day}', [ProvidersController::class, 'getDataTime'])->name('getDataTime');
 Route::get('getOffices', [UsersController::class, 'getOffices']);
 Route::post('office/update', [UsersController::class, 'updateOffice']);
+Route::get('usersTree', [UsersController::class, 'usersTree']);
 Route::post('session', [loginController::class, 'session']);

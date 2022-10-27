@@ -18,7 +18,8 @@ class Provider extends Authenticatable
       'name',
       'tel',
       'active',
-      'related_users_id'
+      'related_users_id',
+      'office_id'
   ];
 
     protected $hidden = [

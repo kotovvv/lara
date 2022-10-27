@@ -22,7 +22,13 @@ class ProvidersController extends Controller
    */
   public function index()
   {
-    return Provider::all();
+    if (session()->has('office_id')) {
+      $office_id = session()->get('office_id');
+
+      return Provider::when($office_id > 0, function ($query) use ($office_id) {
+        return $query->where('office_id', $office_id);
+      })->get();
+    }
   }
 
   public function getall()
@@ -202,7 +208,7 @@ class ProvidersController extends Controller
     $sql = "SELECT `status_id`,s.`name`,s.`color`,COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE l.status_id = 10 AND `provider_id` = " . (int) $id . " AND CAST(l.`updated_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "' GROUP BY `status_id` ORDER BY s.order ASC";
     $providerTimeLidsDep = DB::select(DB::raw($sql));
 
-    $providerTimeLids = array_merge($providerTimeLidsNoDep,$providerTimeLidsDep);
+    $providerTimeLids = array_merge($providerTimeLidsNoDep, $providerTimeLidsDep);
 
     $labels = [];
     $backgroundColor = [];

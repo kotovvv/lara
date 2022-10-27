@@ -28,21 +28,49 @@ class UsersController extends Controller
    */
   public function index()
   {
-    $office_id = session()->get('office_id');
-    return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
-      ->orderBy('users.order', 'asc')
+    if (session()->has('office_id')) {
+      $office_id = session()->get('office_id');
+      return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
+        ->orderBy('users.order', 'asc')
+        ->when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('office_id', $office_id);
+        })
+        ->get();
+    }
+  }
+
+  public function usersTree()
+  {
+    if (session()->has('office_id')) {
+      $office_id = session()->get('office_id');
+      $users =  User::select(['office_id','role_id','group_id','order'])
       ->when($office_id > 0, function ($query) use ($office_id) {
         return $query->where('office_id', $office_id);
       })
-      ->get();
+        ->orderBy('users.office_id', 'asc')
+        ->orderBy('users.role_id', 'asc')
+        ->orderBy('users.group_id', 'asc')
+        ->orderBy('users.order', 'asc')
+        ->get();
+        $offices = [];
+
+        foreach($users as $user){
+          $offices[$user->office_id][$user->role_id][$user->group_id]=$user;
+
+        }
+        // return array_unique(array_column((array) $users,'office_id'));
+return $offices;
+    }
   }
 
   public function getOffices()
   {
-    $office_id = session()->get('office_id');
-    $where = $office_id > 0 ? " where `id` = " . $office_id : "";
-    $sql = 'SELECT * FROM `offices` ' . $where . ' ORDER BY NAME';
-    return DB::select(DB::raw($sql));
+    if (session()->has('office_id')) {
+      $office_id = session()->get('office_id');
+      $where = $office_id > 0 ? " where `id` = " . $office_id : "";
+      $sql = 'SELECT * FROM `offices` ' . $where . ' ORDER BY NAME';
+      return DB::select(DB::raw($sql));
+    }
   }
 
   public function updateOffice(Request $request)
