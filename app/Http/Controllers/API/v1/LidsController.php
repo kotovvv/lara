@@ -58,16 +58,7 @@ class LidsController extends Controller
   public function searchlids(Request $request)
   {
     $data = $request->all();
-    if (isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2) {
-      $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
-      return Lid::select('*')
-        ->whereIn('user_id', $a_user_ids)
-        ->where('name', 'like', "%{$data['search']}%")
-        ->orwhere('tel', 'like', "%{$data['search']}%")
-        ->orwhere('email', 'like', "%{$data['search']}%")
-        ->orwhere('text', 'like', "%{$data['search']}%")
-        ->get();
-    } else {
+    if (session()->has('office_id')) {
       $office_id = session()->get('office_id');
       return Lid::select('*')
         ->when($office_id > 0, function ($query) use ($office_id) {
@@ -79,6 +70,7 @@ class LidsController extends Controller
         ->orwhere('text', 'like', "%{$data['search']}%")
         ->get();
     }
+    return response((object) []);
   }
 
   /**
