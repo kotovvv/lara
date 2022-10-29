@@ -34,8 +34,8 @@ class UsersController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->orderBy('role_id')
         ->orderBy('office_id')
+        ->orderBy('role_id')
         // ->orderBy('group_id')
         ->orderBy('order')
         ->get();
@@ -225,7 +225,6 @@ class UsersController extends Controller
       $col[] = $count_status;
       $repoprt[] = ['color' => $status->color, 'col' => $col];
     }
-
     return $repoprt;
   }
 
@@ -233,11 +232,18 @@ class UsersController extends Controller
   public function getusers()
   {
     $office_id = session()->get('office_id');
+    $user = User::where('id',(int) session()->get('user_id'))->first();
+
+    // $role_id = $user->role_id;
+    $group_id = $user['group_id'];
     return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
-      ->where('users.role_id', '>', 1)
+      //->where('users.role_id', '>', 1)
       ->where('users.active', 1)
       ->when($office_id > 0, function ($query) use ($office_id) {
         return $query->where('office_id', $office_id);
+      })
+      ->when($group_id > 0, function ($query) use ($group_id) {
+        return $query->where('group_id', $group_id);
       })
       ->orderBy('users.order', 'asc')
       ->get();

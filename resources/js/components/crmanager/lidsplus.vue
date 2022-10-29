@@ -652,7 +652,7 @@ export default {
           (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
           (!this.filterGroups.length ||
             this.filterGroups.includes(i.group_id)) &&
-          (!this.filterOffices || this.filterOffices.includes(i.office_id))
+          (!this.filterOffices.length || this.filterOffices.includes(i.office_id))
         );
       });
     },

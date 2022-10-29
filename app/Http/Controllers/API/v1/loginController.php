@@ -38,7 +38,7 @@ class loginController extends Controller
         $ses =  'Has session';
       } else {
         session()->put('office_id', $user['office_id']);
-        // session()->put('user_id', $user['id']);
+        session()->put('user_id', $user['id']);
         $ses =  'Created session';
       }
       return response()->json([
@@ -63,7 +63,8 @@ class loginController extends Controller
       return 'has';
     } else {
       session(['office_id'=> $data['office_id']]);
-      // session()->put('user_id', $data['id']);
+      session(['user_id'=> $data['id']]);
+      session(['role_id'=> $data['role_id']]);
       return 'create';
     }
   }
