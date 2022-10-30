@@ -1,5 +1,19 @@
-<template>
+ <template>
   <div>
+    <v-tabs
+      v-model="tab"
+      background-color="primary"
+      dark
+    >
+      <v-tab>
+        Провайдер
+      </v-tab>
+      <v-tab>
+        ВТС
+      </v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="tab">
+      <v-tab-item>
     <v-row>
       <v-col cols="2">
         <v-select
@@ -123,11 +137,18 @@
         </v-data-table>
       </v-col>
     </v-row>
+      </v-tab-item>
+      <v-tab-item>
+<importBTC></importBTC>
+      </v-tab-item>
+    </v-tabs-items>
+
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import importBTC from "./importBTC";
 export default {
   data: () => ({
     message: "",
@@ -162,6 +183,7 @@ export default {
     parse_csv: [],
     sortOrders: {},
     sortKey: "tel",
+    tab:0
   }),
   watch:{
     selectedProvider: function(newval){
@@ -429,6 +451,9 @@ this.getUsers();
         }
       );
     },
+  },
+    components: {
+    importBTC,
   },
 };
 </script>
