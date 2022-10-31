@@ -759,7 +759,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if ($btc) {
       $sql = "UPDATE `btc_list` SET `used` = true, `lid_id` = " . $req['id'] . ", `user_id` = " . $req['user_id'] . ", `date_time` = NOW() WHERE `id` = " . $btc[0]->id;
       DB::select(DB::raw($sql));
-      $sql = "UPDATE `lids` SET `address` = " . $btc[0]->address . " WHERE `id` = " . $req['id'];
+      $sql = "UPDATE `lids` SET `address` = '" . $btc[0]->address . "' WHERE `id` = " . $req['id'];
       DB::select(DB::raw($sql));
 
       $log = new Log;
