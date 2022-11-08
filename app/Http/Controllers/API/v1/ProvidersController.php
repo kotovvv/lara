@@ -26,14 +26,21 @@ class ProvidersController extends Controller
       $office_id = session()->get('office_id');
 
       return Provider::when($office_id > 0, function ($query) use ($office_id) {
-        return $query->where('office_id', $office_id);
+        return $query->where('office_id','REGEXP','[^0-9]'. $office_id.'[^0-9]');
       })->get();
     }
   }
 
   public function getall()
   {
-    return Provider::all();
+    // return Provider::all();
+    if (session()->has('office_id')) {
+      $office_id = session()->get('office_id');
+
+      return Provider::when($office_id > 0, function ($query) use ($office_id) {
+        return $query->where('office_id','REGEXP','[^0-9]'. $office_id.'[^0-9]');
+      })->get();
+    }
   }
 
   /**
@@ -110,6 +117,7 @@ class ProvidersController extends Controller
 
     $data = $request->all();
     $data['related_users_id'] = json_encode($data['related_users_id']);
+    $data['office_id'] = json_encode($data['office_id']);
 
 
     if (isset($data['id']) && $data['id'] > 0) {

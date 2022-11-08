@@ -67,6 +67,7 @@
                     </v-col>
                     <v-col cols="6">
                       <v-select
+                      multiple
                         :items="offices"
                         v-model="editedItem.office_id"
                         item-text="name"
@@ -137,14 +138,14 @@ export default {
       password: "",
       active: 1,
       related_users_id: [],
-      office_id: "",
+      office_id: [],
     },
     defaultItem: {
       name: "",
       password: "",
       active: 1,
       related_users_id: [],
-      office_id: "",
+      office_id: [],
     },
     offices: [],
   }),
@@ -208,6 +209,8 @@ export default {
           self.providers = self.providers.map(function (p) {
             if (p.related_users_id.length > 0)
               p.related_users_id = JSON.parse(p.related_users_id);
+            if (p.office_id.length > 0)
+              p.office_id = JSON.parse(p.office_id);
             return p;
           });
         })
@@ -230,6 +233,8 @@ export default {
       this.editedItem = Object.assign({}, item);
       if (!Array.isArray(item.related_users_id))
         this.editedItem.related_users_id = [];
+      if (!Array.isArray(item.office_id))
+        this.editedItem.office_id = [];
       this.dialog = true;
     },
     deleteItem(item) {

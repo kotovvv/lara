@@ -145,12 +145,16 @@ class UsersController extends Controller
       $arr['office_id'] = $data['office_id'];
       $arr['order'] = $data['order'];
 
+      if(User::where('id', $data['id'])->value('office_id') != $data['office_id']){
+        Lid::where('user_id',$data['id'])->update(['office_id'=> $data['office_id']]);
+      }
       if (User::where('id', $data['id'])->update($arr)) {
         if (isset($data['password'])) {
           $user = User::find($data['id']);
           $user->password = $password;
           $user->save();
         }
+
         return response('User updated', 200);
       } else return response('User updated error', 301);
     } else {
@@ -158,7 +162,7 @@ class UsersController extends Controller
       $user->name = $data["name"];
       $user->fio = $data["fio"];
       $user->role_id = $data["role_id"];
-      $user->pic = $file_name;
+      // $user->pic = $file_name;
       $user->office_id = $data['office_id'];
       $user->password = $password;
       $user->save();
