@@ -285,6 +285,8 @@
                 required
                 v-model="depozit_val"
                 class="border px-2 mb-4"
+                @keypress="filter(event)"
+                prepend-inner-icon="mdi-currency-usd"
               ></v-text-field
             ></v-col>
             <v-col class="pt-9">
@@ -457,6 +459,16 @@ export default {
     },
   },
   methods: {
+    filter: function(evt) {
+      evt = (evt) ? evt : window.event;
+      let expect = evt.target.value.toString() + evt.key.toString();
+
+      if (!/^[-+]?[0-9]*\.?[0-9]*$/.test(expect)) {
+        evt.preventDefault();
+      } else {
+        return true;
+      }
+    },
     qtytel(id) {
       const self = this;
       let data = {};

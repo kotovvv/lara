@@ -239,7 +239,6 @@ export default {
         .post("/api/getBTCsOnDate", data)
         .then(function (response) {
           self.btc = response.data;
-          console.log(self.btc);
           self.loading = false;
         })
         .catch(function (error) {

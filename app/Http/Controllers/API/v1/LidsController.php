@@ -202,8 +202,10 @@ class LidsController extends Controller
   public function userLids($id)
   {
     $office_id = session()->get('office_id');
-    return Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)->when($office_id > 0, function ($query) use ($office_id) {
-      return $query->where('office_id', $office_id);
+    $providers = Provider::select('id')->where('office_id','REGEXP','[^0-9]'. $office_id.'[^0-9]')->get()->toArray();
+    return Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)
+    ->when($office_id > 0, function ($query) use ($office_id,$providers) {
+      return $query->where('office_id', $office_id)->whereIn('provider_id', $providers);
     })->orderBy('lids.created_at', 'desc')->get();
   }
 
