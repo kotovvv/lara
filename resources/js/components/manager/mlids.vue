@@ -171,14 +171,21 @@
                 </template>
 
                 <template v-slot:item.tel="{ item }">
+                  <span class="tel"
+                  @click.prevent="wp_call(item.tel)"
+                  >
+                    {{ item.tel }}
+                  </span>
                   <a
-                    class="tel"
                     :href="'sip:' + item.tel"
                     @click.prevent="
                       qtytel(item.id);
                       lid_id = item.id;
                     "
-                    >{{ item.tel }}
+                    >
+                    <v-icon small>
+                    mdi-headset
+                  </v-icon>
                     </a>
                 </template>
 
@@ -343,6 +350,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <div id="c2k_container_0" title="" style="text-align: center;">
+    <!--rewrite the CALLTO and uncomment the following line to enable support for ancient browsers-->
+    <!--<a href="tel://CALLTO" id="c2k_alternative_url">CALLTO</a>-->
+    </div>
+    <script type="application/javascript" src="/webphone/webphone_api.js"></script>
+    <script type="application/javascript" src="/webphone/js/click2call/click2call.js"></script>
   </div>
 </template>
 
@@ -350,12 +363,15 @@
 import XLSX from "xlsx";
 import axios from "axios";
 import logtel from "./logtel";
+// import  "webphone/webphone_api"
+// var webp = require("./../../webphone/webphone_api")
 export default {
   components: {
     logtel,
   },
   props: ["user"],
   data: () => ({
+    webphone:{},
     timeProps: { format: "24hr" },
     dial: false,
     depozit: 0,
@@ -415,29 +431,24 @@ export default {
     hm: 0,
     snackbar: false,
     message: "",
+    is_script_loading: false,
   }),
   mounted: function () {
     this.getProviders();
     this.getStatuses();
+    // const wph = document.createElement("script");
+    // wph.setAttribute(
+    //   "src",
+    //   "/webphone/webphone_api.js"
+    // );
+    // document.head.appendChild(wph);
+  },
+  created() {
+    // this.$root.$on('loading_script', e => { this.is_script_loading = true })
+    // this.use_script ()
+    this.wp_start()
   },
   watch: {
-    // selected: function (newval, oldval) {
-    //   //  console.log(newval)
-    //   //  console.log(oldval)
-    //   if (this.selected.length == 0) {
-    //     this.selectedStatus = null;
-    //     this.expanded = [];
-    //     this.tel = "";
-    //     // this.datetime = "";
-    //   } else {
-    //     this.selectedStatus = newval[0].status_id;
-    //     this.expanded = this.selected;
-    //     // this.datetime =
-    //     //   newval[0].ontime != "0000-00-00 00:00:00" && newval[0].ontime != null
-    //     //     ? newval[0].ontime.substring(0, 16)
-    //     //     : "";
-    //   }
-    // },
     datetime: function (newval, oldval) {
       if ((newval == null || newval != oldval) && this.lid_id != "") {
         this.setTime();
@@ -459,6 +470,26 @@ export default {
     },
   },
   methods: {
+
+    wp_start(){
+ webphone_api.parameters['autostart'] = 0;   // start the webphone only when button is clicked
+        webphone_api.onAppStateChange(function (state)
+        {
+            if (state === 'loaded')
+            {
+                webphone_api.setparameter('serveraddress', '2.58.14.173:5275'); // yoursipdomain.com your VoIP server IP address or domain name
+                webphone_api.setparameter('username', '1149');      // SIP account username
+                webphone_api.setparameter('password', 'ad3a903faa58eace5551e69da0ec6035');      // SIP account password (see the "Parameters encryption" in the documentation)
+                        // destination number to call
+                webphone_api.setparameter('autoaction', '0');    // 0=nothing (default), 1=call, 2=chat, 3=video call
+            }
+        });
+    },
+    wp_call(tel){
+      console.log(tel)
+      // webphone_api.call(tel);
+      webphone_api.setparameter('callto', tel);
+    },
     filter: function(evt) {
       evt = (evt) ? evt : window.event;
       let expect = evt.target.value.toString() + evt.key.toString();
@@ -834,7 +865,8 @@ export default {
   text-decoration: none;
 }
 .tel {
-  display: block;
+  display: inline-block;
+  margin-right: 1rem;
   color: #000;
 }
 #maintable.v-data-table >>> tr {
