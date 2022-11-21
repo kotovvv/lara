@@ -70,6 +70,14 @@
         </v-row>
         <v-row>
           <v-col>
+            <div id="c2k_container_0" title="" style="text-align: center">
+              <!--rewrite the CALLTO and uncomment the following line to enable support for ancient browsers-->
+              <!--<a href="tel://CALLTO" id="c2k_alternative_url">CALLTO</a>-->
+            </div>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
             <v-card :class="{ 'd-none': todayItems.length == 0 }">
               <!-- @click:row="clickrow"
               :expanded="expanded" show-expand  hide-default-header   show-select -->
@@ -92,7 +100,7 @@
                     :href="'sip:' + item.tel"
                     @click.stop="qtytel(item.id)"
                     >{{ item.tel }}
-                    </a>
+                  </a>
                 </template>
 
                 <template v-slot:item.status="{ item }">
@@ -171,9 +179,7 @@
                 </template>
 
                 <template v-slot:item.tel="{ item }">
-                  <span class="tel"
-                  @click.prevent="wp_call(item.tel)"
-                  >
+                  <span class="tel" @click.prevent.stop="wp_call(item.tel)">
                     {{ item.tel }}
                   </span>
                   <a
@@ -182,11 +188,9 @@
                       qtytel(item.id);
                       lid_id = item.id;
                     "
-                    >
-                    <v-icon small>
-                    mdi-headset
-                  </v-icon>
-                    </a>
+                  >
+                    <v-icon small> mdi-headset </v-icon>
+                  </a>
                 </template>
 
                 <template v-slot:item.status="{ item }">
@@ -350,12 +354,14 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <div id="c2k_container_0" title="" style="text-align: center;">
-    <!--rewrite the CALLTO and uncomment the following line to enable support for ancient browsers-->
-    <!--<a href="tel://CALLTO" id="c2k_alternative_url">CALLTO</a>-->
-    </div>
-    <script type="application/javascript" src="/webphone/webphone_api.js"></script>
-    <script type="application/javascript" src="/webphone/js/click2call/click2call.js"></script>
+    <script
+      type="application/javascript"
+      src="/webphone/webphone_api.js"
+    ></script>
+    <script
+      type="application/javascript"
+      src="/webphone/js/click2call/click2call.js"
+    ></script>
   </div>
 </template>
 
@@ -371,7 +377,7 @@ export default {
   },
   props: ["user"],
   data: () => ({
-    webphone:{},
+    webphone: {},
     timeProps: { format: "24hr" },
     dial: false,
     depozit: 0,
@@ -409,7 +415,6 @@ export default {
       { text: "Перезвон", value: "ontime" },
       { text: "Сообщение", value: "text" },
       { text: "Адрес", value: "address" },
-
     ],
     headerstime: [
       { text: "Имя", value: "name" },
@@ -442,12 +447,9 @@ export default {
     //   "/webphone/webphone_api.js"
     // );
     // document.head.appendChild(wph);
+    this.wp_start();
   },
-  created() {
-    // this.$root.$on('loading_script', e => { this.is_script_loading = true })
-    // this.use_script ()
-    this.wp_start()
-  },
+  created() {},
   watch: {
     datetime: function (newval, oldval) {
       if ((newval == null || newval != oldval) && this.lid_id != "") {
@@ -470,28 +472,36 @@ export default {
     },
   },
   methods: {
+    wp_start() {
+      setTimeout(function(){
+        webphone_api.parameters['autostart'] = 0;   // start the webphone only when button is clicked
+      webphone_api.onAppStateChange(function (state) {
+        if (state === "loaded") {
+          webphone_api.setparameter("serveraddress", "2.58.14.173:5275"); // yoursipdomain.com your VoIP server IP address or domain name
+          webphone_api.setparameter("username", "1149"); // SIP account username
+          webphone_api.setparameter(
+            "password",
+            "ad3a903faa58eace5551e69da0ec6035"
+          ); // SIP account password (see the "Parameters encryption" in the documentation)
+          // destination number to call
+          webphone_api.setparameter("autoaction", "0"); // 0=nothing (default), 1=call, 2=chat, 3=video call
+          webphone_api.setparameter("loglevel", "1"); // start the webphone only when button is clicked
+        }
+    })
+      },200)
 
-    wp_start(){
- webphone_api.parameters['autostart'] = 0;   // start the webphone only when button is clicked
-        webphone_api.onAppStateChange(function (state)
-        {
-            if (state === 'loaded')
-            {
-                webphone_api.setparameter('serveraddress', '2.58.14.173:5275'); // yoursipdomain.com your VoIP server IP address or domain name
-                webphone_api.setparameter('username', '1149');      // SIP account username
-                webphone_api.setparameter('password', 'ad3a903faa58eace5551e69da0ec6035');      // SIP account password (see the "Parameters encryption" in the documentation)
-                        // destination number to call
-                webphone_api.setparameter('autoaction', '0');    // 0=nothing (default), 1=call, 2=chat, 3=video call
-            }
-        });
     },
-    wp_call(tel){
-      console.log(tel)
-      // webphone_api.call(tel);
-      webphone_api.setparameter('callto', tel);
+    wp_call(tel) {
+      console.info(tel);
+
+      console.info('webphone_api ssssssss')
+      console.info(webphone_api)
+      webphone_api.call(tel);
+      console.info(webphone_api)
+      // webphone_api.setparameter("callto", tel);
     },
-    filter: function(evt) {
-      evt = (evt) ? evt : window.event;
+    filter: function (evt) {
+      evt = evt ? evt : window.event;
       let expect = evt.target.value.toString() + evt.key.toString();
 
       if (!/^[-+]?[0-9]*\.?[0-9]*$/.test(expect)) {
