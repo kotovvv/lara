@@ -179,7 +179,11 @@
                 </template>
 
                 <template v-slot:item.tel="{ item }">
-                  <span class="tel" @click.prevent.stop="wp_call(item.tel)">
+                  <span
+                    class="tel"
+                    @click.prevent.stop="wp_call(item)"
+                    :class="{ active: active_el == item.id }"
+                  >
                     {{ item.tel }}
                   </span>
                   <a
@@ -355,12 +359,9 @@
       </v-card>
     </v-dialog>
     <script
+      v-once
       type="application/javascript"
       src="/webphone/webphone_api.js"
-    ></script>
-    <script
-      type="application/javascript"
-      src="/webphone/js/click2call/click2call.js"
     ></script>
   </div>
 </template>
@@ -436,7 +437,8 @@ export default {
     hm: 0,
     snackbar: false,
     message: "",
-    is_script_loading: false,
+    statuscall: false,
+    active_el: 0,
   }),
   mounted: function () {
     this.getProviders();
@@ -473,32 +475,33 @@ export default {
   },
   methods: {
     wp_start() {
-      setTimeout(function(){
-        webphone_api.parameters['autostart'] = 0;   // start the webphone only when button is clicked
-      webphone_api.onAppStateChange(function (state) {
-        if (state === "loaded") {
-          webphone_api.setparameter("serveraddress", "2.58.14.173:5275"); // yoursipdomain.com your VoIP server IP address or domain name
-          webphone_api.setparameter("username", "1149"); // SIP account username
-          webphone_api.setparameter(
-            "password",
-            "ad3a903faa58eace5551e69da0ec6035"
-          ); // SIP account password (see the "Parameters encryption" in the documentation)
-          // destination number to call
-          webphone_api.setparameter("autoaction", "0"); // 0=nothing (default), 1=call, 2=chat, 3=video call
-          webphone_api.setparameter("loglevel", "1"); // start the webphone only when button is clicked
-        }
-    })
-      },200)
-
+      setTimeout(function () {
+        webphone_api.parameters["autostart"] = 0; // start the webphone only when button is clicked
+        webphone_api.onAppStateChange(function (state) {
+          if (state === "loaded") {
+            webphone_api.setparameter("serveraddress", "2.58.14.173:5275"); // yoursipdomain.com your VoIP server IP address or domain name
+            webphone_api.setparameter("username", "1149"); // SIP account username
+            webphone_api.setparameter(
+              "password",
+              "ad3a903faa58eace5551e69da0ec6035"
+            ); // SIP account password (see the "Parameters encryption" in the documentation)
+            // destination number to call
+            webphone_api.setparameter("autoaction", "0"); // 0=nothing (default), 1=call, 2=chat, 3=video call
+            webphone_api.setparameter("loglevel", "1");
+          }
+        });
+      }, 200);
     },
-    wp_call(tel) {
-      console.info(tel);
-
-      console.info('webphone_api ssssssss')
-      console.info(webphone_api)
-      webphone_api.call(tel);
-      console.info(webphone_api)
-      // webphone_api.setparameter("callto", tel);
+    wp_call(item) {
+      if (this.statuscall) {
+        this.statuscall = false;
+        this.active_el = 0;
+        webphone_api.hangup();
+      } else {
+        this.statuscall = true;
+        this.active_el = item.id;
+        webphone_api.call(item.tel);
+      }
     },
     filter: function (evt) {
       evt = evt ? evt : window.event;
@@ -878,6 +881,10 @@ export default {
   display: inline-block;
   margin-right: 1rem;
   color: #000;
+}
+.tel.active {
+  color: #7620df;
+  font-weight: bold;
 }
 #maintable.v-data-table >>> tr {
   outline: 2px solid transparent;
