@@ -24,7 +24,10 @@ class User extends Authenticatable
         'group_id',
         'order',
         'pic',
-        'office_id'
+        'office_id',
+        'sip_server',
+        'sip_login',
+        'sip_password',
     ];
 
     /**

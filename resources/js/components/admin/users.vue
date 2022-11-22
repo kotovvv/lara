@@ -100,6 +100,24 @@
                               label="Office"
                             ></v-select>
                           </v-col>
+                          <v-col cols="6">
+                            <v-text-field
+                              v-model="editedItem.sip_server"
+                              label="Server sip"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="6">
+                            <v-text-field
+                              v-model="editedItem.sip_login"
+                              label="Login sip"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="6">
+                            <v-text-field
+                              v-model="editedItem.sip_password"
+                              label="Password sip"
+                            ></v-text-field>
+                          </v-col>
                           <!-- <v-col cols="4">
                             <v-switch
                               v-model="editedItem.active"
@@ -270,6 +288,9 @@ export default {
       role_id: 0,
       password: "",
       group_id: "",
+      sip_server: "",
+      sip_login: "",
+      sip_password: "",
       order: 99,
     },
     editedItemOffice: {
@@ -283,6 +304,9 @@ export default {
       role_id: 0,
       password: "",
       group_id: "",
+            sip_server: "",
+      sip_login: "",
+      sip_password: "",
       active: 1,
       order: 99,
     },
