@@ -439,6 +439,7 @@ export default {
     message: "",
     statuscall: false,
     active_el: 0,
+    howmany_msg:0,
   }),
   mounted: function () {
     this.getProviders();
@@ -497,7 +498,13 @@ export default {
             if (evtarray[0] === "STATUS" ) {
 if(evtarray[2] =='Call Finished') self.active_el = 0;
                 // alert("Event status: " + evtarray[0] + evtarray[2] );
-                self.message += "\r\n"+evtarray[2]
+                if(self.howmany_msg > 5) {
+                  self.howmany_msg = 0
+                  self.message = "\r\n"+evtarray[2]
+                }else{
+                  self.howmany_msg++
+                  self.message += "\r\n"+evtarray[2]
+                }
 self.snackbar = true
             }
           }
