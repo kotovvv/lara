@@ -242,7 +242,7 @@
       v-model="snackbar"
       top
       rigth
-      timeout="6000"
+      timeout="2000"
       color="success"
       dark
     >
@@ -358,11 +358,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <script
-      v-once
-      type="application/javascript"
-      src="/webphone/webphone_api.js"
-    ></script>
   </div>
 </template>
 
@@ -370,8 +365,6 @@
 import XLSX from "xlsx";
 import axios from "axios";
 import logtel from "./logtel";
-// import  "webphone/webphone_api"
-// var webp = require("./../../webphone/webphone_api")
 export default {
   components: {
     logtel,
@@ -437,15 +430,12 @@ export default {
     hm: 0,
     snackbar: false,
     message: "",
-    statuscall: false,
-    active_el: 0,
-    howmany_msg:0,
   }),
   mounted: function () {
     this.getProviders();
     this.getStatuses();
-    this.wp_start();
   },
+  created() {},
   watch: {
     datetime: function (newval, oldval) {
       if ((newval == null || newval != oldval) && this.lid_id != "") {
@@ -468,67 +458,8 @@ export default {
     },
   },
   methods: {
-    wp_start() {
-      let self = this;
-      setTimeout(function () {
-        webphone_api.parameters["autostart"] = 0; // start the webphone only when button is clicked
-        webphone_api.onAppStateChange(function (state) {
-          if (state === "loaded") {
-            webphone_api.setparameter(
-              "serveraddress",
-              self.$props.user.sip_server
-            ); // yoursipdomain.com your VoIP server IP address or domain name
-            webphone_api.setparameter("username", self.$props.user.sip_login); // SIP account username
-            webphone_api.setparameter(
-              "password",
-              self.$props.user.sip_password
-            ); // SIP account password (see the "Parameters encryption" in the documentation)
-            // destination number to call
-            webphone_api.setparameter("autoaction", "0"); // 0=nothing (default), 1=call, 2=chat, 3=video call
-            webphone_api.setparameter("loglevel", "1");
-          }
-        });
-        webphone_api.onEvent(function (type, message) {
-          // For example the following status means that there is an incoming call ringing from 2222 on the first line:
-          // STATUS,1,Ringing,2222,1111,2,Katie,[callid]
-          // You can find more detailed explanation about events in the documentation "Notifications" section.
-          // example for detecting incoming call:
-          if (type === "event") {
-            var evtarray = message.split(","); //parameters are separated by comma (,)
-            if (evtarray[0] === "STATUS" ) {
-if(evtarray[2] =='Call Finished') self.active_el = 0;
-                // alert("Event status: " + evtarray[0] + evtarray[2] );
-                if(self.howmany_msg > 5) {
-                  self.howmany_msg = 0
-                  self.message = "\r\n"+evtarray[2]
-                }else{
-                  self.howmany_msg++
-                  self.message += "\r\n"+evtarray[2]
-                }
-self.snackbar = true
-            }
-          }
-          // example for handling displayable messages
-          else if (type === "display") {
-            var position = message.indexOf(",");
-            var title = message.substring(0, position); // NOTE: title can be empty string
-            var text = message.substring(position + 1);
-            // alert(title + "\r\n" + text); //of course, instead of alert you should use some better html display
-            //NOTE: If you wish to handle the popups yourself, then disable popups by settings "showtoasts" parameter to "false".
-          }
-        });
-      }, 1000);
-    },
     wp_call(item) {
-      if (this.statuscall) {
-        this.statuscall = false;
-        this.active_el = 0;
-        webphone_api.hangup();
-      } else {
-        this.statuscall = true;
-        this.active_el = item.id;
-        webphone_api.call(item.tel);
-      }
+      window.open(`/webphone/softphone.html?wp_serveraddress=${this.$props.user.sip_server}&wp_username=${this.$props.user.sip_login}&wp_password=${this.$props.user.sip_password}&wp_callto=${item.tel}`,"softphone","width=350,height=540");
     },
     filter: function (evt) {
       evt = evt ? evt : window.event;
