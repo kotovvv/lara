@@ -459,7 +459,7 @@ export default {
   },
   methods: {
     wp_call(item) {
-      window.open(`/webphone/softphone.html?wp_serveraddress=${this.$props.user.sip_server}&wp_username=${this.$props.user.sip_login}&wp_password=${this.$props.user.sip_password}&wp_callto=${item.tel}`,"softphone","width=350,height=540");
+      window.open(`/webphone/softphone.html?wp_serveraddress=${this.$props.user.sip_server}&wp_username=${this.$props.user.sip_login}&wp_password=${this.$props.user.sip_password}&wp_callto=${this.$props.user.sip_prefix+item.tel}`,"softphone","width=350,height=540");
     },
     filter: function (evt) {
       evt = evt ? evt : window.event;

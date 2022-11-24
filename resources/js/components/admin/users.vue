@@ -118,6 +118,12 @@
                               label="Password sip"
                             ></v-text-field>
                           </v-col>
+                          <v-col cols="6">
+                            <v-text-field
+                              v-model="editedItem.sip_prefix"
+                              label="Prefix sip"
+                            ></v-text-field>
+                          </v-col>
                           <!-- <v-col cols="4">
                             <v-switch
                               v-model="editedItem.active"
@@ -291,6 +297,7 @@ export default {
       sip_server: "",
       sip_login: "",
       sip_password: "",
+      sip_prefix: "",
       order: 99,
     },
     editedItemOffice: {
@@ -307,6 +314,7 @@ export default {
             sip_server: "",
       sip_login: "",
       sip_password: "",
+      sip_prefix: "",
       active: 1,
       order: 99,
     },

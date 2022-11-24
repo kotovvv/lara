@@ -148,6 +148,7 @@ class UsersController extends Controller
         $arr['sip_server'] = $data['sip_server'];
         $arr['sip_login'] = $data['sip_login'];
         $arr['sip_password'] = $data['sip_password'];
+        $arr['sip_prefix'] = $data['sip_prefix'];
       }
 
       if(User::where('id', $data['id'])->value('office_id') != $data['office_id']){
