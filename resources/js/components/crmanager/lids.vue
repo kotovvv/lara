@@ -423,6 +423,8 @@ export default {
             self.filterOffices.push(self.offices[0].id);
           })
           .catch((error) => console.log(error));
+      }else{
+        self.filterOffices.push(self.$props.user.office_id);
       }
     },
     getDuplicates() {
