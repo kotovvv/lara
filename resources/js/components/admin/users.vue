@@ -375,7 +375,9 @@ export default {
             self.rolename(u);
             if (u.role_id == 2) self.group.push({ fio: u.fio, id: u.id });
             u.group = "";
-            u.office = self.offices.find((o)=>{return o.id == u.office_id}).name
+            if(u.office_id != null){
+              u.office = self.offices.find((o)=>{return o.id == u.office_id}).name || ''
+            }
           });
           self.users.map((u) => {
             if (u.group_id > 0) {
@@ -488,7 +490,9 @@ export default {
       this.close();
     },
     saveOfficeBtn() {
+      console.log(this.editedItemOffice.name,this.offices)
       if (
+        this.editedItemOffice.name == null ||
         this.editedItemOffice.name == "" ||
         this.offices.find((el) => el.name == this.editedItemOffice.name)
       )
