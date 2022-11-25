@@ -144,7 +144,7 @@ class UsersController extends Controller
       $arr['group_id'] = $data['group_id'];
       $arr['office_id'] = $data['office_id'];
       $arr['order'] = $data['order'];
-      if(isset($data['sip_server'])){
+      if(isset($data['sip_server']) && $data['sip_server'] != ''){
         $arr['sip_server'] = $data['sip_server'];
         $arr['sip_login'] = $data['sip_login'];
         $arr['sip_password'] = $data['sip_password'];
