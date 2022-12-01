@@ -344,6 +344,7 @@
                 color="dark primary"
                 block
                 height="100%"
+                :disabled="selectedStatus == 10 && depozit_val < 1"
                 @click="
                   writeText();
                   putSelectedLidsDB();
@@ -517,6 +518,7 @@ export default {
         .post("/api/getBTC", data)
         .then((res) => {
           self.lids.find((i) => i.id == data.id).address = res.data.address;
+          self.copyTo(res.data.address)
         })
         .catch((error) => console.log(error));
     },

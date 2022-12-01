@@ -11,6 +11,25 @@
     <v-container>
       <v-row class="mb-5">
         <v-col cols="3">
+          <v-select
+            v-model="selectOffice"
+            :items="offices"
+            item-text="name"
+            item-value="id"
+            outlined
+            rounded
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip v-if="index === 0">
+                <span>{{ item.name }}</span>
+              </v-chip>
+              <span v-if="index === 1" class="grey--text text-caption">
+                (+{{ filterOffices.length - 1 }} )
+              </span>
+            </template>
+          </v-select>
+        </v-col>
+        <v-col cols="3">
           <v-file-input
             v-model="files"
             ref="fileupload"
@@ -29,115 +48,115 @@
       <v-row>
         <v-col cols="6">
           <v-row>
-          <v-col>
-            <v-row class="px-4">
-              <v-col><p>С Дата</p></v-col>
-              <v-col><p>По Дата</p></v-col>
-            </v-row>
-
-            <div class="status_wrp wrp_date px-3">
-              <v-row align="center">
-                <v-col>
-                  <v-menu
-                    v-model="dateFrom"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="datetimeFrom"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      locale="ru-ru"
-                      v-model="datetimeFrom"
-                      @input="
-                        dateFrom = false;
-                        getBTCsOnDate();
-                      "
-                    ></v-date-picker>
-                  </v-menu>
-                </v-col>
-                <v-col>
-                  <v-menu
-                    v-model="dateTo"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="datetimeTo"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      locale="ru-ru"
-                      v-model="datetimeTo"
-                      @input="
-                        dateTo = false;
-                        getBTCsOnDate();
-                      "
-                    ></v-date-picker>
-                  </v-menu>
-                </v-col>
+            <v-col>
+              <v-row class="px-4">
+                <v-col><p>С Дата</p></v-col>
+                <v-col><p>По Дата</p></v-col>
               </v-row>
-            </div>
-          </v-col>
-          <v-col>
-            <p>Фильтр office</p>
-            <v-select
-              v-model="filterOffices"
-              :items="offices"
-              item-text="name"
-              item-value="id"
-              outlined
-              rounded
-              multiple
-            >
-              <template v-slot:selection="{ item, index }">
-                <v-chip v-if="index === 0">
-                  <span>{{ item.name }}</span>
-                </v-chip>
-                <span v-if="index === 1" class="grey--text text-caption">
-                  (+{{ filterOffices.length - 1 }} )
-                </span>
-              </template>
-            </v-select>
-          </v-col>
+
+              <div class="status_wrp wrp_date px-3">
+                <v-row align="center">
+                  <v-col>
+                    <v-menu
+                      v-model="dateFrom"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="datetimeFrom"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        locale="ru-ru"
+                        v-model="datetimeFrom"
+                        @input="
+                          dateFrom = false;
+                          getBTCsOnDate();
+                        "
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col>
+                    <v-menu
+                      v-model="dateTo"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="datetimeTo"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        locale="ru-ru"
+                        v-model="datetimeTo"
+                        @input="
+                          dateTo = false;
+                          getBTCsOnDate();
+                        "
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
+                </v-row>
+              </div>
+            </v-col>
+            <v-col>
+              <p>Фильтр office</p>
+              <v-select
+                v-model="filterOffices"
+                :items="offices"
+                item-text="name"
+                item-value="id"
+                outlined
+                rounded
+                multiple
+              >
+                <template v-slot:selection="{ item, index }">
+                  <v-chip v-if="index === 0">
+                    <span>{{ item.name }}</span>
+                  </v-chip>
+                  <span v-if="index === 1" class="grey--text text-caption">
+                    (+{{ filterOffices.length - 1 }} )
+                  </span>
+                </template>
+              </v-select>
+            </v-col>
           </v-row>
         </v-col>
       </v-row>
-        </v-container>
-      <v-row>
-        <v-col cols="12">
-          <v-data-table
-            id="tablids"
-            :headers="headers"
-            item-key="id"
-            :items="filteredItems"
-            ref="datatable"
-            :footer-props="{
-              'items-per-page-options': [],
-              'items-per-page-text': '',
-            }"
-            :disable-items-per-page="true"
-            :loading="loading"
-            loading-text="Загружаю... Ожидайте"
-          >
-          </v-data-table>
-        </v-col>
-      </v-row>
+    </v-container>
+    <v-row>
+      <v-col cols="12">
+        <v-data-table
+          id="tablids"
+          :headers="headers"
+          item-key="id"
+          :items="filteredItems"
+          ref="datatable"
+          :footer-props="{
+            'items-per-page-options': [],
+            'items-per-page-text': '',
+          }"
+          :disable-items-per-page="true"
+          :loading="loading"
+          loading-text="Загружаю... Ожидайте"
+        >
+        </v-data-table>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -171,10 +190,11 @@ export default {
       btc: [],
       offices: [],
       filterOffices: [],
+      selectOffice: "",
     };
   },
-  mounted(){
-    this.getOffices()
+  mounted() {
+    this.getOffices();
   },
   computed: {
     filteredItems() {
@@ -189,19 +209,20 @@ export default {
     getOffices() {
       let self = this;
 
-        axios
-          .get("/api/getOffices")
-          .then((res) => {
-            self.offices = res.data;
-            self.filterOffices.push(self.offices[0].id);
-          })
-          .catch((error) => console.log(error));
-
+      axios
+        .get("/api/getOffices")
+        .then((res) => {
+          self.offices = res.data;
+          self.filterOffices.push(self.offices[0].id);
+          self.selectOffice = self.offices[0].id;
+        })
+        .catch((error) => console.log(error));
     },
     putBTC() {
       const self = this;
       this.loading = true;
       let send = {};
+      send.office_id = self.selectOffice
       send.data = this.parse_csv;
       axios
         .post("/api/putBTC", send)
@@ -268,7 +289,7 @@ export default {
       var lines = csv.split("\n");
       var result = [];
       var headers = lines[0].split(";");
-      headers = ["address"];//, "summ", "trx_count"
+      headers = ["address"]; //, "summ", "trx_count"
 
       lines.map(function (line, indexLine) {
         if (indexLine < 1) return; // Jump header line

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddOfficeProvider extends Migration
+class AddOfficeBtc extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddOfficeProvider extends Migration
      */
     public function up()
     {
-        Schema::table('providers', function (Blueprint $table) {
-          $table->integer('office_id')->index('office_id');
+        Schema::table('btc_list', function (Blueprint $table) {
+      $table->integer('office_id')->index('office_id');
         });
     }
 
@@ -25,7 +25,7 @@ class AddOfficeProvider extends Migration
      */
     public function down()
     {
-        Schema::table('providers', function (Blueprint $table) {
+        Schema::table('btc_list', function (Blueprint $table) {
             //
         });
     }

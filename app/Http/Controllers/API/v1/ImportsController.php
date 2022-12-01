@@ -23,6 +23,9 @@ class ImportsController extends Controller
   public function putBTC(Request $request)
   {
     $data = $request->all();
+    foreach ($data['data'] as $key => $row) {
+      $data['data'][$key]['office_id'] = $data['office_id'];
+    }
     $response = DB::table('btc_list')->insertOrIgnore($data['data']);
     return $response;
   }
@@ -33,11 +36,11 @@ class ImportsController extends Controller
     $office_id = session()->get('office_id');
     $where = $office_id > 0 ? "  `office_id` = " . $office_id . " AND " : "";
 
-  $date = [date('Y-m-d', strtotime($req['datefrom'])) . ' ' . date("H:i:s", mktime(0, 0, 0)), date('Y-m-d', strtotime($req['dateto'])) . ' ' . date("H:i:s", mktime(23, 59, 59))];
+    $date = [date('Y-m-d', strtotime($req['datefrom'])) . ' ' . date("H:i:s", mktime(0, 0, 0)), date('Y-m-d', strtotime($req['dateto'])) . ' ' . date("H:i:s", mktime(23, 59, 59))];
 
-$sql = "SELECT bl.`address`, bl.`summ`, bl.`trx_count`, bl.`date_time`, l.`id` lid_id, u.`fio` FROM `btc_list` bl INNER JOIN `lids` l ON (bl.`lid_id` = l.`id` ) INNER JOIN `users` u ON (bl.`user_id` = u.`id` ) WHERE ".$where." bl.`date_time` >= '" . $date[0] . "' AND bl.`date_time` <= '" . $date[1] . "'";
+    $sql = "SELECT bl.`address`, bl.`summ`, bl.`trx_count`, bl.`date_time`, l.`id` lid_id, u.`fio` FROM `btc_list` bl INNER JOIN `lids` l ON (bl.`lid_id` = l.`id` ) INNER JOIN `users` u ON (bl.`user_id` = u.`id` ) WHERE " . $where . " bl.`date_time` >= '" . $date[0] . "' AND bl.`date_time` <= '" . $date[1] . "'";
 
-  return DB::select(DB::raw($sql));
+    return DB::select(DB::raw($sql));
   }
 
   /**

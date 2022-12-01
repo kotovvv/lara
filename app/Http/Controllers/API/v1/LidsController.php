@@ -79,7 +79,7 @@ class LidsController extends Controller
         ->orwhere('text', 'like', "%{$data['search']}%")
         ->get();
     }
-  
+
     return response((object) []);
   }
 
@@ -336,7 +336,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $date = [date('Y-m-d', strtotime($req['datefrom'])) . ' ' . date("H:i:s", mktime(0, 0, 0)), date('Y-m-d', strtotime($req['dateto'])) . ' ' . date("H:i:s", mktime(23, 59, 59))];
 
-    $sql = "SELECT DISTINCT l.*,(select DISTINCT sum(depozit) depozit  from depozits where l.id = lid_id and l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "') depozit FROM lids l  WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
+    $sql = "SELECT DISTINCT l.*,(SELECT DISTINCT sum(depozit) depozit FROM depozits d WHERE l.id = d.lid_id AND d.created_at >= '" . $date[0] . "' AND d.created_at <= '" . $date[1] . "') depozit FROM lids l WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
 
     return DB::select(DB::raw($sql));
   }
@@ -764,8 +764,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $res = [];
     $res['message'] = 'no free used';
-
-    $sql = "SELECT id, address FROM `btc_list` where `used` = false order by `id` ASC LIMIT 1";
+    $office_id = session()->get('office_id');
+    $sql = "SELECT id, address FROM `btc_list` where `used` = false AND `office_id` = ". $office_id ." order by `id` ASC LIMIT 1";
     $btc = DB::select(DB::raw($sql));
 
     if ($btc) {
