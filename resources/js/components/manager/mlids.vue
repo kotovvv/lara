@@ -68,14 +68,7 @@
             </v-select>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col>
-            <div id="c2k_container_0" title="" style="text-align: center">
-              <!--rewrite the CALLTO and uncomment the following line to enable support for ancient browsers-->
-              <!--<a href="tel://CALLTO" id="c2k_alternative_url">CALLTO</a>-->
-            </div>
-          </v-col>
-        </v-row>
+
         <v-row>
           <v-col>
             <v-card :class="{ 'd-none': todayItems.length == 0 }">
@@ -95,11 +88,21 @@
                 hide-default-footer
               >
                 <template v-slot:item.tel="{ item }">
-                  <a
+                  <span
                     class="tel"
+                    @click.prevent.stop="wp_call(item)"
+                    :class="{ active: active_el == item.id }"
+                  >
+                    {{ item.tel }}
+                  </span>
+                  <a
                     :href="'sip:' + item.tel"
-                    @click.stop="qtytel(item.id)"
-                    >{{ item.tel }}
+                    @click.stop="
+                      qtytel(item.id);
+                      lid_id = item.id;
+                    "
+                  >
+                    <v-icon small> mdi-headset </v-icon>
                   </a>
                 </template>
 
@@ -188,7 +191,7 @@
                   </span>
                   <a
                     :href="'sip:' + item.tel"
-                    @click.prevent="
+                    @click.stop="
                       qtytel(item.id);
                       lid_id = item.id;
                     "
