@@ -144,15 +144,13 @@ class UsersController extends Controller
       $arr['group_id'] = $data['group_id'];
       $arr['office_id'] = $data['office_id'];
       $arr['order'] = $data['order'];
-      // if(isset($data['sip_server']) && $data['sip_server'] != ''){
-        $arr['sip_server'] = $data['sip_server']? $data['sip_server']: '';
-        $arr['sip_login'] = $data['sip_login'] ? $data['sip_login'] : '';
-        $arr['sip_password'] = $data['sip_password']? $data['sip_password']:'' ;
-        $arr['sip_prefix'] = $data['sip_prefix']? $data['sip_prefix']: '' ;
-      // }
+      $arr['sip_server'] = $data['sip_server'] ? $data['sip_server'] : '';
+      $arr['sip_login'] = $data['sip_login'] ? $data['sip_login'] : '';
+      $arr['sip_password'] = $data['sip_password'] ? $data['sip_password'] : '';
+      $arr['sip_prefix'] = $data['sip_prefix'] ? $data['sip_prefix'] : '';
 
-      if(User::where('id', $data['id'])->value('office_id') != $data['office_id']){
-        Lid::where('user_id',$data['id'])->update(['office_id'=> $data['office_id']]);
+      if (User::where('id', $data['id'])->value('office_id') != $data['office_id']) {
+        Lid::where('user_id', $data['id'])->update(['office_id' => $data['office_id']]);
       }
       if (User::where('id', $data['id'])->update($arr)) {
         if (isset($data['password'])) {
@@ -168,9 +166,15 @@ class UsersController extends Controller
       $user->name = $data["name"];
       $user->fio = $data["fio"];
       $user->role_id = $data["role_id"];
+      $user->group_id = $data['group_id'];
       // $user->pic = $file_name;
+      $user->sip_server = $data['sip_server'] ? $data['sip_server'] : '';
+      $user->sip_login = $data['sip_login'] ? $data['sip_login'] : '';
+      $user->sip_password = $data['sip_password'] ? $data['sip_password'] : '';
+      $user->sip_prefix = $data['sip_prefix'] ? $data['sip_prefix'] : '';
       $user->office_id = $data['office_id'];
       $user->password = $password;
+      $user->order = $data['order'];
       $user->save();
       return response('User added', 200);
     }
@@ -242,7 +246,7 @@ class UsersController extends Controller
   public function getusers()
   {
     $office_id = session()->get('office_id');
-    $user = User::where('id',(int) session()->get('user_id'))->first();
+    $user = User::where('id', (int) session()->get('user_id'))->first();
 
     // $role_id = $user->role_id;
     $group_id = $user['group_id'];

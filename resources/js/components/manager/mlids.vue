@@ -201,7 +201,7 @@
                 </template>
 
                 <template v-slot:item.status="{ item }">
-                  <div class="status_wrp mx-1" @click="openDialog(item)">
+                  <div class="status_wrp mx-1" @click.stop="openDialog(item)">
                     <b
                       :style="{
                         background: stylecolor(item.status_id),
