@@ -88,22 +88,22 @@
                 hide-default-footer
               >
                 <template v-slot:item.tel="{ item }">
-                  <span
-                    class="tel"
-                    @click.prevent.stop="wp_call(item)"
-                    :class="{ active: active_el == item.id }"
-                  >
-                    {{ item.tel }}
-                  </span>
                   <a
+                    class="tel"
                     :href="'sip:' + item.tel"
                     @click.stop="
                       qtytel(item.id);
                       lid_id = item.id;
                     "
                   >
-                    <v-icon small> mdi-headset </v-icon>
+                    {{ item.tel }}
                   </a>
+                  <span
+                    @click.prevent.stop="wp_call(item)"
+                    :class="{ active: active_el == item.id }"
+                  >
+                    <v-icon small> mdi-headset </v-icon>
+                  </span>
                 </template>
 
                 <template v-slot:item.status="{ item }">
@@ -182,22 +182,22 @@
                 </template>
 
                 <template v-slot:item.tel="{ item }">
-                  <span
-                    class="tel"
-                    @click.prevent.stop="wp_call(item)"
-                    :class="{ active: active_el == item.id }"
-                  >
-                    {{ item.tel }}
-                  </span>
                   <a
+                    class="tel"
                     :href="'sip:' + item.tel"
                     @click.stop="
                       qtytel(item.id);
                       lid_id = item.id;
                     "
                   >
-                    <v-icon small> mdi-headset </v-icon>
+                    {{ item.tel }}
                   </a>
+                  <span
+                    @click.prevent.stop="wp_call(item)"
+                    :class="{ active: active_el == item.id }"
+                  >
+                    <v-icon small> mdi-headset </v-icon>
+                  </span>
                 </template>
 
                 <template v-slot:item.status="{ item }">
@@ -463,7 +463,15 @@ export default {
   },
   methods: {
     wp_call(item) {
-      window.open(`/webphone/softphone.html?wp_serveraddress=${this.$props.user.sip_server}&wp_username=${this.$props.user.sip_login}&wp_password=${this.$props.user.sip_password}&wp_callto=${this.$props.user.sip_prefix+item.tel}`,"softphone","width=350,height=540");
+      window.open(
+        `/webphone/softphone.html?wp_serveraddress=${
+          this.$props.user.sip_server
+        }&wp_username=${this.$props.user.sip_login}&wp_password=${
+          this.$props.user.sip_password
+        }&wp_callto=${this.$props.user.sip_prefix + item.tel}`,
+        "softphone",
+        "width=350,height=540"
+      );
     },
     filter: function (evt) {
       evt = evt ? evt : window.event;
@@ -521,7 +529,7 @@ export default {
         .post("/api/getBTC", data)
         .then((res) => {
           self.lids.find((i) => i.id == data.id).address = res.data.address;
-          self.copyTo(res.data.address)
+          self.copyTo(res.data.address);
         })
         .catch((error) => console.log(error));
     },
