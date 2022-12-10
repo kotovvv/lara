@@ -8,7 +8,7 @@
       <v-tab>
         Провайдер
       </v-tab>
-      <v-tab>
+      <v-tab v-if="$attrs.user.role_id==1&&$attrs.user.group_id==0">
         ВТС
       </v-tab>
     </v-tabs>
@@ -138,7 +138,7 @@
       </v-col>
     </v-row>
       </v-tab-item>
-      <v-tab-item>
+      <v-tab-item v-if="$attrs.user.role_id==1&&$attrs.user.group_id==0">
 <importBTC></importBTC>
       </v-tab-item>
     </v-tabs-items>

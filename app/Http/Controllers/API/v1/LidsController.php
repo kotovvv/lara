@@ -94,7 +94,7 @@ class LidsController extends Controller
   }
 
   /**
-   * Store a newly created resource in storage.
+   * Store a newly updated resource in storage.
    *
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
@@ -326,17 +326,21 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   public function getLidsOnDate(Request $request)
   {
     $req = $request->all();
+    $where_status = '';
+    if (count($req['statuses']) > 0) {
+      $where_status = ' l.status_id in (' . implode(', ', $req['statuses']) . ') AND ';
+    }
     if (isset($req['office_ids'])) {
-      $where_user = count($req['office_ids']) > 0 ? "  `office_id` in (" . implode(',', $req['office_ids']) . ") AND " : "";
+      $where_user = count($req['office_ids']) > 0 ? "  `office_id` in (" . implode(',', $req['office_ids']) . ") AND ". $where_status : $where_status;
     } else {
       $office_id = session()->get('office_id');
       $where = $office_id > 0 ? "  `l.office_id` = " . $office_id . " AND " : "";
-      $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ' . $where;
+      $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ' . $where. $where_status;
     }
 
     $date = [date('Y-m-d', strtotime($req['datefrom'])) . ' ' . date("H:i:s", mktime(0, 0, 0)), date('Y-m-d', strtotime($req['dateto'])) . ' ' . date("H:i:s", mktime(23, 59, 59))];
 
-    $sql = "SELECT DISTINCT l.*,(SELECT DISTINCT sum(depozit) depozit FROM depozits d WHERE l.id = d.lid_id AND d.created_at >= '" . $date[0] . "' AND d.created_at <= '" . $date[1] . "') depozit FROM lids l WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
+    $sql = "SELECT l.`id`,l.`tel`,l.`name`,l.`email`,l.`provider_id`,l.`status_id`,l.`user_id`,l.`created_at`,l.`updated_at`,l.`status_id`,(SELECT sum(depozit) depozit FROM depozits d WHERE l.id = d.lid_id AND d.created_at >= '" . $date[0] . "' AND d.created_at <= '" . $date[1] . "') depozit FROM lids l WHERE " . $where_user . " l.updated_at >= '" . $date[0] . "' AND l.updated_at <= '" . $date[1] . "'";
 
     return DB::select(DB::raw($sql));
   }

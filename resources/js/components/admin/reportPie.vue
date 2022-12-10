@@ -87,7 +87,7 @@
             ref="filterStatus"
             color="red"
             v-model="filterStatus"
-            @change="filterStatuses"
+            @change="filterStatuses;getLidsOnDate();"
             :items="statuses"
             item-text="name"
             item-value="id"
@@ -274,7 +274,7 @@ export default {
         .then((res) => {
           self.offices = res.data;
           self.selected_office_ids.push(self.offices[0].id);
-          self.getLidsOnDate();
+
         })
         .catch((error) => console.log(error));
     },
@@ -302,6 +302,7 @@ export default {
       data.datefrom = this.getLocalDateTime(this.dateTimeFrom);
       data.dateto = this.getLocalDateTime(this.dateTimeTo);
       data.office_ids = this.selected_office_ids;
+      data.statuses= this.filterStatus;
       axios
         .post("/api/getLidsOnDate", data)
         .then((res) => {
@@ -380,6 +381,7 @@ export default {
             order,
           }));
           self.filterStatus.push(10);
+          self.getLidsOnDate();
         })
         .catch((error) => console.log(error));
     },
