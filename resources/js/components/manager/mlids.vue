@@ -98,10 +98,8 @@
                   >
                     {{ item.tel }}
                   </a>
-                  <span
-                    @click.prevent.stop="wp_call(item)"
-                    :class="{ active: active_el == item.id }"
-                  >
+                  <span @click.prevent.stop="wp_call(item)">
+                    <!-- :class="{ active: active_el == item.id }" -->
                     <v-icon small> mdi-headset </v-icon>
                   </span>
                 </template>
@@ -192,10 +190,8 @@
                   >
                     {{ item.tel }}
                   </a>
-                  <span
-                    @click.prevent.stop="wp_call(item)"
-                    :class="{ active: active_el == item.id }"
-                  >
+                  <span @click.prevent.stop="wp_call(item)">
+                    <!-- :class="{ active: active_el == item.id }" -->
                     <v-icon small> mdi-headset </v-icon>
                   </span>
                 </template>
@@ -245,7 +241,7 @@
       v-model="snackbar"
       top
       rigth
-      timeout="2000"
+      timeout="6000"
       color="success"
       dark
     >
@@ -498,6 +494,10 @@ export default {
     copyTo(address) {
       this.message = "Copied to clipboard";
       this.snackbar = true;
+      if (address == "") {
+        this.message = "Нема вільних адресів";
+        return;
+      }
       if (navigator.clipboard && window.isSecureContext) {
         // navigator clipboard api method'
         return navigator.clipboard.writeText(address);
@@ -528,6 +528,10 @@ export default {
       axios
         .post("/api/getBTC", data)
         .then((res) => {
+          if (res.data.address == undefined) {
+            self.copyTo("");
+            return;
+          }
           self.lids.find((i) => i.id == data.id).address = res.data.address;
           self.copyTo(res.data.address);
         })
