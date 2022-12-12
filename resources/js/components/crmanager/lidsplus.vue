@@ -652,7 +652,8 @@ export default {
           (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
           (!this.filterGroups.length ||
             this.filterGroups.includes(i.group_id)) &&
-          (!this.filterOffices.length || this.filterOffices.includes(i.office_id))
+          (!this.filterOffices.length ||
+            this.filterOffices.includes(i.office_id))
         );
       });
     },
@@ -797,13 +798,14 @@ export default {
     searchInDB() {
       let self = this;
       const send = {};
+      self.loading = true;
       send.group_id = self.$props.user.group_id;
       send.role_id = self.$props.user.role_id;
       send.search = self.searchAll;
       axios
         .post("api/Lid/searchlids", send)
         .then((res) => {
-          // console.log(res.data);
+          self.loading = false;
           self.lids = Object.entries(res.data).map((e) => e[1]);
 
           self.lids.map(function (e) {
