@@ -327,14 +327,14 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   {
     $req = $request->all();
     $where_status = '';
-    if (count($req['statuses']) > 0) {
+    if (isset($req['statuses']) && count($req['statuses']) > 0) {
       $where_status = ' l.status_id in (' . implode(', ', $req['statuses']) . ') AND ';
     }
     if (isset($req['office_ids'])) {
       $where_user = count($req['office_ids']) > 0 ? "  `office_id` in (" . implode(',', $req['office_ids']) . ") AND ". $where_status : $where_status;
     } else {
       $office_id = session()->get('office_id');
-      $where = $office_id > 0 ? "  `l.office_id` = " . $office_id . " AND " : "";
+      $where = $office_id > 0 ? "  l.`office_id` = " . $office_id . " AND " : "";
       $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ' . $where. $where_status;
     }
 
