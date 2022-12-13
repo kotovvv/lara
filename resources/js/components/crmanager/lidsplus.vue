@@ -1264,7 +1264,7 @@ export default {
   margin: 0 12px 0 12px;
 }
 .v-menu__content.menuable__content__active {
-  min-height: 650px;
+  /* min-height: 650px; */
 }
 .wrp__providers {
   display: flex;
