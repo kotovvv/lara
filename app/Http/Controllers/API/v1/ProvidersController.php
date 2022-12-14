@@ -121,6 +121,7 @@ class ProvidersController extends Controller
 
 
     if (isset($data['id']) && $data['id'] > 0) {
+
       if (!isset($data['password']) || $data['password'] == '') {
         $data['password'] = '';
       } else {

@@ -212,7 +212,7 @@
                     item.text
                   }}</span>
                 </template>
-                <template v-slot:item.address="{ item }" v-if="">
+                <template v-slot:item.address="{ item }">
                   <v-btn
                     small
                     class="teal lighten-4"
@@ -289,8 +289,8 @@
           <v-textarea
             class="px-2 border mb-4"
             rows="1"
-            v-model="text"
-            :value="text"
+            v-model="text_message"
+            :value="text_message"
           ></v-textarea>
           <v-row>
             <v-col v-if="selectedStatus == 10">
@@ -299,7 +299,7 @@
                 required
                 v-model="depozit_val"
                 class="border px-2 mb-4"
-                @keypress="filter(event)"
+                @keypress="filter()"
                 prepend-inner-icon="mdi-currency-usd"
               ></v-text-field
             ></v-col>
@@ -343,7 +343,7 @@
                 color="dark primary"
                 block
                 height="100%"
-                :disabled="selectedStatus == 10 && depozit_val < 1"
+                :disabled="selectedStatus == 10 && depozit_val < 1 && text_message == ''"
                 @click="
                   writeText();
                   putSelectedLidsDB();
@@ -377,7 +377,7 @@ export default {
     depozit: 0,
     depozit_val: "",
     componentKey: 0,
-    text: null,
+    text_message: '',
     tel: "",
     lid_id: "",
     expanded: [],
@@ -553,8 +553,8 @@ export default {
       return false;
     },
     writeText() {
-      if (this.text.length > 0) {
-        this.lids.find((i) => i.id == this.lid_id).text = this.text;
+      if (this.text_message.length > 0) {
+        this.lids.find((i) => i.id == this.lid_id).text = this.text_message;
       }
     },
     openDialog(i) {
@@ -562,7 +562,7 @@ export default {
       if (self.selected.length > 0 && self.selected[0].id != i.id) {
         this.selected = this.expanded = [];
       }
-      this.text = "";
+      this.text_message = "";
       this.lid_id = i.id;
       this.selected = [i];
       // console.log(self.selected);
@@ -688,7 +688,7 @@ export default {
       send.id = eli.id;
       send_el.id = eli.id;
       send_el.tel = eli.tel;
-      send_el.text = self.text;
+      send_el.text = self.text_message;
       send_el.status_id = self.selectedStatus;
       send_el.user_id = eli.user_id;
       send.data = [];
