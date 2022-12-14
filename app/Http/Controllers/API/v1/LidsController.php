@@ -58,25 +58,33 @@ class LidsController extends Controller
   public function searchlids(Request $request)
   {
     $data = $request->all();
+    $office_id = session()->get('office_id');
+    $search = $data['search'];
     if (isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2) {
       $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
       return Lid::select('*')
         ->whereIn('user_id', $a_user_ids)
-        ->where('name', 'like', "%{$data['search']}%")
-        ->orwhere('tel', 'like', "%{$data['search']}%")
-        ->orwhere('email', 'like', "%{$data['search']}%")
-        ->orwhere('text', 'like', "%{$data['search']}%")
+        ->when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('office_id', $office_id);
+        })
+        ->where(function ($query) use ($search) {
+        return $query->where('name', 'like', "%{$search}%")
+        ->orwhere('tel', 'like', "%{$search}%")
+        ->orwhere('email', 'like', "%{$search}%")
+        ->orwhere('text', 'like', "%{$search}%");
+        })
         ->get();
-    } elseif (session()->has('office_id')) {
-      $office_id = session()->get('office_id');
+    } else {
       return Lid::select('*')
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->where('name', 'like', "%{$data['search']}%")
-        ->orwhere('tel', 'like', "%{$data['search']}%")
-        ->orwhere('email', 'like', "%{$data['search']}%")
-        ->orwhere('text', 'like', "%{$data['search']}%")
+        ->where(function ($query) use ($search) {
+        return $query->where('name', 'like', "%{$search}%")
+        ->orwhere('tel', 'like', "%{$search}%")
+        ->orwhere('email', 'like', "%{$search}%")
+        ->orwhere('text', 'like', "%{$search}%");
+        })
         ->get();
     }
 
