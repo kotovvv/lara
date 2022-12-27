@@ -119,24 +119,19 @@ class ProvidersController extends Controller
     $data['related_users_id'] = json_encode($data['related_users_id']);
     $data['office_id'] = json_encode($data['office_id']);
 
+    if (!isset($data['password']) || $data['password'] == '') {
+      $data['password'] = Hash::make(date('Y-m-d H:i:s'));
+    } else {
+      $data['password'] = Hash::make($data['password']);
+    }
 
     if (isset($data['id']) && $data['id'] > 0) {
-      if (!isset($data['password']) || $data['password'] == '') {
-        $data['password'] = '';
-      } else {
-        $data['password'] = Hash::make($data['password']);
-      }
       unset($data['created_at']);
       $data['updated_at'] = Now();
       if (Provider::where('id', $data['id'])->update($data)) {
       }
     } else {
       $provider = Provider::create($data);
-      if ($data['password'] == '') {
-        $provider->password = '';
-      } else {
-        $provider->password = Hash::make($data['password']);
-      }
       $provider->save();
     }
     $name_key = Provider::select('id', 'name', 'tel')->get();

@@ -261,7 +261,7 @@
             show-expand
             @click:row="clickrow"
             :items="filteredItems"
-            :expanded="expanded"
+            :expanded.sync="expanded"
             ref="datatable"
             :footer-props="{
               'items-per-page-options': [],
@@ -884,12 +884,19 @@ export default {
       this.componentKey += 1;
     },
     clickrow(item, row) {
-      if (!row.isSelected) {
+      this.tel = item.tel;
+      this.lid_id = item.id;
+      if (!row.isExpanded) {
+        this.expanded = [item];
+      } else {
+        this.expanded = [];
+      }
+      /* if (!row.isSelected) {
         this.tel = item.tel;
         this.lid_id = item.id;
         this.expanded = [item];
       } else this.tel = "";
-      row.select(!row.isSelected);
+       row.select(!row.isSelected); */
     },
     changeLidsUser() {
       const self = this;
