@@ -126,6 +126,12 @@ class ProvidersController extends Controller
     }
 
     if (isset($data['id']) && $data['id'] > 0) {
+
+      if (!isset($data['password']) || $data['password'] == '') {
+        $data['password'] = '';
+      } else {
+        $data['password'] = Hash::make($data['password']);
+      }
       unset($data['created_at']);
       $data['updated_at'] = Now();
       if (Provider::where('id', $data['id'])->update($data)) {
