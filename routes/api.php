@@ -76,6 +76,7 @@ Route::get('set_zalivjs', [LidsController::class, 'set_zalivjs'])->name('set_zal
 Route::get('set_zalivDub', [LidsController::class, 'set_zalivDub'])->name('set_zalivDub');
 Route::get('get_zaliv', [LidsController::class, 'get_zaliv'])->name('get_zaliv');
 Route::get('get_zaliv_all', [LidsController::class, 'get_zaliv_all'])->name('get_zaliv_all');
+Route::get('get_zaliv_p', [LidsController::class, 'get_zaliv_p'])->name('get_zaliv_p');
 Route::get('get_zaliv_allTime', [LidsController::class, 'get_zaliv_allTime'])->name('get_zaliv_allTime');
 Route::post('setDepozit', [LidsController::class, 'setDepozit'])->name('setDepozit');
 Route::get('getHmLidsUser/{id}', [LidsController::class, 'getHmLidsUser'])->name('getHmLidsUser');

@@ -68,10 +68,10 @@ class LidsController extends Controller
           return $query->where('office_id', $office_id);
         })
         ->where(function ($query) use ($search) {
-        return $query->where('name', 'like', "%{$search}%")
-        ->orwhere('tel', 'like', "%{$search}%")
-        ->orwhere('email', 'like', "%{$search}%")
-        ->orwhere('text', 'like', "%{$search}%");
+          return $query->where('name', 'like', "%{$search}%")
+            ->orwhere('tel', 'like', "%{$search}%")
+            ->orwhere('email', 'like', "%{$search}%")
+            ->orwhere('text', 'like', "%{$search}%");
         })
         ->get();
     } else {
@@ -80,10 +80,10 @@ class LidsController extends Controller
           return $query->where('office_id', $office_id);
         })
         ->where(function ($query) use ($search) {
-        return $query->where('name', 'like', "%{$search}%")
-        ->orwhere('tel', 'like', "%{$search}%")
-        ->orwhere('email', 'like', "%{$search}%")
-        ->orwhere('text', 'like', "%{$search}%");
+          return $query->where('name', 'like', "%{$search}%")
+            ->orwhere('tel', 'like', "%{$search}%")
+            ->orwhere('email', 'like', "%{$search}%")
+            ->orwhere('text', 'like', "%{$search}%");
         })
         ->get();
     }
@@ -220,11 +220,11 @@ class LidsController extends Controller
   public function userLids($id)
   {
     $office_id = session()->get('office_id');
-    $providers = Provider::select('id')->where('office_id','REGEXP','[^0-9]'. $office_id.'[^0-9]')->get()->toArray();
+    $providers = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
     return Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)
-    ->when($office_id > 0, function ($query) use ($office_id,$providers) {
-      return $query->where('office_id', $office_id)->whereIn('provider_id', $providers);
-    })->orderBy('lids.created_at', 'desc')->get();
+      ->when($office_id > 0, function ($query) use ($office_id, $providers) {
+        return $query->where('office_id', $office_id)->whereIn('provider_id', $providers);
+      })->orderBy('lids.created_at', 'desc')->get();
   }
 
   public function statusLids(Request $request)
@@ -339,11 +339,11 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       $where_status = ' l.status_id in (' . implode(', ', $req['statuses']) . ') AND ';
     }
     if (isset($req['office_ids'])) {
-      $where_user = count($req['office_ids']) > 0 ? "  `office_id` in (" . implode(',', $req['office_ids']) . ") AND ". $where_status : $where_status;
+      $where_user = count($req['office_ids']) > 0 ? "  `office_id` in (" . implode(',', $req['office_ids']) . ") AND " . $where_status : $where_status;
     } else {
       $office_id = session()->get('office_id');
       $where = $office_id > 0 ? "  l.`office_id` = " . $office_id . " AND " : "";
-      $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ' . $where. $where_status;
+      $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ' . $where . $where_status;
     }
 
     $date = [date('Y-m-d', strtotime($req['datefrom'])) . ' ' . date("H:i:s", mktime(0, 0, 0)), date('Y-m-d', strtotime($req['dateto'])) . ' ' . date("H:i:s", mktime(23, 59, 59))];
@@ -718,6 +718,62 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     return response($res);
   }
 
+  public function get_zaliv_p(Request $request)
+  {
+    /*
+api_key=11e9c0056d4aa76c3c7b946737f089d4
+starDate=24-12-2007
+stopdate=12-12-2022
+increment=1000
+page=7
+ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депозити)
+    */
+    $req = $request->all();
+    $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+    $limit = $onlydep = '';
+
+    if (!$f_key) return response(['status' => 'Key incorect'], 403);
+    $res['result'] = 'Error';
+    if (!isset($req['increment'])) {
+      $req['increment'] = 1000;
+    }
+    if (!isset($req['page']) || ((int) $req['page'] * (int) $req['increment']) == 0) {
+      $limit = ' LIMIT ' .  (int) $req['increment'];
+    } else {
+      $limit = ' LIMIT ' . (int) $req['increment'] . ' OFFSET ' . (int) $req['page'] * (int) $req['increment'];
+    }
+
+    if (isset($req['ftd']) && $req['ftd'] == 1) {
+      $onlydep = 'l.status_id = 10 AND ';
+    }
+    $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName, l.created_at , l.updated_at FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) where " . $onlydep . " DATE(l.`created_at`) >= '" . $req['startDate'] . "' AND DATE(l.`created_at`) <= '" . $req['stopDate'] . "' AND l.`provider_id` = '" . $f_key->id . "' " . $limit;
+    $lids = DB::select(DB::raw($sql));
+    if ($lids) {
+      $res['data'] = [];
+      $res['result'] = "success";
+      $res['rows'] = 0;
+      foreach ($lids as $lid) {
+        $ftd = $lid->status_id == 10 ? 1 : 0;
+        $a1 = [
+          'afilateName' => $lid->afilyator,
+          'name' => $lid->name,
+          'email' => $lid->email,
+          'phone' => $lid->tel,
+          'status' => $lid->statusName,
+          'lead_id' => $lid->id,
+          'ftd' => $ftd
+        ];
+        if (isset($req['startDate'])) {
+          $a1['datestart'] = $lid->created_at;
+          $a1['dateupdate'] = $lid->updated_at;
+        }
+        $res['data'][] = $a1;
+        $res['rows']++;
+      }
+    }
+    return response($res);
+  }
+
   public function get_zaliv_allTime(Request $request)
   {
     // get_zaliv_allTime?api_key=857193747ca93f651b1f32dcf426ab42&startDate=10.07.2021&endDate=14.01.2022
@@ -777,7 +833,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $res = [];
     $res['message'] = 'no free used';
     $office_id = session()->get('office_id');
-    $sql = "SELECT id, address FROM `btc_list` where `used` = false AND `office_id` = ". $office_id ." order by `id` ASC LIMIT 1";
+    $sql = "SELECT id, address FROM `btc_list` where `used` = false AND `office_id` = " . $office_id . " order by `id` ASC LIMIT 1";
     $btc = DB::select(DB::raw($sql));
 
     if ($btc) {
