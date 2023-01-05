@@ -343,7 +343,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } else {
       $office_id = session()->get('office_id');
       $where = $office_id > 0 ? "  l.`office_id` = " . $office_id . " AND " : "";
-      $where_user = $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ' . $where . $where_status;
+      $where_user = isset($req['user_id']) && $req['user_id'] > 0 ? ' l.user_id = ' . (int) $req['user_id'] . ' AND ' : '1=1 AND ' . $where . $where_status;
     }
 
     $date = [date('Y-m-d', strtotime($req['datefrom'])) . ' ' . date("H:i:s", mktime(0, 0, 0)), date('Y-m-d', strtotime($req['dateto'])) . ' ' . date("H:i:s", mktime(23, 59, 59))];
@@ -737,6 +737,7 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
     if (!isset($req['increment'])) {
       $req['increment'] = 1000;
     }
+     $req['page'] = (int) $req['page'] - 1;
     if (!isset($req['page']) || ((int) $req['page'] * (int) $req['increment']) == 0) {
       $limit = ' LIMIT ' .  (int) $req['increment'];
     } else {
@@ -770,6 +771,10 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
         $res['data'][] = $a1;
         $res['rows']++;
       }
+    }else{
+      $res['data'] = [];
+      $res['result'] = "success";
+      $res['rows'] = 0;
     }
     return response($res);
   }

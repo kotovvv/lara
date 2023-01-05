@@ -358,9 +358,13 @@ export default {
       user.role = this.roles.find((r) => r.id == user.role_id).name;
     },
     fio(user) {
-      user.group = this.group.find((el) => {
+      try {
+        user.group = this.group.find((el) => {
         return el.id == user.group_id;
       }).fio;
+      } catch (error) {
+        user.group = ''
+      }
     },
     getUsers() {
       let self = this;

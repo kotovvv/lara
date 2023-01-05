@@ -1037,14 +1037,17 @@ export default {
       let self = this;
       this.loading = true;
       let data = {};
-      if (this.datetimeFrom == "")
+      if (this.datetimeFrom == ""){
         this.datetimeFrom = new Date(
           new Date().setDate(new Date().getDate() - 14)
         )
           .toISOString()
           .substring(0, 10);
-      if (this.datetimeTo == "")
+      }
+      if (this.datetimeTo == ""){
         this.datetimeTo = new Date().toISOString().substring(0, 10);
+      }
+
       data.datefrom = this.getLocalDateTime(this.datetimeFrom);
       data.dateto = this.getLocalDateTime(this.datetimeTo);
       data.user_id = this.disableuser;

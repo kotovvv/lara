@@ -371,6 +371,7 @@ export default {
       { text: "Статус", value: "status" },
       { text: "Сообщение", value: "text" },
       { text: "Звонков", value: "qtytel" },
+      { text: "ПЕРЕЗВОН", value: "ontime" },
     ],
     parse_header: [],
     sortOrders: {},
