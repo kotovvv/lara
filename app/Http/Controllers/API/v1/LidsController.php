@@ -838,6 +838,7 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
     $res = [];
     $res['message'] = 'no free used';
     $office_id = session()->get('office_id');
+    if($office_id){
     $sql = "SELECT id, address FROM `btc_list` where `used` = false AND `office_id` = " . $office_id . " order by `id` ASC LIMIT 1";
     $btc = DB::select(DB::raw($sql));
 
@@ -857,6 +858,7 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
       $res['address'] = $btc[0]->address;
       $res['message'] = 'Used address ' . $btc[0]->address;
     }
+  }
     return response($res);
   }
 
