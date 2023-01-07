@@ -830,6 +830,13 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
     })->count();
     return response($hm);
   }
+  public function changeDateBTC(Request $request)
+  {
+    $req = $request->all();
+    $sql = "UPDATE `btc_list` SET `date_time` = NOW() WHERE `address` = '". $req['address']."'";
+    DB::select(DB::raw($sql));
+    return response('updated date BTC',200);
+  }
 
   public function getBTC(Request $request)
   {

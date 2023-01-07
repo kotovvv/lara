@@ -498,6 +498,7 @@ export default {
         this.message = "Нема вільних адресів";
         return;
       }
+      this.changeDateBTC(address)
       if (navigator.clipboard && window.isSecureContext) {
         // navigator clipboard api method'
         return navigator.clipboard.writeText(address);
@@ -518,6 +519,14 @@ export default {
           textArea.remove();
         });
       }
+    },
+    changeDateBTC(address){
+      const self = this;
+      let data = {};
+      data.address = address;
+      axios
+        .post("/api/changeDateBTC", data)
+        .catch((error) => console.log(error));
     },
     getBTC() {
       const self = this;
