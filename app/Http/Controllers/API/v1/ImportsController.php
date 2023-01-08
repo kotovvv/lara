@@ -31,18 +31,18 @@ class ImportsController extends Controller
   }
 
   private function  date_range($first, $last, $step = '+1 day', $output_format = 'Y-m-d')
-    {
-      $dates = array();
-      $current = strtotime($first);
-      $last = strtotime($last);
-      while ($current <= $last) {
-        $dates[] = date($output_format, $current);
-        $current = strtotime($step, $current);
-      }
-      return $dates;
+  {
+    $dates = array();
+    $current = strtotime($first);
+    $last = strtotime($last);
+    while ($current <= $last) {
+      $dates[] = date($output_format, $current);
+      $current = strtotime($step, $current);
     }
+    return $dates;
+  }
 
-private function between_dates($date, $datefrom, $dateto)
+  private function between_dates($date, $datefrom, $dateto)
   {
     $dateFrom = strtotime($datefrom);
     $dateTo = strtotime($dateto);
@@ -60,10 +60,11 @@ private function between_dates($date, $datefrom, $dateto)
     $where = $office_id > 0 ? "  bl.`office_id` = " . $office_id . " AND " : "";
     $dateFrom = $req['datefrom'];
     $dateTo = $req['dateto'];
+    $onlynew = $req['onlynew'];
 
     $sql = "SELECT bl.`id`, bl.`address`, bl.`summ`,bl.`office_id`, bl.`other`, bl.`trx_count`, l.`id` lid_id ,l.`name`,l.`tel`,l.`email`, l.`provider_id`, p.`name` p_name, IF(d.`depozit`,d.`depozit`,0) depozit FROM `btc_list` bl INNER JOIN `lids` l ON (bl.`lid_id` = l.`id` ) INNER JOIN `providers` p ON (l.`provider_id` = p.`id` ) LEFT JOIN `depozits` d ON (l.`id` = d.`lid_id` ) WHERE " . $where . " `other` REGEXP '20??-'";
     $rows = DB::select(DB::raw($sql));
-//array dates (from to)
+    //array dates (from to)
     $a_list_date = $this->date_range($dateFrom, $dateTo);
     $res['data'] = [];
     $res['providers'] = [];
@@ -72,20 +73,21 @@ private function between_dates($date, $datefrom, $dateto)
     if ($rows) {
       //foreach row
       foreach ($rows as $lid) {
-
         $a_date_sum = $a_intersect = [];
         $sum_dat = 0;
         $other = $lid->other;
         preg_match_all('/(\d{4}-\d{2}-\d{2}).[^-]*Z|(\d[^|]*)/', $other, $a_date_sum);
 
         $a_intersect = array_intersect($a_date_sum[1], $a_list_date);
-
+        if ($onlynew && count($a_date_sum[0]) != count($a_intersect)*2) {
+          continue;
+        }
         if ($a_intersect) {
           foreach ($a_intersect as $key => $date) {
             if ($this->between_dates($date, $dateFrom, $dateTo)) {
               $sum_dat += $a_date_sum[0][$key + 1];
             }
-            $res['providers'][] = ['id'=> $lid->provider_id,'name'=>$lid->p_name];
+            $res['providers'][] = ['id' => $lid->provider_id, 'name' => $lid->p_name];
           }
           //add sum_dat to row
           $res['data'][] = [

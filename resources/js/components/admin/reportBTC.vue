@@ -64,6 +64,15 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
+
+                 <v-checkbox
+                 dense
+                 class="mr-2"
+                 v-model="onlynew"
+                 label="Новые"
+                 @change="getBTCotherOnDate()"
+                 ></v-checkbox>
+
             </v-row>
           </div>
         </v-col>
@@ -187,6 +196,7 @@ export default {
     this.getBTCotherOnDate();
   },
   data: () => ({
+    onlynew:true,
     loading: false,
     dateFrom: false,
     dateTo: false,
@@ -207,7 +217,7 @@ export default {
       { text: "Сумма lids", value: "depozit", class:"green--text"},
       { text: "BTC", value: "summ", class:"blue--text" },
       { text: "Сумма дат", value: "sum_dat", class:"red--text" },
-      { text: "address", value: "address" },
+      // { text: "address", value: "address" },
     ],
     lids: [],
     expanded: [],
@@ -259,6 +269,7 @@ export default {
         this.datetimeTo = new Date().toISOString().substring(0, 10);
       data.datefrom = this.dateTimeFrom;
       data.dateto = this.dateTimeTo;
+      data.onlynew = this.onlynew;
       axios
         .post("/api/getBTCotherOnDate", data)
         .then((res) => {
