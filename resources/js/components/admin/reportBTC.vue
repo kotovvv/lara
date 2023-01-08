@@ -6,6 +6,7 @@
           <v-row class="px-4">
             <v-col><p>С Дата</p></v-col>
             <v-col><p>По Дата</p></v-col>
+            <v-col><p class="text-right">Новые</p></v-col>
           </v-row>
 
           <div class="status_wrp wrp_date px-3">
@@ -66,10 +67,9 @@
               </v-col>
 
                  <v-checkbox
-                 dense
                  class="mr-2"
                  v-model="onlynew"
-                 label="Новые"
+
                  @change="getBTCotherOnDate()"
                  ></v-checkbox>
 
@@ -298,3 +298,4 @@ export default {
   },
 };
 </script>
+
