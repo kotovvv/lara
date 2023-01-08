@@ -69,6 +69,7 @@ const lids = () => import("../crmanager/lids");
 const lidsplus = () => import("../crmanager/lidsplus");
 const report = () => import("./report");
 const reportPie = () => import("./reportPie");
+const reportBTC = () => import("./reportBTC");
 
 export default {
   props: ["user"],
@@ -99,6 +100,7 @@ export default {
       { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
       { text: "Отчёт", name: "report", icon: "mdi-receipt" },
       { text: "Отчёты", name: "reportPie", icon: "mdi-timetable" },
+      { text: "Отчёт по BTC", name: "reportBTC", icon: "mdi-cash" },
     ],
     adminMenu: "",
   }),
@@ -114,6 +116,7 @@ export default {
       if (this.adminMenu == "lidsplus") return lidsplus;
       if (this.adminMenu == "report") return report;
       if (this.adminMenu == "reportPie") return reportPie;
+      if (this.adminMenu == "reportBTC") return reportBTC;
     },
   },
   mounted: function () {
