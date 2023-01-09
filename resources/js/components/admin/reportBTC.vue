@@ -69,7 +69,6 @@
                  <v-checkbox
                  class="mr-2"
                  v-model="onlynew"
-
                  @change="getBTCotherOnDate()"
                  ></v-checkbox>
 
@@ -116,6 +115,46 @@
               </v-badge>
             </template>
           </v-select>
+        </v-col>
+                <v-col cols="2">
+          <!-- statuses_lids -->
+          <p>Фильтр по статусам</p>
+          <v-select
+            ref="filterStatus"
+            color="red"
+            v-model="filterStatus"
+            :items="statuses"
+            item-text="name"
+            item-value="id"
+            outlined
+            rounded
+            :multiple="true"
+          >
+            <template v-slot:selection="{ item, index }">
+              <span v-if="index === 0">{{ item.name }} </span>
+              <span v-if="index === 1" class="grey--text text-caption">
+                (+{{ filterStatus.length - 1 }} )
+              </span>
+            </template>
+            <template v-slot:item="{ item, attrs }">
+              <v-badge
+                :value="attrs['aria-selected'] == 'true'"
+                color="#7620df"
+                dot
+                left
+              >
+                <i
+                  :style="{
+                    background: item.color,
+                    outline: '1px solid grey',
+                  }"
+                  class="sel_stat mr-4"
+                ></i>
+              </v-badge>
+              {{ item.name }}
+            </template>
+          </v-select>
+
         </v-col>
       </v-row>
     </v-container>
@@ -206,6 +245,8 @@ export default {
     dateTimeTo: new Date().toISOString().substring(0, 10),
     providers: [],
     filterProviders: [],
+    statuses:[],
+    filterStatus:[],
     offices: [],
     selected_office_ids: [],
     headers: [
@@ -231,7 +272,8 @@ export default {
         return (
           (!this.filterProviders.length ||
           this.filterProviders.includes(i.provider_id)) &&
-          (!this.selected_office_ids.length || this.selected_office_ids.includes(i.office_id))
+          (!this.selected_office_ids.length || this.selected_office_ids.includes(i.office_id)) &&
+          (!this.filterStatus.length || this.filterStatus.includes(i.status_id))
         );
       });
     },
@@ -242,7 +284,7 @@ export default {
       return _.sumBy(this.filteredItems,'sum_dat')
     },
     sum_depozit(){
-      return _.sumBy(this.filteredItems,'depozit')
+      return _.sumBy(this.filteredItems, i => Number(i.depozit))
     }
   },
   methods: {
@@ -281,6 +323,7 @@ export default {
             }
           )
           self.providers = res.data.providers
+          self.statuses = res.data.statuses
         })
 
         .catch((error) => console.log(error));
