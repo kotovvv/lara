@@ -69,7 +69,6 @@
                  <v-checkbox
                  class="mr-2"
                  v-model="onlynew"
-
                  @change="getBTCotherOnDate()"
                  ></v-checkbox>
 
@@ -214,6 +213,7 @@ export default {
       { text: "Телефон.", align: "start", value: "tel" },
       { text: "Поставщик", value: "p_name" },
       { text: "Офис", value: "o_name" },
+      { text: "Статус", value: "s_name" },
       { text: "Сумма lids", value: "depozit", class:"green--text"},
       { text: "BTC", value: "summ", class:"blue--text" },
       { text: "Сумма дат", value: "sum_dat", class:"red--text" },
@@ -242,7 +242,7 @@ export default {
       return _.sumBy(this.filteredItems,'sum_dat')
     },
     sum_depozit(){
-      return _.sumBy(this.filteredItems,'depozit')
+      return _.sumBy(this.filteredItems, i => Number(i.depozit))
     }
   },
   methods: {
