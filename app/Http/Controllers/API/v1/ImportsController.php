@@ -70,10 +70,12 @@ class ImportsController extends Controller
     $res['providers'] = [];
     $res['statuses'] = [];
     $res['result'] = "success";
-
+$id = 0;
     if ($rows) {
       //foreach row
       foreach ($rows as $lid) {
+        if($id == $lid->id) continue;
+        $id = $lid->id;
         $a_date_sum = $a_intersect = [];
         $sum_dat = 0;
         $other = $lid->other;
