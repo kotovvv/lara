@@ -255,6 +255,7 @@ export default {
       { text: "Телефон.", align: "start", value: "tel" },
       { text: "Поставщик", value: "p_name" },
       { text: "Офис", value: "o_name" },
+      { text: "Статус", value: "s_name" },
       { text: "Сумма lids", value: "depozit", class:"green--text"},
       { text: "BTC", value: "summ", class:"blue--text" },
       { text: "Сумма дат", value: "sum_dat", class:"red--text" },
