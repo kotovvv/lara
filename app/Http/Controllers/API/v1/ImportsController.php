@@ -62,27 +62,26 @@ class ImportsController extends Controller
     $dateTo = $req['dateto'];
     $onlynew = $req['onlynew'];
 
-    $sql = "SELECT bl.`id`, bl.`address`, bl.`summ`, bl.`office_id`, bl.`other`, bl.`trx_count`, l.`id` lid_id, l.`name`, l.`tel`, l.`email`, l.`provider_id`, l.`status_id`, s.`name` s_name, s.`color` s_color, p.`name` p_name, (SELECT IF (SUM(d.`depozit`), SUM(d.`depozit`), '') FROM `depozits` d WHERE l.`id` = d.`lid_id` AND d.`created_at` > '" . $dateFrom . "' AND d.`created_at` < '" . $dateTo . "') depozit FROM `btc_list` bl INNER JOIN `lids` l ON (bl.`lid_id` = l.`id`) INNER JOIN `providers` p ON (l.`provider_id` = p.`id`) INNER JOIN `statuses` s ON (l.`status_id` = s.`id`) WHERE " . $where . "`other` REGEXP '[^|].*'";
+    $sql = "SELECT bl.`id`, bl.`address`, bl.`summ`, bl.`office_id`, bl.`other`, bl.`trx_count`, l.`id` lid_id, l.`name`, l.`tel`, l.`email`, l.`provider_id`, l.`status_id`, s.`name` s_name, s.`color` s_color, p.`name` p_name, (SELECT IF (SUM(d.`depozit`), SUM(d.`depozit`), '') FROM `depozits` d WHERE l.`id` = d.`lid_id` AND d.`created_at` > '" . $dateFrom . "' AND d.`created_at` < '" . $dateTo . "') depozit FROM `btc_list` bl INNER JOIN `lids` l ON (bl.`lid_id` = l.`id`) INNER JOIN `providers` p ON (l.`provider_id` = p.`id`) INNER JOIN `statuses` s ON (l.`status_id` = s.`id`) WHERE " . $where . "`other` REGEXP '[^|].*' ORDER BY l.`id`";
     $rows = DB::select(DB::raw($sql));
     //array dates (from to)
     $a_list_date = $this->date_range($dateFrom, $dateTo);
-    $res['data'] = [];
+    $res['data'] = $data =  [];
     $res['providers'] = [];
     $res['statuses'] = [];
     $res['result'] = "success";
-$id = 0;
+
+    $compareLidId = $sum_lid = $ia =  0;
     if ($rows) {
       //foreach row
       foreach ($rows as $lid) {
-        if($id == $lid->id) continue;
-        $id = $lid->id;
         $a_date_sum = $a_intersect = [];
         $sum_dat = 0;
         $other = $lid->other;
         $a_date_sum[0] = explode('|', $other);
-        // preg_match_all('/(\d{4}-\d{2}-\d{2}).[^-]*Z|(\d[^|]*)/', $other, $a_date_sum);
         $max = count($a_date_sum[0]);
-        for ($i = 1;
+        for (
+          $i = 1;
           $i < $max;
           $i += 2
         ) {
@@ -96,32 +95,41 @@ $id = 0;
         if ($a_intersect) {
           foreach ($a_intersect as $key => $date) {
             if ($this->between_dates($date, $dateFrom, $dateTo)) {
-              $sum_dat += $a_date_sum[0][($key + 1)*2];
+              $sum_dat += $a_date_sum[0][($key + 1) * 2];
             }
             $res['providers'][] = ['id' => $lid->provider_id, 'name' => $lid->p_name];
             $res['statuses'][] = ['id' => $lid->status_id, 'name' => $lid->s_name, 'color' => $lid->s_color];
           }
-          //add sum_dat to row
-          $res['data'][] = [
-            'id' => $lid->id,
-            'name' => $lid->name,
-            'email' => $lid->email,
-            'tel' => $lid->tel,
-            'address' => $lid->address,
-            'lid_id' => $lid->lid_id,
-            'status_id' =>  $lid->status_id,
-            's_name' =>  $lid->s_name,
-            'summ' => $lid->summ,
-            'office_id' => $lid->office_id,
-            'provider_id' => $lid->provider_id,
-            'p_name' => $lid->p_name,
-            'sum_dat' => $sum_dat,
-            'depozit' => $lid->depozit
-          ];
+          // group same lids
+          if ($compareLidId == $lid->lid_id) {
+            $data[$ia - 1]['summ']  += $lid->summ;
+            $data[$ia - 1]['sum_dat']  += $sum_dat;
+            continue;
+          } else {
+            $compareLidId = $lid->lid_id;
+            $data[$ia++] = [
+              'id' => $lid->id,
+              'name' => $lid->name,
+              'email' => $lid->email,
+              'tel' => $lid->tel,
+              'address' => $lid->address,
+              'lid_id' => $lid->lid_id,
+              'status_id' =>  $lid->status_id,
+              's_name' =>  $lid->s_name,
+              'summ' => $lid->summ,
+              'office_id' => $lid->office_id,
+              'provider_id' => $lid->provider_id,
+              'p_name' => $lid->p_name,
+              'sum_dat' => $sum_dat,
+              'depozit' => (int) $lid->depozit
+            ];
+          }
         }
         //next row
       }
     }
+
+    $res['data'] = array_values($data);
     return $res;
   }
 
