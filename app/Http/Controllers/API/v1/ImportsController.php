@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Import;
 use DB;
 use Debugbar;
+use App\Models\Depozit;
 
 class ImportsController extends Controller
 {
@@ -62,15 +63,16 @@ class ImportsController extends Controller
     $dateTo = $req['dateto'];
     $onlynew = $req['onlynew'];
 
-    $sql = "SELECT bl.`id`, bl.`address`, bl.`summ`,bl.`office_id`, bl.`other`, bl.`trx_count`, l.`id` lid_id ,l.`name`,l.`tel`,l.`email`, l.`provider_id`, l.`status_id`, s.`name` s_name, s.`color` s_color,p.`name` p_name, IF(d.`depozit`,d.`depozit`,0) depozit FROM `btc_list` bl INNER JOIN `lids` l ON (bl.`lid_id` = l.`id` ) INNER JOIN `providers` p ON (l.`provider_id` = p.`id` ) INNER JOIN `statuses` s ON (l.`status_id` = s.`id` ) LEFT JOIN `depozits` d ON (l.`id` = d.`lid_id` ) WHERE " . $where . " `other` REGEXP '[^|].*'";
+    $sql = "SELECT bl.`id`, bl.`address`, bl.`summ`,bl.`office_id`, bl.`other`, bl.`trx_count`, l.`id` lid_id ,l.`name`,l.`tel`,l.`email`, l.`provider_id`, l.`status_id`, s.`name` s_name, s.`color` s_color,p.`name` p_name FROM `btc_list` bl INNER JOIN `lids` l ON (bl.`lid_id` = l.`id` ) INNER JOIN `providers` p ON (l.`provider_id` = p.`id` ) INNER JOIN `statuses` s ON (l.`status_id` = s.`id` )  WHERE " . $where . " `other` REGEXP '[^|].*' ORDER BY lid_id ASC";
     $rows = DB::select(DB::raw($sql));
+
     //array dates (from to)
     $a_list_date = $this->date_range($dateFrom, $dateTo);
     $res['data'] = [];
     $res['providers'] = [];
     $res['statuses'] = [];
     $res['result'] = "success";
-
+$lid_id = 0;
     if ($rows) {
       //foreach row
       foreach ($rows as $lid) {
@@ -78,9 +80,9 @@ class ImportsController extends Controller
         $sum_dat = 0;
         $other = $lid->other;
         $a_date_sum[0] = explode('|', $other);
-        // preg_match_all('/(\d{4}-\d{2}-\d{2}).[^-]*Z|(\d[^|]*)/', $other, $a_date_sum);
         $max = count($a_date_sum[0]);
-        for ($i = 1;
+        for (
+          $i = 1;
           $i < $max;
           $i += 2
         ) {
@@ -92,34 +94,42 @@ class ImportsController extends Controller
           continue;
         }
         if ($a_intersect) {
+          $depozit = Depozit::select(DB::Raw('sum(`depozit`) as depozit'))->whereBetween('created_at', [$dateFrom . " 00:00:00", $dateTo . " 23:59:59"])->where('lid_id', $lid->lid_id)->groupBy('lid_id')->value('depozit');
           foreach ($a_intersect as $key => $date) {
             if ($this->between_dates($date, $dateFrom, $dateTo)) {
-              $sum_dat += $a_date_sum[0][($key + 1)*2];
+              $sum_dat += $a_date_sum[0][($key + 1) * 2];
             }
-            $res['providers'][] = ['id' => $lid->provider_id, 'name' => $lid->p_name];
-            $res['statuses'][] = ['id' => $lid->status_id, 'name' => $lid->s_name, 'color' => $lid->s_color];
           }
+          $res['providers'][] = ['id' => $lid->provider_id, 'name' => $lid->p_name];
+          $res['statuses'][] = ['id' => $lid->status_id, 'name' => $lid->s_name, 'color' => $lid->s_color];
           //add sum_dat to row
-          $res['data'][] = [
-            'id' => $lid->id,
-            'name' => $lid->name,
-            'email' => $lid->email,
-            'tel' => $lid->tel,
-            'address' => $lid->address,
-            'lid_id' => $lid->lid_id,
-            'status_id' =>  $lid->status_id,
-            's_name' =>  $lid->s_name,
-            'summ' => $lid->summ,
-            'office_id' => $lid->office_id,
-            'provider_id' => $lid->provider_id,
-            'p_name' => $lid->p_name,
-            'sum_dat' => $sum_dat,
-            'depozit' => $lid->depozit
-          ];
+          if ($lid_id != $lid->lid_id) {
+            $lid_id = $lid->lid_id;
+            $res['data'][$lid->lid_id] = [
+              'id' => $lid->id,
+              'name' => $lid->name,
+              'email' => $lid->email,
+              'tel' => $lid->tel,
+              'address' => $lid->address,
+              'lid_id' => $lid->lid_id,
+              'status_id' =>  $lid->status_id,
+              's_name' =>  $lid->s_name,
+              'summ' => $lid->summ,
+              'office_id' => $lid->office_id,
+              'provider_id' => $lid->provider_id,
+              'p_name' => $lid->p_name,
+              'sum_dat' => $sum_dat,
+              'depozit' => $depozit
+            ];
+          } else {
+            $res['data'][$lid->lid_id]['summ'] += $lid->summ;
+            $res['data'][$lid->lid_id]['sum_dat'] += $sum_dat;
+          }
         }
         //next row
       }
     }
+    $res['data'] = array_values($res['data']);
     return $res;
   }
 

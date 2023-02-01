@@ -196,8 +196,8 @@
                 'items-per-page-text': '',
               }"
             >
-              <!-- <v-row>
-                <v-col cols="2" class="mt-1">
+               <v-row>
+                <!-- <v-col cols="2" class="mt-1">
                   <v-text-field
                     v-model="search"
                     append-icon="mdi-magnify"
@@ -206,8 +206,18 @@
                     hide-details
                     class="border px-2"
                   ></v-text-field>
+                </v-col> -->
+                <v-spacer></v-spacer>
+                <v-col cols="3" class="mt-3">
+                  <v-data-footer
+                    :pagination="pagination"
+                    :options="options"
+                    @update:options="updateOptions"
+                    :items-per-page-options="[50, 10, 100, 250, 500, -1]"
+                    :items-per-page-text="''"
+                  />
                 </v-col>
-              </v-row> -->
+              </v-row>
             </template>
             <template v-slot:expanded-item="{ headers, item }">
               <td :colspan="headers.length" class="blackborder">
