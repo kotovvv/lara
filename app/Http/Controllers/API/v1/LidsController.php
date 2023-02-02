@@ -178,7 +178,7 @@ class LidsController extends Controller
       $n_lid = new Lid;
 
       if (isset($lid['name'])) {
-        $n_lid->name =  substr($lid['name'],0,59);
+        $n_lid->name =  $lid['name'];
       } else {
         $n_lid->name = time();
       }
@@ -201,7 +201,7 @@ class LidsController extends Controller
       $n_lid->created_at = Now();
 
       if (isset($lid['afilyator'])) {
-        $n_lid->afilyator = str_replace('"','',$lid['afilyator']);
+        $n_lid->afilyator = $lid['afilyator'];
       } else {
         $n_lid->afilyator = '';
       }
@@ -224,7 +224,7 @@ class LidsController extends Controller
   {
     $office_id = session()->get('office_id');
     $providers = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
-    return Lid::select('lids.*',DB::raw( "(SELECT IF(SUM(depozit),SUM(depozit),'') FROM `depozits` d WHERE d.`lid_id` = lids.id) depozit"))->where('lids.user_id', $id)
+    return Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)
       ->when($office_id > 0, function ($query) use ($office_id, $providers) {
         return $query->where('office_id', $office_id)->whereIn('provider_id', $providers);
       })->orderBy('lids.created_at', 'desc')->get();
@@ -235,10 +235,10 @@ class LidsController extends Controller
     $data = $request->all();
     if (isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2) {
       $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
-      return Lid::select('lids.*', DB::raw("(SELECT IF(SUM(depozit),SUM(depozit),'') FROM `depozits` d WHERE d.`lid_id` = lids.id) depozit") )->whereIn('lids.user_id', $a_user_ids)->where('lids.status_id', $data['id'])->orderBy('lids.created_at', 'desc')->get();
+      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->whereIn('lids.user_id', $a_user_ids)->where('lids.status_id', $data['id'])->orderBy('lids.created_at', 'desc')->get();
     } else {
       $office_id = session()->get('office_id');
-      return Lid::select('lids.*', DB::raw("(SELECT IF(SUM(depozit),SUM(depozit),'') FROM `depozits` d WHERE d.`lid_id` = lids.id) depozit"))->where('lids.status_id', $data['id'])->when($office_id > 0, function ($query) use ($office_id) {
+      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.status_id', $data['id'])->when($office_id > 0, function ($query) use ($office_id) {
         return $query->where('office_id', $office_id);
       })->orderBy('lids.created_at', 'desc')->get();
     }
@@ -351,7 +351,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $date = [date('Y-m-d', strtotime($req['datefrom'])) . ' ' . date("H:i:s", mktime(0, 0, 0)), date('Y-m-d', strtotime($req['dateto'])) . ' ' . date("H:i:s", mktime(23, 59, 59))];
 
-    $sql = "SELECT l.`id`,l.`tel`,l.`name`,l.`email`,l.`provider_id`,l.`status_id`,l.`user_id`,l.`created_at`,l.`updated_at`,l.`status_id`,l.`office_id`,if(l.`qtytel` > 0, l.`qtytel`,'') qtytel,l.`text`, (SELECT if(sum(depozit),sum(depozit),'') FROM depozits d WHERE l.id = d.lid_id AND d.created_at >= '" . $date[0] . "' AND d.created_at <= '" . $date[1] . "') depozit FROM lids l WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
+    $sql = "SELECT l.`id`,l.`tel`,l.`name`,l.`email`,l.`provider_id`,l.`afilyator`,l.`status_id`,l.`user_id`,l.`created_at`,l.`updated_at`,l.`status_id`,l.`office_id`,if(l.`qtytel` > 0, l.`qtytel`,'') qtytel,l.`text`, (SELECT sum(depozit) depozit FROM depozits d WHERE l.id = d.lid_id AND d.created_at >= '" . $date[0] . "' AND d.created_at <= '" . $date[1] . "') depozit FROM lids l WHERE " . $where_user . " l.created_at >= '" . $date[0] . "' AND l.created_at <= '" . $date[1] . "'";
 
     return DB::select(DB::raw($sql));
   }
@@ -457,8 +457,9 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
 
     if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
-       $name = Provider::find($f_key->id)->value('name');
-       $n_lid->afilyator = $name;
+       //$name = Provider::find($f_key->id)->value('name');
+
+       $n_lid->afilyator = $f_key->name;
       $n_lid->provider_id = 75;
       $n_lid->user_id = 252;
       $n_lid->office_id = User::where('id', 252)->value('office_id');
