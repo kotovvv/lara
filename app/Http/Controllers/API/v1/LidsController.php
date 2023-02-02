@@ -536,8 +536,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
     if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
-       $name = Provider::find($f_key->id)->value('name');
-       $n_lid->afilyator = $name;
+      //  $name = Provider::find($f_key->id)->value('name');
+       $n_lid->afilyator = $f_key->name;
       $n_lid->provider_id = 75;
       $n_lid->user_id = 252;
       $n_lid->save();
@@ -590,8 +590,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
     if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
-       $name = Provider::find($f_key->id)->value('name');
-       $n_lid->afilyator = $name;
+      //  $name = Provider::find($f_key->id)->value('name');
+       $n_lid->afilyator = $f_key->name;
       $n_lid->provider_id = 75;
       $n_lid->user_id = 252;
       $n_lid->save();
