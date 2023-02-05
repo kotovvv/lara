@@ -25,6 +25,28 @@ class LidsController extends Controller
   {
   }
 
+  public function provider_importlid(Request $request)
+  {
+    $req = $request->all();
+    $data = [];
+    $provider = Provider::select('providers.id', 'providers.name', 'prov_user.user_id')->where('providers.id', $req['provider_id'])->join('prov_user', 'prov_user.provider_id', '=', 'providers.id')->first();
+    if (!$provider->user_id) return $request('no user', 400);
+    $data['user_id'] = $provider['user_id'];
+    $data['provider_id'] = $provider->id;
+    foreach ($req['lids'] as $lid) {
+      $data['data'][] = [
+        'name' => $lid['name'],
+        'tel' => $lid['tel'],
+        'email' => $lid['email'],
+        'afilator' => $provider->name,
+
+      ];
+    }
+    $request = new Request();
+
+    return $this->newlids($request->merge($data));
+  }
+
   public function importlid(Request $request)
   {
     $insertItem = $request->all();
@@ -58,7 +80,7 @@ class LidsController extends Controller
   public function searchlids(Request $request)
   {
     $data = $request->all();
-    if($data['search'] == '') {
+    if ($data['search'] == '') {
       return response((object) []);
     }
     $office_id = session()->get('office_id');
@@ -217,7 +239,7 @@ class LidsController extends Controller
       }
       $n_lid->save();
     }
-    return response('Lids imported', 200);
+    return response('Liads imported', 200);
   }
 
   public function userLids($id)
@@ -457,9 +479,9 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
 
     if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
-       //$name = Provider::find($f_key->id)->value('name');
+      //$name = Provider::find($f_key->id)->value('name');
 
-       $n_lid->afilyator = $f_key->name;
+      $n_lid->afilyator = $f_key->name;
       $n_lid->provider_id = 75;
       $n_lid->user_id = 252;
       $n_lid->office_id = User::where('id', 252)->value('office_id');
@@ -537,7 +559,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
     if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
       //  $name = Provider::find($f_key->id)->value('name');
-       $n_lid->afilyator = $f_key->name;
+      $n_lid->afilyator = $f_key->name;
       $n_lid->provider_id = 75;
       $n_lid->user_id = 252;
       $n_lid->save();
@@ -591,7 +613,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
     if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
       //  $name = Provider::find($f_key->id)->value('name');
-       $n_lid->afilyator = $f_key->name;
+      $n_lid->afilyator = $f_key->name;
       $n_lid->provider_id = 75;
       $n_lid->user_id = 252;
       $n_lid->save();
@@ -741,7 +763,7 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
     if (!isset($req['increment'])) {
       $req['increment'] = 1000;
     }
-     $req['page'] = (int) $req['page'] - 1;
+    $req['page'] = (int) $req['page'] - 1;
     if (!isset($req['page']) || ((int) $req['page'] * (int) $req['increment']) == 0) {
       $limit = ' LIMIT ' .  (int) $req['increment'];
     } else {
@@ -775,7 +797,7 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
         $res['data'][] = $a1;
         $res['rows']++;
       }
-    }else{
+    } else {
       $res['data'] = [];
       $res['result'] = "success";
       $res['rows'] = 0;
@@ -837,9 +859,9 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
   public function changeDateBTC(Request $request)
   {
     $req = $request->all();
-    $sql = "UPDATE `btc_list` SET `date_time` = NOW() WHERE `address` = '". $req['address']."'";
+    $sql = "UPDATE `btc_list` SET `date_time` = NOW() WHERE `address` = '" . $req['address'] . "'";
     DB::select(DB::raw($sql));
-    return response('updated date BTC',200);
+    return response('updated date BTC', 200);
   }
 
   public function getBTC(Request $request)
@@ -849,27 +871,27 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
     $res = [];
     $res['message'] = 'no free used';
     $office_id = session()->get('office_id');
-    if($office_id){
-    $sql = "SELECT id, address FROM `btc_list` where `used` = false AND `office_id` = " . $office_id . " order by `id` ASC LIMIT 1";
-    $btc = DB::select(DB::raw($sql));
+    if ($office_id) {
+      $sql = "SELECT id, address FROM `btc_list` where `used` = false AND `office_id` = " . $office_id . " order by `id` ASC LIMIT 1";
+      $btc = DB::select(DB::raw($sql));
 
-    if ($btc) {
-      $sql = "UPDATE `btc_list` SET `used` = true, `lid_id` = " . $req['id'] . ", `user_id` = " . $req['user_id'] . ", `date_time` = NOW() WHERE `id` = " . $btc[0]->id;
-      DB::select(DB::raw($sql));
-      $sql = "UPDATE `lids` SET `address` = '" . $btc[0]->address . "' WHERE `id` = " . $req['id'];
-      DB::select(DB::raw($sql));
+      if ($btc) {
+        $sql = "UPDATE `btc_list` SET `used` = true, `lid_id` = " . $req['id'] . ", `user_id` = " . $req['user_id'] . ", `date_time` = NOW() WHERE `id` = " . $btc[0]->id;
+        DB::select(DB::raw($sql));
+        $sql = "UPDATE `lids` SET `address` = '" . $btc[0]->address . "' WHERE `id` = " . $req['id'];
+        DB::select(DB::raw($sql));
 
-      $log = new Log;
-      $log->tel = $req['tel'];
-      $log->lid_id = $req['id'];
-      $log->user_id = $req['user_id'];
-      $log->text = $btc[0]->address;
-      $log->save();
+        $log = new Log;
+        $log->tel = $req['tel'];
+        $log->lid_id = $req['id'];
+        $log->user_id = $req['user_id'];
+        $log->text = $btc[0]->address;
+        $log->save();
 
-      $res['address'] = $btc[0]->address;
-      $res['message'] = 'Used address ' . $btc[0]->address;
+        $res['address'] = $btc[0]->address;
+        $res['message'] = 'Used address ' . $btc[0]->address;
+      }
     }
-  }
     return response($res);
   }
 

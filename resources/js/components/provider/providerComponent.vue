@@ -1,45 +1,153 @@
 <template>
   <v-app id="provider">
+        <v-snackbar v-model="snackbar" top right timeout="-1">
+      <v-card-text v-html="message"></v-card-text>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          X
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-container>
       <v-row>
-        <h2 class="col col-12 text-center">Постачальник {{ user.name }}</h2>
-        <div class="col-12 text-center">Start date {{ start_date }}</div>
-        <div class="title col-12 text-center">FTD Statistic</div>
+        <v-tabs v-model="tab">
+          <v-tab>Report</v-tab>
+          <v-tab>Import</v-tab>
+        </v-tabs>
       </v-row>
-      <v-row>
-        <v-col cols="6">
-          <div class="title_all">All time</div>
-          <v-progress-linear
-            :active="pie1"
-            :indeterminate="pie1"
-            color="deep-purple accent-4"
-          ></v-progress-linear>
-          <PieChart :datap="chartDataAll" />
+    </v-container>
+    <v-tabs-items v-model="tab">
+      <v-tab-item>
+        <v-container>
           <v-row>
-            <v-col>
-              All lids: {{ allLidsAll }}
-              <div class="wrp__statuses">
-                <template v-for="(i, x) in statuses_all">
-                  <div class="status_wrp" :key="x">
-                    <b
-                      :style="{
-                        background: i.color,
-                        outline: '1px solid' + i.color,
-                      }"
-                      >{{ i.hm }}</b
-                    >
-                    <span>{{ i.name }}</span>
+            <h2 class="col col-12 text-center">Постачальник {{ user.name }}</h2>
+            <div class="col-12 text-center">Start date {{ start_date }}</div>
+            <div class="title col-12 text-center">FTD Statistic</div>
+          </v-row>
+          <v-row>
+            <v-col cols="6">
+              <div class="title_all">All time</div>
+              <v-progress-linear
+                :active="pie1"
+                :indeterminate="pie1"
+                color="deep-purple accent-4"
+              ></v-progress-linear>
+              <PieChart :datap="chartDataAll" />
+              <v-row>
+                <v-col>
+                  All lids: {{ allLidsAll }}
+                  <div class="wrp__statuses">
+                    <template v-for="(i, x) in statuses_all">
+                      <div class="status_wrp" :key="x">
+                        <b
+                          :style="{
+                            background: i.color,
+                            outline: '1px solid' + i.color,
+                          }"
+                          >{{ i.hm }}</b
+                        >
+                        <span>{{ i.name }}</span>
+                      </div>
+                    </template>
                   </div>
-                </template>
-              </div>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col cols="6">
+              <v-row class="mb-1">
+                <v-col cols="6">
+                  <v-menu
+                    v-model="dateShowFrom"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="dateFrom"
+                        label="Start day"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                        hide-details
+                        class="border pl-10"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="dateFrom"
+                      @input="
+                        dateShowFrom = false;
+                        getPieTime();
+                      "
+                    ></v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="6">
+                  <v-menu
+                    v-model="dateShowTo"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="dateTo"
+                        label="Stop day"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                        hide-details
+                        class="border pl-10"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="dateTo"
+                      @input="
+                        dateShowTo = false;
+                        getPieTime();
+                      "
+                    ></v-date-picker>
+                  </v-menu>
+                </v-col>
+              </v-row>
+              <v-progress-linear
+                :active="pie2"
+                :indeterminate="pie2"
+                color="deep-purple accent-4"
+              ></v-progress-linear>
+              <PieChart :datap="chartDataTime" />
+              <v-row>
+                <v-col>
+                  All lids: {{ allLidsTime }}
+                  <div class="wrp__statuses">
+                    <template v-for="(i, x) in statuses_time">
+                      <div class="status_wrp" :key="x">
+                        <b
+                          :style="{
+                            background: i.color,
+                            outline: '1px solid' + i.color,
+                          }"
+                          >{{ i.hm }}</b
+                        >
+                        <span>{{ i.name }}</span>
+                      </div>
+                    </template>
+                  </div>
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
-        </v-col>
-        <v-col cols="6">
-          <v-row class="mb-1">
-            <v-col cols="6">
+        </v-container>
+
+        <v-container fluid class="mt-10">
+          <v-row>
+            <v-col cols="col-4">
               <v-menu
-                v-model="dateShowFrom"
+                v-model="tablDateShowFrom"
                 :close-on-content-click="false"
                 :nudge-right="40"
                 transition="scale-transition"
@@ -48,27 +156,26 @@
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
-                    v-model="dateFrom"
+                    v-model="tablDateFrom"
                     label="Start day"
                     readonly
                     v-bind="attrs"
                     v-on="on"
-                    hide-details
                     class="border pl-10"
+                    hide-details
                   ></v-text-field>
                 </template>
                 <v-date-picker
-                  v-model="dateFrom"
+                  v-model="tablDateFrom"
                   @input="
-                    dateShowFrom = false;
-                    getPieTime();
+                    tablDateShowFrom = false;
+                    getDataTime();
                   "
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col cols="6">
+                ></v-date-picker> </v-menu
+            ></v-col>
+            <v-col cols="col-4">
               <v-menu
-                v-model="dateShowTo"
+                v-model="tablDateShowTo"
                 :close-on-content-click="false"
                 :nudge-right="40"
                 transition="scale-transition"
@@ -77,207 +184,150 @@
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
-                    v-model="dateTo"
+                    v-model="tablDateTo"
                     label="Stop day"
                     readonly
                     v-bind="attrs"
                     v-on="on"
-                    hide-details
                     class="border pl-10"
+                    hide-details
                   ></v-text-field>
                 </template>
                 <v-date-picker
-                  v-model="dateTo"
+                  v-model="tablDateTo"
+                  class="border"
                   @input="
-                    dateShowTo = false;
-                    getPieTime();
+                    tablDateShowTo = false;
+                    getDataTime();
                   "
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-          </v-row>
-          <v-progress-linear
-            :active="pie2"
-            :indeterminate="pie2"
-            color="deep-purple accent-4"
-          ></v-progress-linear>
-          <PieChart :datap="chartDataTime" />
-          <v-row>
-            <v-col>
-              All lids: {{ allLidsTime }}
-              <div class="wrp__statuses">
-                <template v-for="(i, x) in statuses_time">
-                  <div class="status_wrp" :key="x">
-                    <b
-                      :style="{
-                        background: i.color,
-                        outline: '1px solid' + i.color,
-                      }"
-                      >{{ i.hm }}</b
-                    >
-                    <span>{{ i.name }}</span>
-                  </div>
-                </template>
-              </div>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-container>
-
-    <v-container fluid class="mt-10">
-      <v-row>
-        <v-col cols="col-4">
-          <v-menu
-            v-model="tablDateShowFrom"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="tablDateFrom"
-                label="Start day"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-                class="border pl-10"
+                ></v-date-picker> </v-menu
+            ></v-col>
+            <v-col cols="col-4"
+              ><v-text-field
+                label="Text search"
+                class="border px-5 mt-0"
+                hide-details="auto"
+                single-line
+                v-model="text_search"
+              ></v-text-field
+            ></v-col>
+            <v-col cols="col-4">
+              <!-- @change="filterStatuses" -->
+              <v-select
+                ref="filterStatus"
+                color="red"
+                v-model="filterStatus"
+                :items="statuses"
+                item-text="name"
+                item-value="id"
+                label="Status filter"
+                outlined
+                rounded
                 hide-details
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="tablDateFrom"
-              @input="
-                tablDateShowFrom = false;
-                getDataTime();
-              "
-            ></v-date-picker> </v-menu
-        ></v-col>
-        <v-col cols="col-4">
-          <v-menu
-            v-model="tablDateShowTo"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="tablDateTo"
-                label="Stop day"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-                class="border pl-10"
-                hide-details
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="tablDateTo"
-              class="border"
-              @input="
-                tablDateShowTo = false;
-                getDataTime();
-              "
-            ></v-date-picker> </v-menu
-        ></v-col>
-        <v-col cols="col-4"
-          ><v-text-field
-            label="Text search"
-            class="border px-5 mt-0"
-            hide-details="auto"
-            single-line
-            v-model="text_search"
-          ></v-text-field
-        ></v-col>
-        <v-col cols="col-4">
-          <!-- @change="filterStatuses" -->
-          <v-select
-            ref="filterStatus"
-            color="red"
-            v-model="filterStatus"
-            :items="statuses"
-            item-text="name"
-            item-value="id"
-            label="Status filter"
-            outlined
-            rounded
-            hide-details
-            :multiple="true"
-          >
-            <template v-slot:selection="{ item, index }">
-              <span v-if="index === 0">{{ item.name }} </span>
-              <span v-if="index === 1" class="grey--text text-caption">
-                (+{{ filterStatus.length - 1 }} )
-              </span>
-            </template>
-            <template v-slot:item="{ item, attrs }">
-              <v-badge
-                :value="attrs['aria-selected'] == 'true'"
-                color="#7620df"
-                dot
-                left
+                :multiple="true"
               >
-                <i
-                  :style="{
-                    background: item.color,
-                    outline: '1px solid grey',
-                  }"
-                  class="sel_stat mr-4"
-                ></i>
-              </v-badge>
-              {{ item.name }}
-            </template>
-          </v-select>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-          <v-progress-linear
-            :active="loading"
-            :indeterminate="loading"
-            color="deep-purple accent-4"
-          ></v-progress-linear>
-          <v-data-table
-            :headers="headers"
-            :items="filteredItems"
-            :search="text_search"
-            @click:row="clickrow"
-          ></v-data-table>
-        </v-col>
-        <v-dialog v-model="popup" max-width="500">
-          <v-card>
-            <v-card-title class="text-h5"> History statuses </v-card-title>
-          <v-progress-linear
-            :active="history_load"
-            :indeterminate="history_load"
-            color="deep-purple accent-4"
-          ></v-progress-linear>
-            <v-card-text>
-              <v-simple-table>
-                <template v-slot:default>
-                  <thead>
-                    <tr>
-                      <th class="text-left">Date</th>
-                      <th class="text-left">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item in history" :key="item.id">
-                      <td>{{ item.date }}</td>
-                      <td>{{ item.status }}</td>
-                    </tr>
-                  </tbody>
+                <template v-slot:selection="{ item, index }">
+                  <span v-if="index === 0">{{ item.name }} </span>
+                  <span v-if="index === 1" class="grey--text text-caption">
+                    (+{{ filterStatus.length - 1 }} )
+                  </span>
                 </template>
-              </v-simple-table>
-            </v-card-text>
-          </v-card>
-        </v-dialog>
-      </v-row>
-    </v-container>
+                <template v-slot:item="{ item, attrs }">
+                  <v-badge
+                    :value="attrs['aria-selected'] == 'true'"
+                    color="#7620df"
+                    dot
+                    left
+                  >
+                    <i
+                      :style="{
+                        background: item.color,
+                        outline: '1px solid grey',
+                      }"
+                      class="sel_stat mr-4"
+                    ></i>
+                  </v-badge>
+                  {{ item.name }}
+                </template>
+              </v-select>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
+              <v-progress-linear
+                :active="loading"
+                :indeterminate="loading"
+                color="deep-purple accent-4"
+              ></v-progress-linear>
+              <v-data-table
+                :headers="headers"
+                :items="filteredItems"
+                :search="text_search"
+                @click:row="clickrow"
+              ></v-data-table>
+            </v-col>
+            <v-dialog v-model="popup" max-width="500">
+              <v-card>
+                <v-card-title class="text-h5"> History statuses </v-card-title>
+                <v-progress-linear
+                  :active="history_load"
+                  :indeterminate="history_load"
+                  color="deep-purple accent-4"
+                ></v-progress-linear>
+                <v-card-text>
+                  <v-simple-table>
+                    <template v-slot:default>
+                      <thead>
+                        <tr>
+                          <th class="text-left">Date</th>
+                          <th class="text-left">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="item in history" :key="item.id">
+                          <td>{{ item.date }}</td>
+                          <td>{{ item.status }}</td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </v-simple-table>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
+          </v-row>
+        </v-container>
+      </v-tab-item>
+      <v-tab-item>
+        <v-container>
+          <v-row>
+            <v-col cols="3">
+              <v-file-input
+                v-model="files"
+                ref="fileupload"
+                label="загрузить CSV"
+                show-size
+                truncate-length="24"
+                @change="onFileChange"
+              ></v-file-input>
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="provider_importlid" v-if="parse_csv.length">Upload</v-btn>
+            <v-col cols="2" v-else>
+              <download-csv :data="demo" delimiter=";" :name="'leads.csv'">
+                <v-btn depressed>Download demo</v-btn>
+              </download-csv>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-data-table
+          :headers="headers_import"
+          item-key="tel+afilyator"
+          :items="parse_csv"
+          ref="datatable"
+          :loading="loading"
+        ></v-data-table>
+      </v-tab-item>
+    </v-tabs-items>
   </v-app>
 </template>
 
@@ -285,11 +335,15 @@
 import PieChart from "./pieComponents";
 import axios from "axios";
 import _ from "lodash";
+import JsonCSV from "vue-json-csv";
 export default {
   components: {
     PieChart,
+    downloadCsv: JsonCSV,
   },
   data: () => ({
+    message: "",
+    snackbar:false,
     popup: false,
     pie1: false,
     pie2: false,
@@ -319,6 +373,12 @@ export default {
     text_search: "",
     filterStatus: [],
     history: [],
+    headers_import: [
+      { text: "Имя", value: "name" },
+      { text: "Email", value: "email" },
+      { text: "Тел.", align: "start", value: "tel" },
+      // { text: "Афилятор", value: "afilyator" },
+    ],
     headers: [
       { text: "Name", value: "name" },
       { text: "Email", value: "email" },
@@ -327,6 +387,8 @@ export default {
       { text: "Edit date", value: "updated_at" },
       { text: "Status", value: "status_name" },
     ],
+    parse_header: [],
+    parse_csv: [],
     lids: [],
     chartDataAll: {
       labels: [],
@@ -346,6 +408,15 @@ export default {
         },
       ],
     },
+    tab: 0,
+    files: [],
+    demo: [
+      {
+        name: "Myname",
+        email: "myemail@test.com",
+        tel: 1234567890,
+      },
+    ],
   }),
   computed: {
     filteredItems() {
@@ -357,10 +428,109 @@ export default {
     },
   },
   methods: {
+    provider_importlid() {
+      let self = this;
+      let data = {};
+      self.loading = true
+      self.message = ''
+      data.provider_id = self.user.id;
+      data.lids = self.parse_csv;
+
+      axios
+        .post("api/provider_importlid", data)
+        .then(function (res) {
+          if(res.status == 200){
+            self.snackbar = true
+            self.message = res.data;
+            self.loading = false
+            self.parse_csv = []
+          }
+          self.loading = false
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    onFileChange(f) {
+      if (f == null) return;
+      const ftype = [
+        "text/comma-separated-values",
+        "text/csv",
+        "application/csv",
+        "application/excel",
+        "application/vnd.ms-excel",
+        "application/vnd.msexcel",
+        "text/anytext",
+        "text/plain",
+      ];
+      if (ftype.indexOf(f.type) >= 0) {
+        this.createInput(f);
+      } else {
+        this.files = [];
+      }
+    },
+    csvJSON(csv) {
+      var vm = this;
+      var lines = csv.split("\n");
+      var result = [];
+      var headers = lines[0].split(";");
+      headers = ["name", "email", "tel"];
+      // vm.parse_header = lines[0].split(",");
+      // lines[0].split(",").forEach(function (key) {
+      //   vm.sortOrders[key] = 1;
+      // });
+
+      lines.map(function (line, indexLine) {
+        if (indexLine < 1) return; // Jump header line
+
+        var obj = {};
+        line = line.trim();
+        var currentline = line.split(";");
+
+        headers.map(function (header, indexHeader) {
+          obj[header] = currentline[indexHeader];
+        });
+
+        result.push(obj);
+      });
+
+      // result.pop(); // remove the last item because undefined values
+
+      return result; // JavaScript object
+    },
+    createInput(file) {
+      let promise = new Promise((resolve, reject) => {
+        var reader = new FileReader();
+        var vm = this;
+        reader.onload = (e) => {
+          resolve((vm.fileinput = reader.result));
+        };
+        reader.readAsText(file);
+      });
+
+      promise.then(
+        (result) => {
+          let vm = this;
+          /* handle a successful result */
+          // console.log(vm.csvJSON(this.fileinput));
+          // reader.onload = function(event) {
+          // arr.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
+          vm.parse_csv = vm.csvJSON(this.fileinput);
+
+          //console.log(vm.parse_csv);
+
+          // };
+        },
+        (error) => {
+          /* handle an error */
+          console.log(error);
+        }
+      );
+    },
     clickrow(item, row) {
       const self = this;
-      self.history = []
-      self.history_load = true
+      self.history = [];
+      self.history_load = true;
       axios
         .get("api/historyLid/" + item.id)
         .then(function (res) {
@@ -368,7 +538,7 @@ export default {
           if (item.status_id != 10) {
             self.history = self.history.filter((el) => el.status_id != 10);
           }
-          self.history_load = false
+          self.history_load = false;
         })
         .catch(function (error) {
           console.log(error);
