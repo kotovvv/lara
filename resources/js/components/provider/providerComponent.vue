@@ -377,7 +377,7 @@ export default {
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Тел.", align: "start", value: "tel" },
-      // { text: "Афилятор", value: "afilyator" },
+       { text: "Афилятор", value: "afilyator" },
     ],
     headers: [
       { text: "Name", value: "name" },
@@ -415,6 +415,7 @@ export default {
         name: "Myname",
         email: "myemail@test.com",
         tel: 1234567890,
+        afilyator:"Some afilyator"
       },
     ],
   }),
@@ -474,7 +475,7 @@ export default {
       var lines = csv.split("\n");
       var result = [];
       var headers = lines[0].split(";");
-      headers = ["name", "email", "tel"];
+      headers = ["name", "email", "tel","afilyator"];
       // vm.parse_header = lines[0].split(",");
       // lines[0].split(",").forEach(function (key) {
       //   vm.sortOrders[key] = 1;
