@@ -591,7 +591,8 @@ export default {
     getUsers() {
       let self = this;
       self.loading = true
-      let get = self.$props.user.role_id == 1 ? "/api/users" : "/api/getusers";
+      // let get = self.$props.user.role_id == 1 ? "/api/users" : "/api/getusers";
+      let get = "/api/getusers";
       axios
         .get(get)
         .then((res) => {

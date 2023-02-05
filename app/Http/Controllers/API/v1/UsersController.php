@@ -30,7 +30,7 @@ class UsersController extends Controller
   {
     if (session()->has('office_id')) {
       $office_id = session()->get('office_id');
-      return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
+      return User::select(['users.*'])
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })

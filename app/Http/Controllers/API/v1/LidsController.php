@@ -29,7 +29,7 @@ class LidsController extends Controller
   {
     $req = $request->all();
     $data = [];
-    $provider = Provider::select('providers.id', 'providers.name', 'prov_user.user_id')->where('providers.id', $req['provider_id'])->join('prov_user', 'prov_user.provider_id', '=', 'providers.id')->first();
+    $provider = Provider::select('providers.id', 'providers.name', 'providers.user_id')->where('providers.id', $req['provider_id'])->first();
     if (!$provider->user_id) return $request('no user', 400);
     $data['user_id'] = $provider['user_id'];
     $data['provider_id'] = $provider->id;
@@ -38,8 +38,7 @@ class LidsController extends Controller
         'name' => $lid['name'],
         'tel' => $lid['tel'],
         'email' => $lid['email'],
-        'afilator' => $provider->name,
-
+        'afilyator' => $lid['afilyator'],
       ];
     }
     $request = new Request();
@@ -209,7 +208,6 @@ class LidsController extends Controller
         $n_lid->tel = preg_replace('/[^0-9]/','', $lid['tel']);
       } else {
         continue;
-
       }
 
       if (isset($lid['email'])) {

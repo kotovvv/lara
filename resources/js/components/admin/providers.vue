@@ -60,6 +60,15 @@
                       ></v-select>
                     </v-col>
                     <v-col cols="12">
+                      <v-select
+                        :items="users"
+                        v-model="editedItem.user_id"
+                        item-text="name"
+                        item-value="id"
+                        label="Пользователь для импорта"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12">
                       <v-text-field
                         v-model="editedItem.tel"
                         label="ApiKey"
@@ -139,6 +148,7 @@ export default {
       active: 1,
       related_users_id: [],
       office_id: [],
+      user_id:0,
     },
     defaultItem: {
       name: "",
@@ -146,6 +156,7 @@ export default {
       active: 1,
       related_users_id: [],
       office_id: [],
+      user_id:0,
     },
     offices: [],
   }),
