@@ -34,9 +34,12 @@ class LidsController extends Controller
     $data['user_id'] = $provider['user_id'];
     $data['provider_id'] = $provider->id;
     foreach ($req['lids'] as $lid) {
+      if (!isset($lid["tel"])) {
+        continue;
+      }
       $data['data'][] = [
         'name' => $lid['name'],
-        'tel' => $lid['tel'],
+        'tel' => $lid["tel"],
         'email' => $lid['email'],
         'afilyator' => $lid['afilyator'],
       ];
@@ -199,13 +202,13 @@ class LidsController extends Controller
       $n_lid = new Lid;
 
       if (isset($lid['name'])) {
-        $n_lid->name =  substr(trim($lid['name']),0,50);
+        $n_lid->name =  substr(trim($lid['name']), 0, 50);
       } else {
         $n_lid->name = time();
       }
 
       if (isset($lid['tel'])) {
-        $n_lid->tel = preg_replace('/[^0-9]/','', $lid['tel']);
+        $n_lid->tel = preg_replace('/[^0-9]/', '', $lid['tel']);
       } else {
         continue;
       }
@@ -222,7 +225,7 @@ class LidsController extends Controller
       $n_lid->created_at = Now();
 
       if (isset($lid['afilyator'])) {
-        $n_lid->afilyator = substr(trim($lid['afilyator']),0,50);
+        $n_lid->afilyator = substr(trim($lid['afilyator']), 0, 50);
       } else {
         $n_lid->afilyator = '';
       }
