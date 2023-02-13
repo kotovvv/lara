@@ -866,6 +866,19 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
     return response('updated date BTC', 200);
   }
 
+  public function getAssignedBTC(Request $request)
+  {
+    $req = $request->all();
+    $btc = (object)[];
+    if( session()->get('office_id')){
+          $sql = "SELECT `date_time`,`address` FROM `btc_list` WHERE `lid_id` = '" . (int) $req['lid_id'] . "'";
+    $btc = DB::select(DB::raw($sql));
+    return response($btc);
+    }
+
+  }
+
+
   public function getBTC(Request $request)
   {
     $req = $request->all();

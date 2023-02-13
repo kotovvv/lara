@@ -194,6 +194,10 @@
                     <!-- :class="{ active: active_el == item.id }" -->
                     <v-icon small> mdi-headset </v-icon>
                   </span>
+                  <span @click.prevent.stop="openDialogBTC(item)">
+                    <!-- :class="{ active: active_el == item.id }" -->
+                    <v-icon class="bitcoin"> mdi-bitcoin </v-icon>
+                  </span>
                 </template>
 
                 <template v-slot:item.status="{ item }">
@@ -358,6 +362,19 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="dialog"
+      width="auto"
+    >
+      <v-card>
+        <v-card-text>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" block @click="dialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -374,6 +391,7 @@ export default {
     webphone: {},
     timeProps: { format: "24hr" },
     dial: false,
+    dialog: false,
     depozit: 0,
     depozit_val: "",
     componentKey: 0,
@@ -458,6 +476,10 @@ export default {
     },
   },
   methods: {
+    openDialogBTC(item){
+      console.log(item)
+      this.dialog=true
+    },
     wp_call(item) {
       window.open(
         `/webphone/softphone.html?wp_serveraddress=${
@@ -534,6 +556,7 @@ export default {
       data.id = this.selected[0].id;
       data.user_id = this.selected[0].user_id;
       data.tel = this.selected[0].tel;
+      //get new BTC from table for lead
       axios
         .post("/api/getBTC", data)
         .then((res) => {
@@ -927,5 +950,11 @@ td .status_wrp {
 }
 .hideStatus {
   display: none;
+}
+.bitcoin{
+  color:yellow;
+  margin: 0 1rem;
+  background: #000;
+  cursor:pointer
 }
 </style>

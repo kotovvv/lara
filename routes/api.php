@@ -97,4 +97,5 @@ Route::post('putBTC', [ImportsController::class, 'putBTC']);
 Route::post('getBTCsOnDate', [ImportsController::class, 'getBTCsOnDate']);
 Route::post('getBTCotherOnDate', [ImportsController::class, 'getBTCotherOnDate']);
 Route::post('changeDateBTC', [LidsController::class, 'changeDateBTC']);
+Route::post('getAssignedBTC', [LidsController::class, 'getAssignedBTC']);
 Route::post('provider_importlid', [LidsController::class, 'provider_importlid']);
