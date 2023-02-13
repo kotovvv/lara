@@ -347,7 +347,9 @@
                 color="dark primary"
                 block
                 height="100%"
-                :disabled="selectedStatus == 10 && depozit_val < 1 && text_message == ''"
+                :disabled="
+                  selectedStatus == 10 && depozit_val < 1 && text_message == ''
+                "
                 @click="
                   writeText();
                   putSelectedLidsDB();
@@ -362,16 +364,40 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog
-      v-model="dialog"
-      width="auto"
-    >
+    <v-dialog v-model="dialog" width="auto">
       <v-card>
         <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+          <p v-if="selected[0]"><b>Найменування: </b>{{selected[0].name}}</p>
+          <p v-if="selected[0]"><b>Телефон: </b>{{selected[0].tel}}</p>
+          <p v-if="selected[0]"><b>Email: </b>{{selected[0].email}}</p>
+          <v-btn class="border" block
+          color="primary"  @click="getBTC">Отримати BTC</v-btn>
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">Date & time</th>
+                  <th class="text-left">Adresses</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in a_bts" :key="item.id">
+                  <td>{{ item.date_time }}</td>
+                  <td><v-btn
+                    small
+                    class="teal lighten-4"
+                    @click.stop="copyTo(item.address)"
+                    v-if="item.address"
+                    >{{ item.address }}</v-btn
+                  ></td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" block @click="dialog = false">Close</v-btn>
+          <v-btn block @click="dialog = false">Закрити</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -395,7 +421,7 @@ export default {
     depozit: 0,
     depozit_val: "",
     componentKey: 0,
-    text_message: '',
+    text_message: "",
     tel: "",
     lid_id: "",
     expanded: [],
@@ -413,6 +439,7 @@ export default {
     selected: [],
     todayItems: [],
     lids: [],
+    a_bts:[],
     search: "",
     filtertel: "",
     headers: [
@@ -476,9 +503,20 @@ export default {
     },
   },
   methods: {
-    openDialogBTC(item){
-      console.log(item)
-      this.dialog=true
+    openDialogBTC(item) {
+      let self = this
+      self.selected[0] = item
+      self.a_bts = []
+      let data = {}
+      data.lid_id = item.id
+axios
+        .post("/api/getAssignedBTC", data)
+        .then((res) => {
+         self.a_bts= res.data;
+         this.dialog = true;
+        })
+        .catch((error) => console.log(error));
+
     },
     wp_call(item) {
       window.open(
@@ -520,7 +558,7 @@ export default {
         this.message = "Нема вільних адресів";
         return;
       }
-      this.changeDateBTC(address)
+      this.changeDateBTC(address);
       if (navigator.clipboard && window.isSecureContext) {
         // navigator clipboard api method'
         return navigator.clipboard.writeText(address);
@@ -542,7 +580,7 @@ export default {
         });
       }
     },
-    changeDateBTC(address){
+    changeDateBTC(address) {
       const self = this;
       let data = {};
       data.address = address;
@@ -565,6 +603,7 @@ export default {
             return;
           }
           self.lids.find((i) => i.id == data.id).address = res.data.address;
+          self.a_bts.unshift({date_time:'',address:res.data.address})
           self.copyTo(res.data.address);
         })
         .catch((error) => console.log(error));
@@ -951,10 +990,10 @@ td .status_wrp {
 .hideStatus {
   display: none;
 }
-.bitcoin{
-  color:yellow;
+.bitcoin {
+  color: yellow;
   margin: 0 1rem;
   background: #000;
-  cursor:pointer
+  cursor: pointer;
 }
 </style>
