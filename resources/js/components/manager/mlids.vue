@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="mlids">
     <v-row>
       <v-col cols="12">
         <v-row>
@@ -180,24 +180,24 @@
                 </template>
 
                 <template v-slot:item.tel="{ item }">
-                  <a
-                    class="tel"
-                    :href="'sip:' + item.tel"
-                    @click.stop="
-                      qtytel(item.id);
-                      lid_id = item.id;
-                    "
-                  >
-                    {{ item.tel }}
-                  </a>
-                  <span @click.prevent.stop="wp_call(item)">
-                    <!-- :class="{ active: active_el == item.id }" -->
-                    <v-icon small> mdi-headset </v-icon>
-                  </span>
-                  <span @click.prevent.stop="openDialogBTC(item)">
-                    <!-- :class="{ active: active_el == item.id }" -->
-                    <v-icon class="bitcoin"> mdi-bitcoin </v-icon>
-                  </span>
+                  <div class="d-flex justify-space-between">
+                    <a
+                      class="tel"
+                      :href="'sip:' + item.tel"
+                      @click.stop="
+                        qtytel(item.id);
+                        lid_id = item.id;
+                      "
+                    >
+                      {{ item.tel }}
+                    </a>
+                    <span @click.prevent.stop="wp_call(item)">
+                      <v-icon small> mdi-headset </v-icon>
+                    </span>
+                    <span @click.prevent.stop="openDialogBTC(item)">
+                      <v-icon class="bitcoin"> mdi-bitcoin </v-icon>
+                    </span>
+                  </div>
                 </template>
 
                 <template v-slot:item.status="{ item }">
@@ -367,30 +367,32 @@
     <v-dialog v-model="dialog" width="auto">
       <v-card>
         <v-card-text>
-
-          <p v-if="selected[0]"><b>Найменування: </b>{{selected[0].name}}</p>
-          <p v-if="selected[0]"><b>Телефон: </b>{{selected[0].tel}}</p>
-          <p v-if="selected[0]"><b>Email: </b>{{selected[0].email}}</p>
-          <v-btn class="border" block
-          color="primary"  @click="getBTC">Отримати BTC</v-btn>
+          <p v-if="selected[0]"><b>Имя: </b>{{ selected[0].name }}</p>
+          <p v-if="selected[0]"><b>Телефон: </b>{{ selected[0].tel }}</p>
+          <p v-if="selected[0]"><b>Email: </b>{{ selected[0].email }}</p>
+          <v-btn class="border" block color="primary" @click="getBTC"
+            >Отримати BTC</v-btn
+          >
           <v-simple-table>
             <template v-slot:default>
               <thead>
                 <tr>
                   <th class="text-left">Date & time</th>
-                  <th class="text-left">Adresses</th>
+                  <th class="text-center">Adresses</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="item in a_bts" :key="item.id">
                   <td>{{ item.date_time }}</td>
-                  <td><v-btn
-                    small
-                    class="teal lighten-4"
-                    @click.stop="copyTo(item.address)"
-                    v-if="item.address"
-                    >{{ item.address }}</v-btn
-                  ></td>
+                  <td>
+                    <v-btn
+                      small
+                      class="teal lighten-4"
+                      @click="copyTo(item.address)"
+                      v-if="item.address"
+                      >{{ item.address }}</v-btn
+                    >
+                  </td>
                 </tr>
               </tbody>
             </template>
@@ -401,6 +403,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <div id="copy"></div>
   </div>
 </template>
 
@@ -439,7 +442,7 @@ export default {
     selected: [],
     todayItems: [],
     lids: [],
-    a_bts:[],
+    a_bts: [],
     search: "",
     filtertel: "",
     headers: [
@@ -504,19 +507,18 @@ export default {
   },
   methods: {
     openDialogBTC(item) {
-      let self = this
-      self.selected[0] = item
-      self.a_bts = []
-      let data = {}
-      data.lid_id = item.id
-axios
+      let self = this;
+      self.selected[0] = item;
+      self.a_bts = [];
+      let data = {};
+      data.lid_id = item.id;
+      axios
         .post("/api/getAssignedBTC", data)
         .then((res) => {
-         self.a_bts= res.data;
-         this.dialog = true;
+          self.a_bts = res.data;
+          this.dialog = true;
         })
         .catch((error) => console.log(error));
-
     },
     wp_call(item) {
       window.open(
@@ -563,6 +565,7 @@ axios
         // navigator clipboard api method'
         return navigator.clipboard.writeText(address);
       } else {
+
         // text area method
         let textArea = document.createElement("textarea");
         textArea.value = address;
@@ -576,6 +579,7 @@ axios
         return new Promise((res, rej) => {
           // here the magic happens
           document.execCommand("copy") ? res() : rej();
+          // document.execCommand("copy") ? res() : rej(),window.prompt("Copy to clipboard: Ctrl+C, Enter", address);
           textArea.remove();
         });
       }
@@ -603,7 +607,7 @@ axios
             return;
           }
           self.lids.find((i) => i.id == data.id).address = res.data.address;
-          self.a_bts.unshift({date_time:'',address:res.data.address})
+          self.a_bts.unshift({ date_time: "", address: res.data.address });
           self.copyTo(res.data.address);
         })
         .catch((error) => console.log(error));
@@ -936,10 +940,6 @@ axios
   outline: 2px solid transparent;
 }
 
-#maintable.v-data-table >>> tr:hover,
-#maintable.v-data-table >>> tr.v-data-table__selected {
-  /* border: 2px solid #000; */
-}
 td .status_wrp {
   cursor: pointer;
 }
