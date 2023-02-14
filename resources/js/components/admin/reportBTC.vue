@@ -264,6 +264,7 @@ export default {
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
       { text: "Поставщик", value: "p_name" },
+      { text: "Cоздан", value: "created_at" },
       { text: "Офис", value: "o_name" },
       { text: "Статус", value: "s_name" },
       { text: "Сумма lids", value: "depozit", class:"green--text"},

@@ -364,8 +364,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="dialog" width="auto">
-      <v-card>
+    <v-dialog v-model="dialog" width="600px">
+      <v-card class="pa-7">
         <v-card-text>
           <p v-if="selected[0]"><b>Имя: </b>{{ selected[0].name }}</p>
           <p v-if="selected[0]"><b>Телефон: </b>{{ selected[0].tel }}</p>
@@ -390,7 +390,7 @@
                       class="teal lighten-4"
                       @click="copyTo(item.address)"
                       v-if="item.address"
-                      >{{ item.address }}</v-btn
+                      >{{ item.address }} <v-icon> mdi-content-copy </v-icon></v-btn
                     >
                   </td>
                 </tr>
