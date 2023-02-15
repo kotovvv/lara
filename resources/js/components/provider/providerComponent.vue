@@ -1,6 +1,6 @@
 <template>
   <v-app id="provider">
-        <v-snackbar v-model="snackbar" top right timeout="-1">
+    <v-snackbar v-model="snackbar" top right timeout="-1">
       <v-card-text v-html="message"></v-card-text>
       <template v-slot:action="{ attrs }">
         <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
@@ -13,6 +13,7 @@
         <v-tabs v-model="tab">
           <v-tab>Report</v-tab>
           <v-tab>Import</v-tab>
+          <v-tab>CHECK DUBLIKATE MAIL</v-tab>
         </v-tabs>
       </v-row>
     </v-container>
@@ -311,7 +312,12 @@
               ></v-file-input>
             </v-col>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="provider_importlid" v-if="parse_csv.length">Upload</v-btn>
+            <v-btn
+              color="primary"
+              @click="provider_importlid"
+              v-if="parse_csv.length"
+              >Upload</v-btn
+            >
             <v-col cols="2" v-else>
               <download-csv :data="demo" delimiter=";" :name="'leads.csv'">
                 <v-btn depressed>Download demo</v-btn>
@@ -326,6 +332,37 @@
           ref="datatable"
           :loading="loading"
         ></v-data-table>
+      </v-tab-item>
+      <v-tab-item>
+        <v-container>
+          <v-row>
+            <v-col cols="6">
+              <v-textarea
+                class="border pa-3"
+                v-model="list_email"
+                label="Emails"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="6">
+              <v-file-input
+                v-model="file_emails"
+                label="загрузить txt"
+                show-size
+                truncate-length="24"
+                @change="onFileChange"
+              ></v-file-input>
+              <v-btn @click="checkEmails" v-if="list_email" class="primary"
+                >Проверить</v-btn
+              >
+              <div v-if="in_db.length" class="mt-4">
+                <v-btn @click="download('in')">Download In DB</v-btn>
+              </div>
+              <div v-if="out_db.length" class="mt-4">
+                <v-btn @click="download('out')">Download Out DB</v-btn>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-tab-item>
     </v-tabs-items>
   </v-app>
@@ -342,8 +379,12 @@ export default {
     downloadCsv: JsonCSV,
   },
   data: () => ({
+    list_email: "",
+    file_emails: [],
+    in_db: [],
+    out_db: [],
     message: "",
-    snackbar:false,
+    snackbar: false,
     popup: false,
     pie1: false,
     pie2: false,
@@ -377,7 +418,7 @@ export default {
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Тел.", align: "start", value: "tel" },
-       { text: "Афилятор", value: "afilyator" },
+      { text: "Афилятор", value: "afilyator" },
     ],
     headers: [
       { text: "Name", value: "name" },
@@ -389,6 +430,7 @@ export default {
     ],
     parse_header: [],
     parse_csv: [],
+    parse_txt_emails: [],
     lids: [],
     chartDataAll: {
       labels: [],
@@ -415,7 +457,7 @@ export default {
         name: "Myname",
         email: "myemail@test.com",
         tel: 1234567890,
-        afilyator:"Some afilyator"
+        afilyator: "Some afilyator",
       },
     ],
   }),
@@ -429,24 +471,63 @@ export default {
     },
   },
   methods: {
+    download(inout) {
+      if (inout == "in") {
+        let filename = "in_db.txt";
+        let text = this.in_db.toString().replace(/[,]/, "\n");
+      } else {
+        let filename = "out_db.txt";
+        let text = this.out_db.toString().replace(/[,]/, "\n");
+      }
+
+      let element = document.createElement("a");
+      element.setAttribute(
+        "href",
+        "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+      );
+      element.setAttribute("download", filename);
+
+      element.style.display = "none";
+      document.body.appendChild(element);
+
+      element.click();
+      document.body.removeChild(element);
+    },
+    checkEmails() {
+      let vm = this;
+      vm.in_db = [];
+      vm.out_db = [];
+      let data = [];
+      data = vm.list_email.replace(/[\r]/gm, "").split("\n");
+      axios
+        .post("api/checkEmails", data)
+        .then(function (res) {
+          vm.in_db = res.data;
+          vm.out_db = [...new Set(data.filter((i) => !res.data.includes(i)))];
+          console.log(vm.in_db, vm.out_db);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     provider_importlid() {
       let self = this;
       let data = {};
-      self.loading = true
-      self.message = ''
+      self.loading = true;
+      self.message = "";
       data.provider_id = self.user.id;
       data.lids = self.parse_csv;
 
       axios
         .post("api/provider_importlid", data)
         .then(function (res) {
-          if(res.status == 200){
-            self.snackbar = true
+          if (res.status == 200) {
+            self.snackbar = true;
             self.message = res.data;
-            self.loading = false
-            self.parse_csv = []
+            self.loading = false;
+            self.parse_csv = [];
           }
-          self.loading = false
+          self.loading = false;
         })
         .catch(function (error) {
           console.log(error);
@@ -470,20 +551,21 @@ export default {
         this.files = [];
       }
     },
+    txt2Array(txt) {
+      let vm = this;
+      vm.list_email = txt;
+      // let lines = vm.list_email.replace(/[\r]/gm, '').split("\n");
+    },
     csvJSON(csv) {
       var vm = this;
       var lines = csv.split("\n");
       var result = [];
       var headers = lines[0].split(";");
-      headers = ["name", "email", "tel","afilyator"];
-      // vm.parse_header = lines[0].split(",");
-      // lines[0].split(",").forEach(function (key) {
-      //   vm.sortOrders[key] = 1;
-      // });
+
+      headers = ["name", "email", "tel", "afilyator"];
 
       lines.map(function (line, indexLine) {
-        if (indexLine < 1) return; // Jump header line
-
+        //if (indexLine < 1) return; // Jump header line
         var obj = {};
         line = line.trim();
         var currentline = line.split(";");
@@ -491,12 +573,8 @@ export default {
         headers.map(function (header, indexHeader) {
           obj[header] = currentline[indexHeader];
         });
-
         result.push(obj);
       });
-
-      // result.pop(); // remove the last item because undefined values
-
       return result; // JavaScript object
     },
     createInput(file) {
@@ -512,18 +590,13 @@ export default {
       promise.then(
         (result) => {
           let vm = this;
-          /* handle a successful result */
-          // console.log(vm.csvJSON(this.fileinput));
-          // reader.onload = function(event) {
-          // arr.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
-          vm.parse_csv = vm.csvJSON(this.fileinput);
-
-          //console.log(vm.parse_csv);
-
-          // };
+          if (vm.tab == 2) {
+            vm.parse_txt_emails = vm.txt2Array(this.fileinput);
+          } else {
+            vm.parse_csv = vm.csvJSON(this.fileinput);
+          }
         },
         (error) => {
-          /* handle an error */
           console.log(error);
         }
       );

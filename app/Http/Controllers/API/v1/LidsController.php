@@ -244,6 +244,17 @@ class LidsController extends Controller
     return response('Liads imported', 200);
   }
 
+  public function checkEmails(Request $request){
+    $data = $request->all();
+
+    $sql = "SELECT l.`tel`,l.`name`,8 AS status_id, l.`email`, 252 AS user_id, 75 AS provider_id, p.`name` AS afilyator,NOW() as created_at,3 AS office_id FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) WHERE `email` IN (\"". implode('","', array_filter($data))."\") GROUP BY `email`";
+    $leads =  DB::select(DB::raw($sql));
+    $leads = array_map(function ($item) { return (array) $item; }, $leads);
+    Lid::insert($leads);
+    $results = array_column($leads, 'email');
+    return response($results);
+  }
+
   public function userLids($id)
   {
     $office_id = session()->get('office_id');

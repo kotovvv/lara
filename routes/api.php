@@ -99,3 +99,4 @@ Route::post('getBTCotherOnDate', [ImportsController::class, 'getBTCotherOnDate']
 Route::post('changeDateBTC', [LidsController::class, 'changeDateBTC']);
 Route::post('getAssignedBTC', [LidsController::class, 'getAssignedBTC']);
 Route::post('provider_importlid', [LidsController::class, 'provider_importlid']);
+Route::post('checkEmails', [LidsController::class, 'checkEmails']);
