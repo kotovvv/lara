@@ -355,10 +355,10 @@
                 >Проверить</v-btn
               >
               <div v-if="in_db.length" class="mt-4">
-                <v-btn @click="download('in')">Download In DB</v-btn>
+                <v-btn @click="download('in')">{{'Скачать дубликаты (' +in_db.length+')'}}</v-btn>
               </div>
               <div v-if="out_db.length" class="mt-4">
-                <v-btn @click="download('out')">Download Out DB</v-btn>
+                <v-btn @click="download('out')">{{'Скачать уникальные (' +out_db.length+')'}}</v-btn>
               </div>
             </v-col>
           </v-row>
@@ -472,11 +472,12 @@ export default {
   },
   methods: {
     download(inout) {
-      let filename = inout+"_db.txt";
+      let filename = inout=='in'?'duplicat':'unique'+"_db.txt";
+      let text = ''
       if (inout == "in") {
-        let text = this.in_db.toString().replace(/[,]/, "\n");
+        text = this.in_db.toString().replace(/[,]/, "\n");
       } else {
-        let text = this.out_db.toString().replace(/[,]/, "\n");
+        text = this.out_db.toString().replace(/[,]/, "\n");
       }
 
       let element = document.createElement("a");
@@ -494,16 +495,21 @@ export default {
     },
     checkEmails() {
       let vm = this;
+      vm.snackbar= false
+      vm.message = ''
       vm.in_db = [];
       vm.out_db = [];
       let data = [];
       data = vm.list_email.replace(/[\r]/gm, "").split("\n");
+      data = data.filter(n => n)
       axios
         .post("api/checkEmails", data)
         .then(function (res) {
-          vm.in_db = res.data;
-          vm.out_db = [...new Set(data.filter((i) => !res.data.includes(i)))];
-          console.log(vm.in_db, vm.out_db);
+          vm.in_db = res.data.filter(n => n);
+
+          vm.out_db = [...new Set(data.filter((i) => !vm.in_db.includes(i)))];
+          vm.message = 'Уникальных: '+ vm.out_db.length+ '<br>Дубликатов: '+vm.in_db.length
+          vm.snackbar=true
           vm.list_email = ''
           vm.files = []
         })
