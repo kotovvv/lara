@@ -505,6 +505,8 @@ export default {
           vm.in_db = res.data;
           vm.out_db = [...new Set(data.filter((i) => !res.data.includes(i)))];
           console.log(vm.in_db, vm.out_db);
+          vm.list_email = ''
+          vm.files = []
         })
         .catch(function (error) {
           console.log(error);
