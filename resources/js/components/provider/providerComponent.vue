@@ -472,11 +472,10 @@ export default {
   },
   methods: {
     download(inout) {
+      let filename = inout+"_db.txt";
       if (inout == "in") {
-        let filename = "in_db.txt";
         let text = this.in_db.toString().replace(/[,]/, "\n");
       } else {
-        let filename = "out_db.txt";
         let text = this.out_db.toString().replace(/[,]/, "\n");
       }
 
