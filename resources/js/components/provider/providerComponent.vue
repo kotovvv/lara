@@ -352,7 +352,11 @@
                 @change="onFileChange"
               ></v-file-input>
               <v-btn @click="checkEmails" v-if="list_email" class="primary"
-                >Проверить</v-btn
+                >Проверить<v-progress-circular
+                v-if="loading"
+      indeterminate
+      color="amber"
+    ></v-progress-circular></v-btn
               >
               <div v-if="in_db.length" class="mt-4">
                 <v-btn @click="download('in')">{{'Скачать дубликаты (' +in_db.length+')'}}</v-btn>
@@ -496,6 +500,7 @@ export default {
     checkEmails() {
       let vm = this;
       vm.snackbar= false
+      vm.loading = true
       vm.message = ''
       vm.in_db = [];
       vm.out_db = [];
@@ -510,6 +515,7 @@ export default {
           vm.out_db = [...new Set(data.filter((i) => !vm.in_db.includes(i)))];
           vm.message = 'Уникальных: '+ vm.out_db.length+ '<br>Дубликатов: '+vm.in_db.length
           vm.snackbar=true
+          vm.loading = false
           vm.list_email = ''
           vm.files = []
         })
