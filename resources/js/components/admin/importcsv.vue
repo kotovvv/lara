@@ -130,7 +130,7 @@
           <v-col cols="12" v-if="leads.length">
             <v-row>
               <v-col>
-                <div class="wrp__statuses">
+                <div class="wrp__statuses" id="wrp_stat">
                   <template v-for="(i, x) in Statuses">
                     <div class="status_wrp" :key="x">
                       <b
@@ -433,6 +433,8 @@ export default {
           });
           self.filterStatuses();
           self.loading = false;
+          const el = document.getElementById('wrp_stat');
+      el.scrollIntoView({behavior: "smooth"});
         })
         .catch(function (error) {
           console.log(error);

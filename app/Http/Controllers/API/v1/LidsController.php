@@ -378,7 +378,13 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   {
     $req = $request->all();
     if (isset($req['provider_id']) && isset($req['start']) && isset($req['end'])) {
-      return Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$req['start'], $req['end']])->get();
+      $lids =  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$req['start'], $req['end']])->get();
+      if($lids->count()){
+        return $lids;
+      }else{
+        $date_end = substr($req['end'],0,10);
+        return  Lid::where('provider_id', (int) $req['provider_id'])->whereDate('created_at', $date_end)->get();
+      }
     }
     return response('Some not good(', 404);
   }
