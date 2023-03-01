@@ -1,154 +1,222 @@
  <template>
   <div>
-    <v-tabs
-      v-model="tab"
-      background-color="primary"
-      dark
-    >
-      <v-tab>
-        Провайдер
-      </v-tab>
-      <v-tab v-if="$attrs.user.role_id==1&&$attrs.user.group_id==0">
+    <v-tabs v-model="tab" background-color="primary" dark>
+      <v-tab> Провайдер </v-tab>
+      <v-tab v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
         ВТС
       </v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item>
-    <v-row>
-      <v-col cols="2">
-        <v-select
-          v-model="selectedProvider"
-          :items="providers"
-          label="Провайдер"
-          item-text="name"
-          item-value="id"
-        ></v-select>
-      </v-col>
-      <v-col cols="3" v-if="selectedProvider">
-        <v-file-input
-          v-model="files"
-          ref="fileupload"
-          label="загрузить CSV"
-          show-size
-          truncate-length="24"
-          @change="onFileChange"
-        ></v-file-input>
-      </v-col>
-      <v-col cols="3" v-if="parse_csv.length">
-        <v-select
-          v-model="selectedStatus"
-          :items="statuses"
-          label="Статус"
-          item-text="name"
-          item-value="id"
-        ></v-select>
-      </v-col>
-      <v-col cols="4" v-if="parse_csv.length">
-        <v-textarea v-model="message" label="Сообщение" rows="1"></v-textarea>
-      </v-col>
-    </v-row>
+        <v-row>
+          <v-col cols="2">
+            <v-select
+              v-model="selectedProvider"
+              :items="providers"
+              label="Провайдер"
+              item-text="name"
+              item-value="id"
+            ></v-select>
+          </v-col>
+          <v-col cols="3" v-if="selectedProvider">
+            <v-file-input
+              v-model="files"
+              ref="fileupload"
+              label="загрузить CSV"
+              show-size
+              truncate-length="24"
+              @change="onFileChange"
+            ></v-file-input>
+          </v-col>
+          <v-col cols="3" v-if="parse_csv.length">
+            <v-select
+              v-model="selectedStatus"
+              :items="statuses"
+              label="Статус"
+              item-text="name"
+              item-value="id"
+            ></v-select>
+          </v-col>
+          <v-col cols="4" v-if="parse_csv.length">
+            <v-textarea
+              v-model="message"
+              label="Сообщение"
+              rows="1"
+            ></v-textarea>
+          </v-col>
+        </v-row>
 
-    <v-main v-if="parse_csv.length && files">
-      <v-row>
-        <v-col cols="8">
-          <v-card>
-            <v-container>
-              <v-row>
-                <v-col cols="4">
-                  <v-card-title>
-                    <v-text-field
-                      v-model="search"
-                      append-icon="mdi-magnify"
-                      label="Поиск"
-                      single-line
-                      hide-details
-                    ></v-text-field>
-                  </v-card-title>
-                </v-col>
-                <v-col cols="3">
-                  <v-card-title>
-                    <v-text-field
-                      v-model.lazy.trim="filtertel"
-                      append-icon="mdi-phone"
-                      label="Начальные цифры"
-                      single-line
-                      hide-details
-                    ></v-text-field>
-                  </v-card-title>
-                </v-col>
-              </v-row>
-            </v-container>
-            <v-data-table
-              v-model.lazy.trim="selected"
-              :headers="headers"
-              :search="search"
-              :single-select="false"
-              item-key="tel+afilyator"
-              show-select
-              @click:row="clickrow"
-              :items="filteredItems"
-              ref="datatable"
-              :loading="loading"
-            ></v-data-table>
-          </v-card>
-        </v-col>
-        <v-col cols="4">
-          <v-card height="100%" class="pa-5">
-            Укажите пользователя для лидов
-            <v-list>
-              <v-radio-group
-                @change="putSelectedLidsDB"
-                ref="radiogroup"
-                v-model="userid"
-                v-bind="users"
-                id="usersradiogroup"
-              >
-                <v-radio :value="user.id" v-for="user in users" :key="user.id">
-                  <template v-slot:label>
-                    {{ user.fio }}
-                    <v-badge
-                      :content="user.hmlids"
-                      :value="user.hmlids"
-                      :color="usercolor(user)"
-                      overlap
+        <v-main v-if="parse_csv.length && files">
+          <v-row>
+            <v-col cols="8">
+              <v-card>
+                <v-container>
+                  <v-row>
+                    <v-col cols="4">
+                      <v-card-title>
+                        <v-text-field
+                          v-model="search"
+                          append-icon="mdi-magnify"
+                          label="Поиск"
+                          single-line
+                          hide-details
+                        ></v-text-field>
+                      </v-card-title>
+                    </v-col>
+                    <v-col cols="3">
+                      <v-card-title>
+                        <v-text-field
+                          v-model.lazy.trim="filtertel"
+                          append-icon="mdi-phone"
+                          label="Начальные цифры"
+                          single-line
+                          hide-details
+                        ></v-text-field>
+                      </v-card-title>
+                    </v-col>
+                  </v-row>
+                </v-container>
+                <v-data-table
+                  v-model.lazy.trim="selected"
+                  :headers="headers"
+                  :search="search"
+                  :single-select="false"
+                  item-key="tel+afilyator"
+                  show-select
+                  :items="filteredItems"
+                  ref="datatable"
+                  :loading="loading"
+                ></v-data-table>
+              </v-card>
+            </v-col>
+            <v-col cols="4">
+              <v-card height="100%" class="pa-5">
+                Укажите пользователя для лидов
+                <v-list>
+                  <v-radio-group
+                    @change="putSelectedLidsDB"
+                    ref="radiogroup"
+                    v-model="userid"
+                    v-bind="users"
+                    id="usersradiogroup"
+                  >
+                    <v-radio
+                      :value="user.id"
+                      v-for="user in users"
+                      :key="user.id"
                     >
-                      <v-icon large v-if="user.role_id === 2">
-                        mdi-account-group-outline
-                      </v-icon>
-                      <v-icon large v-else> mdi-account-outline </v-icon>
-                    </v-badge>
+                      <template v-slot:label>
+                        {{ user.fio }}
+                        <v-badge
+                          :content="user.hmlids"
+                          :value="user.hmlids"
+                          :color="usercolor(user)"
+                          overlap
+                        >
+                          <v-icon large v-if="user.role_id === 2">
+                            mdi-account-group-outline
+                          </v-icon>
+                          <v-icon large v-else> mdi-account-outline </v-icon>
+                        </v-badge>
+                      </template>
+                    </v-radio>
+                  </v-radio-group>
+                </v-list>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-main>
+        <v-row v-else>
+          <v-col cols="12" v-if="leads.length">
+            <v-row>
+              <v-col>
+                <div class="wrp__statuses">
+                  <template v-for="(i, x) in Statuses">
+                    <div class="status_wrp" :key="x">
+                      <b
+                        :style="{
+                          background: i.color,
+                          outline: '1px solid' + i.color,
+                        }"
+                        >{{ i.hm }}</b
+                      >
+                      <span>{{ i.name }}</span>
+                    </div>
                   </template>
-                </v-radio>
-              </v-radio-group>
-            </v-list>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-main>
-    <v-row v-else>
-      <v-col>
-        <v-data-table
-          :headers="import_headers"
-          item-key="id"
-          :items="imports"
-          ref="importtable"
-        >
-          <template v-slot:item.id="{ item }"> </template>
-        </v-data-table>
-      </v-col>
-    </v-row>
+                </div>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="12">
+            <v-progress-linear
+              :active="loading"
+              indeterminate
+              color="purple"
+            ></v-progress-linear>
+          </v-col>
+          <v-col cols="12" v-if="leads.length">
+            <div class="border pa-4">
+              <v-data-table
+                id="tablids"
+                :headers="headers_leads"
+                item-key="id"
+                :items="leads"
+                :footer-props="{
+                  'items-per-page-options': [],
+                  'items-per-page-text': '',
+                }"
+                :disable-items-per-page="true"
+                :loading="loading"
+                loading-text="Загружаю... Ожидайте"
+              >
+                <template
+                  v-slot:top="{ pagination, options, updateOptions }"
+                  :footer-props="{
+                    'items-per-page-options': [50, 10, 100, 250, 500, -1],
+                    'items-per-page-text': '',
+                  }"
+                >
+                  <v-row>
+
+                    <!-- <v-spacer></v-spacer> -->
+                    <v-col cols="3" class="mt-3">
+                      <v-data-footer
+                        :pagination="pagination"
+                        :options="options"
+                        @update:options="updateOptions"
+                        :items-per-page-options="[50, 10, 100, 250, 500, -1]"
+                        :items-per-page-text="''"
+                      />
+                    </v-col>
+                  </v-row>
+                </template>
+              </v-data-table>
+            </div>
+          </v-col>
+          <v-col cols="12">
+            <v-data-table
+              :headers="import_headers"
+              item-key="id"
+              :items="imports"
+              ref="importtable"
+              @click:row="clickrow"
+            >
+              <template v-slot:item.id="{ item }"> </template>
+            </v-data-table>
+          </v-col>
+        </v-row>
       </v-tab-item>
-      <v-tab-item v-if="$attrs.user.role_id==1&&$attrs.user.group_id==0">
-<importBTC></importBTC>
+      <v-tab-item v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
+        <importBTC></importBTC>
       </v-tab-item>
     </v-tabs-items>
-
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import importBTC from "./importBTC";
+import _ from "lodash";
 export default {
   data: () => ({
     message: "",
@@ -165,6 +233,17 @@ export default {
     files: [],
     search: "",
     filtertel: "",
+        headers_leads: [
+      { text: "Имя", value: "name" },
+      { text: "Email", value: "email" },
+      { text: "Телефон.", align: "start", value: "tel" },
+      // { text: "Афилятор", value: "afilyator" },
+      // { text: "Поставщик", value: "provider" },
+      // { text: "Менеджер", value: "user" },
+      // { text: "Создан", value: "date_created" },
+      { text: "Статус", value: "status" },
+
+    ],
     headers: [
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
@@ -183,16 +262,20 @@ export default {
     parse_csv: [],
     sortOrders: {},
     sortKey: "tel",
-    tab:0
+    tab: 0,
+    Statuses: [],
+    leads: [],
   }),
-  watch:{
-    selectedProvider: function(newval){
-      this.users = []
-      this.related_user = []
-      let rel_user = this.providers.find((p) => p.id == newval).related_users_id
-      if (rel_user.length > 2 ) {
-this.related_user = JSON.parse(rel_user)
-this.getUsers();
+  watch: {
+    selectedProvider: function (newval) {
+      this.users = [];
+      this.related_user = [];
+      let rel_user = this.providers.find(
+        (p) => p.id == newval
+      ).related_users_id;
+      if (rel_user.length > 2) {
+        this.related_user = JSON.parse(rel_user);
+        this.getUsers();
       }
     },
   },
@@ -211,6 +294,25 @@ this.getUsers();
     },
   },
   methods: {
+    filterStatuses() {
+      const self = this;
+      self.Statuses = [];
+      let stord = this.leads;
+      stord = Object.entries(_.groupBy(stord, "status"));
+      stord.map(function (i) {
+        //i[0]//name
+        //i[1]//array
+        let el = self.statuses.find((s) => s.name == i[0]);
+        self.Statuses.push({
+          id: el.id,
+          name: i[0],
+          hm: i[1].length,
+          order: el.order,
+          color: el.color,
+        });
+      });
+      self.Statuses = _.orderBy(self.Statuses, "order");
+    },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
     },
@@ -254,13 +356,10 @@ this.getUsers();
 
             axios
               .post("api/imports", info)
-              .then(function (response) {
-                // console.log(response);
-              })
+              .then(function (response) {})
               .catch(function (error) {
                 console.log(error);
               });
-            //====================
           })
           .catch(function (error) {
             console.log(error);
@@ -273,7 +372,6 @@ this.getUsers();
         axios
           .post("api/Lid/newlids", send)
           .then(function (response) {
-            // console.log(response);
             self.parse_csv = self.parse_csv.filter(
               (ar) =>
                 !self.$refs.datatable.$children[0].filteredItems.find(
@@ -288,8 +386,8 @@ this.getUsers();
             //======================
             let info = {};
 
-            info.start = start;
-            info.end = new Date().toJSON().slice(0, 19).replace("T", " ");
+            info.start = response.data.date_start;
+            info.end = response.data.date_end;
             info.provider_id = self.selectedProvider;
             info.user_id = self.$attrs.user.id;
             info.message = self.message;
@@ -302,7 +400,6 @@ this.getUsers();
               .catch(function (error) {
                 console.log(error);
               });
-            //====================
           })
           .catch(function (error) {
             console.log(error);
@@ -316,15 +413,41 @@ this.getUsers();
       this.$refs.radiogroup.lazyValue = null;
       this.getUsers();
     },
-    clickrow() {
-      console.log("You can click on row))");
+    clickrow(item) {
+      console.log(item)
+      let self = this;
+      let data = {};
+      self.loading = true;
+      data.provider_id = item.provider_id;
+      data.start = item.start;
+      data.end = item.end;
+
+      axios
+        .post("api/getlidsImportedProvider", data)
+        .then(function (response) {
+          self.leads = response.data;
+          self.leads.map(function (e) {
+            e.date_created = e.created_at.substring(0, 10);
+            if (e.status_id)
+              e.status = self.statuses.find((s) => s.id == e.status_id).name;
+          });
+          self.filterStatuses();
+          self.loading = false;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     getProviders() {
       let self = this;
       axios
         .get("/api/provider")
         .then((res) => {
-          self.providers = res.data.map(({ name, id, related_users_id}) => ({ name, id, related_users_id }));
+          self.providers = res.data.map(({ name, id, related_users_id }) => ({
+            name,
+            id,
+            related_users_id,
+          }));
         })
         .catch((error) => console.log(error));
     },
@@ -334,11 +457,12 @@ this.getUsers();
         .get("/api/imports")
         .then((res) => {
           self.imports = res.data.map(
-            ({ id, start, end, provider, user, message }) => ({
+            ({ id, start, end, provider, provider_id, user, message }) => ({
               id,
               start,
               end,
               provider,
+              provider_id,
               user,
               message,
             })
@@ -350,7 +474,7 @@ this.getUsers();
       let self = this;
 
       axios
-        .post("/api/getusers",self.related_user)
+        .post("/api/getusers", self.related_user)
         .then((res) => {
           self.users = res.data.map(({ name, id, role_id, fio, hmlids }) => ({
             name,
@@ -367,15 +491,18 @@ this.getUsers();
       axios
         .get("/api/statuses")
         .then((res) => {
-          self.statuses = res.data.map(({ name, id }) => ({
+          self.statuses = res.data.map(({ uname, name, id, color, order }) => ({
+            uname,
             name,
             id,
+            color,
+            order,
           }));
         })
         .catch((error) => console.log(error));
     },
     onFileChange(f) {
-      if (f == null) return
+      if (f == null) return;
       const ftype = [
         "text/comma-separated-values",
         "text/csv",
@@ -440,7 +567,12 @@ this.getUsers();
           // arr.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
           vm.parse_csv = vm
             .csvJSON(this.fileinput)
-            .filter((v, i, a) => a.findIndex((t) => t.afilyator+t.tel == v.afilyator+v.tel) === i);
+            .filter(
+              (v, i, a) =>
+                a.findIndex(
+                  (t) => t.afilyator + t.tel == v.afilyator + v.tel
+                ) === i
+            );
           // console.log(vm.parse_csv);
 
           // };
@@ -452,7 +584,7 @@ this.getUsers();
       );
     },
   },
-    components: {
+  components: {
     importBTC,
   },
 };

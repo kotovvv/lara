@@ -196,6 +196,8 @@ class LidsController extends Controller
 
   public function newlids(Request $request)
   {
+    $res = [];
+    $res['date_start'] = Now();
     $data = $request->all();
     // Debugbar::info($data['data']);
     foreach ($data['data'] as $lid) {
@@ -241,15 +243,19 @@ class LidsController extends Controller
       }
       $n_lid->save();
     }
-    return response('Liads imported', 200);
+    $res['date_end'] = Now();
+    return response($res, 200);
   }
 
-  public function checkEmails(Request $request){
+  public function checkEmails(Request $request)
+  {
     $data = $request->all();
-DB::select(DB::raw("SET SQL_MODE = '';"));
-    $sql = "SELECT l.`tel`,l.`name`,8 AS status_id, l.`email`, 252 AS user_id, 75 AS provider_id, p.`name` AS afilyator,NOW() as created_at,3 AS office_id FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) WHERE `email` IN (\"". implode('","', array_filter($data))."\") GROUP BY `email`";
+    DB::select(DB::raw("SET SQL_MODE = '';"));
+    $sql = "SELECT l.`tel`,l.`name`,8 AS status_id, l.`email`, 252 AS user_id, 75 AS provider_id, p.`name` AS afilyator,NOW() as created_at,3 AS office_id FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) WHERE `email` IN (\"" . implode('","', array_filter($data)) . "\") GROUP BY `email`";
     $leads =  DB::select(DB::raw($sql));
-    $leads = array_map(function ($item) { return (array) $item; }, $leads);
+    $leads = array_map(function ($item) {
+      return (array) $item;
+    }, $leads);
     Lid::insert($leads);
     $results = array_column($leads, 'email');
     return response($results);
@@ -366,6 +372,15 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     return Lid::select('id')->where('provider_id', $f_key->id)->whereBetween('created_at', [$req['start'], $req['end']])->get();
+  }
+
+  public function getlidsImportedProvider(Request $request)
+  {
+    $req = $request->all();
+    if (isset($req['provider_id']) && isset($req['start']) && isset($req['end'])) {
+      return Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$req['start'], $req['end']])->get();
+    }
+    return response('Some not good(', 404);
   }
 
 
@@ -509,8 +524,6 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $res['status'] = 'OK';
     $res['id'] = $id;
     $res['insert'] = $insert;
-
-
     return response($res);
   }
 
@@ -881,12 +894,11 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
   {
     $req = $request->all();
     $btc = (object)[];
-    if( session()->get('office_id')){
-          $sql = "SELECT `id`,`date_time`,`address` FROM `btc_list` WHERE `lid_id` = '" . (int) $req['lid_id'] . "'";
-    $btc = DB::select(DB::raw($sql));
-    return response($btc);
+    if (session()->get('office_id')) {
+      $sql = "SELECT `id`,`date_time`,`address` FROM `btc_list` WHERE `lid_id` = '" . (int) $req['lid_id'] . "'";
+      $btc = DB::select(DB::raw($sql));
+      return response($btc);
     }
-
   }
 
 
