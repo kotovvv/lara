@@ -504,13 +504,13 @@ export default {
       vm.message = ''
       vm.in_db = [];
       vm.out_db = [];
-      let data = [];
-      data = vm.list_email.replace(/[\r]/gm, "").split("\n");
-      data = data.filter(n => n)
+      let data = {};
+      data_list = vm.list_email.replace(/[\r]/gm, "").split("\n");
+      data.emails = data_list.filter((n) => n);
       axios
         .post("api/checkEmails", data)
         .then(function (res) {
-          vm.in_db = res.data.filter(n => n);
+          vm.in_db = res.data.emails.filter(n => n);
 
           vm.out_db = [...new Set(data.filter((i) => !vm.in_db.includes(i)))];
           vm.message = 'Уникальных: '+ vm.out_db.length+ '<br>Дубликатов: '+vm.in_db.length

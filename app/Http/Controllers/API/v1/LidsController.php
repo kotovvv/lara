@@ -250,14 +250,21 @@ class LidsController extends Controller
   public function checkEmails(Request $request)
   {
     $data = $request->all();
+    $results = [];
+    if (isset($data['check'])) {
+      $sql = "SELECT l.`id`, l.`tel`,l.`name`, l.`status_id`, s.`name` status_name, l.`email`, u.`name` user_name, p.`name` provider_name, l.`afilyator`, o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) WHERE `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\")";
+      $results['leads'] =  DB::select(DB::raw($sql));
+      return response($results);
+    }
+
     DB::select(DB::raw("SET SQL_MODE = '';"));
-    $sql = "SELECT l.`tel`,l.`name`,8 AS status_id, l.`email`, 252 AS user_id, 75 AS provider_id, p.`name` AS afilyator,NOW() as created_at,3 AS office_id FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) WHERE `email` IN (\"" . implode('","', array_filter($data)) . "\") GROUP BY `email`";
+    $sql = "SELECT l.`tel`,l.`name`,8 AS status_id, l.`email`, 252 AS user_id, 75 AS provider_id, p.`name` AS afilyator,NOW() as created_at,3 AS office_id FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) WHERE `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\") GROUP BY `email`";
     $leads =  DB::select(DB::raw($sql));
     $leads = array_map(function ($item) {
       return (array) $item;
     }, $leads);
     Lid::insert($leads);
-    $results = array_column($leads, 'email');
+    $results['emails'] = array_column($leads, 'email');
     return response($results);
   }
 
@@ -379,12 +386,12 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $req = $request->all();
     if (isset($req['provider_id']) && isset($req['start']) && isset($req['end'])) {
       $lids =  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$req['start'], $req['end']])->get();
-      if($lids->count()){
+      if ($lids->count()) {
         return $lids;
-      }else{
+      } else {
         // $date_end = substr($req['end'],0,10);
         $date_start = date('Y-m-d H:i:s', strtotime('+60 minutes', strtotime($req['end'])));
-        $date_end =date('Y-m-d H:i:s', strtotime('+1 hour +4 minutes', strtotime($req['end'])));
+        $date_end = date('Y-m-d H:i:s', strtotime('+1 hour +4 minutes', strtotime($req['end'])));
         return  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$date_start, $date_end])->get();
       }
     }

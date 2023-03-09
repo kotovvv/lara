@@ -5,6 +5,7 @@
       <v-tab v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
         ВТС
       </v-tab>
+      <v-tab>CHECK DUBLIKATE MAIL</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item>
@@ -154,6 +155,17 @@
               color="purple"
             ></v-progress-linear>
           </v-col>
+          <v-col cols="12">
+            <v-data-table
+              :headers="import_headers"
+              item-key="id"
+              :items="imports"
+              ref="importtable"
+              @click:row="clickrow"
+            >
+              <template v-slot:item.id="{ item }"> </template>
+            </v-data-table>
+          </v-col>
           <v-col cols="12" v-if="leads.length">
             <div class="border pa-4">
               <v-data-table
@@ -177,7 +189,6 @@
                   }"
                 >
                   <v-row>
-
                     <!-- <v-spacer></v-spacer> -->
                     <v-col cols="3" class="mt-3">
                       <v-data-footer
@@ -193,21 +204,48 @@
               </v-data-table>
             </div>
           </v-col>
-          <v-col cols="12">
-            <v-data-table
-              :headers="import_headers"
-              item-key="id"
-              :items="imports"
-              ref="importtable"
-              @click:row="clickrow"
-            >
-              <template v-slot:item.id="{ item }"> </template>
-            </v-data-table>
-          </v-col>
         </v-row>
       </v-tab-item>
       <v-tab-item v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
         <importBTC></importBTC>
+      </v-tab-item>
+      <v-tab-item>
+        <v-container>
+          <v-row>
+            <v-col cols="6">
+              <v-textarea
+                class="border pa-3"
+                v-model="list_email"
+                label="Emails"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="6">
+              <v-file-input
+                v-model="file_emails"
+                label="загрузить txt"
+                show-size
+                truncate-length="24"
+                @change="onFileChange"
+              ></v-file-input>
+              <v-btn @click="checkEmails" v-if="list_email" class="primary"
+                >Проверить<v-progress-circular
+                  v-if="loading"
+                  indeterminate
+                  color="amber"
+                ></v-progress-circular
+              ></v-btn>
+            </v-col>
+            <v-col cols="12" v-if="duplicate_leads.length">
+              <v-data-table
+                :headers="duplicate_leads_headers"
+                item-key="id"
+                :items="duplicate_leads"
+                ref="duplicatetable"
+              >
+              </v-data-table>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-tab-item>
     </v-tabs-items>
   </div>
@@ -219,6 +257,8 @@ import importBTC from "./importBTC";
 import _ from "lodash";
 export default {
   data: () => ({
+    list_email: "",
+    file_emails: [],
     message: "",
     loading: false,
     userid: null,
@@ -233,7 +273,7 @@ export default {
     files: [],
     search: "",
     filtertel: "",
-        headers_leads: [
+    headers_leads: [
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
@@ -242,7 +282,6 @@ export default {
       // { text: "Менеджер", value: "user" },
       // { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status" },
-
     ],
     headers: [
       { text: "Имя", value: "name" },
@@ -258,6 +297,17 @@ export default {
       { text: "Хто імпортував", value: "user" },
       { text: "Коментар", value: "message" },
     ],
+    duplicate_leads_headers: [
+      { text: "Афилятор", value: "afilyator" },
+      { text: "Емаил", value: "email" },
+      { text: "Имя", value: "name" },
+      { text: "Оффис", value: "office_name" },
+      { text: "Провайдер", value: "provider_name" },
+      { text: "Статус", value: "status_name" },
+      { text: "Тел", value: "tel" },
+      { text: "Оператор", value: "user_name" },
+    ],
+    duplicate_leads: [],
     parse_header: [],
     parse_csv: [],
     sortOrders: {},
@@ -294,6 +344,27 @@ export default {
     },
   },
   methods: {
+    checkEmails() {
+      let vm = this;
+      vm.loading = true;
+      vm.duplicate_leads = [];
+      let data = {};
+      let data_list = []
+      data_list = vm.list_email.replace(/[\r]/gm, "").split("\n");
+      data.emails = data_list.filter((n) => n);
+      data.check = 1;
+      axios
+        .post("api/checkEmails", data)
+        .then(function (res) {
+          vm.duplicate_leads = res.data.leads;
+          vm.loading = false;
+          vm.list_email = "";
+          vm.files = [];
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     filterStatuses() {
       const self = this;
       self.Statuses = [];
@@ -414,7 +485,7 @@ export default {
       this.getUsers();
     },
     clickrow(item) {
-      console.log(item)
+      console.log(item);
       let self = this;
       let data = {};
       self.loading = true;
@@ -433,8 +504,8 @@ export default {
           });
           self.filterStatuses();
           self.loading = false;
-          const el = document.getElementById('wrp_stat');
-      el.scrollIntoView({behavior: "smooth"});
+          const el = document.getElementById("wrp_stat");
+          el.scrollIntoView({ behavior: "smooth" });
         })
         .catch(function (error) {
           console.log(error);
@@ -521,6 +592,10 @@ export default {
         this.files = [];
       }
     },
+    txt2Array(txt) {
+      let vm = this;
+      vm.list_email = txt;
+    },
     csvJSON(csv) {
       var vm = this;
       var lines = csv.split("\n");
@@ -563,10 +638,10 @@ export default {
       promise.then(
         (result) => {
           let vm = this;
-          /* handle a successful result */
-          // console.log(vm.csvJSON(this.fileinput));
-          // reader.onload = function(event) {
-          // arr.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
+          console.log(vm.tab)
+          if (vm.tab == 2) {
+            vm.parse_txt_emails = vm.txt2Array(vm.fileinput);
+          } else {
           vm.parse_csv = vm
             .csvJSON(this.fileinput)
             .filter(
@@ -575,9 +650,7 @@ export default {
                   (t) => t.afilyator + t.tel == v.afilyator + v.tel
                 ) === i
             );
-          // console.log(vm.parse_csv);
-
-          // };
+            }
         },
         (error) => {
           /* handle an error */
