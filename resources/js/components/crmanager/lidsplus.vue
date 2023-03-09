@@ -811,7 +811,9 @@ export default {
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
-            e.date_updated = e.updated_at.substring(0, 10);
+            if(e.updated_at){
+              e.date_updated = e.updated_at.substring(0, 10);
+            }
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
@@ -1005,7 +1007,9 @@ export default {
           self.lids = Object.entries(res.data).map((e) => e[1]);
           self.lids.map(function (e) {
             e.date_created = e.created_at.substring(0, 10);
-            e.date_updated = e.updated_at.substring(0, 10);
+            if(e.updated_at){
+              e.date_updated = e.updated_at.substring(0, 10);
+            }
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
@@ -1059,7 +1063,9 @@ export default {
           self.lids = Object.entries(res.data).map((e) => e[1]);
           self.lids.map(function (e) {
             e.date_created = e.created_at.substring(0, 10);
-            e.date_updated = e.updated_at.substring(0, 10);
+            if(e.updated_at){
+              e.date_updated = e.updated_at.substring(0, 10);
+            }
             if (e.status_id) {
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
             }
@@ -1117,7 +1123,9 @@ export default {
 
           self.lids.map(function (e) {
             e.date_created = e.created_at.substring(0, 10);
-            e.date_updated = e.updated_at.substring(0, 10);
+            if(e.updated_at){
+              e.date_updated = e.updated_at.substring(0, 10);
+            }
             if (self.users.find((u) => u.id == e.user_id)) {
               e.user = self.users.find((u) => u.id == e.user_id).fio;
             }
