@@ -349,9 +349,7 @@ export default {
       vm.loading = true;
       vm.duplicate_leads = [];
       let data = {};
-      let data_list = []
-      data_list = vm.list_email.replace(/[\r]/gm, "").split("\n");
-      data.emails = data_list.filter((n) => n);
+      data.emails = vm.list_email.replace(/[\r]/gm, "").split("\n").filter((n) => n);
       data.check = 1;
       axios
         .post("api/checkEmails", data)

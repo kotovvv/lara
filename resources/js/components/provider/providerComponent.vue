@@ -505,14 +505,13 @@ export default {
       vm.in_db = [];
       vm.out_db = [];
       let data = {};
-      data_list = vm.list_email.replace(/[\r]/gm, "").split("\n");
-      data.emails = data_list.filter((n) => n);
+      data.emails = vm.list_email.replace(/(\r)/gm, "").split("\n").filter((n) => n);
       axios
         .post("api/checkEmails", data)
         .then(function (res) {
           vm.in_db = res.data.emails.filter(n => n);
 
-          vm.out_db = [...new Set(data.filter((i) => !vm.in_db.includes(i)))];
+          vm.out_db = [...new Set(data.emails.filter((i) => !vm.in_db.includes(i)))];
           vm.message = 'Уникальных: '+ vm.out_db.length+ '<br>Дубликатов: '+vm.in_db.length
           vm.snackbar=true
           vm.loading = false
