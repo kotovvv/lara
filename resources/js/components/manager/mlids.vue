@@ -11,11 +11,12 @@
                 label="Поиск"
                 outlined
                 rounded
+                @click:append="getLidsPost($props.user.id)"
               ></v-text-field>
             </v-card-title>
           </v-col>
           <v-col cols="3">
-            Фильтр по поставщикам
+            Запрос по поставщикам
             <v-select
               v-model="filterProviders"
               :items="providers"
@@ -23,20 +24,30 @@
               item-value="id"
               outlined
               rounded
-            ></v-select>
+              multiple
+              @change="getLidsPost($props.user.id)"
+            >
+                        <template v-slot:selection="{ item, index }">
+              <span v-if="index <= 2">{{ item.name }} </span>
+              <span v-if="index > 2" class="grey--text text-caption">
+                (+{{ filterProviders.length - 1 }} )
+              </span>
+            </template>
+            </v-select>
           </v-col>
           <v-col cols="3">
-            Первые цифры номера
+            Запрос по номеру
 
             <v-text-field
               v-model.lazy.trim="filtertel"
               append-icon="mdi-phone"
               outlined
               rounded
+              @click:append="getLidsPost($props.user.id)"
             ></v-text-field>
           </v-col>
           <v-col cols="3">
-            Фильтр по статусу
+            Запрос по статусу
             <v-select
               v-model="filterStatus"
               :items="filterstatuses"
@@ -44,31 +55,40 @@
               item-value="id"
               outlined
               rounded
+              multiple
+              @change="getLidsPost($props.user.id)"
             >
-              <template v-slot:selection="{ item }">
+            <template v-slot:selection="{ item, index }">
+              <span v-if="index === 0">{{ item.name }} </span>
+              <span v-if="index === 1" class="grey--text text-caption">
+                (+{{ filterStatus.length - 1 }} )
+              </span>
+            </template>
+            <template v-slot:item="{ item, attrs }">
+              <v-badge
+                :value="attrs['aria-selected'] == 'true'"
+                color="#7620df"
+                dot
+                left
+              >
                 <i
                   :style="{
                     background: item.color,
                     outline: '1px solid grey',
                   }"
                   class="sel_stat mr-4"
-                ></i
-                >{{ item.name }}
-              </template>
-              <template v-slot:item="{ item }">
-                <i
-                  :style="{
-                    background: item.color,
-                    outline: '1px solid grey',
-                  }"
-                  class="sel_stat mr-4"
-                ></i
-                >{{ item.name }}
-              </template>
+                ></i>
+              </v-badge>
+              {{ item.name }}
+            </template>
             </v-select>
           </v-col>
         </v-row>
-
+            <v-progress-linear
+              :active="loading"
+              indeterminate
+              color="purple"
+            ></v-progress-linear>
         <v-row>
           <v-col>
             <v-card :class="{ 'd-none': todayItems.length == 0 }">
@@ -146,13 +166,13 @@
               </v-data-table>
             </v-card>
             <v-card>
-              <!-- show-expand show-select  :expanded="expanded"-->
+              <!-- show-expand show-select  :expanded="expanded" :search="search"-->
               <v-data-table
                 id="maintable"
                 v-model.lazy.trim="selected"
                 :headers="headers"
                 item-key="id"
-                :search="search"
+
                 :single-select="true"
                 :single-expand="true"
                 :items="filteredItems"
@@ -417,6 +437,7 @@ export default {
   },
   props: ["user"],
   data: () => ({
+    loading:false,
     webphone: {},
     timeProps: { format: "24hr" },
     dial: false,
@@ -436,8 +457,8 @@ export default {
     statuses: [],
     filterstatuses: [],
     selectedStatus: 0,
-    filterStatus: 0,
-    filterProviders: 0,
+    filterStatus: [],
+    filterProviders: [],
     providers: [],
     selected: [],
     todayItems: [],
@@ -493,12 +514,12 @@ export default {
   },
   computed: {
     filteredItems() {
-      let reg = new RegExp("^" + this.filtertel);
+      // let reg = new RegExp("^" + this.filtertel);
       return this.lids.filter((i) => {
         return (
-          (!this.filterStatus || i.status_id == this.filterStatus) &&
-          (!this.filterProviders || i.provider_id == this.filterProviders) &&
-          (!this.filtertel || reg.test(i.tel)) &&
+          // (!this.filterStatus || i.status_id == this.filterStatus) &&
+          // (!this.filterProviders || i.provider_id == this.filterProviders) &&
+          // (!this.filtertel || reg.test(i.tel)) &&
           (!this.todayItems ||
             !this.todayItems.filter((e) => e.id == i.id).length)
         );
@@ -719,7 +740,7 @@ export default {
         .then(function (response) {
           //console.log(response);
           self.$refs.datetime.clearHandler();
-          self.getLids(self.$props.user.id);
+          self.getLidsPost(self.$props.user.id);
         })
         .catch(function (error) {
           console.log(error);
@@ -827,19 +848,80 @@ export default {
             color,
           }));
           self.filterstatuses = self.statuses.map((e) => e);
-          self.filterstatuses.unshift({ name: "Без статуса", id: 0 });
-          self.getLids(self.$props.user.id);
+          // self.filterstatuses.unshift({ name: "Без статуса", id: 0 });
+          self.getLidsPost(self.$props.user.id);
         })
         .catch((error) => console.log(error));
     },
+ getLidsPost(id){
+      let self = this;
+      let data ={}
+      self.loading=true
+      // self.search = "";
+      // self.filtertel = "";
+      self.disableuser = id;
+      data.id = id
+      data.provider_id = self.filterProviders
+      data.status_id = self.filterStatus
+      data.tel = self.filtertel
+      data.search = self.search
+      axios
+        .post("/api/getLidsPost", data)
+        .then((res) => {
+          self.lids = Object.entries(res.data).map((e) => e[1]);
 
+          self.lids.map(function (e) {
+            // e.user = self.users.find((u) => u.id === e.user_id).fio;
+            // delete e.provider_id;
+            if(e.updated_at){
+e.date = e.updated_at.substring(0, 10);
+            }
+
+            e.date_created = e.created_at.substring(0, 10);
+            // e.mess = e.text;
+
+            if (e.status_id) {
+              e.status =
+                self.statuses.find((s) => s.id == e.status_id).name || "";
+            }
+            if (self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            }
+          });
+
+          self.todaylids();
+          self.loading=false
+          // setInterval(function () {
+          //   self.getHm();
+          // }, 180000);
+        })
+        .then(
+          () =>
+            function (e) {
+              self.lids.map(function (e) {
+                e.provider = self.providers.find(
+                  (p) => p.id == e.provider_id
+                ).name;
+              });
+            }
+        )
+        .catch((error) => console.log(error));
+    },
     getLids(id) {
       let self = this;
+      let data ={}
       self.search = "";
       self.filtertel = "";
       self.disableuser = id;
+      data.id = id
+      data.provider_id = self.filterProviders
+      data.status_id = self.filterStatus
+      data.tel = self.filtertel
+      data.search = self.search
       axios
-        .get("/api/userlids/" + id)
+        .get("/api/userLids/"+id)
         .then((res) => {
           self.lids = Object.entries(res.data).map((e) => e[1]);
 
@@ -914,7 +996,7 @@ export default {
         .get("/api/provider")
         .then((res) => {
           self.providers = res.data.map(({ name, id }) => ({ name, id }));
-          self.providers.unshift({ name: "Все", id: 0 });
+          // self.providers.unshift({ name: "Все", id: 0 });
         })
         .catch((error) => console.log(error));
     },

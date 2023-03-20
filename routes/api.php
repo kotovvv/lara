@@ -43,6 +43,7 @@ Route::post('getusers', [UsersController::class, 'getrelatedusers'])->name('getr
 Route::get('users/getroles', [UsersController::class, 'getroless'])->name('user.getroles');
 Route::post('user/update', [UsersController::class, 'update'])->name('user.update');
 Route::get('userlids/{id}', [LidsController::class, 'userLids'])->name('userlids');
+Route::post('getLidsPost', [LidsController::class, 'userLidsPost'])->name('userlidspost');
 Route::post('statuslids', [LidsController::class, 'statusLids'])->name('statuslids');
 Route::get('getuserlids/{id}', [LidsController::class, 'getuserLids'])->name('getuserlids');
 Route::delete('provider/{id}', [ProvidersController::class, 'destroy']);
