@@ -236,6 +236,10 @@
               ></v-btn>
             </v-col>
             <v-col cols="12" v-if="duplicate_leads.length">
+                <v-btn outlined rounded @click="exportXlsx" class="border">
+                  <v-icon left> mdi-file-excel </v-icon>
+                  Скачать таблицу
+                </v-btn>
               <v-data-table
                 :headers="duplicate_leads_headers"
                 item-key="id"
@@ -252,6 +256,7 @@
 </template>
 
 <script>
+import XLSX from "xlsx";
 import axios from "axios";
 import importBTC from "./importBTC";
 import _ from "lodash";
@@ -259,6 +264,8 @@ export default {
   data: () => ({
     list_email: "",
     file_emails: [],
+    in_db: [],
+    out_db: [],
     message: "",
     loading: false,
     userid: null,
@@ -344,17 +351,45 @@ export default {
     },
   },
   methods: {
+        exportXlsx() {
+      const self = this;
+      const obj = _.groupBy(self.filteredItems, "status");
+      const lidsByStatus = Array.from(Object.keys(obj), (k) => [
+        `${k}`,
+        obj[k],
+      ]);
+
+      var wb = XLSX.utils.book_new(); // make Workbook of Excel
+      window["list"] = XLSX.utils.json_to_sheet(self.duplicate_leads);
+              XLSX.utils.book_append_sheet(
+          wb,
+          window["list"],
+          "duplicate_emailes"
+        );
+
+      // export Excel file
+      XLSX.writeFile(wb, "dupl_email"+ new Date().toDateString()+".xlsx"); // name of the file is 'book.xlsx'
+    },
     checkEmails() {
       let vm = this;
       vm.loading = true;
+      vm.message = ''
       vm.duplicate_leads = [];
+      vm.in_db = [];
+      vm.out_db = [];
       let data = {};
       data.emails = vm.list_email.replace(/[\r]/gm, "").split("\n").filter((n) => n);
       data.check = 1;
       axios
         .post("api/checkEmails", data)
         .then(function (res) {
+          vm.in_db = res.data.emails.filter(n => n);
+
+          vm.out_db = [...new Set(data.emails.filter((i) => !vm.in_db.includes(i)))];
+          vm.message = 'Уникальных: '+ vm.out_db.length+ '<br>Дубликатов: '+vm.in_db.length
+          vm.snackbar=true
           vm.duplicate_leads = res.data.leads;
+
           vm.loading = false;
           vm.list_email = "";
           vm.files = [];

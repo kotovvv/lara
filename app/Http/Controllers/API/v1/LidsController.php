@@ -254,7 +254,7 @@ class LidsController extends Controller
     if (isset($data['check'])) {
       $sql = "SELECT l.`id`, l.`tel`,l.`name`, l.`status_id`, s.`name` status_name, l.`email`, u.`name` user_name, p.`name` provider_name, l.`afilyator`, o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) WHERE `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\")";
       $results['leads'] =  DB::select(DB::raw($sql));
-      return response($results);
+
     }
 
     DB::select(DB::raw("SET SQL_MODE = '';"));
