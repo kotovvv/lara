@@ -1,5 +1,13 @@
  <template>
   <div>
+    <v-snackbar v-model="snackbar" top right timeout="-1">
+      <v-card-text v-html="message"></v-card-text>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          X
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-tabs v-model="tab" background-color="primary" dark>
       <v-tab> Провайдер </v-tab>
       <v-tab v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
@@ -236,10 +244,10 @@
               ></v-btn>
             </v-col>
             <v-col cols="12" v-if="duplicate_leads.length">
-                <v-btn outlined rounded @click="exportXlsx" class="border">
-                  <v-icon left> mdi-file-excel </v-icon>
-                  Скачать таблицу
-                </v-btn>
+              <v-btn outlined rounded @click="exportXlsx" class="border">
+                <v-icon left> mdi-file-excel </v-icon>
+                Скачать таблицу
+              </v-btn>
               <v-data-table
                 :headers="duplicate_leads_headers"
                 item-key="id"
@@ -267,6 +275,7 @@ export default {
     in_db: [],
     out_db: [],
     message: "",
+    snackbar: false,
     loading: false,
     userid: null,
     users: [],
@@ -351,7 +360,7 @@ export default {
     },
   },
   methods: {
-        exportXlsx() {
+    exportXlsx() {
       const self = this;
       const obj = _.groupBy(self.filteredItems, "status");
       const lidsByStatus = Array.from(Object.keys(obj), (k) => [
@@ -361,33 +370,39 @@ export default {
 
       var wb = XLSX.utils.book_new(); // make Workbook of Excel
       window["list"] = XLSX.utils.json_to_sheet(self.duplicate_leads);
-              XLSX.utils.book_append_sheet(
-          wb,
-          window["list"],
-          "duplicate_emailes"
-        );
+      XLSX.utils.book_append_sheet(wb, window["list"], "duplicate_emailes");
 
       // export Excel file
-      XLSX.writeFile(wb, "dupl_email"+ new Date().toDateString()+".xlsx"); // name of the file is 'book.xlsx'
+      XLSX.writeFile(wb, "dupl_email" + new Date().toDateString() + ".xlsx"); // name of the file is 'book.xlsx'
     },
     checkEmails() {
       let vm = this;
       vm.loading = true;
-      vm.message = ''
+      vm.snackbar = false;
+      vm.message = "";
       vm.duplicate_leads = [];
       vm.in_db = [];
       vm.out_db = [];
       let data = {};
-      data.emails = vm.list_email.replace(/[\r]/gm, "").split("\n").filter((n) => n);
+      data.emails = vm.list_email
+        .replace(/[\r]/gm, "")
+        .split("\n")
+        .filter((n) => n);
       data.check = 1;
       axios
         .post("api/checkEmails", data)
         .then(function (res) {
-          vm.in_db = res.data.emails.filter(n => n);
+          vm.in_db = res.data.emails.filter((n) => n);
 
-          vm.out_db = [...new Set(data.emails.filter((i) => !vm.in_db.includes(i)))];
-          vm.message = 'Уникальных: '+ vm.out_db.length+ '<br>Дубликатов: '+vm.in_db.length
-          vm.snackbar=true
+          vm.out_db = [
+            ...new Set(data.emails.filter((i) => !vm.in_db.includes(i))),
+          ];
+          vm.message =
+            "Уникальных: " +
+            vm.out_db.length +
+            "<br>Дубликатов: " +
+            vm.in_db.length;
+          vm.snackbar = true;
           vm.duplicate_leads = res.data.leads;
 
           vm.loading = false;
@@ -671,19 +686,19 @@ export default {
       promise.then(
         (result) => {
           let vm = this;
-          console.log(vm.tab)
+          console.log(vm.tab);
           if (vm.tab == 2) {
             vm.parse_txt_emails = vm.txt2Array(vm.fileinput);
           } else {
-          vm.parse_csv = vm
-            .csvJSON(this.fileinput)
-            .filter(
-              (v, i, a) =>
-                a.findIndex(
-                  (t) => t.afilyator + t.tel == v.afilyator + v.tel
-                ) === i
-            );
-            }
+            vm.parse_csv = vm
+              .csvJSON(this.fileinput)
+              .filter(
+                (v, i, a) =>
+                  a.findIndex(
+                    (t) => t.afilyator + t.tel == v.afilyator + v.tel
+                  ) === i
+              );
+          }
         },
         (error) => {
           /* handle an error */
