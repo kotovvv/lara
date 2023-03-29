@@ -268,7 +268,7 @@ class LidsController extends Controller
     return response($results);
   }
 
-  public function userLidsPost(Request $request)
+  public function getLidsPost(Request $request)
   {
     $data = $request->all();
     $office_id = session()->get('office_id');
@@ -276,6 +276,8 @@ class LidsController extends Controller
     $status_id = $data['status_id'];
     $search = $data['search'];
     $tel = $data['tel'];
+    $limit = $data['limit'];
+    $page = $data['page'];
     $providers = [];
     if (count($data['provider_id']) > 0) {
       $providers = $data['provider_id'];
@@ -285,8 +287,7 @@ class LidsController extends Controller
         $providers[] = $item['id'];
       }
     }
-    $limit =  count($data['provider_id']) == 0 && count($status_id) == 0 && $search == '' && $tel == '' ? 1 : 0;
-    //  dd($limit);
+
     return Lid::select('lids.*', 'depozits.depozit')
       ->distinct()
       ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
@@ -309,9 +310,9 @@ class LidsController extends Controller
         });
       })
       ->orderBy('lids.created_at', 'desc')
-      ->when($limit == 1, function ($query) {
-        return $query->limit(200);
-      })
+      ->offset($page)
+      ->limit($limit)
+
       ->get();
   }
 
