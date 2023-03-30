@@ -268,11 +268,95 @@ class LidsController extends Controller
     return response($results);
   }
 
+  public function getLidsPost(Request $request)
+  {
+    $data = $request->all();
+    $office_id = session()->get('office_id');
+    $id = $data['id'];
+    $status_id = $data['status_id'];
+    $search = $data['search'];
+    $tel = $data['tel'];
+    $limit = $data['limit'];
+    $page = $data['page'];
+    $providers = [];
+    if (count($data['provider_id']) > 0) {
+      $providers = $data['provider_id'];
+    } else {
+      $res = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
+      foreach ($res as $item) {
+        $providers[] = $item['id'];
+      }
+    }
+    $response = [];
+
+    $response['hm'] = Lid::select('lids.*', 'depozits.depozit')
+      ->distinct()
+      ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
+      ->where('lids.user_id', $id)
+      ->when($office_id > 0, function ($query) use ($office_id) {
+        return $query->where('office_id', $office_id);
+      })
+      ->when(count($providers) > 0, function ($query) use ($providers) {
+        return $query->whereIn('provider_id', $providers);
+      })
+      ->when(count($status_id) > 0, function ($query) use ($status_id) {
+        return $query->whereIn('status_id', $status_id);
+      })
+      ->when($tel != '', function ($query) use ($tel) {
+        return $query->where('tel','like', $tel . '%');
+      })
+      ->when($search != '', function ($query) use ($search) {
+        return $query->where(function ($query) use ($search) {
+          return $query->where('name', 'like', '%' . $search . '%')->orWhere('email', 'like', '%' . $search . '%');
+        });
+      })
+      ->count();
+
+    $response['lids'] = Lid::select('lids.*', 'depozits.depozit')
+      ->distinct()
+      ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
+      ->where('lids.user_id', $id)
+      ->when($office_id > 0, function ($query) use ($office_id) {
+        return $query->where('office_id', $office_id);
+      })
+      ->when(count($providers) > 0, function ($query) use ($providers) {
+        return $query->whereIn('provider_id', $providers);
+      })
+      ->when(count($status_id) > 0, function ($query) use ($status_id) {
+        return $query->whereIn('status_id', $status_id);
+      })
+      ->when($tel != '', function ($query) use ($tel) {
+        return $query->where('tel','like', $tel . '%');
+      })
+      ->when($search != '', function ($query) use ($search) {
+        return $query->where(function ($query) use ($search) {
+          return $query->where('name', 'like', '%' . $search . '%')->orWhere('email', 'like', '%' . $search . '%');
+        });
+      })
+      ->orderBy('lids.created_at', 'desc')
+      ->offset($limit*($page-1))
+      ->limit($limit)
+      ->get();
+
+      return response($response);
+  }
+
+  public function todaylids($id)
+  {
+    $date = date('Y-m-d');
+    return Lid::where('user_id', (int) $id)
+    ->whereNotNull('ontime')
+    ->whereDate('ontime', '=', $date)
+    ->orderBy('ontime','desc')
+    ->get();
+  }
+
+
   public function userLids($id)
   {
     $office_id = session()->get('office_id');
     $providers = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
-    return Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)
+    Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)
       ->when($office_id > 0, function ($query) use ($office_id, $providers) {
         return $query->where('office_id', $office_id)->whereIn('provider_id', $providers);
       })->orderBy('lids.created_at', 'desc')->get();
