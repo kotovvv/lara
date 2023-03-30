@@ -341,6 +341,17 @@ class LidsController extends Controller
       return response($response);
   }
 
+  public function todaylids($id)
+  {
+    $date = date('Y-m-d');
+    return Lid::where('user_id', (int) $id)
+    ->whereNotNull('ontime')
+    ->whereDate('ontime', '=', $date)
+    ->orderBy('ontime','desc')
+    ->get();
+  }
+
+
   public function userLids($id)
   {
     $office_id = session()->get('office_id');

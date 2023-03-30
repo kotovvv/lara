@@ -174,14 +174,16 @@
                 item-key="id"
                 :single-select="true"
                 :single-expand="true"
-                :items="filteredItems"
+                :items="lids"
                 :items-per-page="100"
                 :hide-default-footer="true"
                 ref="datatable"
                 @click:row="clickrow"
               >
                 <template v-slot:top="{}">
-                  <v-col>
+                  <v-row class="align-center">
+                  <v-col cols="2"><h5>Всего:{{ hm }}</h5></v-col>
+                  <v-col cols="6">
                     <v-pagination
                       v-model="page"
                       class="my-4"
@@ -189,8 +191,8 @@
                       @input="getLidsPost($props.user.id)"
                       total-visible="10"
                     ></v-pagination>
-                    Всего:{{ hm }}
                   </v-col>
+                  </v-row>
                 </template>
 
                 <template v-slot:item.tel="{ item }">
@@ -500,6 +502,7 @@ export default {
   mounted: function () {
     this.getProviders();
     this.getStatuses();
+    this.todaylids();
   },
   created() {},
   watch: {
@@ -510,15 +513,7 @@ export default {
     },
   },
   computed: {
-    filteredItems() {
-      // let reg = new RegExp("^" + this.filtertel);
-      return this.lids.filter((i) => {
-        return (
-          !this.todayItems ||
-          !this.todayItems.filter((e) => e.id == i.id).length
-        );
-      });
-    },
+
   },
   methods: {
     openDialogBTC(item) {
@@ -850,8 +845,7 @@ export default {
               ).name;
             }
           });
-
-          self.todaylids();
+          self.todaylids()
           self.loading = false;
         })
         .then(
@@ -911,12 +905,11 @@ export default {
     },
     todaylids() {
       const self = this;
-      self.todayItems = self.lids.filter(function (l) {
-        return (
-          new Date(l.ontime).toLocaleDateString() ==
-          new Date().toLocaleDateString()
-        );
-      });
+      const id = self.$props.user.id
+            axios
+        .get("/api/todaylids/"+id)
+        .then((res) => {
+          self.todayItems = res.data;
       self.todayItems.map(function (t) {
         t.date = new Date(t.ontime).toLocaleTimeString().substring(0, 5);
       });
@@ -930,6 +923,10 @@ export default {
         // a должно быть равным b
         return 0;
       });
+        })
+        .catch((error) => console.log(error));
+
+
     },
     stylecolor(status_id) {
       if (status_id == null) return;

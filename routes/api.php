@@ -46,6 +46,7 @@ Route::get('userlids/{id}', [LidsController::class, 'userLids'])->name('userlids
 Route::post('getLidsPost', [LidsController::class, 'getLidsPost'])->name('getLidsPost');
 Route::post('statuslids', [LidsController::class, 'statusLids'])->name('statuslids');
 Route::get('getuserlids/{id}', [LidsController::class, 'getuserLids'])->name('getuserlids');
+Route::get('todaylids/{id}', [LidsController::class, 'todaylids'])->name('todaylids');
 Route::delete('provider/{id}', [ProvidersController::class, 'destroy']);
 Route::delete('user/{id}', [UsersController::class, 'deleteuser']);
 Route::delete('delDataUser/{id}', [UsersController::class, 'delDataUser']);
