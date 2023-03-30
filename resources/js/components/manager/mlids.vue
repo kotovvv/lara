@@ -182,8 +182,18 @@
               >
                 <template v-slot:top="{}">
                   <div>
-                    {{ hm/limit }}
-
+            <v-pagination
+              v-model="page"
+              class="my-4"
+              :length="parseInt(hm/limit)"
+            ></v-pagination>
+<!-- <vue-awesome-paginate
+    :total-items=hm
+    :items-per-page=limit
+    :max-pages-shown="5"
+    v-model=page
+    :on-click="getLidsPost($props.user.id)"
+  /> -->
                      Всего:{{hm}}</div>
                 </template>
 
