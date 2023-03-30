@@ -180,7 +180,7 @@
                 ref="datatable"
                 @click:row="clickrow"
               >
-                <template v-slot:top="{}">
+                <template v-slot:top="{}" v-if="hm > 100">
                   <v-row class="align-center">
                   <v-col cols="2"><h5>Всего:{{ hm }}</h5></v-col>
                   <v-col cols="6">
