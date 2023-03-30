@@ -287,8 +287,9 @@ class LidsController extends Controller
         $providers[] = $item['id'];
       }
     }
+    $response = [];
 
-    return Lid::select('lids.*', 'depozits.depozit')
+    $response['hm'] = Lid::select('lids.*', 'depozits.depozit')
       ->distinct()
       ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
       ->where('lids.user_id', $id)
@@ -302,7 +303,30 @@ class LidsController extends Controller
         return $query->whereIn('status_id', $status_id);
       })
       ->when($tel != '', function ($query) use ($tel) {
-        return $query->where('tel', $tel);
+        return $query->where('tel','like', $tel . '%');
+      })
+      ->when($search != '', function ($query) use ($search) {
+        return $query->where(function ($query) use ($search) {
+          return $query->where('name', 'like', '%' . $search . '%')->orWhere('email', 'like', '%' . $search . '%');
+        });
+      })
+      ->count();
+
+    $response['lids'] = Lid::select('lids.*', 'depozits.depozit')
+      ->distinct()
+      ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
+      ->where('lids.user_id', $id)
+      ->when($office_id > 0, function ($query) use ($office_id) {
+        return $query->where('office_id', $office_id);
+      })
+      ->when(count($providers) > 0, function ($query) use ($providers) {
+        return $query->whereIn('provider_id', $providers);
+      })
+      ->when(count($status_id) > 0, function ($query) use ($status_id) {
+        return $query->whereIn('status_id', $status_id);
+      })
+      ->when($tel != '', function ($query) use ($tel) {
+        return $query->where('tel','like', $tel . '%');
       })
       ->when($search != '', function ($query) use ($search) {
         return $query->where(function ($query) use ($search) {
@@ -310,10 +334,11 @@ class LidsController extends Controller
         });
       })
       ->orderBy('lids.created_at', 'desc')
-      ->offset($page)
+      ->offset($limit*($page-1))
       ->limit($limit)
-
       ->get();
+
+      return response($response);
   }
 
   public function userLids($id)

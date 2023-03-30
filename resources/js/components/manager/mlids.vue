@@ -11,7 +11,7 @@
                 label="Поиск"
                 outlined
                 rounded
-                @click:append="getLidsPost($props.user.id)"
+                @click:append="page=0;getLidsPost($props.user.id)"
               ></v-text-field>
             </v-card-title>
           </v-col>
@@ -25,7 +25,7 @@
               outlined
               rounded
               multiple
-              @change="getLidsPost($props.user.id)"
+              @change="page=0;getLidsPost($props.user.id)"
             >
               <template v-slot:selection="{ item, index }">
                 <span v-if="index <= 2">{{ item.name }} </span>
@@ -43,7 +43,7 @@
               append-icon="mdi-phone"
               outlined
               rounded
-              @click:append="getLidsPost($props.user.id)"
+              @click:append="page=0;getLidsPost($props.user.id)"
             ></v-text-field>
           </v-col>
           <v-col cols="3">
@@ -56,7 +56,7 @@
               outlined
               rounded
               multiple
-              @change="getLidsPost($props.user.id)"
+              @change="page=0;getLidsPost($props.user.id)"
             >
               <template v-slot:selection="{ item, index }">
                 <span v-if="index === 0">{{ item.name }} </span>
@@ -176,25 +176,21 @@
                 :single-expand="true"
                 :items="filteredItems"
                 :items-per-page="100"
-                hide-default-footer=true
+                :hide-default-footer="true"
                 ref="datatable"
                 @click:row="clickrow"
               >
                 <template v-slot:top="{}">
-                  <div>
-            <v-pagination
-              v-model="page"
-              class="my-4"
-              :length="parseInt(hm/limit)"
-            ></v-pagination>
-<!-- <vue-awesome-paginate
-    :total-items=hm
-    :items-per-page=limit
-    :max-pages-shown="5"
-    v-model=page
-    :on-click="getLidsPost($props.user.id)"
-  /> -->
-                     Всего:{{hm}}</div>
+                  <v-col>
+                    <v-pagination
+                      v-model="page"
+                      class="my-4"
+                      :length="parseInt(hm / limit)+1"
+                      @input="getLidsPost($props.user.id)"
+                      total-visible="10"
+                    ></v-pagination>
+                    Всего:{{ hm }}
+                  </v-col>
                 </template>
 
                 <template v-slot:item.tel="{ item }">
@@ -824,19 +820,20 @@ export default {
       let data = {};
       self.loading = true;
       self.disableuser = id;
-      self.getHm()
+
       data.id = id;
       data.provider_id = self.filterProviders;
       data.status_id = self.filterStatus;
       data.tel = self.filtertel;
       data.search = self.search;
-      data.limit = self.limit
-      data.page = self.page
+      data.limit = self.limit;
+      data.page = self.page;
 
       axios
         .post("/api/getLidsPost", data)
         .then((res) => {
-          self.lids = Object.entries(res.data).map((e) => e[1]);
+          self.hm = res.data.hm
+          self.lids = Object.entries(res.data.lids).map((e) => e[1]);
 
           self.lids.map(function (e) {
             if (e.updated_at) {
