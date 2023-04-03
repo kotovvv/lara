@@ -340,12 +340,7 @@
             <template v-slot:expanded-item="{ headers, item }">
               <!-- :colspan="headers.length" -->
               <td :colspan="headers.length" class="blackborder">
-                <!-- <v-row>
-                  <v-col cols="12"> -->
-
                 <logtel :lid_id="item.id" :key="item.id" />
-                <!-- </v-col>
-                </v-row> -->
               </td>
             </template>
             <template v-slot:footer.prepend>

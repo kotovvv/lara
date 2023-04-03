@@ -182,8 +182,10 @@
               >
                 <template v-slot:top="{}">
                   <v-row class="align-center">
-                  <v-col cols="2"><h5>Всего:{{ hm }}</h5></v-col>
-                  <v-col cols="6">
+                    <v-spacer></v-spacer>
+
+                  <h5 class="mb-0">Всего:{{ hm }}</h5>
+
                     <v-pagination
                       v-model="page"
                       class="my-4"
@@ -191,7 +193,7 @@
                       @input="getLidsPost($props.user.id)"
                       total-visible="10"
                     ></v-pagination>
-                  </v-col>
+
                   </v-row>
                 </template>
 
