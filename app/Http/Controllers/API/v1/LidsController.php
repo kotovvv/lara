@@ -354,12 +354,18 @@ class LidsController extends Controller
 
   public function userLids($id)
   {
+    $adnwhere = '';
     $office_id = session()->get('office_id');
     $providers = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
-    Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)
-      ->when($office_id > 0, function ($query) use ($office_id, $providers) {
-        return $query->where('office_id', $office_id)->whereIn('provider_id', $providers);
-      })->orderBy('lids.created_at', 'desc')->get();
+    // Lid::select('lids.*', 'depozits.depozit')->distinct()->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.user_id', $id)
+    //   ->when($office_id > 0, function ($query) use ($office_id, $providers) {
+    //     return $query->where('office_id', $office_id)->whereIn('provider_id', $providers);
+    //   })->orderBy('lids.created_at', 'desc')->get();
+    if ($office_id > 0) {
+      $adnwhere = " AND office_id = $office_id AND provider_id in (" . implode(',', $providers) . ") ";
+    }
+    $sql = "SELECT DISTINCT `lids`.*, (SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit FROM `lids`  WHERE `lids`.`user_id` = $id $adnwhere ORDER BY `lids`.`created_at` DESC";
+    return DB::select(DB::raw($sql));
   }
 
   public function statusLids(Request $request)
