@@ -11,11 +11,15 @@
                 label="Поиск"
                 outlined
                 rounded
+                @click:append="
+                  page = 0;
+                  getLidsPost();
+                "
               ></v-text-field>
             </v-card-title>
           </v-col>
           <v-col cols="3">
-            Фильтр по поставщикам
+            Запрос по поставщикам
             <v-select
               v-model="filterProviders"
               :items="providers"
@@ -23,20 +27,36 @@
               item-value="id"
               outlined
               rounded
-            ></v-select>
+              multiple
+              @change="
+                page = 0;
+                getLidsPost();
+              "
+            >
+              <template v-slot:selection="{ item, index }">
+                <span v-if="index <= 2">{{ item.name }} </span>
+                <span v-if="index > 2" class="grey--text text-caption">
+                  (+{{ filterProviders.length - 1 }} )
+                </span>
+              </template>
+            </v-select>
           </v-col>
           <v-col cols="3">
-            Первые цифры номера
+            Запрос по номеру
 
             <v-text-field
               v-model.lazy.trim="filtertel"
               append-icon="mdi-phone"
               outlined
               rounded
+              @click:append="
+                page = 0;
+                getLidsPost();
+              "
             ></v-text-field>
           </v-col>
           <v-col cols="3">
-            Фильтр по статусу
+            Запрос по статусу
             <v-select
               v-model="filterStatus"
               :items="filterstatuses"
@@ -44,31 +64,43 @@
               item-value="id"
               outlined
               rounded
+              multiple
+              @change="
+                page = 0;
+                getLidsPost();
+              "
             >
-              <template v-slot:selection="{ item }">
-                <i
-                  :style="{
-                    background: item.color,
-                    outline: '1px solid grey',
-                  }"
-                  class="sel_stat mr-4"
-                ></i
-                >{{ item.name }}
+              <template v-slot:selection="{ item, index }">
+                <span v-if="index === 0">{{ item.name }} </span>
+                <span v-if="index === 1" class="grey--text text-caption">
+                  (+{{ filterStatus.length - 1 }} )
+                </span>
               </template>
-              <template v-slot:item="{ item }">
-                <i
-                  :style="{
-                    background: item.color,
-                    outline: '1px solid grey',
-                  }"
-                  class="sel_stat mr-4"
-                ></i
-                >{{ item.name }}
+              <template v-slot:item="{ item, attrs }">
+                <v-badge
+                  :value="attrs['aria-selected'] == 'true'"
+                  color="#7620df"
+                  dot
+                  left
+                >
+                  <i
+                    :style="{
+                      background: item.color,
+                      outline: '1px solid grey',
+                    }"
+                    class="sel_stat mr-4"
+                  ></i>
+                </v-badge>
+                {{ item.name }}
               </template>
             </v-select>
           </v-col>
         </v-row>
-
+        <v-progress-linear
+          :active="loading"
+          indeterminate
+          color="purple"
+        ></v-progress-linear>
         <v-row>
           <v-col>
             <v-card :class="{ 'd-none': todayItems.length == 0 }">
@@ -146,37 +178,32 @@
               </v-data-table>
             </v-card>
             <v-card>
-              <!-- show-expand show-select  :expanded="expanded"-->
+              <!-- show-expand show-select  :expanded="expanded" :search="search"-->
               <v-data-table
                 id="maintable"
                 v-model.lazy.trim="selected"
                 :headers="headers"
                 item-key="id"
-                :search="search"
                 :single-select="true"
                 :single-expand="true"
-                :items="filteredItems"
+                :items="lids"
+                :items-per-page="100"
+                :hide-default-footer="true"
                 ref="datatable"
                 @click:row="clickrow"
-                :footer-props="{
-                  'items-per-page-options': [10, 50, 100, 250, 500, -1],
-                  'items-per-page-text': '',
-                }"
               >
-                <template
-                  v-slot:top="{ pagination, options, updateOptions }"
-                  :footer-props="{
-                    'items-per-page-options': [10, 50, 100, 250, 500, -1],
-                    'items-per-page-text': '',
-                  }"
-                >
-                  <v-data-footer
-                    :pagination="pagination"
-                    :options="options"
-                    @update:options="updateOptions"
-                    :items-per-page-options="[10, 50, 100, 250, 500, -1]"
-                    :items-per-page-text="''"
-                  />
+                <template v-slot:top="{}" v-if="hm > 100">
+                  <v-row class="align-center">
+                    <v-spacer></v-spacer>
+                    <h5 class="mb-0">Всего:{{ hm }}</h5>
+                    <v-pagination
+                      v-model="page"
+                      class="my-4"
+                      :length="parseInt(hm / limit) + 1"
+                      @input="getLidsPost()"
+                      total-visible="10"
+                    ></v-pagination>
+                  </v-row>
                 </template>
 
                 <template v-slot:item.tel="{ item }">
@@ -390,7 +417,8 @@
                       class="teal lighten-4"
                       @click="copyTo(item.address)"
                       v-if="item.address"
-                      >{{ item.address }} <v-icon> mdi-content-copy </v-icon></v-btn
+                      >{{ item.address }}
+                      <v-icon> mdi-content-copy </v-icon></v-btn
                     >
                   </td>
                 </tr>
@@ -417,6 +445,7 @@ export default {
   },
   props: ["user"],
   data: () => ({
+    loading: false,
     webphone: {},
     timeProps: { format: "24hr" },
     dial: false,
@@ -436,8 +465,8 @@ export default {
     statuses: [],
     filterstatuses: [],
     selectedStatus: 0,
-    filterStatus: 0,
-    filterProviders: 0,
+    filterStatus: [],
+    filterProviders: [],
     providers: [],
     selected: [],
     todayItems: [],
@@ -478,10 +507,13 @@ export default {
     hm: 0,
     snackbar: false,
     message: "",
+    page: 0,
+    limit: 100,
   }),
   mounted: function () {
     this.getProviders();
     this.getStatuses();
+    this.todaylids();
   },
   created() {},
   watch: {
@@ -491,20 +523,7 @@ export default {
       }
     },
   },
-  computed: {
-    filteredItems() {
-      let reg = new RegExp("^" + this.filtertel);
-      return this.lids.filter((i) => {
-        return (
-          (!this.filterStatus || i.status_id == this.filterStatus) &&
-          (!this.filterProviders || i.provider_id == this.filterProviders) &&
-          (!this.filtertel || reg.test(i.tel)) &&
-          (!this.todayItems ||
-            !this.todayItems.filter((e) => e.id == i.id).length)
-        );
-      });
-    },
-  },
+  computed: {},
   methods: {
     openDialogBTC(item) {
       let self = this;
@@ -565,7 +584,6 @@ export default {
         // navigator clipboard api method'
         return navigator.clipboard.writeText(address);
       } else {
-
         // text area method
         let textArea = document.createElement("textarea");
         textArea.value = address;
@@ -619,12 +637,6 @@ export default {
           return true;
         }
       }
-      // show only deposit & callback
-      // if (this.selected.length && this.selected[0].status_id == 9) {
-      //   if (id != 9 && id != 10) {
-      //     return true;
-      //   }
-      // }
       return false;
     },
     writeText() {
@@ -640,7 +652,6 @@ export default {
       this.text_message = "";
       this.lid_id = i.id;
       this.selected = [i];
-      // console.log(self.selected);
       this.selectedStatus = i.status_id;
       this.expanded = this.selected;
       self.dial = true;
@@ -673,9 +684,6 @@ export default {
                 self.snackbar = true;
                 localStorage.hm = self.hm;
               }
-            } else {
-              self.hm = self.lids.length;
-              localStorage.hm = self.hm;
             }
           }
         })
@@ -717,9 +725,8 @@ export default {
       axios
         .post("api/Lid/ontime", send)
         .then(function (response) {
-          //console.log(response);
           self.$refs.datetime.clearHandler();
-          self.getLids(self.$props.user.id);
+          self.getLidsPost();
         })
         .catch(function (error) {
           console.log(error);
@@ -746,17 +753,13 @@ export default {
     },
     putSelectedLidsDB() {
       const self = this;
-      // if (self.selectedStatus == 10 && self.depozit == false) return;
       let send = {};
       let send_el = {};
       let costil = self.filtertel;
       self.filtertel = 1;
       self.filtertel = costil;
-
       let eli = self.lids.find((obj) => obj.id == self.selected[0].id);
-
       let st = self.statuses.find((s) => s.id == self.selectedStatus);
-      // console.log(st);
       eli.status = st.name;
       eli.status_id = self.selectedStatus;
       eli.updated_at = self.currentDateTime();
@@ -771,6 +774,7 @@ export default {
       axios
         .post("api/Lid/updatelids", send)
         .then(function (response) {
+          self.getLidsPost();
           self.forceRerender();
         })
         .catch(function (error) {
@@ -792,7 +796,6 @@ export default {
         .post("api/setDepozit", send)
         .then(function (response) {
           self.depozit_val = "";
-          // console.log(response);
         })
         .catch(function (error) {
           console.log(error);
@@ -801,20 +804,6 @@ export default {
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
     },
-
-    // clickrow(item, row) {
-    //   if (!row.isSelected) {
-    //     this.tel = item.tel;
-    //     this.keytime += 1;
-    //     if (item.ontime != null) {
-    //       this.datetime = item.ontime.substring(0, 16);
-    //     }
-    //     this.lid_id = item.id;
-    //     this.text = "";
-    //     this.depozit_val = "";
-    //   } else this.tel = "";
-    //   row.select(!row.isSelected);
-    // },
 
     getStatuses() {
       let self = this;
@@ -827,29 +816,79 @@ export default {
             color,
           }));
           self.filterstatuses = self.statuses.map((e) => e);
-          self.filterstatuses.unshift({ name: "Без статуса", id: 0 });
-          self.getLids(self.$props.user.id);
+          self.getLidsPost();
         })
         .catch((error) => console.log(error));
     },
+    getLidsPost() {
+      const id = this.$props.user.id;
+      let self = this;
+      let data = {};
+      self.loading = true;
+      self.disableuser = id;
 
+      data.id = id;
+      data.provider_id = self.filterProviders;
+      data.status_id = self.filterStatus;
+      data.tel = self.filtertel;
+      data.search = self.search;
+      data.limit = self.limit;
+      data.page = self.page;
+
+      axios
+        .post("/api/getLidsPost", data)
+        .then((res) => {
+          self.hm = res.data.hm;
+          self.lids = Object.entries(res.data.lids).map((e) => e[1]);
+
+          self.lids.map(function (e) {
+            if (e.updated_at) {
+              e.date = e.updated_at.substring(0, 10);
+            }
+            e.date_created = e.created_at.substring(0, 10);
+            if (e.status_id) {
+              e.status =
+                self.statuses.find((s) => s.id == e.status_id).name || "";
+            }
+            if (self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            }
+          });
+          self.todaylids();
+          self.loading = false;
+        })
+        .then(
+          () =>
+            function (e) {
+              self.lids.map(function (e) {
+                e.provider = self.providers.find(
+                  (p) => p.id == e.provider_id
+                ).name;
+              });
+            }
+        )
+        .catch((error) => console.log(error));
+    },
     getLids(id) {
       let self = this;
+      let data = {};
       self.search = "";
       self.filtertel = "";
       self.disableuser = id;
+      data.id = id;
+      data.provider_id = self.filterProviders;
+      data.status_id = self.filterStatus;
+      data.tel = self.filtertel;
+      data.search = self.search;
       axios
-        .get("/api/userlids/" + id)
+        .get("/api/userLids/" + id)
         .then((res) => {
           self.lids = Object.entries(res.data).map((e) => e[1]);
-
           self.lids.map(function (e) {
-            // e.user = self.users.find((u) => u.id === e.user_id).fio;
-            // delete e.provider_id;
             e.date = e.updated_at.substring(0, 10);
             e.date_created = e.created_at.substring(0, 10);
-            // e.mess = e.text;
-
             if (e.status_id) {
               e.status =
                 self.statuses.find((s) => s.id == e.status_id).name || "";
@@ -862,9 +901,6 @@ export default {
           });
 
           self.todaylids();
-          // setInterval(function () {
-          //   self.getHm();
-          // }, 180000);
         })
         .then(
           () =>
@@ -880,33 +916,32 @@ export default {
     },
     todaylids() {
       const self = this;
-      self.todayItems = self.lids.filter(function (l) {
-        return (
-          new Date(l.ontime).toLocaleDateString() ==
-          new Date().toLocaleDateString()
-          // new Date(l.ontime).getTime() > 0 &&
-          // new Date(l.ontime).getTime() <=
-          //   new Date().setUTCHours(23, 59, 59, 999)
-        );
-      });
-      self.todayItems.map(function (t) {
-        t.date = new Date(t.ontime).toLocaleTimeString().substring(0, 5);
-      });
-      self.todayItems.sort(function (a, b) {
-        if (a.date > b.date) {
-          return 1;
-        }
-        if (a.date < b.date) {
-          return -1;
-        }
-        // a должно быть равным b
-        return 0;
-      });
+      const id = self.$props.user.id;
+      axios
+        .get("/api/todaylids/" + id)
+        .then((res) => {
+          self.todayItems = res.data;
+          self.todayItems.map(function (t) {
+            t.date = new Date(t.ontime).toLocaleTimeString().substring(0, 5);
+          });
+          self.todayItems.sort(function (a, b) {
+            if (a.date > b.date) {
+              return 1;
+            }
+            if (a.date < b.date) {
+              return -1;
+            }
+            // a должно быть равным b
+            return 0;
+          });
+        })
+        .catch((error) => console.log(error));
     },
     stylecolor(status_id) {
-      // console.log(status_id)
       if (status_id == null) return;
-      return this.statuses.find((e) => e.id == status_id).color;
+      if (this.statuses.length) {
+        return this.statuses.find((e) => e.id == status_id).color;
+      }
     },
     getProviders() {
       let self = this;
@@ -914,7 +949,6 @@ export default {
         .get("/api/provider")
         .then((res) => {
           self.providers = res.data.map(({ name, id }) => ({ name, id }));
-          self.providers.unshift({ name: "Все", id: 0 });
         })
         .catch((error) => console.log(error));
     },
