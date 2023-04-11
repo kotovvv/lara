@@ -757,13 +757,7 @@ export default {
       let send_el = {};
       let eli = {}
       let st = {}
-      let costil = self.filtertel;
-      self.filtertel = 1;
-      self.filtertel = costil;
-      eli = self.lids.find((obj) => obj.id == self.selected[0].id);
-      if(eli == {}){
-        eli = self.todayItems.find((obj) => obj.id == self.selected[0].id);
-      }
+      eli = self.lids.find((i) => i.id == self.selected[0].id) || self.todayItems.find((i) => i.id == self.selected[0].id);
       st = self.statuses.find((s) => s.id == self.selectedStatus);
       eli.status = st.name;
       eli.status_id = self.selectedStatus;
