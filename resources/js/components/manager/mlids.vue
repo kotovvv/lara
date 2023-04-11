@@ -755,11 +755,16 @@ export default {
       const self = this;
       let send = {};
       let send_el = {};
+      let eli = {}
+      let st = {}
       let costil = self.filtertel;
       self.filtertel = 1;
       self.filtertel = costil;
-      let eli = self.lids.find((obj) => obj.id == self.selected[0].id);
-      let st = self.statuses.find((s) => s.id == self.selectedStatus);
+      eli = self.lids.find((obj) => obj.id == self.selected[0].id);
+      if(eli == {}){
+        eli = self.todayItems.find((obj) => obj.id == self.selected[0].id);
+      }
+      st = self.statuses.find((s) => s.id == self.selectedStatus);
       eli.status = st.name;
       eli.status_id = self.selectedStatus;
       eli.updated_at = self.currentDateTime();
