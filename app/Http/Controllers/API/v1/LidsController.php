@@ -289,9 +289,9 @@ class LidsController extends Controller
     }
     $response = [];
 
-    $response['hm'] = Lid::select('lids.*', 'depozits.depozit')
-      ->distinct()
-      ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
+    $response['hm'] = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))
+      // ->distinct()
+      // ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
       ->where('lids.user_id', $id)
       ->when($office_id > 0, function ($query) use ($office_id) {
         return $query->where('office_id', $office_id);
@@ -312,9 +312,9 @@ class LidsController extends Controller
       })
       ->count();
 
-    $response['lids'] = Lid::select('lids.*', 'depozits.depozit')
-      ->distinct()
-      ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
+    $response['lids'] = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))
+      // ->distinct()
+      // ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
       ->where('lids.user_id', $id)
       ->when($office_id > 0, function ($query) use ($office_id) {
         return $query->where('office_id', $office_id);
@@ -381,10 +381,10 @@ class LidsController extends Controller
     $data = $request->all();
     if (isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2) {
       $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
-      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->whereIn('lids.user_id', $a_user_ids)->where('lids.status_id', $data['id'])->orderBy('lids.created_at', 'desc')->get();
+      return Lid::select('lids.*',  DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))->whereIn('lids.user_id', $a_user_ids)->where('lids.status_id', $data['id'])->orderBy('lids.created_at', 'desc')->get();
     } else {
       $office_id = session()->get('office_id');
-      return Lid::select('lids.*', 'depozits.depozit')->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')->where('lids.status_id', $data['id'])->when($office_id > 0, function ($query) use ($office_id) {
+      return Lid::select('lids.*',  DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))->where('lids.status_id', $data['id'])->when($office_id > 0, function ($query) use ($office_id) {
         return $query->where('office_id', $office_id);
       })->orderBy('lids.created_at', 'desc')->get();
     }
