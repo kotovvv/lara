@@ -921,11 +921,12 @@ export default {
         .get("/api/todaylids/" + id)
         .then((res) => {
           self.todayItems = res.data;
-          if(t.ontime.length > 5){
             self.todayItems.map(function (t) {
+              if(t.ontime.length > 5){
             t.date = new Date(t.ontime).toLocaleTimeString().substring(0, 5);
+            }
           });
-          }
+
 
           self.todayItems.sort(function (a, b) {
             if (a.date > b.date) {
