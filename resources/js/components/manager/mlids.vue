@@ -859,16 +859,16 @@ export default {
           self.todaylids();
           self.loading = false;
         })
-        .then(
-          () =>
-            function (e) {
-              self.lids.map(function (e) {
-                e.provider = self.providers.find(
-                  (p) => p.id == e.provider_id
-                ).name;
-              });
-            }
-        )
+        // .then(
+        //   () =>
+        //     function (e) {
+        //       self.lids.map(function (e) {
+        //         e.provider = self.providers.find(
+        //           (p) => p.id == e.provider_id
+        //         ).name;
+        //       });
+        //     }
+        // )
         .catch((error) => console.log(error));
     },
     getLids(id) {
@@ -902,16 +902,16 @@ export default {
 
           self.todaylids();
         })
-        .then(
-          () =>
-            function (e) {
-              self.lids.map(function (e) {
-                e.provider = self.providers.find(
-                  (p) => p.id == e.provider_id
-                ).name;
-              });
-            }
-        )
+        // .then(
+        //   () =>
+        //     function (e) {
+        //       self.lids.map(function (e) {
+        //         e.provider = self.providers.find(
+        //           (p) => p.id == e.provider_id
+        //         ).name;
+        //       });
+        //     }
+        // )
         .catch((error) => console.log(error));
     },
     todaylids() {
