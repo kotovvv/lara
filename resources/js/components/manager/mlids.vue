@@ -641,7 +641,8 @@ export default {
     },
     writeText() {
       if (this.text_message.length > 0) {
-        this.lids.find((i) => i.id == this.lid_id).text = this.text_message;
+
+        (this.lids.find((i) => i.id == this.lid_id) || this.todayItems.find((i) => i.id == this.lid_id)).text = this.text_message;
       }
     },
     openDialog(i) {
