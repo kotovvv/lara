@@ -641,8 +641,10 @@ export default {
     },
     writeText() {
       if (this.text_message.length > 0) {
-
-        (this.lids.find((i) => i.id == this.lid_id) || this.todayItems.find((i) => i.id == this.lid_id)).text = this.text_message;
+        (
+          this.lids.find((i) => i.id == this.lid_id) ||
+          this.todayItems.find((i) => i.id == this.lid_id)
+        ).text = this.text_message;
       }
     },
     openDialog(i) {
@@ -756,9 +758,11 @@ export default {
       const self = this;
       let send = {};
       let send_el = {};
-      let eli = {}
-      let st = {}
-      eli = self.lids.find((i) => i.id == self.selected[0].id) || self.todayItems.find((i) => i.id == self.selected[0].id);
+      let eli = {};
+      let st = {};
+      eli =
+        self.lids.find((i) => i.id == self.selected[0].id) ||
+        self.todayItems.find((i) => i.id == self.selected[0].id);
       st = self.statuses.find((s) => s.id == self.selectedStatus);
       eli.status = st.name;
       eli.status_id = self.selectedStatus;
@@ -917,17 +921,22 @@ export default {
     todaylids() {
       const self = this;
       const id = self.$props.user.id;
-      self.todayItems = []
+      self.todayItems = [];
       axios
         .get("/api/todaylids/" + id)
         .then((res) => {
           self.todayItems = res.data;
-            self.todayItems.map(function (t) {
-              if(t.ontime.length > 5){
-            t.date = new Date(t.ontime).toLocaleTimeString().substring(0, 5);
+          self.todayItems.map(function (t) {
+            if (t.ontime.length > 5) {
+              t.date = new Date(t.ontime).toLocaleTimeString().substring(0, 5);
+            }
+            t.date_created = t.created_at.substring(0, 10);
+            if (self.providers.find((p) => p.id == t.provider_id)) {
+              t.provider = self.providers.find(
+                (p) => p.id == t.provider_id
+              ).name;
             }
           });
-
 
           self.todayItems.sort(function (a, b) {
             if (a.date > b.date) {
