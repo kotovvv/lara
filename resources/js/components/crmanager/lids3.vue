@@ -89,7 +89,7 @@
             ref="filterStatus"
             color="red"
             v-model="filterStatus"
-            @change="filterStatuses"
+            @change="getLidsPost"
             :items="statuses"
             item-text="name"
             item-value="id"
@@ -125,7 +125,7 @@
             v-if="
               filterStatus &&
               $props.user.role_id == 1 &&
-              filteredItems.length > 0
+              lids.length > 0
             "
           >
              <v-icon small @click="deleteItem()"> mdi-delete </v-icon>
@@ -139,7 +139,7 @@
             :items="providers"
             item-text="name"
             item-value="id"
-            @change="filterStatuses"
+            @change="getLidsPost"
             outlined
             rounded
             multiple
@@ -172,6 +172,7 @@
             outlined
             rounded
             multiple
+            @change="getLidsPost"
           >
             <template v-slot:selection="{ item, index }">
               <v-chip v-if="index === 0">
@@ -189,6 +190,7 @@
             v-model.lazy.trim="filtertel"
             append-icon="mdi-phone"
             @input="filterStatuses"
+            @click:append="getLidsPost"
             outlined
             rounded
           ></v-text-field>
@@ -199,7 +201,7 @@
           <v-text-field
             v-model="searchAll"
             append-icon="mdi-magnify"
-            @click:append="searchInDB"
+            @click:append="getLidsPost"
             outlined
             rounded
           ></v-text-field>
@@ -247,6 +249,21 @@
         </div>
       </v-col>
     </v-row>
+    <v-snackbar
+      v-model="snackbar"
+      top
+      rigth
+      timeout="6000"
+      color="success"
+      dark
+    >
+      {{ message }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="white" text v-bind="attrs" @click="snackbar = false">
+          Х
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-row>
       <v-col cols="9">
         <div class="border pa-4">
@@ -260,24 +277,15 @@
             show-select
             show-expand
             @click:row="clickrow"
-            :items="filteredItems"
+            :items="lids"
+:disable-pagination="true"
+  :footer-props="{ disablePagination: true, disableItemsPerPage : true }"
             :expanded.sync="expanded"
             ref="datatable"
-            :footer-props="{
-              'items-per-page-options': [],
-              'items-per-page-text': '',
-            }"
-            :disable-items-per-page="true"
             :loading="loading"
             loading-text="Загружаю... Ожидайте"
           >
-            <template
-              v-slot:top="{ pagination, options, updateOptions }"
-              :footer-props="{
-                'items-per-page-options': [50, 10, 100, 250, 500, -1],
-                'items-per-page-text': '',
-              }"
-            >
+            <template v-slot:top="{}">
               <v-row>
                 <v-col cols="1">
                   <v-row class="mb-5">
@@ -286,7 +294,7 @@
                       <v-text-field
                         class="mx-2 mt-0 pt-0 talign-center nn"
                         @input="selectRow"
-                        :max="filteredItems.length"
+                        :max="lids.length"
                         v-model.number="hmrow"
                         hide-details="auto"
                         color="#004D40"
@@ -305,50 +313,42 @@
                   ></v-text-field>
                 </v-col>
                 <v-col class="wrp_group">
-                  <v-row>
+                  <v-row >
                     <v-checkbox
                       v-model="filterGroups"
                       v-for="(groupa, index) in group"
                       :key="index"
                       :value="groupa.id"
-                      class="pt-4"
+                      :hide-details=true
                     >
                       <template v-slot:label>
                         <div class="img">{{ groupa.fio.slice(0, 3) }}</div>
-                        <!-- <img
-                          :src="'/storage/' + groupa.pic"
-                          :alt="groupa.fio"
-                          v-if="groupa.pic"
-                        /> -->
                       </template>
                     </v-checkbox>
                   </v-row>
                 </v-col>
-
-                <!-- <v-spacer></v-spacer> -->
                 <v-col cols="3" class="mt-3">
-                  <v-data-footer
-                    :pagination="pagination"
-                    :options="options"
-                    @update:options="updateOptions"
-                    :items-per-page-options="[50, 10, 100, 250, 500, -1]"
-                    :items-per-page-text="''"
-                  />
+                  <v-row class="align-center">
+                    <h5 class="mb-0">Всего:{{ hm }}</h5>
+                    <v-pagination
+                      v-model="page"
+                      class="my-4"
+                      :length="parseInt(hm / limit) + 1"
+                      @input="getLidsPost()"
+                      total-visible="10"
+                    ></v-pagination>
+                  </v-row>
                 </v-col>
               </v-row>
             </template>
             <template v-slot:expanded-item="{ headers, item }">
-              <!-- :colspan="headers.length" -->
               <td :colspan="headers.length" class="blackborder">
-                <!-- <v-row>
-                  <v-col cols="12"> -->
-
                 <logtel :lid_id="item.id" :key="item.id" />
-                <!-- </v-col>
-                </v-row> -->
               </td>
             </template>
-            <template v-slot:footer.prepend>
+            <template v-slot:footer.prepend
+
+              >
               <v-col cols="2">
                 <v-btn outlined rounded @click="exportXlsx" class="border">
                   <v-icon left> mdi-file-excel </v-icon>
@@ -553,6 +553,11 @@ export default {
     hmrow: "",
     offices: [],
     filterOffices: [],
+    hm: 0,
+    snackbar: false,
+    message: "",
+    page: 0,
+    limit: 100,
   }),
   mounted: function () {
     this.getUsers();
@@ -637,25 +642,7 @@ export default {
       }
     },
   },
-  computed: {
-    filteredItems() {
-      let reg = new RegExp("^" + this.filtertel);
-      return this.lids.filter((i) => {
-        return (
-          (!this.filterStatus.length ||
-            this.filterStatus.includes(i.status_id)) &&
-          (!this.filterProviders.length ||
-            this.filterProviders.includes(i.provider_id)) &&
-          (!this.filtertel || reg.test(i.tel)) &&
-          (!this.showDuplicates || this.telsDuplicates.includes(i.id)) &&
-          (!this.filterGroups.length ||
-            this.filterGroups.includes(i.group_id)) &&
-          (!this.filterOffices.length ||
-            this.filterOffices.includes(i.office_id))
-        );
-      });
-    },
-  },
+  computed: {},
   methods: {
     getOffices() {
       let self = this;
@@ -691,12 +678,179 @@ export default {
     },
     getLidsOnUserOrDate() {
       if (this.savedates == false) {
-        let user_id =
-          this.disableuser > 0 ? this.disableuser : this.$props.user.id;
-        this.getLids(user_id);
+        this.getLidsPost();
       } else {
         this.getLidsOnDate();
       }
+    },
+    getLidsOnDate() {
+      exit
+      let self = this;
+      this.loading = true;
+      let data = {};
+      if (this.datetimeFrom == "") {
+        this.datetimeFrom = new Date(
+          new Date().setDate(new Date().getDate() - 14)
+        )
+          .toISOString()
+          .substring(0, 10);
+      }
+      if (this.datetimeTo == "") {
+        this.datetimeTo = new Date().toISOString().substring(0, 10);
+      }
+
+      data.datefrom = this.getLocalDateTime(this.datetimeFrom);
+      data.dateto = this.getLocalDateTime(this.datetimeTo);
+      data.user_id = this.disableuser;
+      axios
+        .post("/api/getLidsOnDate", data)
+        .then((res) => {
+          self.loading = false;
+          self.lids = Object.entries(res.data).map((e) => e[1]);
+          self.lids.map(function (e) {
+            e.date_created = e.created_at.substring(0, 10);
+            if (e.updated_at) {
+              e.date_updated = e.updated_at.substring(0, 10);
+            }
+            if (e.status_id) {
+              e.status = self.statuses.find((s) => s.id == e.status_id).name;
+            }
+            if (self.users.find((u) => u.id == e.user_id)) {
+              let luser = self.users.find((u) => u.id == e.user_id);
+              e.user = luser.fio;
+              e.group_id = luser.group_id;
+            }
+
+            if (self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            }
+          });
+          self.orderStatus();
+          self.searchAll = "";
+        })
+        .then(() => {
+          if (localStorage.filterStatus) {
+            self.filterStatus = localStorage.filterStatus
+              .split(",")
+              .map((el) => parseInt(el));
+          }
+          self.filterStatuses();
+        })
+        .then(() => {
+          if (localStorage.filterProviders) {
+            self.filterProviders = localStorage.filterProviders
+              .split(",")
+              .map((el) => parseInt(el));
+          }
+        })
+        .then(() => {
+          if (self.hmrow > 0) {
+            const temp = self.hmrow;
+            self.hmrow = "";
+            self.hmrow = temp;
+            self.selectRow();
+          }
+        })
+        .catch((error) => console.log(error));
+    },
+    getLids(id) {
+      let self = this;
+      self.search = "";
+      self.disableuser = id;
+      self.Statuses = [];
+      self.loading = true;
+      self.lids = [];
+      axios
+        .get("/api/userlids/" + id)
+        .then((res) => {
+          self.lids = Object.entries(res.data).map((e) => e[1]);
+
+          self.lids.map(function (e) {
+            e.date_created = e.created_at.substring(0, 10);
+            if (e.updated_at) {
+              e.date_updated = e.updated_at.substring(0, 10);
+            }
+            if (self.users.find((u) => u.id == e.user_id)) {
+              e.user = self.users.find((u) => u.id == e.user_id).fio;
+            }
+            if (self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            }
+            if (e.status_id)
+              e.status = self.statuses.find((s) => s.id == e.status_id).name;
+          });
+          self.orderStatus();
+          self.searchAll = "";
+          if (localStorage.filterStatus) {
+            self.$refs.filterStatus.selectedItems = [
+              self.statuses.find(function (i) {
+                return localStorage.filterStatus
+                  .split()
+                  .map((el) => parseInt(el))
+                  .includes(i.id);
+              }),
+            ];
+          }
+          self.loading = false;
+          self.filterStatuses();
+        })
+        .then(() => {
+          if (self.hmrow > 0) {
+            const temp = self.hmrow;
+            self.hmrow = "";
+            self.hmrow = temp;
+            self.selectRow();
+          }
+        })
+        .catch((error) => console.log(error));
+    },
+    getLidsPost() {
+      const id = this.disableuser > 0 ? this.disableuser : this.$props.user.id;
+      let self = this;
+      let data = {};
+      self.loading = true;
+      self.disableuser = id;
+
+      data.id = id;
+      data.provider_id = self.filterProviders;
+      data.status_id = self.filterStatus;
+      data.tel = self.filtertel;
+      data.search = self.search;
+      data.limit = self.limit;
+      data.page = self.page;
+data.office_id = self.filterOffices
+      axios
+        .post("/api/getLidsPost", data)
+        .then((res) => {
+          self.hm = res.data.hm;
+          self.lids = Object.entries(res.data.lids).map((e) => e[1]);
+
+          self.lids.map(function (e) {
+            if (e.updated_at) {
+              e.date_updated = e.updated_at.substring(0, 10);
+            }
+            e.date_created = e.created_at.substring(0, 10);
+            if (e.status_id) {
+              e.status =
+                self.statuses.find((s) => s.id == e.status_id).name || "";
+            }
+             if (self.users.find((u) => u.id == e.user_id)) {
+              e.user = self.users.find((u) => u.id == e.user_id).fio;
+            }
+            if (self.providers.find((p) => p.id == e.provider_id)) {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            }
+          });
+          self.loading = false;
+          self.filterStatuses();
+        })
+        .catch((error) => console.log(error));
     },
     selectRow() {
       this.selected = this.$refs.datatable.internalCurrentItems.slice(
@@ -740,7 +894,7 @@ export default {
     filterStatuses() {
       const self = this;
       self.Statuses = [];
-      let stord = this.filteredItems;
+      let stord = this.lids;
       stord = Object.entries(_.groupBy(stord, "status"));
       stord.map(function (i) {
         //i[0]//name
@@ -758,7 +912,7 @@ export default {
     },
     exportXlsx() {
       const self = this;
-      const obj = _.groupBy(self.filteredItems, "status");
+      const obj = _.groupBy(self.lids, "status");
       const lidsByStatus = Array.from(Object.keys(obj), (k) => [
         `${k}`,
         obj[k],
@@ -809,7 +963,7 @@ export default {
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
-            if(e.updated_at){
+            if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
             }
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
@@ -825,7 +979,7 @@ export default {
     deleteItem() {
       const self = this;
       let ids = [];
-      this.filteredItems.forEach(function (el) {
+      this.lids.forEach(function (el) {
         ids.push(el.id);
         self.lids.splice(
           self.lids.indexOf(self.lids.find((l) => l.id == el.id)),
@@ -856,9 +1010,9 @@ export default {
         send.data = this.selected;
       } else if (
         (this.search !== "" || this.filtertel !== "") &&
-        this.$refs.datatable.$children[0].filteredItems.length > 0
+        this.$refs.datatable.$children[0].lids.length > 0
       ) {
-        send.data = this.$refs.datatable.$children[0].filteredItems;
+        send.data = this.$refs.datatable.$children[0].lids;
         axios
           .post("api/Lid/newlids", send)
           .then(function (response) {
@@ -939,7 +1093,7 @@ export default {
     getUsers() {
       let self = this;
       // let get = self.$props.user.role_id == 1 ? "/api/users" : "/api/getusers";
-      let get =  "/api/getusers";
+      let get = "/api/getusers";
       axios
         .get(get)
         .then((res) => {
@@ -1005,7 +1159,7 @@ export default {
           self.lids = Object.entries(res.data).map((e) => e[1]);
           self.lids.map(function (e) {
             e.date_created = e.created_at.substring(0, 10);
-            if(e.updated_at){
+            if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
             }
             if (e.status_id)
@@ -1036,130 +1190,7 @@ export default {
         .slice(0, 16)
         .replace("T", " ");
     },
-    getLidsOnDate() {
-      let self = this;
-      this.loading = true;
-      let data = {};
-      if (this.datetimeFrom == ""){
-        this.datetimeFrom = new Date(
-          new Date().setDate(new Date().getDate() - 14)
-        )
-          .toISOString()
-          .substring(0, 10);
-      }
-      if (this.datetimeTo == ""){
-        this.datetimeTo = new Date().toISOString().substring(0, 10);
-      }
 
-      data.datefrom = this.getLocalDateTime(this.datetimeFrom);
-      data.dateto = this.getLocalDateTime(this.datetimeTo);
-      data.user_id = this.disableuser;
-      axios
-        .post("/api/getLidsOnDate", data)
-        .then((res) => {
-          self.loading = false;
-          self.lids = Object.entries(res.data).map((e) => e[1]);
-          self.lids.map(function (e) {
-            e.date_created = e.created_at.substring(0, 10);
-            if(e.updated_at){
-              e.date_updated = e.updated_at.substring(0, 10);
-            }
-            if (e.status_id) {
-              e.status = self.statuses.find((s) => s.id == e.status_id).name;
-            }
-            if (self.users.find((u) => u.id == e.user_id)) {
-              let luser = self.users.find((u) => u.id == e.user_id);
-              e.user = luser.fio;
-              e.group_id = luser.group_id;
-            }
-
-            if (self.providers.find((p) => p.id == e.provider_id)) {
-              e.provider = self.providers.find(
-                (p) => p.id == e.provider_id
-              ).name;
-            }
-          });
-          self.orderStatus();
-          self.searchAll = "";
-        })
-        .then(() => {
-          if (localStorage.filterStatus) {
-            self.filterStatus = localStorage.filterStatus
-              .split(",")
-              .map((el) => parseInt(el));
-          }
-          self.filterStatuses();
-        })
-        .then(() => {
-          if (localStorage.filterProviders) {
-            self.filterProviders = localStorage.filterProviders
-              .split(",")
-              .map((el) => parseInt(el));
-          }
-        })
-        .then(() => {
-          if (self.hmrow > 0) {
-            const temp = self.hmrow;
-            self.hmrow = "";
-            self.hmrow = temp;
-            self.selectRow();
-          }
-        })
-        .catch((error) => console.log(error));
-    },
-    getLids(id) {
-      let self = this;
-      self.search = "";
-      self.disableuser = id;
-      self.Statuses = [];
-      self.loading = true;
-      self.lids = [];
-      axios
-        .get("/api/userlids/" + id)
-        .then((res) => {
-          self.lids = Object.entries(res.data).map((e) => e[1]);
-
-          self.lids.map(function (e) {
-            e.date_created = e.created_at.substring(0, 10);
-            if(e.updated_at){
-              e.date_updated = e.updated_at.substring(0, 10);
-            }
-            if (self.users.find((u) => u.id == e.user_id)) {
-              e.user = self.users.find((u) => u.id == e.user_id).fio;
-            }
-            if (self.providers.find((p) => p.id == e.provider_id)) {
-              e.provider = self.providers.find(
-                (p) => p.id == e.provider_id
-              ).name;
-            }
-            if (e.status_id)
-              e.status = self.statuses.find((s) => s.id == e.status_id).name;
-          });
-          self.orderStatus();
-          self.searchAll = "";
-          if (localStorage.filterStatus) {
-            self.$refs.filterStatus.selectedItems = [
-              self.statuses.find(function (i) {
-                return localStorage.filterStatus
-                  .split()
-                  .map((el) => parseInt(el))
-                  .includes(i.id);
-              }),
-            ];
-          }
-          self.loading = false;
-          self.filterStatuses();
-        })
-        .then(() => {
-          if (self.hmrow > 0) {
-            const temp = self.hmrow;
-            self.hmrow = "";
-            self.hmrow = temp;
-            self.selectRow();
-          }
-        })
-        .catch((error) => console.log(error));
-    },
     orderStatus() {
       const self = this;
       let stord = [];
@@ -1235,12 +1266,11 @@ export default {
   overflow: auto;
   max-height: 54vh;
 }
-#tablids .v-data-footer .v-data-footer__select {
-  margin-left: 0;
-  margin-right: 0;
-}
-#tablids .v-application--is-ltr .v-data-footer__pagination {
-  margin: 0;
+#tablids .v-data-footer .v-data-footer__select,
+#tablids .v-data-footer .v-data-footer__pagination,
+#tablids .v-data-footer .v-data-footer__icons-before,
+#tablids .v-data-footer .v-data-footer__icons-after {
+  display: none;
 }
 .wrp_date .v-text-field > .v-input__control > .v-input__slot {
   margin-top: 3px;
@@ -1277,9 +1307,7 @@ export default {
   background: #fff;
   color: #7620df;
 }
-#app .v-application--is-ltr .v-data-footer__pagination {
-  margin: 0 12px 0 12px;
-}
+
 .v-menu__content.menuable__content__active {
   /* min-height: 650px; */
 }

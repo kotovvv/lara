@@ -10,7 +10,6 @@ use App\Models\Log;
 use App\Models\Depozit;
 use App\Models\User;
 use App\Models\Provider;
-use Barryvdh\Debugbar\Twig\Extension\Debug;
 use DB;
 use Debugbar;
 
@@ -254,7 +253,6 @@ class LidsController extends Controller
     if (isset($data['check'])) {
       $sql = "SELECT l.`id`, l.`tel`,l.`name`, l.`status_id`, s.`name` status_name, l.`email`, u.`name` user_name, p.`name` provider_name, l.`afilyator`, o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) WHERE `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\")";
       $results['leads'] =  DB::select(DB::raw($sql));
-
     }
 
     DB::select(DB::raw("SET SQL_MODE = '';"));
@@ -270,8 +268,9 @@ class LidsController extends Controller
 
   public function getLidsPost(Request $request)
   {
+    $office_id = [];
     $data = $request->all();
-    $office_id = session()->get('office_id');
+
     $id = $data['id'];
     $status_id = $data['status_id'];
     $search = $data['search'];
@@ -279,22 +278,37 @@ class LidsController extends Controller
     $limit = $data['limit'];
     $page = $data['page'];
     $providers = [];
-    if (count($data['provider_id']) > 0) {
-      $providers = $data['provider_id'];
-    } else {
-      $res = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
-      foreach ($res as $item) {
-        $providers[] = $item['id'];
+    if ($tel != '' || $search != '') {
+      if (isset($data['office_id']) && count($data['office_id']) > 0) {
+        $office_id = $data['office_id'];
+      } else {
+        $office_id[] = session()->get('office_id');
       }
     }
-    $response = [];
 
-    $response['hm'] = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))
-      // ->distinct()
-      // ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
+    if (count($data['provider_id']) > 0) {
+      $providers = $data['provider_id'];
+      if (is_array($office_id)) {
+        $where = '';
+        foreach ($office_id as $key => $off_id) {
+          $where .= $key == 0 ? "" : " OR " . "office_id REGEXP('[^0-9]" . $off_id['off_id'] . "[^0-9]')";
+        }
+
+        $sql = "SELECT id FROM `providers` WHERE " . $where;
+        $providers =  DB::select(DB::raw($sql))->toArray();
+      } else {
+        $res = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
+        foreach ($res as $item) {
+          $providers[] = $item['id'];
+        }
+      }
+    }
+
+    $response = [];
+    $s_liads = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))
       ->where('lids.user_id', $id)
-      ->when($office_id > 0, function ($query) use ($office_id) {
-        return $query->where('office_id', $office_id);
+      ->when(count($office_id), function ($query) use ($office_id) {
+        return $query->whereIn('office_id', $office_id);
       })
       ->when(count($providers) > 0, function ($query) use ($providers) {
         return $query->whereIn('provider_id', $providers);
@@ -303,7 +317,33 @@ class LidsController extends Controller
         return $query->whereIn('status_id', $status_id);
       })
       ->when($tel != '', function ($query) use ($tel) {
-        return $query->where('tel','like', $tel . '%');
+        return $query->where('tel', 'like', $tel . '%');
+      })
+      ->when($search != '', function ($query) use ($search) {
+        return $query->where(function ($query) use ($search) {
+          return $query->where('name', 'like', '%' . $search . '%')->orWhere('email', 'like', '%' . $search . '%');
+        });
+      });
+    $response['hm'] = $s_liads->count();
+    $response['lids'] = $s_liads->orderBy('lids.created_at', 'desc')
+      ->offset($limit * ($page - 1))
+      ->limit($limit)
+      ->get();
+    /* $response['hm'] = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))
+      // ->distinct()
+      // ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
+      ->where('lids.user_id', $id)
+      ->when(count($office_id) , function ($query) use ($office_id) {
+        return $query->whereIn('office_id', $office_id);
+      })
+      ->when(count($providers) > 0, function ($query) use ($providers) {
+        return $query->whereIn('provider_id', $providers);
+      })
+      ->when(count($status_id) > 0, function ($query) use ($status_id) {
+        return $query->whereIn('status_id', $status_id);
+      })
+      ->when($tel != '', function ($query) use ($tel) {
+        return $query->where('tel', 'like', $tel . '%');
       })
       ->when($search != '', function ($query) use ($search) {
         return $query->where(function ($query) use ($search) {
@@ -316,8 +356,8 @@ class LidsController extends Controller
       // ->distinct()
       // ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
       ->where('lids.user_id', $id)
-      ->when($office_id > 0, function ($query) use ($office_id) {
-        return $query->where('office_id', $office_id);
+      ->when(count($office_id), function ($query) use ($office_id) {
+        return $query->whereIn('office_id',  $office_id);
       })
       ->when(count($providers) > 0, function ($query) use ($providers) {
         return $query->whereIn('provider_id', $providers);
@@ -326,7 +366,7 @@ class LidsController extends Controller
         return $query->whereIn('status_id', $status_id);
       })
       ->when($tel != '', function ($query) use ($tel) {
-        return $query->where('tel','like', $tel . '%');
+        return $query->where('tel', 'like', $tel . '%');
       })
       ->when($search != '', function ($query) use ($search) {
         return $query->where(function ($query) use ($search) {
@@ -334,21 +374,21 @@ class LidsController extends Controller
         });
       })
       ->orderBy('lids.created_at', 'desc')
-      ->offset($limit*($page-1))
+      ->offset($limit * ($page - 1))
       ->limit($limit)
-      ->get();
+      ->get(); */
 
-      return response($response);
+    return response($response);
   }
 
   public function todaylids($id)
   {
     $date = date('Y-m-d');
     return Lid::where('user_id', (int) $id)
-    ->whereNotNull('ontime')
-    ->whereDate('ontime', '=', $date)
-    ->orderBy('ontime','desc')
-    ->get();
+      ->whereNotNull('ontime')
+      ->whereDate('ontime', '=', $date)
+      ->orderBy('ontime', 'desc')
+      ->get();
   }
 
 
@@ -358,7 +398,7 @@ class LidsController extends Controller
     $a_providers = [];
     $office_id = session()->get('office_id');
     $providers = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
-    foreach($providers as $provider){
+    foreach ($providers as $provider) {
       $a_providers[] = $provider['id'];
     }
 
@@ -372,7 +412,7 @@ class LidsController extends Controller
     if ($office_id > 0) {
       $adnwhere = " AND office_id = $office_id AND provider_id in (" . implode(',', $a_providers) . ") ";
     }
-    $sql = "SELECT DISTINCT `lids`.*, (SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit FROM `lids`  WHERE `lids`.`user_id` = ".(int) $id. $adnwhere." ORDER BY `lids`.`created_at` DESC";
+    $sql = "SELECT DISTINCT `lids`.*, (SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit FROM `lids`  WHERE `lids`.`user_id` = " . (int) $id . $adnwhere . " ORDER BY `lids`.`created_at` DESC";
     return DB::select(DB::raw($sql));
   }
 
