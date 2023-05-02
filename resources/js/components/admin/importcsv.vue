@@ -322,6 +322,7 @@ export default {
       { text: "Статус", value: "status_name" },
       { text: "Тел", value: "tel" },
       { text: "Оператор", value: "user_name" },
+      { text: "Создан", value: "created" },
     ],
     duplicate_leads: [],
     parse_header: [],
@@ -371,6 +372,9 @@ export default {
       var wb = XLSX.utils.book_new(); // make Workbook of Excel
       window["list"] = XLSX.utils.json_to_sheet(self.duplicate_leads);
       XLSX.utils.book_append_sheet(wb, window["list"], "duplicate_emailes");
+      const unique = self.out_db.map(i => ({ email: i }));
+      window["unique"] = XLSX.utils.json_to_sheet(unique);
+      XLSX.utils.book_append_sheet(wb, window["unique"], "unique");
 
       // export Excel file
       XLSX.writeFile(wb, "dupl_email" + new Date().toDateString() + ".xlsx"); // name of the file is 'book.xlsx'

@@ -278,8 +278,11 @@
             show-expand
             @click:row="clickrow"
             :items="lids"
-:disable-pagination="true"
-  :footer-props="{ disablePagination: true, disableItemsPerPage : true }"
+            :disable-pagination="true"
+            :footer-props="{
+              disablePagination: true,
+              disableItemsPerPage: true,
+            }"
             :expanded.sync="expanded"
             ref="datatable"
             :loading="loading"
@@ -313,13 +316,13 @@
                   ></v-text-field>
                 </v-col>
                 <v-col class="wrp_group">
-                  <v-row >
+                  <v-row>
                     <v-checkbox
                       v-model="filterGroups"
                       v-for="(groupa, index) in group"
                       :key="index"
                       :value="groupa.id"
-                      :hide-details=true
+                      :hide-details="true"
                     >
                       <template v-slot:label>
                         <div class="img">{{ groupa.fio.slice(0, 3) }}</div>
@@ -346,9 +349,7 @@
                 <logtel :lid_id="item.id" :key="item.id" />
               </td>
             </template>
-            <template v-slot:footer.prepend
-
-              >
+            <template v-slot:footer.prepend>
               <v-col cols="2">
                 <v-btn outlined rounded @click="exportXlsx" class="border">
                   <v-icon left> mdi-file-excel </v-icon>
@@ -684,7 +685,7 @@ export default {
       }
     },
     getLidsOnDate() {
-      exit
+      exit;
       let self = this;
       this.loading = true;
       let data = {};
@@ -822,7 +823,7 @@ export default {
       data.search = self.search;
       data.limit = self.limit;
       data.page = self.page;
-data.office_id = self.filterOffices
+      data.office_id = self.filterOffices;
       axios
         .post("/api/getLidsPost", data)
         .then((res) => {
@@ -838,7 +839,7 @@ data.office_id = self.filterOffices
               e.status =
                 self.statuses.find((s) => s.id == e.status_id).name || "";
             }
-             if (self.users.find((u) => u.id == e.user_id)) {
+            if (self.users.find((u) => u.id == e.user_id)) {
               e.user = self.users.find((u) => u.id == e.user_id).fio;
             }
             if (self.providers.find((p) => p.id == e.provider_id)) {
