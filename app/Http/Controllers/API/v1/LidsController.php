@@ -140,10 +140,12 @@ class LidsController extends Controller
         })
         ->where(function ($query) use ($search) {
           return $query
-            ->where('name', 'like', "%{$search}%")
-            ->orwhere('tel', 'like', "%{$search}%")
-            ->orwhere('email', 'like', "%{$search}%")
-            ->orwhere('text', 'like', "%{$search}%");
+          ->whereRaw('MATCH(NAME,email,TEXT) AGAINST ("' . $search . '")')
+            //->where('name', 'like', "%{$search}%")
+            // ->orwhere('tel', 'like', "%{$search}%")
+            //->orwhere('email', 'like', "%{$search}%")
+            //->orwhere('text', 'like', "%{$search}%")
+            ;
         });
       $response['hm'] = $q_leads->count();
 
@@ -160,10 +162,13 @@ class LidsController extends Controller
           return $query->where('office_id', $office_id);
         })
         ->where(function ($query) use ($search) {
-          return $query->where('name', 'like', "%{$search}%")
-            ->orwhere('tel', 'like', "%{$search}%")
-            ->orwhere('email', 'like', "%{$search}%")
-            ->orwhere('text', 'like', "%{$search}%");
+          return $query
+          ->whereRaw('MATCH(NAME,email,TEXT) AGAINST ("'.$search.'")')
+          // ->where('name', 'like', "%{$search}%")
+          //   ->orwhere('tel', 'like', "%{$search}%")
+          //   ->orwhere('email', 'like', "%{$search}%")
+          //   ->orwhere('text', 'like', "%{$search}%")
+          ;
         });
       $response['hm'] = $q_leads->count();
 
