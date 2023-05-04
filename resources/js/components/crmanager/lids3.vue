@@ -171,8 +171,7 @@
             item-value="id"
             outlined
             rounded
-            multiple
-            @change="getLidsPost"
+            @change="getPage"
           >
             <template v-slot:selection="{ item, index }">
               <v-chip v-if="index === 0">
@@ -201,13 +200,18 @@
           <v-text-field
             v-model="searchAll"
             append-icon="mdi-magnify"
-            @click:append="getLidsPost"
+            @click:append="searchlids3"
             outlined
             rounded
           ></v-text-field>
         </v-col>
       </v-row>
     </v-container>
+    <v-progress-linear
+              :active="loading"
+              indeterminate
+              color="purple"
+            ></v-progress-linear>
     <v-row>
       <v-col>
         <div class="wrp__statuses">
@@ -337,7 +341,7 @@
                       v-model="page"
                       class="my-4"
                       :length="parseInt(hm / limit) + 1"
-                      @input="getLidsPost()"
+                      @input="getPage()"
                       total-visible="10"
                     ></v-pagination>
                   </v-row>
@@ -645,6 +649,13 @@ export default {
   },
   computed: {},
   methods: {
+    getPage(){
+      if(this.searchAll != ''){
+        this.searchlids3()
+      }else{
+        this.getLidsPost()
+      }
+    },
     getOffices() {
       let self = this;
       if (self.$props.user.role_id == 1 && self.$props.user.office_id == 0) {
@@ -948,21 +959,25 @@ export default {
       });
       return i1 != ndx && ndx != -1;
     },
-    searchInDB() {
+    searchlids3() {
       let self = this;
-      const send = {};
+      const data = {};
       self.loading = true;
-      send.group_id = self.$props.user.group_id;
-      send.role_id = self.$props.user.role_id;
-      send.search = self.searchAll;
+      data.group_id = self.$props.user.group_id;
+      data.role_id = self.$props.user.role_id;
+      data.limit = self.limit;
+      data.page = self.page;
+      data.search = self.searchAll;
+      data.office_id = self.filterOffices;
       axios
-        .post("api/Lid/searchlids", send)
+        .post("api/Lid/searchlids3", data)
         .then((res) => {
-          self.loading = false;
-          self.lids = Object.entries(res.data).map((e) => e[1]);
+          self.hm = res.data.hm;
+
+          self.lids = Object.entries(res.data.lids).map((e) => e[1]);
 
           self.lids.map(function (e) {
-            e.user = self.users.find((u) => u.id == e.user_id).fio;
+            e.user = self.users.find((u) => u.id == e.user_id).fio || '';
             e.date_created = e.created_at.substring(0, 10);
             if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
@@ -971,6 +986,7 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
+          self.loading = false;
           self.disableuser = 0;
         })
         .catch(function (error) {
@@ -1167,7 +1183,7 @@ export default {
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
           if (self.users.length) {
-            e.user = self.users.find((u) => u.id == e.user_id).fio;
+            e.user = self.users.find((u) => u.id == e.user_id).fio || '';
           }
           if (self.providers.length) {
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
@@ -1258,7 +1274,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .scroll-y {
   max-height: 60vh;
   overflow: auto;

@@ -117,6 +117,66 @@ class LidsController extends Controller
     return response((object) []);
   }
 
+  public function searchlids3(Request $request)
+  {
+    $data = $request->all();
+    if ($data['search'] == '') {
+      return response(['hm' => 0, 'lids' => []]);
+    }
+    $limit = $page = 0;
+    $response = [];
+    if (isset($data['limit'])) {
+      $limit = (int) $data['limit'];
+      $page = (int) $data['page'];
+    }
+    $office_id = session()->get('office_id');
+    $search = $data['search'];
+    if (isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2) {
+      $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
+      $q_leads = Lid::select('*')
+        ->whereIn('user_id', $a_user_ids)
+        ->when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('office_id', $office_id);
+        })
+        ->where(function ($query) use ($search) {
+          return $query
+            ->where('name', 'like', "%{$search}%")
+            ->orwhere('tel', 'like', "%{$search}%")
+            ->orwhere('email', 'like', "%{$search}%")
+            ->orwhere('text', 'like', "%{$search}%");
+        });
+      $response['hm'] = $q_leads->count();
+
+      $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
+        ->offset($limit * ($page - 1))
+        ->limit($limit)
+        ->get();
+
+      return response($response);
+    } else {
+      $office_id = (int) $data['office_id'];
+      $q_leads = Lid::select('*')
+        ->when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('office_id', $office_id);
+        })
+        ->where(function ($query) use ($search) {
+          return $query->where('name', 'like', "%{$search}%")
+            ->orwhere('tel', 'like', "%{$search}%")
+            ->orwhere('email', 'like', "%{$search}%")
+            ->orwhere('text', 'like', "%{$search}%");
+        });
+      $response['hm'] = $q_leads->count();
+
+      $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
+        ->offset($limit * ($page - 1))
+        ->limit($limit)
+        ->get();
+      return response($response);
+    }
+
+    return response(['hm' => 0, 'lids' => []]);
+  }
+
   /**
    * Show the form for creating a new resource.
    *
@@ -268,9 +328,8 @@ class LidsController extends Controller
 
   public function getLidsPost(Request $request)
   {
-    $office_id = [];
     $data = $request->all();
-
+    $office_id = session()->get('office_id');
     $id = $data['id'];
     $status_id = $data['status_id'];
     $search = $data['search'];
@@ -278,37 +337,19 @@ class LidsController extends Controller
     $limit = $data['limit'];
     $page = $data['page'];
     $providers = [];
-    if ($tel != '' || $search != '') {
-      if (isset($data['office_id']) && count($data['office_id']) > 0) {
-        $office_id = $data['office_id'];
-      } else {
-        $office_id[] = session()->get('office_id');
-      }
-    }
-
     if (count($data['provider_id']) > 0) {
       $providers = $data['provider_id'];
-      if (is_array($office_id)) {
-        $where = '';
-        foreach ($office_id as $key => $off_id) {
-          $where .= $key == 0 ? "" : " OR " . "office_id REGEXP('[^0-9]" . $off_id['off_id'] . "[^0-9]')";
-        }
-
-        $sql = "SELECT id FROM `providers` WHERE " . $where;
-        $providers =  DB::select(DB::raw($sql))->toArray();
-      } else {
-        $res = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
-        foreach ($res as $item) {
-          $providers[] = $item['id'];
-        }
+    } else {
+      $res = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
+      foreach ($res as $item) {
+        $providers[] = $item['id'];
       }
     }
-
     $response = [];
-    $s_liads = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))
+    $q_leads = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))
       ->where('lids.user_id', $id)
-      ->when(count($office_id), function ($query) use ($office_id) {
-        return $query->whereIn('office_id', $office_id);
+      ->when($office_id > 0, function ($query) use ($office_id) {
+        return $query->where('office_id', $office_id);
       })
       ->when(count($providers) > 0, function ($query) use ($providers) {
         return $query->whereIn('provider_id', $providers);
@@ -324,59 +365,12 @@ class LidsController extends Controller
           return $query->where('name', 'like', '%' . $search . '%')->orWhere('email', 'like', '%' . $search . '%');
         });
       });
-    $response['hm'] = $s_liads->count();
-    $response['lids'] = $s_liads->orderBy('lids.created_at', 'desc')
+    $response['hm'] = $q_leads->count();
+
+    $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
       ->offset($limit * ($page - 1))
       ->limit($limit)
       ->get();
-    /* $response['hm'] = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))
-      // ->distinct()
-      // ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
-      ->where('lids.user_id', $id)
-      ->when(count($office_id) , function ($query) use ($office_id) {
-        return $query->whereIn('office_id', $office_id);
-      })
-      ->when(count($providers) > 0, function ($query) use ($providers) {
-        return $query->whereIn('provider_id', $providers);
-      })
-      ->when(count($status_id) > 0, function ($query) use ($status_id) {
-        return $query->whereIn('status_id', $status_id);
-      })
-      ->when($tel != '', function ($query) use ($tel) {
-        return $query->where('tel', 'like', $tel . '%');
-      })
-      ->when($search != '', function ($query) use ($search) {
-        return $query->where(function ($query) use ($search) {
-          return $query->where('name', 'like', '%' . $search . '%')->orWhere('email', 'like', '%' . $search . '%');
-        });
-      })
-      ->count();
-
-    $response['lids'] = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))
-      // ->distinct()
-      // ->leftJoin('depozits', 'lids.id', '=', 'depozits.lid_id')
-      ->where('lids.user_id', $id)
-      ->when(count($office_id), function ($query) use ($office_id) {
-        return $query->whereIn('office_id',  $office_id);
-      })
-      ->when(count($providers) > 0, function ($query) use ($providers) {
-        return $query->whereIn('provider_id', $providers);
-      })
-      ->when(count($status_id) > 0, function ($query) use ($status_id) {
-        return $query->whereIn('status_id', $status_id);
-      })
-      ->when($tel != '', function ($query) use ($tel) {
-        return $query->where('tel', 'like', $tel . '%');
-      })
-      ->when($search != '', function ($query) use ($search) {
-        return $query->where(function ($query) use ($search) {
-          return $query->where('name', 'like', '%' . $search . '%')->orWhere('email', 'like', '%' . $search . '%');
-        });
-      })
-      ->orderBy('lids.created_at', 'desc')
-      ->offset($limit * ($page - 1))
-      ->limit($limit)
-      ->get(); */
 
     return response($response);
   }
