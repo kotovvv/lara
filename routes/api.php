@@ -44,6 +44,7 @@ Route::get('users/getroles', [UsersController::class, 'getroless'])->name('user.
 Route::post('user/update', [UsersController::class, 'update'])->name('user.update');
 Route::get('userlids/{id}', [LidsController::class, 'userLids'])->name('userlids');
 Route::post('getLidsPost', [LidsController::class, 'getLidsPost'])->name('getLidsPost');
+Route::post('getLids3', [LidsController::class, 'getLids3'])->name('getLids3');
 Route::post('statuslids', [LidsController::class, 'statusLids'])->name('statuslids');
 Route::get('getuserlids/{id}', [LidsController::class, 'getuserLids'])->name('getuserlids');
 Route::get('todaylids/{id}', [LidsController::class, 'todaylids'])->name('todaylids');

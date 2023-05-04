@@ -89,7 +89,7 @@
             ref="filterStatus"
             color="red"
             v-model="filterStatus"
-            @change="getLidsPost"
+            @change="getLids3"
             :items="statuses"
             item-text="name"
             item-value="id"
@@ -121,15 +121,6 @@
               {{ item.name }}
             </template>
           </v-select>
-          <!--  <v-btn
-            v-if="
-              filterStatus &&
-              $props.user.role_id == 1 &&
-              lids.length > 0
-            "
-          >
-             <v-icon small @click="deleteItem()"> mdi-delete </v-icon>
-          </v-btn>-->
         </v-col>
 
         <v-col>
@@ -139,7 +130,7 @@
             :items="providers"
             item-text="name"
             item-value="id"
-            @change="getLidsPost"
+            @change="getLids3"
             outlined
             rounded
             multiple
@@ -162,6 +153,29 @@
             </template>
           </v-select>
         </v-col>
+
+        <v-col>
+          <p>Телефон</p>
+          <v-text-field
+            v-model.lazy.trim="filtertel"
+            append-icon="mdi-phone"
+            @input="filterStatuses"
+            @click:append="getLids3"
+            outlined
+            rounded
+          ></v-text-field>
+        </v-col>
+
+        <v-col v-if="$props.user.role_id == 1">
+          <p>Глобальный поиск</p>
+          <v-text-field
+            v-model="searchAll"
+            append-icon="mdi-magnify"
+            @click:append="searchlids3"
+            outlined
+            rounded
+          ></v-text-field>
+        </v-col>
         <v-col v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
           <p>Фильтр office</p>
           <v-select
@@ -183,35 +197,13 @@
             </template>
           </v-select>
         </v-col>
-        <v-col>
-          <p>Телефон</p>
-          <v-text-field
-            v-model.lazy.trim="filtertel"
-            append-icon="mdi-phone"
-            @input="filterStatuses"
-            @click:append="getLidsPost"
-            outlined
-            rounded
-          ></v-text-field>
-        </v-col>
-
-        <v-col v-if="$props.user.role_id == 1">
-          <p>Глобальный поиск</p>
-          <v-text-field
-            v-model="searchAll"
-            append-icon="mdi-magnify"
-            @click:append="searchlids3"
-            outlined
-            rounded
-          ></v-text-field>
-        </v-col>
       </v-row>
     </v-container>
     <v-progress-linear
-              :active="loading"
-              indeterminate
-              color="purple"
-            ></v-progress-linear>
+      :active="loading"
+      indeterminate
+      color="purple"
+    ></v-progress-linear>
     <v-row>
       <v-col>
         <div class="wrp__statuses">
@@ -557,7 +549,7 @@ export default {
     Statuses: [],
     hmrow: "",
     offices: [],
-    filterOffices: [],
+    filterOffices: 0,
     hm: 0,
     snackbar: false,
     message: "",
@@ -649,11 +641,11 @@ export default {
   },
   computed: {},
   methods: {
-    getPage(){
-      if(this.searchAll != ''){
-        this.searchlids3()
-      }else{
-        this.getLidsPost()
+    getPage() {
+      if (this.searchAll != "") {
+        this.searchlids3();
+      } else {
+        this.getLids3();
       }
     },
     getOffices() {
@@ -663,7 +655,7 @@ export default {
           .get("/api/getOffices")
           .then((res) => {
             self.offices = res.data;
-            self.filterOffices.push(self.offices[0].id);
+            self.filterOffices = self.offices[0].id;
           })
           .catch((error) => console.log(error));
       }
@@ -690,13 +682,13 @@ export default {
     },
     getLidsOnUserOrDate() {
       if (this.savedates == false) {
-        this.getLidsPost();
+        this.getLids3();
       } else {
         this.getLidsOnDate();
       }
     },
     getLidsOnDate() {
-      exit;
+      return
       let self = this;
       this.loading = true;
       let data = {};
@@ -820,7 +812,7 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    getLidsPost() {
+    getLids3() {
       const id = this.disableuser > 0 ? this.disableuser : this.$props.user.id;
       let self = this;
       let data = {};
@@ -836,7 +828,7 @@ export default {
       data.page = self.page;
       data.office_id = self.filterOffices;
       axios
-        .post("/api/getLidsPost", data)
+        .post("/api/getLids3", data)
         .then((res) => {
           self.hm = res.data.hm;
           self.lids = Object.entries(res.data.lids).map((e) => e[1]);
@@ -977,7 +969,7 @@ export default {
           self.lids = Object.entries(res.data.lids).map((e) => e[1]);
 
           self.lids.map(function (e) {
-            e.user = self.users.find((u) => u.id == e.user_id).fio || '';
+            e.user = self.users.find((u) => u.id == e.user_id).fio || "";
             e.date_created = e.created_at.substring(0, 10);
             if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
@@ -1183,7 +1175,7 @@ export default {
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
           if (self.users.length) {
-            e.user = self.users.find((u) => u.id == e.user_id).fio || '';
+            e.user = self.users.find((u) => u.id == e.user_id).fio || "";
           }
           if (self.providers.length) {
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
