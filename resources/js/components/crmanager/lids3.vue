@@ -89,7 +89,7 @@
             ref="filterStatus"
             color="red"
             v-model="filterStatus"
-            @change="getLids3"
+            @change="getPage"
             :items="statuses"
             item-text="name"
             item-value="id"
@@ -130,7 +130,7 @@
             :items="providers"
             item-text="name"
             item-value="id"
-            @change="getLids3"
+            @change="getPage"
             outlined
             rounded
             multiple
@@ -160,7 +160,7 @@
             v-model.lazy.trim="filtertel"
             append-icon="mdi-phone"
             @input="filterStatuses"
-            @click:append="getLids3"
+            @click:append="getPage"
             outlined
             rounded
           ></v-text-field>
@@ -334,7 +334,7 @@
                       class="my-4"
                       :length="parseInt(hm / limit) + 1"
                       @input="getPage()"
-                      total-visible="10"
+                      total-visible="5"
                     ></v-pagination>
                   </v-row>
                 </v-col>
@@ -461,7 +461,7 @@
                           :color="usercolor(user)"
                           @click="
                             disableuser = user.id;
-                            getLidsOnUserOrDate();
+                            getPage();
                           "
                           :value="user.hmlids"
                           :disabled="disableuser == user.id"
@@ -599,7 +599,6 @@ export default {
         return;
       }
       this.disableuser = user.id;
-      // this.getLidsOnDate();
       this.akkvalue = _.findIndex(this.group, { group_id: user.group_id });
     },
     filterStatus(newName) {
@@ -608,10 +607,6 @@ export default {
     },
     savedates(newName) {
       localStorage.savedates = newName;
-      if (newName == true) {
-        //this.disableuser = 0;
-        //this.userid = null;
-      }
       this.getLidsOnUserOrDate();
     },
 
@@ -645,6 +640,7 @@ export default {
       if (this.searchAll != "") {
         this.searchlids3();
       } else {
+        this.page = 0;
         this.getLids3();
       }
     },
@@ -831,7 +827,8 @@ export default {
         .post("/api/getLids3", data)
         .then((res) => {
           self.hm = res.data.hm;
-          self.lids = Object.entries(res.data.lids).map((e) => e[1]);
+          // self.lids = Object.entries(res.data.lids).map((e) => e[1]);
+          self.lids = res.data.lids;
 
           self.lids.map(function (e) {
             if (e.updated_at) {
@@ -842,17 +839,17 @@ export default {
               e.status =
                 self.statuses.find((s) => s.id == e.status_id).name || "";
             }
-            if (self.users.find((u) => u.id == e.user_id)) {
+            if (e.user_id) {
               e.user = self.users.find((u) => u.id == e.user_id).fio;
             }
-            if (self.providers.find((p) => p.id == e.provider_id)) {
+            if (e.provider_id) {
               e.provider = self.providers.find(
                 (p) => p.id == e.provider_id
               ).name;
             }
           });
           self.loading = false;
-          self.filterStatuses();
+          // self.filterStatuses();
         })
         .catch((error) => console.log(error));
     },

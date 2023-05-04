@@ -138,15 +138,8 @@ class LidsController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->where(function ($query) use ($search) {
-          return $query
-          ->whereRaw('MATCH(NAME,email,TEXT) AGAINST ("' . $search . '")')
-            //->where('name', 'like', "%{$search}%")
-            // ->orwhere('tel', 'like', "%{$search}%")
-            //->orwhere('email', 'like', "%{$search}%")
-            //->orwhere('text', 'like', "%{$search}%")
-            ;
-        });
+        ->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")')
+          ;
       $response['hm'] = $q_leads->count();
 
       $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
@@ -161,15 +154,8 @@ class LidsController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->where(function ($query) use ($search) {
-          return $query
-          ->whereRaw('MATCH(NAME,email,TEXT) AGAINST ("'.$search.'")')
-          // ->where('name', 'like', "%{$search}%")
-          //   ->orwhere('tel', 'like', "%{$search}%")
-          //   ->orwhere('email', 'like', "%{$search}%")
-          //   ->orwhere('text', 'like', "%{$search}%")
+        ->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("'.$search.'")')
           ;
-        });
       $response['hm'] = $q_leads->count();
 
       $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
@@ -385,7 +371,6 @@ class LidsController extends Controller
     $office_id = session()->get('office_id');
     $id = $data['id'];
     $status_id = $data['status_id'];
-    $search = $data['search'];
     $tel = $data['tel'];
     $limit = $data['limit'];
     $page = $data['page'];
@@ -412,12 +397,11 @@ class LidsController extends Controller
       })
       ->when($tel != '', function ($query) use ($tel) {
         return $query->where('tel', 'like', $tel . '%');
-      })
-      ->when($search != '', function ($query) use ($search) {
-        return $query->where(function ($query) use ($search) {
-          return $query->where('name', 'like', '%' . $search . '%')->orWhere('email', 'like', '%' . $search . '%');
-        });
       });
+      if((int)$page == 0){
+        $response['statuses'] = DB::Raw('SELECT COUNT(*), statuses.`name`,statuses.`color` FROM ('. $q_leads->toSql() .') lidss LEFT JOIN `statuses` ON (statuses.`id` = lidss.status_id) GROUP BY status_id ORDER BY statuses.`order` ASC');
+
+      }
     $response['hm'] = $q_leads->count();
 
     $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
