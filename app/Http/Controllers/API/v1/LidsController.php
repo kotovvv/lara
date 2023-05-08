@@ -328,7 +328,7 @@ class LidsController extends Controller
     $limit = $data['limit'];
     $page = $data['page'];
     $providers = [];
-    if (count($data['provider_id']) > 0) {
+    if (isset($data['provider_id']) && count($data['provider_id']) > 0) {
       $providers = $data['provider_id'];
     } else {
       $res = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
@@ -365,6 +365,8 @@ class LidsController extends Controller
 
     return response($response);
   }
+
+
   public function getLids3(Request $request)
   {
     $data = $request->all();

@@ -286,7 +286,7 @@
           >
             <template v-slot:top="{}">
               <v-row>
-                <v-col cols="1">
+                <!-- <v-col cols="1">
                   <v-row class="mb-5">
                     <span class="mt-5 d-flex pl-2 align-center border"
                       >Отбор
@@ -300,7 +300,7 @@
                       ></v-text-field>
                     </span>
                   </v-row>
-                </v-col>
+                </v-col> -->
                 <v-col cols="2" class="mt-1">
                   <v-text-field
                     v-model="search"
