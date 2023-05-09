@@ -27,7 +27,7 @@ class ProvidersController extends Controller
 
       return Provider::when($office_id > 0, function ($query) use ($office_id) {
         return $query->where('office_id','REGEXP','[^0-9]'. $office_id.'[^0-9]');
-      })->get();
+      })->orderBy('name','ASC')->get();
     }
   }
 

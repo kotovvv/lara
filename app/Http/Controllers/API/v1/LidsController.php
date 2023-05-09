@@ -138,8 +138,7 @@ class LidsController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")')
-          ;
+        ->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")');
       $response['hm'] = $q_leads->count();
 
       $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
@@ -154,8 +153,7 @@ class LidsController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("'.$search.'")')
-          ;
+        ->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")');
       $response['hm'] = $q_leads->count();
 
       $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
@@ -370,13 +368,27 @@ class LidsController extends Controller
   public function getLids3(Request $request)
   {
     $data = $request->all();
+
     $office_id = session()->get('office_id');
+    if ($office_id == 0) {
+      $office_id =  $data['office_id'];
+    }
+
     $id = $data['id'];
     $status_id = $data['status_id'];
     $tel = $data['tel'];
     $limit = $data['limit'];
-    $page = $data['page'];
-    $providers = [];
+    $page = (int) $data['page'];
+    $providers = $date = $users_ids = [];
+    $where_date = '';
+    if (isset($data['group_ids'])) {
+      $users_ids = User::select('id')->whereIn('group_id', $data['group_ids']);
+    }
+    if (isset($data['datefrom'])) {
+      $date = [date('Y-m-d', strtotime($data['datefrom'])) . ' ' . date('H:i:s', mktime(0, 0, 0)), date('Y-m-d', strtotime($data['dateto'])) . ' ' . date('H:i:s', mktime(23, 59, 59))];
+      $where_date = " AND created_at >= '" . $date[0] . "' AND created_at <= '" . $date[1] . "'";
+    }
+
     if (count($data['provider_id']) > 0) {
       $providers = $data['provider_id'];
     } else {
@@ -385,9 +397,15 @@ class LidsController extends Controller
         $providers[] = $item['id'];
       }
     }
+
     $response = [];
-    $q_leads = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit'))
-      ->where('lids.user_id', $id)
+    $q_leads = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') depozit'))
+      ->when(!is_array($id) && $id > 0, function ($query) use ($id) {
+        return $query->where('lids.user_id', $id);
+      })
+      ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
+        return $query->whereIn('lids.user_id', $users_ids);
+      })
       ->when($office_id > 0, function ($query) use ($office_id) {
         return $query->where('office_id', $office_id);
       })
@@ -399,11 +417,11 @@ class LidsController extends Controller
       })
       ->when($tel != '', function ($query) use ($tel) {
         return $query->where('tel', 'like', $tel . '%');
+      })
+      ->when(count($date) > 0, function ($query) use ($date) {
+        return $query->whereBetween('lids.created_at', $date);
       });
-      if((int)$page == 0){
-        $response['statuses'] = DB::Raw('SELECT COUNT(*), statuses.`name`,statuses.`color` FROM ('. $q_leads->toSql() .') lidss LEFT JOIN `statuses` ON (statuses.`id` = lidss.status_id) GROUP BY status_id ORDER BY statuses.`order` ASC');
 
-      }
     $response['hm'] = $q_leads->count();
 
     $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
@@ -411,6 +429,13 @@ class LidsController extends Controller
       ->limit($limit)
       ->get();
 
+    if ($page == 0) {
+      $response['statuses'] = $q_leads->select(DB::Raw('count(*) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
+      ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
+      ->groupBy('status_id')
+      ->orderBy('statuses.order', 'ASC')
+      ->get();
+    }
     return response($response);
   }
 

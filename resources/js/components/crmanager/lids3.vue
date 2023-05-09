@@ -84,7 +84,7 @@
 
         <v-col>
           <!-- statuses_lids -->
-          <p>Фильтр по статусам</p>
+          <p>Отбор по статусам</p>
           <v-select
             ref="filterStatus"
             color="red"
@@ -124,7 +124,7 @@
         </v-col>
 
         <v-col>
-          <p>Фильтр по поставщикам</p>
+          <p>Отбор по поставщикам</p>
           <v-select
             v-model="filterProviders"
             :items="providers"
@@ -156,10 +156,10 @@
 
         <v-col>
           <p>Телефон</p>
+          <!-- @input="filterStatuses" -->
           <v-text-field
             v-model.lazy.trim="filtertel"
             append-icon="mdi-phone"
-            @input="filterStatuses"
             @click:append="getPage"
             outlined
             rounded
@@ -187,14 +187,14 @@
             rounded
             @change="getPage"
           >
+            <!--
             <template v-slot:selection="{ item, index }">
               <v-chip v-if="index === 0">
-                <span>{{ item.name }}</span>
-              </v-chip>
-              <span v-if="index === 1" class="grey--text text-caption">
+                <span>{{ item.name }}</span><span v-if="index === 1" class="grey--text text-caption">
                 (+{{ filterOffices.length - 1 }} )
               </span>
-            </template>
+              </v-chip>
+            </template>-->
           </v-select>
         </v-col>
       </v-row>
@@ -319,6 +319,7 @@
                       :key="index"
                       :value="groupa.id"
                       :hide-details="true"
+                      @change="getLids3"
                     >
                       <template v-slot:label>
                         <div class="img">{{ groupa.fio.slice(0, 3) }}</div>
@@ -598,7 +599,7 @@ export default {
         this.userid = null;
         return;
       }
-      this.disableuser = user.id;
+      //this.disableuser = user.id;
       this.akkvalue = _.findIndex(this.group, { group_id: user.group_id });
     },
     filterStatus(newName) {
@@ -607,7 +608,7 @@ export default {
     },
     savedates(newName) {
       localStorage.savedates = newName;
-      this.getLidsOnUserOrDate();
+      this.getLids3();
     },
 
     datetimeFrom(newName) {
@@ -627,9 +628,7 @@ export default {
       localStorage.filterProviders = newName.toString();
     },
     filterGStatus: function (newval, oldval) {
-      if (newval == 0) {
-        //this.getLids(this.$props.user.id);
-      } else {
+      if (newval != 0) {
         this.getStatusLids(newval);
       }
     },
@@ -651,7 +650,8 @@ export default {
           .get("/api/getOffices")
           .then((res) => {
             self.offices = res.data;
-            self.filterOffices = self.offices[0].id;
+            self.offices.unshift({ id: 0, name: "--выбор--" });
+            self.filterOffices = self.offices[1].id;
           })
           .catch((error) => console.log(error));
       }
@@ -661,161 +661,49 @@ export default {
     },
     changeFilterProviders(el) {
       this.filterProviders = this.filterProviders.filter((i) => i != el);
-      this.filterStatuses();
+      // this.filterStatuses();
     },
     changeFilterStatus(el_id) {
       this.filterStatus = this.filterStatus.filter((i) => i != el_id);
-      this.filterStatuses();
+      // this.filterStatuses();
     },
     clearuser() {
       this.disableuser = 0;
-      this.getLidsOnUserOrDate();
+      this.getLids3();
       this.selectedUser = {};
     },
     checked(at) {
       //console.log(at["aria-selected"]);
       return at["aria-selected"];
     },
-    getLidsOnUserOrDate() {
-      if (this.savedates == false) {
-        this.getLids3();
-      } else {
-        this.getLidsOnDate();
-      }
-    },
-    getLidsOnDate() {
-      return
-      let self = this;
-      this.loading = true;
-      let data = {};
-      if (this.datetimeFrom == "") {
-        this.datetimeFrom = new Date(
-          new Date().setDate(new Date().getDate() - 14)
-        )
-          .toISOString()
-          .substring(0, 10);
-      }
-      if (this.datetimeTo == "") {
-        this.datetimeTo = new Date().toISOString().substring(0, 10);
-      }
-
-      data.datefrom = this.getLocalDateTime(this.datetimeFrom);
-      data.dateto = this.getLocalDateTime(this.datetimeTo);
-      data.user_id = this.disableuser;
-      axios
-        .post("/api/getLidsOnDate", data)
-        .then((res) => {
-          self.loading = false;
-          self.lids = Object.entries(res.data).map((e) => e[1]);
-          self.lids.map(function (e) {
-            e.date_created = e.created_at.substring(0, 10);
-            if (e.updated_at) {
-              e.date_updated = e.updated_at.substring(0, 10);
-            }
-            if (e.status_id) {
-              e.status = self.statuses.find((s) => s.id == e.status_id).name;
-            }
-            if (self.users.find((u) => u.id == e.user_id)) {
-              let luser = self.users.find((u) => u.id == e.user_id);
-              e.user = luser.fio;
-              e.group_id = luser.group_id;
-            }
-
-            if (self.providers.find((p) => p.id == e.provider_id)) {
-              e.provider = self.providers.find(
-                (p) => p.id == e.provider_id
-              ).name;
-            }
-          });
-          self.orderStatus();
-          self.searchAll = "";
-        })
-        .then(() => {
-          if (localStorage.filterStatus) {
-            self.filterStatus = localStorage.filterStatus
-              .split(",")
-              .map((el) => parseInt(el));
-          }
-          self.filterStatuses();
-        })
-        .then(() => {
-          if (localStorage.filterProviders) {
-            self.filterProviders = localStorage.filterProviders
-              .split(",")
-              .map((el) => parseInt(el));
-          }
-        })
-        .then(() => {
-          if (self.hmrow > 0) {
-            const temp = self.hmrow;
-            self.hmrow = "";
-            self.hmrow = temp;
-            self.selectRow();
-          }
-        })
-        .catch((error) => console.log(error));
-    },
-    getLids(id) {
-      let self = this;
-      self.search = "";
-      self.disableuser = id;
-      self.Statuses = [];
-      self.loading = true;
-      self.lids = [];
-      axios
-        .get("/api/userlids/" + id)
-        .then((res) => {
-          self.lids = Object.entries(res.data).map((e) => e[1]);
-
-          self.lids.map(function (e) {
-            e.date_created = e.created_at.substring(0, 10);
-            if (e.updated_at) {
-              e.date_updated = e.updated_at.substring(0, 10);
-            }
-            if (self.users.find((u) => u.id == e.user_id)) {
-              e.user = self.users.find((u) => u.id == e.user_id).fio;
-            }
-            if (self.providers.find((p) => p.id == e.provider_id)) {
-              e.provider = self.providers.find(
-                (p) => p.id == e.provider_id
-              ).name;
-            }
-            if (e.status_id)
-              e.status = self.statuses.find((s) => s.id == e.status_id).name;
-          });
-          self.orderStatus();
-          self.searchAll = "";
-          if (localStorage.filterStatus) {
-            self.$refs.filterStatus.selectedItems = [
-              self.statuses.find(function (i) {
-                return localStorage.filterStatus
-                  .split()
-                  .map((el) => parseInt(el))
-                  .includes(i.id);
-              }),
-            ];
-          }
-          self.loading = false;
-          self.filterStatuses();
-        })
-        .then(() => {
-          if (self.hmrow > 0) {
-            const temp = self.hmrow;
-            self.hmrow = "";
-            self.hmrow = temp;
-            self.selectRow();
-          }
-        })
-        .catch((error) => console.log(error));
-    },
     getLids3() {
-      const id = this.disableuser > 0 ? this.disableuser : this.$props.user.id;
       let self = this;
       let data = {};
       self.loading = true;
-      self.disableuser = id;
+      if (this.savedates == true) {
+        if (this.datetimeFrom == "") {
+          this.datetimeFrom = new Date(
+            new Date().setDate(new Date().getDate() - 14)
+          )
+            .toISOString()
+            .substring(0, 10);
+        }
+        if (this.datetimeTo == "") {
+          this.datetimeTo = new Date().toISOString().substring(0, 10);
+        }
 
-      data.id = id;
+        data.datefrom = this.getLocalDateTime(this.datetimeFrom);
+        data.dateto = this.getLocalDateTime(this.datetimeTo);
+        data.id = this.disableuser;
+      } else {
+        let id = this.disableuser > 0 ? this.disableuser : this.$props.user.id;
+        self.disableuser = id;
+        data.id = id;
+      }
+      if (this.filterGroups.length) {
+        data.group_ids = this.filterGroups;
+        return;
+      }
       data.provider_id = self.filterProviders;
       data.status_id = self.filterStatus;
       data.tel = self.filtertel;
@@ -823,18 +711,23 @@ export default {
       data.limit = self.limit;
       data.page = self.page;
       data.office_id = self.filterOffices;
+
       axios
         .post("/api/getLids3", data)
         .then((res) => {
           self.hm = res.data.hm;
-          // self.lids = Object.entries(res.data.lids).map((e) => e[1]);
+          if (self.page == 0) {
+            self.Statuses = res.data.statuses;
+          }
           self.lids = res.data.lids;
 
           self.lids.map(function (e) {
             if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
             }
-            e.date_created = e.created_at.substring(0, 10);
+            if (e.created_at) {
+              e.date_created = e.created_at.substring(0, 10);
+            }
             if (e.status_id) {
               e.status =
                 self.statuses.find((s) => s.id == e.status_id).name || "";
@@ -849,7 +742,7 @@ export default {
             }
           });
           self.loading = false;
-          // self.filterStatuses();
+          //self.filterStatuses();
         })
         .catch((error) => console.log(error));
     },
@@ -871,7 +764,7 @@ export default {
         localStorage.removeItem("datetimeFrom");
       }
       if (this.disableuser == 0) {
-        this.getLidsOnUserOrDate();
+        this.getLids3();
       }
     },
     clearFilter() {
@@ -885,32 +778,14 @@ export default {
       this.filterProviders = [];
       this.filtertel = "";
       this.disableuser = 0;
-      this.getLidsOnUserOrDate();
+      this.getLids3();
     },
     getGroup() {
       return _.filter(this.users, function (o) {
         return o.group_id == o.id;
       });
     },
-    filterStatuses() {
-      const self = this;
-      self.Statuses = [];
-      let stord = this.lids;
-      stord = Object.entries(_.groupBy(stord, "status"));
-      stord.map(function (i) {
-        //i[0]//name
-        //i[1]//array
-        let el = self.statuses.find((s) => s.name == i[0]);
-        self.Statuses.push({
-          id: el.id,
-          name: i[0],
-          hm: i[1].length,
-          order: el.order,
-          color: el.color,
-        });
-      });
-      self.Statuses = _.orderBy(self.Statuses, "order");
-    },
+
     exportXlsx() {
       const self = this;
       const obj = _.groupBy(self.lids, "status");
@@ -1088,7 +963,7 @@ export default {
           // }
 
           self.getUsers();
-          self.getLidsOnUserOrDate();
+          self.getLids3();
           // self.userid = null;
         })
         .catch(function (error) {
