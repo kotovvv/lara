@@ -424,15 +424,16 @@ class LidsController extends Controller
 
     $response['hm'] = $q_leads->count();
 
-    $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
+    $response['lids'] = $q_leads
+    // ->orderBy('lids.created_at', 'desc')
       ->offset($limit * ($page - 1))
       ->limit($limit)
       ->get();
 
     if ($page == 0) {
-      $response['statuses'] = $q_leads->select(DB::Raw('count(*) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
+      $response['statuses'] = $q_leads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
       ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
-      ->groupBy('status_id')
+      ->groupBy('id')
       ->orderBy('statuses.order', 'ASC')
       ->get();
     }

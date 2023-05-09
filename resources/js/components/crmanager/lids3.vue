@@ -38,7 +38,7 @@
                     v-model="datetimeFrom"
                     @input="
                       dateFrom = false;
-                      savedates == true ? getLidsOnDate() : null;
+                      savedates == true ? getLids3(0) : null;
                     "
                   ></v-date-picker>
                 </v-menu>
@@ -65,7 +65,7 @@
                     v-model="datetimeTo"
                     @input="
                       dateTo = false;
-                      getLidsOnDate();
+                      getLids3(0);
                     "
                   ></v-date-picker>
                 </v-menu>
@@ -89,7 +89,7 @@
             ref="filterStatus"
             color="red"
             v-model="filterStatus"
-            @change="getPage"
+            @change="getPage(0)"
             :items="statuses"
             item-text="name"
             item-value="id"
@@ -130,7 +130,7 @@
             :items="providers"
             item-text="name"
             item-value="id"
-            @change="getPage"
+            @change="getPage(0)"
             outlined
             rounded
             multiple
@@ -160,7 +160,7 @@
           <v-text-field
             v-model.lazy.trim="filtertel"
             append-icon="mdi-phone"
-            @click:append="getPage"
+            @click:append="getPage(0)"
             outlined
             rounded
           ></v-text-field>
@@ -185,7 +185,7 @@
             item-value="id"
             outlined
             rounded
-            @change="getPage"
+            @change="getPage(0)"
           >
             <!--
             <template v-slot:selection="{ item, index }">
@@ -635,11 +635,13 @@ export default {
   },
   computed: {},
   methods: {
-    getPage() {
+    getPage(page) {
       if (this.searchAll != "") {
         this.searchlids3();
       } else {
-        this.page = 0;
+        if (page == 0) {
+          this.page = 0;
+        }
         this.getLids3();
       }
     },
@@ -661,11 +663,11 @@ export default {
     },
     changeFilterProviders(el) {
       this.filterProviders = this.filterProviders.filter((i) => i != el);
-      // this.filterStatuses();
+      this.getPage(0);
     },
     changeFilterStatus(el_id) {
       this.filterStatus = this.filterStatus.filter((i) => i != el_id);
-      // this.filterStatuses();
+      this.getPage(0);
     },
     clearuser() {
       this.disableuser = 0;
@@ -716,9 +718,11 @@ export default {
         .post("/api/getLids3", data)
         .then((res) => {
           self.hm = res.data.hm;
+
           if (self.page == 0) {
             self.Statuses = res.data.statuses;
           }
+
           self.lids = res.data.lids;
 
           self.lids.map(function (e) {
