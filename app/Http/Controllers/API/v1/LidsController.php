@@ -298,14 +298,25 @@ class LidsController extends Controller
   public function checkEmails(Request $request)
   {
     $data = $request->all();
-    $results = [];
+    $results = $a_tel = [];
+    $where_email_tel = $group_email_tel = '';
+    if (isset($data['email_tel']) && $data['email_tel'] == 'tel') {
+      foreach (array_filter($data['emails']) as $tel) {
+        $a_tel[] = preg_replace('/[^0-9]/', '', $tel);
+      }
+      $where_email_tel = " WHERE l.`tel` IN (\"" . implode('","', array_filter($a_tel)) . "\")";
+      $group_email_tel = " GROUP BY `tel`";
+    } else {
+      $where_email_tel = " WHERE `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\")";
+      $group_email_tel = " GROUP BY `email`";
+    }
     if (isset($data['check'])) {
-      $sql = "SELECT l.`id`, l.`tel`,l.`name`,l.`created_at` created, l.`status_id`, s.`name` status_name, l.`email`, u.`name` user_name, p.`name` provider_name, l.`afilyator`, o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) WHERE `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\") ORDER BY l.created_at ASC";
+      $sql = "SELECT l.`id`, l.`tel`,l.`name`,l.`created_at` created, l.`updated_at` updated, l.`status_id`, s.`name` status_name, l.`email`, u.`name` user_name, p.`name` provider_name, l.`afilyator`, o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel . " ORDER BY l.created_at ASC";
       $results['leads'] =  DB::select(DB::raw($sql));
     }
 
     DB::select(DB::raw("SET SQL_MODE = '';"));
-    $sql = "SELECT l.`tel`,l.`name`,8 AS status_id, l.`email`, 252 AS user_id, 75 AS provider_id, p.`name` AS afilyator,NOW() as created_at,3 AS office_id FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) WHERE `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\") GROUP BY `email`";
+    $sql = "SELECT l.`tel`,l.`name`,8 AS status_id, l.`email`, 252 AS user_id, 75 AS provider_id, p.`name` AS afilyator,NOW() as created_at,3 AS office_id FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) " . $where_email_tel . $group_email_tel;
     $leads =  DB::select(DB::raw($sql));
     $leads = array_map(function ($item) {
       return (array) $item;
@@ -425,17 +436,17 @@ class LidsController extends Controller
     $response['hm'] = $q_leads->count();
 
     $response['lids'] = $q_leads
-    // ->orderBy('lids.created_at', 'desc')
+      // ->orderBy('lids.created_at', 'desc')
       ->offset($limit * ($page - 1))
       ->limit($limit)
       ->get();
 
     if ($page == 0) {
       $response['statuses'] = $q_leads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
-      ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
-      ->groupBy('id')
-      ->orderBy('statuses.order', 'ASC')
-      ->get();
+        ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
+        ->groupBy('id')
+        ->orderBy('statuses.order', 'ASC')
+        ->get();
     }
     return response($response);
   }

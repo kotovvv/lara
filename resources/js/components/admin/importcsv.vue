@@ -220,11 +220,28 @@
       <v-tab-item>
         <v-container>
           <v-row>
+            <v-col>
+              <v-radio-group
+      v-model="email_tel"
+      row
+    >
+      <v-radio
+        label="email"
+        value="email"
+      ></v-radio>
+      <v-radio
+        label="телефон"
+        value="tel"
+      ></v-radio>
+    </v-radio-group>
+            </v-col>
+          </v-row>
+          <v-row>
             <v-col cols="6">
               <v-textarea
                 class="border pa-3"
                 v-model="list_email"
-                label="Emails"
+                label="Почтовые адреса или телефоны "
               ></v-textarea>
             </v-col>
             <v-col cols="6">
@@ -332,6 +349,7 @@ export default {
     tab: 0,
     Statuses: [],
     leads: [],
+    email_tel:'email',
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -377,7 +395,7 @@ export default {
       XLSX.utils.book_append_sheet(wb, window["unique"], "unique");
 
       // export Excel file
-      XLSX.writeFile(wb, "dupl_email" + new Date().toDateString() + ".xlsx"); // name of the file is 'book.xlsx'
+      XLSX.writeFile(wb, "dupl_"+self.email_tel + new Date().toDateString() + ".xlsx"); // name of the file is 'book.xlsx'
     },
     checkEmails() {
       let vm = this;
@@ -393,6 +411,7 @@ export default {
         .split("\n")
         .filter((n) => n);
       data.check = 1;
+      data.email_tel = vm.email_tel
       axios
         .post("api/checkEmails", data)
         .then(function (res) {
