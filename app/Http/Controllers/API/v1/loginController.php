@@ -59,12 +59,12 @@ class loginController extends Controller
 
     $data = $request->all();
 
-    if ( session('office_id') === User::where('id',(int) $data['id'])->value('office_id')) {
+    if (isset($data['id']) && session('user_id') == $data['id'] && session('office_id') === User::where('id', (int) $data['id'])->value('office_id')) {
       return 'has';
     } else {
-      session(['office_id'=> $data['office_id']]);
-      session(['user_id'=> $data['id']]);
-      session(['role_id'=> $data['role_id']]);
+      session(['office_id' => $data['office_id']]);
+      session(['user_id' => $data['id']]);
+      session(['role_id' => $data['role_id']]);
       return 'create';
     }
   }

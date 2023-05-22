@@ -1165,9 +1165,10 @@ ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депози
 
     $sql = "INSERT INTO `qtytel` (`lid_id`,`user_id`,`date_time`) value ('" . $req['lid_id'] . "','" . $req['user_id'] . "',NOW())";
     DB::select(DB::raw($sql));
-    Lid::where('id', $req['lid_id'])->increment('qtytel');
+    // Lid::where('id', $req['lid_id'])->increment('qtytel');
     $qtytel = Lid::where('id', $req['lid_id'])->value('qtytel');
-
+    $sql = "UPDATE lids SET qtytel = " . ++$qtytel . " WHERE id = " . (int)$req['lid_id'];
+    DB::select(DB::raw($sql));
     return response($qtytel);
   }
 
