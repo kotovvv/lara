@@ -635,7 +635,7 @@ export default {
   },
   computed: {},
   methods: {
-    getPage(page) {
+    getPage(page = 0) {
       if (this.searchAll != "") {
         this.searchlids3();
       } else {
@@ -704,7 +704,6 @@ export default {
       }
       if (this.filterGroups.length) {
         data.group_ids = this.filterGroups;
-        return;
       }
       data.provider_id = self.filterProviders;
       data.status_id = self.filterStatus;

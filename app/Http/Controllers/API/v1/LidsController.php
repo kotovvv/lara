@@ -393,7 +393,10 @@ class LidsController extends Controller
     $providers = $date = $users_ids = [];
     $where_date = '';
     if (isset($data['group_ids'])) {
-      $users_ids = User::select('id')->whereIn('group_id', $data['group_ids']);
+      $res = User::select('id')->whereIn('group_id', $data['group_ids'])->get()->toArray();
+      foreach ($res as $item) {
+        $users_ids[] = $item['id'];
+      }
     }
     if (isset($data['datefrom'])) {
       $date = [date('Y-m-d', strtotime($data['datefrom'])) . ' ' . date('H:i:s', mktime(0, 0, 0)), date('Y-m-d', strtotime($data['dateto'])) . ' ' . date('H:i:s', mktime(23, 59, 59))];
