@@ -156,11 +156,11 @@
 
         <v-col>
           <p>Телефон</p>
-          <!-- @input="filterStatuses" -->
+          <!-- @click:append="getPage(0)" -->
           <v-text-field
             v-model.lazy.trim="filtertel"
             append-icon="mdi-phone"
-            @click:append="getPage(0)"
+            @input="getPage"
             outlined
             rounded
           ></v-text-field>
