@@ -310,6 +310,12 @@
                     hide-details
                     class="border px-2"
                   ></v-text-field>
+                  <v-select
+                    v-model="limit"
+                    label="Лимит"
+                    :items="[100, 250, 500, 1000]"
+                    @change="getPage(0)"
+                  ></v-select>
                 </v-col>
                 <v-col class="wrp_group">
                   <v-row>
@@ -635,7 +641,7 @@ export default {
   },
   computed: {},
   methods: {
-    getPage(page = 0) {
+    getPage(page) {
       if (this.searchAll != "") {
         this.searchlids3();
       } else {
