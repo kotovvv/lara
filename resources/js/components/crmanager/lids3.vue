@@ -341,7 +341,7 @@
                       v-model="limit"
                       rounded
                       class="mt-2 border"
-                      :items="[100, 250, 500, 1000]"
+                      :items="[10, 50, 100, 250, 500, 'all']"
                       @change="getPage(0)"
                     ></v-select
                   ></v-row>
