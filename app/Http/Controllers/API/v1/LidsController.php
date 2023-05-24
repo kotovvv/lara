@@ -126,7 +126,7 @@ class LidsController extends Controller
     $limit = $page = 0;
     $response = [];
     if (isset($data['limit'])) {
-      $limit = (int) $data['limit'];
+      $limit = $data['limit'];
       $page = (int) $data['page'];
     }
     $office_id = session()->get('office_id');
@@ -142,8 +142,10 @@ class LidsController extends Controller
       $response['hm'] = $q_leads->count();
 
       $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
-        ->offset($limit * ($page - 1))
-        ->limit($limit)
+        ->when($limit != 'all', function ($query) use ($limit, $page) {
+          return $query->offset($limit * ($page - 1))
+        ->limit($limit);
+        })
         ->get();
 
       return response($response);
@@ -157,8 +159,12 @@ class LidsController extends Controller
       $response['hm'] = $q_leads->count();
 
       $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
-        ->offset($limit * ($page - 1))
-        ->limit($limit)
+        ->when(
+          $limit != 'all',
+          function ($query) use ($limit, $page) {
+            return $query->offset($limit * ($page - 1))
+              ->limit($limit);
+            })
         ->get();
       return response($response);
     }
@@ -368,8 +374,13 @@ class LidsController extends Controller
     $response['hm'] = $q_leads->count();
 
     $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
-      ->offset($limit * ($page - 1))
-      ->limit($limit)
+      ->when(
+        $limit != 'all',
+        function ($query) use ($limit, $page) {
+          return $query->offset($limit * ($page - 1))
+            ->limit($limit);
+        }
+      )
       ->get();
 
     return response($response);
@@ -439,9 +450,13 @@ class LidsController extends Controller
     $response['hm'] = $q_leads->count();
 
     $response['lids'] = $q_leads
-      // ->orderBy('lids.created_at', 'desc')
-      ->offset($limit * ($page - 1))
-      ->limit($limit)
+      ->when(
+        $limit != 'all',
+        function ($query) use ($limit, $page) {
+          return $query->offset($limit * ($page - 1))
+            ->limit($limit);
+        }
+      )
       ->get();
 
     if ($page == 0) {
