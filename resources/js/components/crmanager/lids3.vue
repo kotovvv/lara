@@ -275,6 +275,7 @@
             @click:row="clickrow"
             :items="lids"
             :disable-pagination="true"
+            hide-default-footer
             :footer-props="{
               disablePagination: true,
               disableItemsPerPage: true,
@@ -286,22 +287,19 @@
           >
             <template v-slot:top="{}">
               <v-row>
-                <!-- <v-col cols="1">
-                  <v-row class="mb-5">
-                    <span class="mt-5 d-flex pl-2 align-center border"
-                      >Отбор
-                      <v-text-field
-                        class="mx-2 mt-0 pt-0 talign-center nn"
-                        @input="selectRow"
-                        :max="lids.length"
-                        v-model.number="hmrow"
-                        hide-details="auto"
-                        color="#004D40"
-                      ></v-text-field>
-                    </span>
-                  </v-row>
-                </v-col> -->
-                <v-col cols="2" class="mt-1">
+                <v-col cols="2">
+                  <div class="d-flex pl-2 align-center border">
+                    Отбор
+                    <v-text-field
+                      class="mx-2 mt-0 pt-0 talign-center nn"
+                      @input="selectRow"
+                      :max="limit"
+                      v-model.number="hmrow"
+                      hide-details="auto"
+                      color="#004D40"
+                    ></v-text-field>
+                  </div>
+
                   <v-text-field
                     v-model="search"
                     append-icon="mdi-magnify"
@@ -310,12 +308,6 @@
                     hide-details
                     class="border px-2"
                   ></v-text-field>
-                  <v-select
-                    v-model="limit"
-                    label="Лимит"
-                    :items="[10, 50, 100, 250, 500, 'all']"
-                    @change="getPage(0)"
-                  ></v-select>
                 </v-col>
                 <v-col class="wrp_group">
                   <v-row>
@@ -333,17 +325,26 @@
                     </v-checkbox>
                   </v-row>
                 </v-col>
-                <v-col cols="3" class="mt-3">
+                <v-col cols="3" class="mt--3">
                   <v-row class="align-center">
                     <h5 class="mb-0">Всего:{{ hm }}</h5>
                     <v-pagination
                       v-model="page"
-                      class="my-4"
+                      class="my--4"
                       :length="parseInt(hm / limit) + 1"
                       @input="getPage()"
                       total-visible="5"
                     ></v-pagination>
                   </v-row>
+                  <v-row>
+                    <v-select
+                      v-model="limit"
+                      rounded
+                      class="mt-2 border"
+                      :items="[100, 250, 500, 1000]"
+                      @change="getPage(0)"
+                    ></v-select
+                  ></v-row>
                 </v-col>
               </v-row>
             </template>
@@ -352,61 +353,61 @@
                 <logtel :lid_id="item.id" :key="item.id" />
               </td>
             </template>
-            <template v-slot:footer.prepend>
-              <v-col cols="2">
-                <v-btn outlined rounded @click="exportXlsx" class="border">
-                  <v-icon left> mdi-file-excel </v-icon>
-                  Скачать таблицу
-                </v-btn>
-              </v-col>
-              <v-spacer></v-spacer>
-              <v-col>
-                <h6>Назначение статусов</h6>
-              </v-col>
-              <v-col cols="3">
-                <v-select
-                  v-model="selectedStatus"
-                  :items="statuses"
-                  item-text="name"
-                  item-value="id"
-                  outlined
-                  rounded
-                >
-                  <template v-slot:selection="{ item }">
-                    <i
-                      :style="{
-                        background: item.color,
-                        outline: '1px solid grey',
-                      }"
-                      class="sel_stat mr-4"
-                    ></i
-                    >{{ item.name }}
-                  </template>
-                  <template v-slot:item="{ item }">
-                    <i
-                      :style="{
-                        background: item.color,
-                        outline: '1px solid grey',
-                      }"
-                      class="sel_stat mr-4"
-                    ></i
-                    >{{ item.name }}
-                  </template>
-                </v-select>
-              </v-col>
-              <v-col cols="3">
-                <v-btn
-                  :disable="!selectedStatus && !selected.length"
-                  class="border ma-2"
-                  outlined
-                  rounded
-                  @click="changeStatus"
-                >
-                  Сменить статус
-                </v-btn>
-              </v-col>
-            </template>
           </v-data-table>
+          <v-row class="align-center">
+            <v-col cols="2">
+              <v-btn outlined rounded @click="exportXlsx" class="border">
+                <v-icon left> mdi-file-excel </v-icon>
+                Скачать таблицу
+              </v-btn>
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-col>
+              <h6>Назначение статусов</h6>
+            </v-col>
+            <v-col cols="3">
+              <v-select
+                v-model="selectedStatus"
+                :items="statuses"
+                item-text="name"
+                item-value="id"
+                outlined
+                rounded
+              >
+                <template v-slot:selection="{ item }">
+                  <i
+                    :style="{
+                      background: item.color,
+                      outline: '1px solid grey',
+                    }"
+                    class="sel_stat mr-4"
+                  ></i
+                  >{{ item.name }}
+                </template>
+                <template v-slot:item="{ item }">
+                  <i
+                    :style="{
+                      background: item.color,
+                      outline: '1px solid grey',
+                    }"
+                    class="sel_stat mr-4"
+                  ></i
+                  >{{ item.name }}
+                </template>
+              </v-select>
+            </v-col>
+            <v-col cols="3">
+              <v-btn
+                :disable="!selectedStatus && !selected.length"
+                class="border ma-2"
+                outlined
+                rounded
+                @click="changeStatus"
+              >
+                Сменить статус
+              </v-btn>
+            </v-col>
+          </v-row>
         </div>
       </v-col>
       <v-col cols="3">
