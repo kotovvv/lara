@@ -752,7 +752,9 @@ export default {
             }
           });
           self.loading = false;
-          //self.filterStatuses();
+        })
+        .then(() => {
+          self.selectRow();
         })
         .catch((error) => console.log(error));
     },
