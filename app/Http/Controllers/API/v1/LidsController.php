@@ -414,6 +414,10 @@ class LidsController extends Controller
     $page = (int) $data['page'];
     $providers = $date = $users_ids = [];
     $where_date = '';
+    $duplicate_tel = [];
+    if (isset($data['duplicate_tel'])) {
+      $duplicate_tel = Lid::select('tel')->where('user_id', $id)->groupBy('tel')->having(DB::raw('count(tel)'), '>', 1);
+    }
     if (isset($data['group_ids'])) {
       $res = User::select('id')->whereIn('group_id', $data['group_ids'])->get()->toArray();
       foreach ($res as $item) {
@@ -453,6 +457,9 @@ class LidsController extends Controller
       })
       ->when($tel != '', function ($query) use ($tel) {
         return $query->where('tel', 'like', $tel . '%');
+      })
+      ->when(isset($data['duplicate_tel']), function ($query) use ($duplicate_tel) {
+        return $query->whereIn('tel', $duplicate_tel);
       })
       ->when(count($date) > 0, function ($query) use ($date) {
         return $query->whereBetween('lids.created_at', $date);
