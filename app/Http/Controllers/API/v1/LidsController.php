@@ -138,13 +138,18 @@ class LidsController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")');
+        ->when(strstr($search, '@'), function ($query) use ($search) {
+          return $query->where('email', $search);
+        })
+        ->when(!strstr($search, '@'), function ($query) use ($search) {
+          return $query->whereRaw('MATCH(NAME,tel,TEXT) AGAINST ("' . $search . '")');
+        });
       $response['hm'] = $q_leads->count();
 
       $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
         ->when($limit != 'all', function ($query) use ($limit, $page) {
           return $query->offset($limit * ($page - 1))
-        ->limit($limit);
+            ->limit($limit);
         })
         ->get();
 
@@ -155,7 +160,12 @@ class LidsController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")');
+        ->when(strstr($search, '@'), function ($query) use ($search) {
+          return $query->where('email', $search);
+        })
+        ->when(!strstr($search, '@'), function ($query) use ($search) {
+          return $query->whereRaw('MATCH(NAME,tel,TEXT) AGAINST ("' . $search . '")');
+        });
       $response['hm'] = $q_leads->count();
 
       $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
@@ -164,7 +174,8 @@ class LidsController extends Controller
           function ($query) use ($limit, $page) {
             return $query->offset($limit * ($page - 1))
               ->limit($limit);
-            })
+          }
+        )
         ->get();
       return response($response);
     }
