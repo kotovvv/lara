@@ -708,7 +708,7 @@ export default {
         data.datefrom = this.getLocalDateTime(this.datetimeFrom);
         data.dateto = this.getLocalDateTime(this.datetimeTo);
         data.id = this.disableuser;
-        if (this.$props.user.role_id == 2) {
+        if (this.$props.user.role_id == 2 && this.disableuser == 0) {
           data.id = this.$props.user.id;
         }
       } else {
