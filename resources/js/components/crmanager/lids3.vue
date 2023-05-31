@@ -165,8 +165,8 @@
             rounded
           ></v-text-field>
         </v-col>
-
-        <v-col v-if="$props.user.role_id == 1">
+        <!-- v-if="$props.user.role_id == 1" -->
+        <v-col>
           <p>Глобальный поиск</p>
           <v-text-field
             v-model="searchAll"
