@@ -339,7 +339,11 @@ class LidsController extends Controller
       return (array) $item;
     }, $leads);
     Lid::insert($leads);
-    $results['emails'] = array_column($leads, 'email');
+    if (isset($data['email_tel']) && $data['email_tel'] == 'tel') {
+      $results['emails'] = array_column($leads, 'tel');
+    } else {
+      $results['emails'] = array_column($leads, 'email');
+    }
     return response($results);
   }
 
