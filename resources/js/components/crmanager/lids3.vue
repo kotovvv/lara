@@ -679,8 +679,8 @@ export default {
     },
     clearuser() {
       this.disableuser = 0;
-      if (self.$props.user.role_id == 2) {
-        this.disableuser = self.$props.user.id;
+      if (this.$props.user.role_id == 2) {
+        this.disableuser = this.$props.user.id;
       }
       this.getLids3();
       this.selectedUser = {};
@@ -708,9 +708,12 @@ export default {
         data.datefrom = this.getLocalDateTime(this.datetimeFrom);
         data.dateto = this.getLocalDateTime(this.datetimeTo);
         data.id = this.disableuser;
+        if (this.$props.user.role_id == 2) {
+          data.id = this.$props.user.id;
+        }
       } else {
         let id = this.disableuser > 0 ? this.disableuser : this.$props.user.id;
-        self.disableuser = id;
+        this.disableuser = id;
         data.id = id;
       }
       if (this.filterGroups.length) {
