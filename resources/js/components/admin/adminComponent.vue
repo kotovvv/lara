@@ -67,7 +67,6 @@ const providers = () => import("./providers");
 const mlids = () => import("../manager/mlids");
 const lids = () => import("../crmanager/lids");
 const lidsplus = () => import("../crmanager/lidsplus");
-const lids1 = () => import("../crmanager/lids1");
 const lids3 = () => import("../crmanager/lids3");
 const report = () => import("./report");
 const reportPie = () => import("./reportPie");
@@ -99,7 +98,6 @@ export default {
       // { text: "Рабочие места", name: "workPlaces", icon: "mdi-sitemap" },
       { text: "Распределение", name: "lids", icon: "mdi-account-arrow-left" },
       { text: "Распределение2", name: "lidsplus", icon: "mdi-filter-outline" },
-      { text: "Распределение1", name: "lids1", icon: "mdi-routes" },
       { text: "Распределение3", name: "lids3", icon: "mdi-sitemap" },
       { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
       { text: "Отчёт", name: "report", icon: "mdi-receipt" },
@@ -118,7 +116,6 @@ export default {
       if (this.adminMenu == "mlids") return mlids;
       if (this.adminMenu == "lids") return lids;
       if (this.adminMenu == "lidsplus") return lidsplus;
-      if (this.adminMenu == "lids1") return lids1;
       if (this.adminMenu == "lids3") return lids3;
       if (this.adminMenu == "report") return report;
       if (this.adminMenu == "reportPie") return reportPie;

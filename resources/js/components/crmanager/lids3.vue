@@ -540,6 +540,7 @@ export default {
       { text: "Депозит", value: "depozit" },
       { text: "Сообщение", value: "text" },
       { text: "Звонков", value: "qtytel" },
+      { text: "ПЕРЕЗВОН", value: "ontime" },
     ],
     parse_header: [],
     sortOrders: {},
@@ -678,6 +679,9 @@ export default {
     },
     clearuser() {
       this.disableuser = 0;
+      if (self.$props.user.role_id == 2) {
+        this.disableuser = self.$props.user.id;
+      }
       this.getLids3();
       this.selectedUser = {};
     },
