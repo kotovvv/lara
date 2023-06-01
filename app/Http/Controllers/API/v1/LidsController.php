@@ -138,11 +138,11 @@ class LidsController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->when(strstr($search, '@'), function ($query) use ($search) {
+        ->when(strpos($search, '@') != false, function ($query) use ($search) {
           return $query->where('email', $search);
         })
-        ->when(!strstr($search, '@'), function ($query) use ($search) {
-          return $query->whereRaw('MATCH(NAME,tel,TEXT) AGAINST ("' . $search . '")');
+        ->when(strpos($search, '@') === false, function ($query) use ($search) {
+          return $query->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")');
         });
       $response['hm'] = $q_leads->count();
 
@@ -160,11 +160,11 @@ class LidsController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->when(strstr($search, '@'), function ($query) use ($search) {
+        ->when(strpos($search, '@') != false, function ($query) use ($search) {
           return $query->where('email', $search);
         })
-        ->when(!strstr($search, '@'), function ($query) use ($search) {
-          return $query->whereRaw('MATCH(NAME,tel,TEXT) AGAINST ("' . $search . '")');
+        ->when(strpos($search, '@') === false, function ($query) use ($search) {
+          return $query->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")');
         });
       $response['hm'] = $q_leads->count();
 
