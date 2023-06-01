@@ -444,7 +444,7 @@ class LidsController extends Controller
 
     $response = [];
     $q_leads = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') depozit'))
-      ->when(!is_array($id) && $id > 0, function ($query) use ($id) {
+      ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
         return $query->where('lids.user_id', $id);
       })
       ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
