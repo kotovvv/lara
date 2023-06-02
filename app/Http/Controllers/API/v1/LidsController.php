@@ -138,11 +138,11 @@ class LidsController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->when(strstr($search, '@'), function ($query) use ($search) {
+        ->when(strpos($search, '@') != false, function ($query) use ($search) {
           return $query->where('email', $search);
         })
-        ->when(!strstr($search, '@'), function ($query) use ($search) {
-          return $query->whereRaw('MATCH(NAME,tel,TEXT) AGAINST ("' . $search . '")');
+        ->when(strpos($search, '@') === false, function ($query) use ($search) {
+          return $query->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")');
         });
       $response['hm'] = $q_leads->count();
 
@@ -160,11 +160,11 @@ class LidsController extends Controller
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('office_id', $office_id);
         })
-        ->when(strstr($search, '@'), function ($query) use ($search) {
+        ->when(strpos($search, '@') != false, function ($query) use ($search) {
           return $query->where('email', $search);
         })
-        ->when(!strstr($search, '@'), function ($query) use ($search) {
-          return $query->whereRaw('MATCH(NAME,tel,TEXT) AGAINST ("' . $search . '")');
+        ->when(strpos($search, '@') === false, function ($query) use ($search) {
+          return $query->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")');
         });
       $response['hm'] = $q_leads->count();
 
@@ -444,7 +444,7 @@ class LidsController extends Controller
 
     $response = [];
     $q_leads = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') depozit'))
-      ->when(!is_array($id) && $id > 0, function ($query) use ($id) {
+      ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
         return $query->where('lids.user_id', $id);
       })
       ->when(count($users_ids) > 0, function ($query) use ($users_ids) {

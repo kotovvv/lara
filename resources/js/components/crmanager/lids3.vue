@@ -469,6 +469,7 @@
                           :color="usercolor(user)"
                           @click="
                             disableuser = user.id;
+                            filterGroups = [];
                             getPage();
                           "
                           :value="user.hmlids"
@@ -679,8 +680,10 @@ export default {
     },
     clearuser() {
       this.disableuser = 0;
+      this.filterGroups = [];
       if (this.$props.user.role_id == 2) {
         this.disableuser = this.$props.user.id;
+        this.filterGroups.push(this.$props.user.id);
       }
       this.getLids3();
       this.selectedUser = {};
