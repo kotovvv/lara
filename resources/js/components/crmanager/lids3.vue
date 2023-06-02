@@ -354,7 +354,7 @@
               </td>
             </template>
           </v-data-table>
-          <v-row class="align-center">
+          <v-row class="align-center" v-if="$props.user.role_id == 1">
             <v-col cols="2">
               <v-btn outlined rounded @click="exportXlsx" class="border">
                 <v-icon left> mdi-file-excel </v-icon>
