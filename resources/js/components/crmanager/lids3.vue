@@ -565,6 +565,7 @@ export default {
     message: "",
     page: 0,
     limit: 100,
+    archSelected: [],
   }),
   mounted: function () {
     this.getUsers();
@@ -645,6 +646,9 @@ export default {
   computed: {},
   methods: {
     getPage(page) {
+      if (this.selected.length) {
+        this.archSelected = this.archSelected.concat(this.selected);
+      }
       if (this.searchAll != "") {
         this.searchlids3();
       } else {
@@ -965,6 +969,9 @@ export default {
         send.status_id = this.selectedStatus;
       }
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
+        if (this.archSelected.length) {
+          this.selected = this.selected.concat(this.archSelected);
+        }
         send.data = this.selected;
       } else {
         this.userid = null;
@@ -980,6 +987,7 @@ export default {
           self.search = "";
           self.$refs.radiogroup.lazyValue = null;
           self.selected = [];
+          self.archSelected = [];
           // if (self.savedates == true) {
           //   self.disableuser = 0;
           // }
@@ -1160,21 +1168,24 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .scroll-y {
   max-height: 60vh;
   overflow: auto;
 }
+
 #tablids .v-data-table__wrapper {
   overflow: auto;
   max-height: 54vh;
 }
+
 #tablids .v-data-footer .v-data-footer__select,
 #tablids .v-data-footer .v-data-footer__pagination,
 #tablids .v-data-footer .v-data-footer__icons-before,
 #tablids .v-data-footer .v-data-footer__icons-after {
   display: none;
 }
+
 .wrp_date .v-text-field > .v-input__control > .v-input__slot {
   margin-top: 3px;
   margin-bottom: 0;
