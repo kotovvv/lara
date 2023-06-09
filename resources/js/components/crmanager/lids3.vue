@@ -648,6 +648,8 @@ export default {
     getPage(page) {
       if (this.selected.length) {
         this.archSelected = this.archSelected.concat(this.selected);
+        this.selected = this.archSelected;
+        this.archSelected = [];
       }
       if (this.searchAll != "") {
         this.searchlids3();
@@ -773,10 +775,12 @@ export default {
         .catch((error) => console.log(error));
     },
     selectRow() {
-      this.selected = this.$refs.datatable.internalCurrentItems.slice(
-        0,
-        this.hmrow
-      );
+      if (this.hmrow) {
+        this.selected = this.$refs.datatable.internalCurrentItems.slice(
+          0,
+          this.hmrow
+        );
+      }
     },
     cleardate() {
       this.datetimeFrom = new Date(
@@ -969,9 +973,6 @@ export default {
         send.status_id = this.selectedStatus;
       }
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-        if (this.archSelected.length) {
-          this.selected = this.selected.concat(this.archSelected);
-        }
         send.data = this.selected;
       } else {
         this.userid = null;
@@ -1220,10 +1221,6 @@ export default {
   border: 1px solid #7620df;
   background: #fff;
   color: #7620df;
-}
-
-.v-menu__content.menuable__content__active {
-  /* min-height: 650px; */
 }
 .wrp__providers {
   display: flex;
