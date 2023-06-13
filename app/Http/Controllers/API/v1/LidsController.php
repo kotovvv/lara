@@ -473,6 +473,9 @@ class LidsController extends Controller
       ->when(count($date) > 0, function ($query) use ($date) {
         return $query->whereBetween('lids.created_at', $date);
       })
+      ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {
+        return $query->whereNotNull('lids.ontime');
+      })
       ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'afilyator', function ($query) use ($data) {
         return $query->orderBy('lids.afilyator', $data['sortBy'][1]);
       })

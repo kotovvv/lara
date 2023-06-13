@@ -75,6 +75,7 @@
                 ><v-icon>close</v-icon></v-btn
               >
               <v-checkbox v-model="savedates"></v-checkbox>
+              <v-checkbox v-model="callback"></v-checkbox>
               <v-btn @click="clearuser" small text
                 ><v-icon>refresh</v-icon></v-btn
               >
@@ -510,7 +511,7 @@ export default {
     modal: false,
     dateFrom: false,
     dateTo: false,
-
+    callback: false,
     dateProps: { locale: "ru-RU", format: "24hr" },
     datetimeFrom: new Date(new Date().setDate(new Date().getDate() - 14))
       .toISOString()
@@ -584,6 +585,9 @@ export default {
     if (localStorage.savedates) {
       this.savedates = localStorage.savedates == "true" ? true : false;
     }
+    if (localStorage.callback) {
+      this.callback = localStorage.callback == "true" ? true : false;
+    }
     if (localStorage.tel) {
       this.filtertel = localStorage.tel;
     }
@@ -619,6 +623,10 @@ export default {
     filterStatus(newName) {
       localStorage.filterStatus = newName.toString();
       this.selectRow();
+    },
+    callback(newName) {
+      localStorage.callback = newName;
+      this.getLids3();
     },
     savedates(newName) {
       localStorage.savedates = newName;
@@ -760,6 +768,9 @@ export default {
       data.office_id = self.filterOffices;
       if (this.sortBy != "") {
         data.sortBy = [this.sortBy, this.sortDesc];
+      }
+      if (this.callback === true) {
+        data.callback = 1;
       }
 
       axios
