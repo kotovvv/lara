@@ -441,6 +441,11 @@ class LidsController extends Controller
         $providers[] = $item['id'];
       }
     }
+    if (isset($data['sortBy'])) {
+      // "afilyator", "provider", "date_created", "date_updated"
+      $data['sortBy'][1] = $data['sortBy'][1] === true ? 'DESC' : 'ASC';
+    }
+
 
     $response = [];
     $q_leads = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') depozit'))
@@ -467,6 +472,18 @@ class LidsController extends Controller
       })
       ->when(count($date) > 0, function ($query) use ($date) {
         return $query->whereBetween('lids.created_at', $date);
+      })
+      ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'afilyator', function ($query) use ($data) {
+        return $query->orderBy('lids.afilyator', $data['sortBy'][1]);
+      })
+      ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'provider', function ($query) use ($data) {
+        return $query->leftJoin('providers', 'lids.provider_id', '=', 'providers.id')->orderBy('providers.name', $data['sortBy'][1]);
+      })
+      ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'date_created', function ($query) use ($data) {
+        return $query->orderBy('lids.created_at', $data['sortBy'][1]);
+      })
+      ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'date_updated', function ($query) use ($data) {
+        return $query->orderBy('lids.updated_at', $data['sortBy'][1]);
       });
 
     $response['hm'] = $q_leads->count();

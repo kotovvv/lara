@@ -273,6 +273,8 @@
             show-select
             show-expand
             @click:row="clickrow"
+            @update:sort-by="makeSort"
+            @update:sort-desc="makeSort"
             :items="lids"
             :disable-pagination="true"
             hide-default-footer
@@ -565,6 +567,9 @@ export default {
     message: "",
     page: 0,
     limit: 100,
+    archSelected: [],
+    sortBy: "",
+    sortDesc: true,
   }),
   mounted: function () {
     this.getUsers();
@@ -644,7 +649,31 @@ export default {
   },
   computed: {},
   methods: {
+    makeSort(sort) {
+      if (
+        ["afilyator", "provider", "date_created", "date_updated"].includes(sort)
+      ) {
+        this.sortBy = sort;
+      }
+      if (sort === undefined) {
+        this.sortBy = "";
+        this.sortDesc = true;
+      }
+      if (sort === true && this.sortBy != "") {
+        this.sortDesc = true;
+        this.getPage();
+      }
+      if (sort === false && this.sortBy != "") {
+        this.sortDesc = false;
+        this.getPage();
+      }
+    },
     getPage(page) {
+      if (this.selected.length) {
+        this.archSelected = this.archSelected.concat(this.selected);
+        this.selected = this.archSelected;
+        this.archSelected = [];
+      }
       if (this.searchAll != "") {
         this.searchlids3();
       } else {
@@ -729,6 +758,9 @@ export default {
       data.limit = self.limit;
       data.page = self.page;
       data.office_id = self.filterOffices;
+      if (this.sortBy != "") {
+        data.sortBy = [this.sortBy, this.sortDesc];
+      }
 
       axios
         .post("/api/getLids3", data)
@@ -769,10 +801,12 @@ export default {
         .catch((error) => console.log(error));
     },
     selectRow() {
-      this.selected = this.$refs.datatable.internalCurrentItems.slice(
-        0,
-        this.hmrow
-      );
+      if (this.hmrow) {
+        this.selected = this.$refs.datatable.internalCurrentItems.slice(
+          0,
+          this.hmrow
+        );
+      }
     },
     cleardate() {
       this.datetimeFrom = new Date(
@@ -980,6 +1014,7 @@ export default {
           self.search = "";
           self.$refs.radiogroup.lazyValue = null;
           self.selected = [];
+          self.archSelected = [];
           // if (self.savedates == true) {
           //   self.disableuser = 0;
           // }
@@ -1161,21 +1196,24 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .scroll-y {
   max-height: 60vh;
   overflow: auto;
 }
+
 #tablids .v-data-table__wrapper {
   overflow: auto;
   max-height: 54vh;
 }
+
 #tablids .v-data-footer .v-data-footer__select,
 #tablids .v-data-footer .v-data-footer__pagination,
 #tablids .v-data-footer .v-data-footer__icons-before,
 #tablids .v-data-footer .v-data-footer__icons-after {
   display: none;
 }
+
 .wrp_date .v-text-field > .v-input__control > .v-input__slot {
   margin-top: 3px;
   margin-bottom: 0;
@@ -1210,10 +1248,6 @@ export default {
   border: 1px solid #7620df;
   background: #fff;
   color: #7620df;
-}
-
-.v-menu__content.menuable__content__active {
-  /* min-height: 650px; */
 }
 .wrp__providers {
   display: flex;
