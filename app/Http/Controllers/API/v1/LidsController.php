@@ -456,7 +456,7 @@ class LidsController extends Controller
         return $query->whereIn('lids.user_id', $users_ids);
       })
       ->when($office_id > 0, function ($query) use ($office_id) {
-        return $query->where('office_id', $office_id);
+        return $query->where('lids.office_id', $office_id);
       })
       ->when(count($providers) > 0, function ($query) use ($providers) {
         return $query->whereIn('provider_id', $providers);
