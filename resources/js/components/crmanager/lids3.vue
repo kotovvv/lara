@@ -371,7 +371,7 @@
             <v-col cols="3">
               <v-select
                 v-model="selectedStatus"
-                :items="statuses"
+                :items="[{ name: 'Default', id: 0 }, ...statuses]"
                 item-text="name"
                 item-value="id"
                 outlined
@@ -1090,7 +1090,7 @@ export default {
             color,
             order,
           }));
-          self.statuses.unshift({ name: "Default", id: 0 });
+          // self.statuses.unshift({ name: "Default", id: 0 });
         })
         .catch((error) => console.log(error));
     },

@@ -474,7 +474,7 @@ class LidsController extends Controller
         return $query->whereBetween('lids.created_at', $date);
       })
       ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {
-        return $query->whereNotNull('lids.ontime');
+        return $query->where(DB::Raw('(SELECT count(*) cnt FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9)'), '>', 0);
       })
       ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'afilyator', function ($query) use ($data) {
         return $query->orderBy('lids.afilyator', $data['sortBy'][1]);
