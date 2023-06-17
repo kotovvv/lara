@@ -24,12 +24,13 @@ class LogsController extends Controller
   public function onCdr(Request $request)
   {
     $req = $request->all();
-
-    $caller = $_GET['q'];
-    $called = $_GET['w'];
-    $duration = round($_GET['z'] / 1000);
-    $reason = $_GET['x'];
-    $sql = "INSERT INTO `calls` (`user_id`,`tel`,`duration`,`timecall`,`status`) VALUES ('$caller','$called',$duration,NOW(),'$reason')";
+    $office_id = session()->get('office_id');
+    $user_id = session()->get('user_id');
+    $caller = $req['q'];
+    $called = $req['w'];
+    $duration = round($req['z'] / 1000);
+    $reason = $req['x'];
+    $sql = "INSERT INTO `calls` (`user_id`,`user_tel`,`tel`,`duration`,`timecall`,`status`,`office_id`) VALUES ($user_id,$caller,$called,$duration,NOW(),'$reason',$office_id)";
     DB::select(DB::raw($sql));
     // return response($sql, 200);
   }
