@@ -441,10 +441,10 @@ class LidsController extends Controller
         $providers[] = $item['id'];
       }
     }
-    if (isset($data['sortBy'])) {
-      // "afilyator", "provider", "date_created", "date_updated"
-      $data['sortBy'][1] = $data['sortBy'][1] === true ? 'DESC' : 'ASC';
-    }
+    // if (isset($data['sortBy'])) {
+    //   // "afilyator", "provider", "date_created", "date_updated"
+    //   $data['sortBy'][1] = $data['sortBy'][1] === true ? 'DESC' : 'ASC';
+    // }
 
 
     $response = [];
@@ -475,19 +475,19 @@ class LidsController extends Controller
       })
       ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {
         return $query->where(DB::Raw('(SELECT count(*) cnt FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9)'), '>', 0);
-      })
-      ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'afilyator', function ($query) use ($data) {
-        return $query->orderBy('lids.afilyator', $data['sortBy'][1]);
-      })
-      ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'provider', function ($query) use ($data) {
-        return $query->leftJoin('providers', 'lids.provider_id', '=', 'providers.id')->orderBy('providers.name', $data['sortBy'][1]);
-      })
-      ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'date_created', function ($query) use ($data) {
-        return $query->orderBy('lids.created_at', $data['sortBy'][1]);
-      })
-      ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'date_updated', function ($query) use ($data) {
-        return $query->orderBy('lids.updated_at', $data['sortBy'][1]);
       });
+      // ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'afilyator', function ($query) use ($data) {
+      //   return $query->orderBy('lids.afilyator', $data['sortBy'][1]);
+      // })
+      // ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'provider', function ($query) use ($data) {
+      //   return $query->leftJoin('providers', 'lids.provider_id', '=', 'providers.id')->orderBy('providers.name', $data['sortBy'][1]);
+      // })
+      // ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'date_created', function ($query) use ($data) {
+      //   return $query->orderBy('lids.created_at', $data['sortBy'][1]);
+      // })
+      // ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'date_updated', function ($query) use ($data) {
+      //   return $query->orderBy('lids.updated_at', $data['sortBy'][1]);
+      // })
 
     $response['hm'] = $q_leads->count();
 

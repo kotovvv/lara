@@ -23,6 +23,7 @@ class LogsController extends Controller
 
   public function onCdr(Request $request)
   {
+    $office_id = session()->get('office_id');
     $req = $request->all();
     $office_id = session()->get('office_id');
     $user_id = session()->get('user_id');
@@ -35,6 +36,33 @@ class LogsController extends Controller
     // return response($sql, 200);
   }
 
+  public function getCalls(Request $request)
+  {
+    $req = $request->all();
+    $office_id = session()->get('office_id');
+
+    if (isset($req['office_id'])) {
+      $office_id = (int) $req['office_id'];
+    }
+    $office = "office_id = $office_id AND";
+    if ($office_id == 0) {
+      $office = "1 AND";
+    }
+
+    $dateFrom = $req['dateFrom'] . ' 00:00:00';
+    $dateTo = $req['dateTo'] . ' 23:59:59';
+
+    $sql = "SELECT
+    u.id
+    ,u.name
+,(SELECT COUNT(*) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) cnt
+,(SELECT SEC_TO_TIME(SUM(`duration`)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) dur
+,(SELECT COUNT(*) FROM `calls` c WHERE `duration`> 180 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) mr2
+   FROM
+   `users` u
+WHERE u.id IN (SELECT `user_id` FROM `calls` WHERE $office `timecall` BETWEEN '$dateFrom' AND '$dateTo' GROUP BY `user_id`)";
+    return DB::select(DB::raw($sql));
+  }
 
   public function getlogonid(Request $request, $lid_id)
   {

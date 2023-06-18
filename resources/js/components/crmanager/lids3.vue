@@ -264,6 +264,8 @@
     <v-row>
       <v-col cols="9">
         <div class="border pa-4">
+          <!-- @update:sort-by="makeSort"
+          @update:sort-desc="makeSort" -->
           <v-data-table
             v-model.lazy.trim="selected"
             id="tablids"
@@ -274,8 +276,6 @@
             show-select
             show-expand
             @click:row="clickrow"
-            @update:sort-by="makeSort"
-            @update:sort-desc="makeSort"
             :items="lids"
             :disable-pagination="true"
             hide-default-footer
@@ -657,25 +657,25 @@ export default {
   },
   computed: {},
   methods: {
-    makeSort(sort) {
-      if (
-        ["afilyator", "provider", "date_created", "date_updated"].includes(sort)
-      ) {
-        this.sortBy = sort;
-      }
-      if (sort === undefined) {
-        this.sortBy = "";
-        this.sortDesc = true;
-      }
-      if (sort === true && this.sortBy != "") {
-        this.sortDesc = true;
-        this.getPage();
-      }
-      if (sort === false && this.sortBy != "") {
-        this.sortDesc = false;
-        this.getPage();
-      }
-    },
+    // makeSort(sort) {
+    //   if (
+    //     ["afilyator", "provider", "date_created", "date_updated"].includes(sort)
+    //   ) {
+    //     this.sortBy = sort;
+    //   }
+    //   if (sort === undefined) {
+    //     this.sortBy = "";
+    //     this.sortDesc = true;
+    //   }
+    //   if (sort === true && this.sortBy != "") {
+    //     this.sortDesc = true;
+    //     this.getPage();
+    //   }
+    //   if (sort === false && this.sortBy != "") {
+    //     this.sortDesc = false;
+    //     this.getPage();
+    //   }
+    // },
     getPage(page) {
       if (this.selected.length) {
         this.archSelected = this.archSelected.concat(this.selected);
@@ -766,9 +766,9 @@ export default {
       data.limit = self.limit;
       data.page = self.page;
       data.office_id = self.filterOffices;
-      if (this.sortBy != "") {
-        data.sortBy = [this.sortBy, this.sortDesc];
-      }
+      // if (this.sortBy != "") {
+      //   data.sortBy = [this.sortBy, this.sortDesc];
+      // }
       if (this.callback === true) {
         data.callback = 1;
       }

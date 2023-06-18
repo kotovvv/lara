@@ -67,6 +67,7 @@ const providers = () => import("./providers");
 const mlids = () => import("../manager/mlids");
 const lids = () => import("../crmanager/lids");
 const lidsplus = () => import("../crmanager/lidsplus");
+const calls = () => import("../crmanager/calls");
 const lids3 = () => import("../crmanager/lids3");
 const report = () => import("./report");
 const reportPie = () => import("./reportPie");
@@ -99,6 +100,7 @@ export default {
       { text: "Распределение", name: "lids", icon: "mdi-account-arrow-left" },
       { text: "Распределение2", name: "lidsplus", icon: "mdi-filter-outline" },
       { text: "Распределение3", name: "lids3", icon: "mdi-sitemap" },
+      { text: "Звонки", name: "calls", icon: "mdi-headset-dock" },
       { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
       { text: "Отчёт", name: "report", icon: "mdi-receipt" },
       { text: "Отчёты", name: "reportPie", icon: "mdi-timetable" },
@@ -117,6 +119,7 @@ export default {
       if (this.adminMenu == "lids") return lids;
       if (this.adminMenu == "lidsplus") return lidsplus;
       if (this.adminMenu == "lids3") return lids3;
+      if (this.adminMenu == "calls") return calls;
       if (this.adminMenu == "report") return report;
       if (this.adminMenu == "reportPie") return reportPie;
       if (this.adminMenu == "reportBTC") return reportBTC;
