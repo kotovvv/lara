@@ -57,7 +57,7 @@ class LogsController extends Controller
     ,u.name
 ,(SELECT COUNT(*) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) cnt
 ,(SELECT SEC_TO_TIME(SUM(`duration`)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) dur
-,(SELECT COUNT(*) FROM `calls` c WHERE `duration`> 180 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) mr2
+,(SELECT COUNT(*) FROM `calls` c WHERE `duration`> 120 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) mr2
    FROM
    `users` u
 WHERE u.id IN (SELECT `user_id` FROM `calls` WHERE $office `timecall` BETWEEN '$dateFrom' AND '$dateTo' GROUP BY `user_id`)";
