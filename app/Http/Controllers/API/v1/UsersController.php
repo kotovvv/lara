@@ -148,6 +148,7 @@ class UsersController extends Controller
       $arr['sip_login'] = $data['sip_login'] ? $data['sip_login'] : '';
       $arr['sip_password'] = $data['sip_password'] ? $data['sip_password'] : '';
       $arr['sip_prefix'] = $data['sip_prefix'] ? $data['sip_prefix'] : '';
+      $arr['servers'] = $data['servers'] ? $data['servers'] : '';
 
       if (User::where('id', $data['id'])->value('office_id') != $data['office_id']) {
         Lid::where('user_id', $data['id'])->update(['office_id' => $data['office_id']]);
@@ -172,6 +173,7 @@ class UsersController extends Controller
       $user->sip_login = $data['sip_login'] ? $data['sip_login'] : '';
       $user->sip_password = $data['sip_password'] ? $data['sip_password'] : '';
       $user->sip_prefix = $data['sip_prefix'] ? $data['sip_prefix'] : '';
+      $user->servers = $data['servers'] ? $data['servers'] : '';
       $user->office_id = $data['office_id'];
       $user->password = $password;
       $user->order = $data['order'];

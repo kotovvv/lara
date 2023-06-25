@@ -8,7 +8,7 @@
           <v-data-table
             v-model="selected"
             :headers="headers"
-            :items="users"
+            :items="filteredUser"
             sort-by="role_id"
             show-select
             class="border"
@@ -100,6 +100,14 @@
                               label="Office"
                             ></v-select>
                           </v-col>
+                          <v-col cols="12">
+                            <v-textarea
+                              outlined
+                              label="Name;Server;Login;Password;Prefix"
+                              v-model="editedItem.servers"
+                              value="editedItem.servers"
+                            ></v-textarea>
+                          </v-col>
                           <v-col cols="6">
                             <v-text-field
                               v-model="editedItem.sip_server"
@@ -171,6 +179,20 @@
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
+                <v-col
+                  v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0"
+                >
+                  <p>Фильтр office</p>
+                  <v-select
+                    v-model="filterOffices"
+                    :items="offices"
+                    item-text="name"
+                    item-value="id"
+                    outlined
+                    rounded
+                  >
+                  </v-select>
+                </v-col>
               </v-toolbar>
             </template>
             <template v-slot:item.actions="{ item }">
@@ -284,6 +306,7 @@ export default {
       { text: "", value: "actions", sortable: false },
     ],
     offices: [],
+    filterOffices: "",
     editedIndex: -1,
     editedIndexOffice: -1,
     editedItem: {
@@ -298,6 +321,7 @@ export default {
       sip_login: "",
       sip_password: "",
       sip_prefix: "",
+      servers: "",
       order: 99,
     },
     editedItemOffice: {
@@ -311,10 +335,11 @@ export default {
       role_id: 0,
       password: "",
       group_id: "",
-            sip_server: "",
+      sip_server: "",
       sip_login: "",
       sip_password: "",
       sip_prefix: "",
+      servers: "",
       active: 1,
       order: 99,
     },
@@ -324,6 +349,11 @@ export default {
   }),
 
   computed: {
+    filteredUser() {
+      return this.users.filter((i) => {
+        return this.filterOffices == i.office_id;
+      });
+    },
     formTitle() {
       return this.editedIndex === -1
         ? "Новый пользователь"
@@ -349,7 +379,6 @@ export default {
   },
 
   created() {
-
     this.getOffices();
   },
 
@@ -360,10 +389,10 @@ export default {
     fio(user) {
       try {
         user.group = this.group.find((el) => {
-        return el.id == user.group_id;
-      }).fio;
+          return el.id == user.group_id;
+        }).fio;
       } catch (error) {
-        user.group = ''
+        user.group = "";
       }
     },
     getUsers() {
@@ -379,8 +408,11 @@ export default {
             self.rolename(u);
             if (u.role_id == 2) self.group.push({ fio: u.fio, id: u.id });
             u.group = "";
-            if(u.office_id != null){
-              u.office = self.offices.find((o)=>{return o.id == u.office_id}).name || ''
+            if (u.office_id != null) {
+              u.office =
+                self.offices.find((o) => {
+                  return o.id == u.office_id;
+                }).name || "";
             }
           });
           self.users.map((u) => {
@@ -397,7 +429,11 @@ export default {
         .get("/api/getOffices")
         .then((res) => {
           self.offices = res.data;
-          if (self.$attrs.user.role_id == 1 && self.$attrs.user.office_id == 0) {
+          if (
+            self.$attrs.user.role_id == 1 &&
+            self.$attrs.user.office_id == 0
+          ) {
+            self.filterOffices = self.offices[0].id;
             self.offices.unshift({ name: "SuperOffice", id: 0 });
           }
           this.getUsers();
@@ -494,7 +530,7 @@ export default {
       this.close();
     },
     saveOfficeBtn() {
-      console.log(this.editedItemOffice.name,this.offices)
+      console.log(this.editedItemOffice.name, this.offices);
       if (
         this.editedItemOffice.name == null ||
         this.editedItemOffice.name == "" ||
