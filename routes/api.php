@@ -96,6 +96,7 @@ Route::get('getDataTime/{id}/{start_day}/{stop_day}', [ProvidersController::clas
 Route::get('getOffices', [UsersController::class, 'getOffices']);
 Route::post('office/update', [UsersController::class, 'updateOffice']);
 Route::get('usersTree', [UsersController::class, 'usersTree']);
+Route::get('getServers/{id}', [UsersController::class, 'getServers']);
 Route::post('session', [loginController::class, 'session']);
 Route::post('putBTC', [ImportsController::class, 'putBTC']);
 Route::post('getBTCsOnDate', [ImportsController::class, 'getBTCsOnDate']);

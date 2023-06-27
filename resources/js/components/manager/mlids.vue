@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12">
         <v-row>
-          <v-col cols="3">
+          <v-col cols="2">
             <v-card-title>
               <v-text-field
                 v-model="search"
@@ -18,7 +18,7 @@
               ></v-text-field>
             </v-card-title>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="2">
             Запрос по поставщикам
             <v-select
               v-model="filterProviders"
@@ -41,7 +41,7 @@
               </template>
             </v-select>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="2">
             Запрос по номеру
 
             <v-text-field
@@ -55,7 +55,7 @@
               "
             ></v-text-field>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="2">
             Запрос по статусу
             <v-select
               v-model="filterStatus"
@@ -92,6 +92,25 @@
                   ></i>
                 </v-badge>
                 {{ item.name }}
+              </template>
+            </v-select>
+          </v-col>
+          <v-col cols="2">
+            Сервер
+            <v-select
+              v-model="selectedServer"
+              :items="servers"
+              item-text="name"
+              item-value="name"
+              outlined
+              rounded
+              return-object
+            >
+              <template v-slot:selection="{ item, index }">
+                <span v-if="index <= 2">{{ item.name }} </span>
+                <span v-if="index > 2" class="grey--text text-caption">
+                  (+{{ filterProviders.length - 1 }} )
+                </span>
               </template>
             </v-select>
           </v-col>
@@ -509,11 +528,14 @@ export default {
     message: "",
     page: 0,
     limit: 100,
+    servers: [],
+    selectedServer: {},
   }),
   mounted: function () {
     this.getProviders();
     this.getStatuses();
     this.todaylids();
+    this.getServers();
   },
   created() {},
   watch: {
@@ -525,6 +547,16 @@ export default {
   },
   computed: {},
   methods: {
+    getServers() {
+      const self = this;
+      axios
+        .get("/api/getServers/" + this.$props.user.id)
+        .then((res) => {
+          self.servers = res.data;
+          self.selectedServer = self.servers[0];
+        })
+        .catch((error) => console.log(error));
+    },
     openDialogBTC(item) {
       let self = this;
       self.selected[0] = item;
@@ -542,10 +574,10 @@ export default {
     wp_call(item) {
       window.open(
         `/webphone/softphone.html?wp_serveraddress=${
-          this.$props.user.sip_server
-        }&wp_username=${this.$props.user.sip_login}&wp_password=${
-          this.$props.user.sip_password
-        }&wp_callto=${this.$props.user.sip_prefix + item.tel}`,
+          this.selectedServer.server
+        }&wp_username=${this.selectedServer.login}&wp_password=${
+          this.selectedServer.password
+        }&wp_callto=${this.selectedServer.prefix + item.tel}`,
         "softphone",
         "width=350,height=540"
       );
