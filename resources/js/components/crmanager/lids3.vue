@@ -316,7 +316,7 @@
                   <v-row>
                     <v-checkbox
                       v-model="filterGroups"
-                      v-for="(groupa, index) in filteredGroup"
+                      v-for="(groupa, index) in group"
                       :key="index"
                       :value="groupa.id"
                       :hide-details="true"
@@ -418,7 +418,7 @@
           <div class="my-3">Поиск пользователей</div>
           <v-autocomplete
             v-model="selectedUser"
-            :items="filteredUser"
+            :items="users"
             label="Выбор"
             item-text="fio"
             item-value="id"
@@ -435,14 +435,11 @@
                 id="usersradiogroup"
                 ref="radiogroup"
                 v-model="userid"
-                v-bind="filteredUser"
+                v-bind="users"
                 @change="changeLidsUser"
               >
                 <v-expansion-panels ref="akk" v-model="akkvalue">
-                  <v-expansion-panel
-                    v-for="(item, i) in filteredGroup"
-                    :key="i"
-                  >
+                  <v-expansion-panel v-for="(item, i) in group" :key="i">
                     <v-expansion-panel-header>
                       <div
                         height="60"
@@ -457,7 +454,7 @@
                     </v-expansion-panel-header>
                     <v-expansion-panel-content>
                       <v-row
-                        v-for="user in filteredUser.filter(function (i) {
+                        v-for="user in users.filter(function (i) {
                           return i.group_id == item.group_id;
                         })"
                         :key="user.id"
@@ -658,21 +655,7 @@ export default {
       }
     },
   },
-  computed: {
-    filteredGroup() {
-      if (this.group == null) {
-        return [];
-      }
-      return this.group.filter((i) => {
-        return this.filterOffices == i.office_id;
-      });
-    },
-    filteredUser() {
-      return this.users.filter((i) => {
-        return this.filterOffices == i.office_id;
-      });
-    },
-  },
+  computed: {},
   methods: {
     // makeSort(sort) {
     //   if (
@@ -715,8 +698,8 @@ export default {
           .get("/api/getOffices")
           .then((res) => {
             self.offices = res.data;
-            self.filterOffices = self.offices[0].id;
             self.offices.unshift({ id: 0, name: "--выбор--" });
+            self.filterOffices = self.offices[1].id;
           })
           .catch((error) => console.log(error));
       }
@@ -1073,7 +1056,6 @@ export default {
               group_id,
               order,
               statnew,
-              office_id,
               pic,
             }) => ({
               name,
@@ -1085,7 +1067,6 @@ export default {
               group_id,
               order,
               statnew,
-              office_id,
             })
           );
           if (self.$props.user.role_id != 1) {
