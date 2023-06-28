@@ -429,13 +429,13 @@ export default {
         .get("/api/getOffices")
         .then((res) => {
           self.offices = res.data;
+          self.filterOffices = self.offices[0].id;
           if (
             self.$attrs.user.role_id == 1 &&
             self.$attrs.user.office_id == 0
           ) {
             self.offices.unshift({ name: "SuperOffice", id: 0 });
           }
-          self.filterOffices = self.offices[0].id;
           this.getUsers();
         })
         .catch((error) => console.log(error));
