@@ -433,9 +433,9 @@ export default {
             self.$attrs.user.role_id == 1 &&
             self.$attrs.user.office_id == 0
           ) {
-            self.filterOffices = self.offices[0].id;
             self.offices.unshift({ name: "SuperOffice", id: 0 });
           }
+          self.filterOffices = self.offices[0].id;
           this.getUsers();
         })
         .catch((error) => console.log(error));
