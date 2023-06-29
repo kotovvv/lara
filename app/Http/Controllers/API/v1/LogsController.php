@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Log;
 use DB;
 use Debugbar;
+use Carbon\Carbon;
 
 class LogsController extends Controller
 {
@@ -31,7 +32,21 @@ class LogsController extends Controller
     $called = $req['w'];
     $duration = round($req['z'] / 1000);
     $reason = $req['x'];
-    $sql = "INSERT INTO `calls` (`user_id`,`user_tel`,`tel`,`duration`,`timecall`,`status`,`office_id`) VALUES ($user_id,$caller,$called,$duration,NOW(),'$reason',$office_id)";
+    $date = Carbon::now();
+
+    //get time last call
+    $sql = "SELECT `timecall` FROM `calls` WHERE `user_id` = $user_id  AND date(`timecall`) = CURDATE() AND `timecall` < $date ORDER BY id DESC LIMIT 1";
+    $lastcall = DB::select(DB::raw($sql));
+    if ($lastcall) {
+      $lastcall = Carbon::parse($lastcall[0]->timecall);
+    } else {
+      $lastcall = Carbon::now()->hour('09')->minute('00');
+    }
+    //different between calls
+    $cur = $date->subSeconds($duration);
+    $diff = $cur->diffInSeconds($lastcall);
+
+    $sql = "INSERT INTO `calls` (`user_id`,`user_tel`,`tel`,`duration`,`timecall`,`status`,`office_id`,`pausa`) VALUES ($user_id,$caller,$called,$duration,NOW(),'$reason',$office_id,$diff)";
     DB::select(DB::raw($sql));
     // return response($sql, 200);
   }
@@ -51,13 +66,35 @@ class LogsController extends Controller
 
     $dateFrom = $req['dateFrom'] . ' 00:00:00';
     $dateTo = $req['dateTo'] . ' 23:59:59';
+    //====================
 
+
+    // $sql = "SELECT `id`,`user_id`,`timecall`,`duration` FROM `calls` WHERE DATE(`timecall`) = '2023-06-28'";
+    // $list = DB::select(DB::raw($sql));
+    // foreach ($list as $user) {
+    //   $sql = "SELECT `timecall` FROM `calls` WHERE `user_id` = $user->user_id  AND `timecall` < '$user->timecall' AND DATE(`timecall`) = '2023-06-28' ORDER BY id DESC LIMIT 1";
+    //   $lastcall = DB::select(DB::raw($sql));
+    //   if ($lastcall) {
+    //     $lastcall = Carbon::parse($lastcall[0]->timecall);
+    //   } else {
+    //     $lastcall = Carbon::create('2023-06-28')->hour('09')->minute('00');
+    //   }
+    //   //different berween calls
+    //   $cur = Carbon::parse($user->timecall)->subSeconds($user->duration);
+    //   $diff = $cur->diffInSeconds($lastcall);
+    //   $sql = "UPDATE `calls` SET `pausa` = $diff WHERE id = $user->id";
+    //   DB::select(DB::raw($sql));
+    // }
+
+    //===================================
     $sql = "SELECT
     u.id
     ,u.name
 ,(SELECT COUNT(*) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) cnt
 ,(SELECT SEC_TO_TIME(SUM(`duration`)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) dur
 ,(SELECT COUNT(*) FROM `calls` c WHERE `duration`> 120 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) mr2
+,(SELECT SEC_TO_TIME(AVG(`duration`)) FROM `calls` c WHERE  c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) avg
+,(SELECT SEC_TO_TIME(SUM(`pausa`)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) pausa
    FROM
    `users` u
 WHERE u.id IN (SELECT `user_id` FROM `calls` WHERE $office `timecall` BETWEEN '$dateFrom' AND '$dateTo' GROUP BY `user_id`)";
