@@ -573,11 +573,13 @@ export default {
     },
     wp_call(item) {
       window.open(
-        `/webphone/softphone.html?wp_serveraddress=${
+        `/webphone/softphone.html?wp_serveraddress=${encodeURIComponent(
           this.selectedServer.server
-        }&wp_username=${this.selectedServer.login}&wp_password=${
+        )}&wp_username=${encodeURIComponent(
+          this.selectedServer.login
+        )}&wp_password=${encodeURIComponent(
           this.selectedServer.password
-        }&wp_callto=${this.selectedServer.prefix + item.tel}`,
+        )}&wp_callto=${this.selectedServer.prefix + item.tel}`,
         "softphone",
         "width=350,height=540"
       );
