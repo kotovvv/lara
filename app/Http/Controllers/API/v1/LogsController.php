@@ -40,7 +40,7 @@ class LogsController extends Controller
     if ($lastcall) {
       $lastcall = Carbon::parse($lastcall[0]->timecall);
     } else {
-      $lastcall = Carbon::now()->hour('09')->minute('00');
+      $lastcall = Carbon::now()->hour('09')->minute('00')->second('00');
     }
     //different between calls
     $cur = $date->subSeconds($duration);
