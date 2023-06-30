@@ -66,12 +66,11 @@
                 </v-menu>
               </v-col>
 
-                 <v-checkbox
-                 class="mr-2"
-                 v-model="onlynew"
-                 @change="getBTCotherOnDate()"
-                 ></v-checkbox>
-
+              <v-checkbox
+                class="mr-2"
+                v-model="onlynew"
+                @change="getBTCotherOnDate()"
+              ></v-checkbox>
             </v-row>
           </div>
         </v-col>
@@ -85,7 +84,7 @@
             multiple
             class="border px-5"
           ></v-select>
-                    <!-- @change="" -->
+          <!-- @change="" -->
         </v-col>
         <v-col cols="2">
           <p>Фильтр по поставщикам</p>
@@ -116,7 +115,7 @@
             </template>
           </v-select>
         </v-col>
-                <v-col cols="2">
+        <v-col cols="2">
           <!-- statuses_lids -->
           <p>Фильтр по статусам</p>
           <v-select
@@ -154,16 +153,23 @@
               {{ item.name }}
             </template>
           </v-select>
-
         </v-col>
       </v-row>
     </v-container>
     <v-row>
-            <v-col><h3>Всего лидов: {{ filteredItems.length }}</h3></v-col>
-            <v-col><h3 class="green--text">Сумма lids: {{ sum_depozit }}</h3></v-col>
-            <v-col><h3 class="blue--text">Сумма BTC: {{ summ }}</h3></v-col>
-            <v-col><h3 class="red--text">Сумма дат: {{ sum_dates }}</h3></v-col>
-<v-col></v-col>
+      <v-col
+        ><h3>Всего лидов: {{ filteredItems.length }}</h3></v-col
+      >
+      <v-col
+        ><h3 class="green--text">Сумма lids: {{ sum_depozit }}</h3></v-col
+      >
+      <v-col
+        ><h3 class="blue--text">Сумма BTC: {{ summ }}</h3></v-col
+      >
+      <v-col
+        ><h3 class="red--text">Сумма дат: {{ sum_dates }}</h3></v-col
+      >
+      <v-col></v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
@@ -171,7 +177,7 @@
           <!-- show-select -->
           <v-data-table
             v-model.lazy.trim="selected"
-            id="tablids"
+            id="tabbtc"
             :headers="headers"
             :search="search"
             :single-select="false"
@@ -180,12 +186,7 @@
             @click:row="clickrow"
             :items="filteredItems"
             :expanded="expanded"
-            ref="datatable"
-            :footer-props="{
-              'items-per-page-options': [],
-              'items-per-page-text': '',
-            }"
-            :disable-items-per-page="true"
+            ref="btctable"
             :loading="loading"
             loading-text="Загружаю... Ожидайте"
           >
@@ -196,7 +197,7 @@
                 'items-per-page-text': '',
               }"
             >
-               <v-row>
+              <v-row>
                 <!-- <v-col cols="2" class="mt-1">
                   <v-text-field
                     v-model="search"
@@ -227,7 +228,6 @@
           </v-data-table>
         </div>
       </v-col>
-
     </v-row>
   </div>
 </template>
@@ -245,7 +245,7 @@ export default {
     this.getBTCotherOnDate();
   },
   data: () => ({
-    onlynew:true,
+    onlynew: true,
     loading: false,
     dateFrom: false,
     dateTo: false,
@@ -255,8 +255,8 @@ export default {
     dateTimeTo: new Date().toISOString().substring(0, 10),
     providers: [],
     filterProviders: [],
-    statuses:[],
-    filterStatus:[],
+    statuses: [],
+    filterStatus: [],
     offices: [],
     selected_office_ids: [],
     headers: [
@@ -267,9 +267,9 @@ export default {
       { text: "Cоздан", value: "created_at" },
       { text: "Офис", value: "o_name" },
       { text: "Статус", value: "s_name" },
-      { text: "Сумма lids", value: "depozit", class:"green--text"},
-      { text: "BTC", value: "summ", class:"blue--text" },
-      { text: "Сумма дат", value: "sum_dat", class:"red--text" },
+      { text: "Сумма lids", value: "depozit", class: "green--text" },
+      { text: "BTC", value: "summ", class: "blue--text" },
+      { text: "Сумма дат", value: "sum_dat", class: "red--text" },
       // { text: "address", value: "address" },
     ],
     lids: [],
@@ -283,21 +283,22 @@ export default {
       return this.lids.filter((i) => {
         return (
           (!this.filterProviders.length ||
-          this.filterProviders.includes(i.provider_id)) &&
-          (!this.selected_office_ids.length || this.selected_office_ids.includes(i.office_id)) &&
+            this.filterProviders.includes(i.provider_id)) &&
+          (!this.selected_office_ids.length ||
+            this.selected_office_ids.includes(i.office_id)) &&
           (!this.filterStatus.length || this.filterStatus.includes(i.status_id))
         );
       });
     },
-    summ(){
-      return _.sumBy(this.filteredItems,'summ')
+    summ() {
+      return _.sumBy(this.filteredItems, "summ");
     },
-    sum_dates(){
-      return _.sumBy(this.filteredItems,'sum_dat')
+    sum_dates() {
+      return _.sumBy(this.filteredItems, "sum_dat");
     },
-    sum_depozit(){
-      return _.sumBy(this.filteredItems, i => Number(i.depozit))
-    }
+    sum_depozit() {
+      return _.sumBy(this.filteredItems, (i) => Number(i.depozit));
+    },
   },
   methods: {
     getOffices() {
@@ -329,13 +330,12 @@ export default {
         .then((res) => {
           self.loading = false;
           self.lids = res.data.data;
-          self.lids = self.lids.map((l)=>{
-            l.o_name = self.offices.find((o)=>o.id==l.office_id).name
-            return l
-            }
-          )
-          self.providers = res.data.providers
-          self.statuses = res.data.statuses
+          self.lids = self.lids.map((l) => {
+            l.o_name = self.offices.find((o) => o.id == l.office_id).name;
+            return l;
+          });
+          self.providers = res.data.providers;
+          self.statuses = res.data.statuses;
         })
 
         .catch((error) => console.log(error));
@@ -349,7 +349,6 @@ export default {
       } else this.tel = "";
       row.select(!row.isSelected);
     },
-
   },
 };
 </script>

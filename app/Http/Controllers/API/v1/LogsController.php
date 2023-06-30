@@ -32,10 +32,14 @@ class LogsController extends Controller
     $called = $req['w'];
     $duration = round($req['z'] / 1000);
     $reason = $req['x'];
+    $connecttime = 0;
+    if (isset($req['t'])) {
+      $connecttime = round($req['t'] / 1000);
+    }
     $date = Carbon::now();
 
     //get time last call
-    $sql = "SELECT `timecall` FROM `calls` WHERE `user_id` = $user_id  AND date(`timecall`) = CURDATE() AND `timecall` < $date ORDER BY id DESC LIMIT 1";
+    $sql = "SELECT `timecall` FROM `calls` WHERE `user_id` = $user_id  AND date(`timecall`) = CURDATE() AND `timecall` < '$date' ORDER BY id DESC LIMIT 1";
     $lastcall = DB::select(DB::raw($sql));
     if ($lastcall) {
       $lastcall = Carbon::parse($lastcall[0]->timecall);
@@ -43,10 +47,10 @@ class LogsController extends Controller
       $lastcall = Carbon::now()->hour('09')->minute('00')->second('00');
     }
     //different between calls
-    $cur = $date->subSeconds($duration);
+    $cur = $date->subSeconds($duration + $connecttime);
     $diff = $cur->diffInSeconds($lastcall);
 
-    $sql = "INSERT INTO `calls` (`user_id`,`user_tel`,`tel`,`duration`,`timecall`,`status`,`office_id`,`pausa`) VALUES ($user_id,$caller,$called,$duration,NOW(),'$reason',$office_id,$diff)";
+    $sql = "INSERT INTO `calls` (`user_id`,`user_tel`,`tel`,`duration`,`timecall`,`status`,`office_id`,`pausa`,`connecttime`) VALUES ($user_id,$caller,$called,$duration,NOW(),'$reason',$office_id,$diff,$connecttime)";
     DB::select(DB::raw($sql));
     // return response($sql, 200);
   }
@@ -91,10 +95,13 @@ class LogsController extends Controller
     u.id
     ,u.name
 ,(SELECT COUNT(*) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) cnt
+,(SELECT COUNT(DISTINCT(tel)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) utel
+,(SELECT SEC_TO_TIME(SUM(`duration`)+SUM(`connecttime`)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) work
 ,(SELECT SEC_TO_TIME(SUM(`duration`)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) dur
 ,(SELECT COUNT(*) FROM `calls` c WHERE `duration`> 120 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) mr2
-,(SELECT SEC_TO_TIME(round(AVG(`duration`))) FROM `calls` c WHERE  c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) avg
+,(SELECT SEC_TO_TIME(round(AVG(`duration`),0)) FROM `calls` c WHERE  c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) avg
 ,(SELECT SEC_TO_TIME(SUM(`pausa`)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) pausa
+,(SELECT SEC_TO_TIME(round(AVG(`pausa`),0)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) spausa
    FROM
    `users` u
 WHERE u.id IN (SELECT `user_id` FROM `calls` WHERE $office `timecall` BETWEEN '$dateFrom' AND '$dateTo' GROUP BY `user_id`)";
