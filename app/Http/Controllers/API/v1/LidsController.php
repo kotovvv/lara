@@ -436,9 +436,11 @@ class LidsController extends Controller
     if (count($data['provider_id']) > 0) {
       $providers = $data['provider_id'];
     } else {
-      $res = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
-      foreach ($res as $item) {
-        $providers[] = $item['id'];
+      if ($office_id > 0) {
+        $res = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
+        foreach ($res as $item) {
+          $providers[] = $item['id'];
+        }
       }
     }
     // if (isset($data['sortBy'])) {
