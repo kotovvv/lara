@@ -92,19 +92,31 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-data-table
-          v-model.lazy.trim="selected"
-          id="tabcalls"
-          :headers="headers"
-          item-key="id"
-          show-select
-          show-expand
-          :items="calls"
-          ref="datatable"
-          :loading="loading"
-          loading-text="Загружаю... Ожидайте"
-        >
-        </v-data-table>
+        <v-expansion-panels ref="akk" v-model="akkvalue">
+          <v-expansion-panel v-for="(item, i) in group" :key="i">
+            <v-expansion-panel-header>
+              <div
+                height="60"
+                width="60"
+                class="img v-expansion-panel-header__icon mr-1"
+              >
+                {{ i }}
+              </div>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-row>
+                <v-data-table
+                  :headers="headers"
+                  item-key="id"
+                  :items="item"
+                  :loading="loading"
+                  loading-text="Загружаю... Ожидайте"
+                >
+                </v-data-table>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
     </v-row>
   </div>
@@ -112,6 +124,7 @@
 
 <script>
 import axios from "axios";
+import _ from "lodash";
 export default {
   props: ["user"],
   data: () => ({
@@ -122,8 +135,8 @@ export default {
       { text: "Ср пауза", value: "spausa" },
       { text: "Всего звонков", value: "cnt" },
       { text: "Уникальные", value: "utel" },
-      { text: "Ответил", value: "" },
-      { text: "Без ответа", value: "" },
+      { text: "Ответил", value: "good" },
+      { text: "Без ответа", value: "bad" },
       { text: "Общее время работы", value: "work" },
       { text: "Общее время разговора", value: "dur" },
       { text: "Среднее в режиме разговора", value: "avg" },
@@ -142,6 +155,7 @@ export default {
     offices: [],
     filterOffices: 0,
     loading: false,
+    group: [],
   }),
   mounted: function () {
     this.getOffices();
@@ -181,6 +195,7 @@ export default {
         .post("/api/getCalls", data)
         .then((res) => {
           self.calls = res.data;
+          self.group = _.groupBy(self.calls, "grp");
           self.loading = false;
         })
         .catch((error) => console.log(error));

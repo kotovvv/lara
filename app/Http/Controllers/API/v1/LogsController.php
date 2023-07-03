@@ -102,6 +102,9 @@ class LogsController extends Controller
 ,(SELECT SEC_TO_TIME(round(AVG(`duration`),0)) FROM `calls` c WHERE  c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) avg
 ,(SELECT SEC_TO_TIME(SUM(`pausa`)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) pausa
 ,(SELECT SEC_TO_TIME(round(AVG(`pausa`),0)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) spausa
+,(SELECT COUNT(`duration`) FROM `calls` c WHERE `duration` > 0 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) good
+,(SELECT COUNT(`duration`) FROM `calls` c WHERE `duration` = 0 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) bad
+,(SELECT LEFT(u2.fio,3) FROM `users` u2 WHERE u.group_id = u2.id ) grp
    FROM
    `users` u
 WHERE u.id IN (SELECT `user_id` FROM `calls` WHERE $office `timecall` BETWEEN '$dateFrom' AND '$dateTo' GROUP BY `user_id`)";
