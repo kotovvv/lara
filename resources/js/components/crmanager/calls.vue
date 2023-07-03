@@ -131,8 +131,6 @@ export default {
     calls: [],
     headers: [
       { text: "Менеджер", value: "name" },
-      { text: "Пауза", value: "pausa" },
-      { text: "Ср пауза", value: "spausa" },
       { text: "Всего звонков", value: "cnt" },
       { text: "Уникальные", value: "utel" },
       { text: "Ответил", value: "good" },
@@ -141,6 +139,8 @@ export default {
       { text: "Общее время разговора", value: "dur" },
       { text: "Среднее в режиме разговора", value: "avg" },
       { text: "Эфективные звонки (более 2 минут)", value: "mr2" },
+            { text: "Пауза", value: "pausa" },
+      { text: "Ср пауза", value: "spausa" },
     ],
     selected: [],
     dateFrom: false,
