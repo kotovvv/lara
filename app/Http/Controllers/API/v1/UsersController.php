@@ -44,13 +44,15 @@ class UsersController extends Controller
 
   public function getServers($id)
   {
-    $servers = '';
+    $servers = [];
     if (session()->has('office_id')) {
       $servers = User::where('id', $id)->value('servers');
-      $servers = preg_split("/\r\n|\n|\r/", $servers);
-      foreach ($servers as $key => $server) {
-        $a_server = explode(';', $server);
-        $servers[$key] = ['name' => $a_server[0], 'server' => $a_server[1], 'login' => $a_server[2], 'password' => $a_server[3], 'prefix' => $a_server[4]];
+      if (strlen($servers) > 20) {
+        $servers = preg_split("/\r\n|\n|\r/", $servers);
+        foreach ($servers as $key => $server) {
+          $a_server = explode(';', $server);
+          $servers[$key] = ['name' => $a_server[0], 'server' => $a_server[1], 'login' => $a_server[2], 'password' => $a_server[3], 'prefix' => $a_server[4]];
+        }
       }
     }
     return $servers;

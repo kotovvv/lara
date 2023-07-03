@@ -50,7 +50,7 @@ class LogsController extends Controller
     $cur = $date->subSeconds($duration + $connecttime);
     $diff = $cur->diffInSeconds($lastcall);
 
-    $sql = "INSERT INTO `calls` (`user_id`,`user_tel`,`tel`,`duration`,`timecall`,`status`,`office_id`,`pausa`,`connecttime`) VALUES ($user_id,$caller,$called,$duration,NOW(),'$reason',$office_id,$diff,$connecttime)";
+    $sql = "INSERT INTO `calls` (`user_id`,`user_tel`,`tel`,`duration`,`timecall`,`status`,`office_id`,`pausa`,`connecttime`) VALUES ($user_id,$caller,$called,$duration,'$date','$reason',$office_id,$diff,$connecttime)";
     DB::select(DB::raw($sql));
     // return response($sql, 200);
   }
@@ -73,15 +73,15 @@ class LogsController extends Controller
     //====================
 
 
-    // $sql = "SELECT `id`,`user_id`,`timecall`,`duration` FROM `calls` WHERE DATE(`timecall`) = '2023-06-28'";
+    // $sql = "SELECT `id`,`user_id`,`timecall`,`duration` FROM `calls` WHERE DATE(`timecall`) = '2023-07-03'";
     // $list = DB::select(DB::raw($sql));
     // foreach ($list as $user) {
-    //   $sql = "SELECT `timecall` FROM `calls` WHERE `user_id` = $user->user_id  AND `timecall` < '$user->timecall' AND DATE(`timecall`) = '2023-06-28' ORDER BY id DESC LIMIT 1";
+    //   $sql = "SELECT `timecall` FROM `calls` WHERE `user_id` = $user->user_id  AND `timecall` < '$user->timecall' AND DATE(`timecall`) = '2023-07-03' ORDER BY id DESC LIMIT 1";
     //   $lastcall = DB::select(DB::raw($sql));
     //   if ($lastcall) {
     //     $lastcall = Carbon::parse($lastcall[0]->timecall);
     //   } else {
-    //     $lastcall = Carbon::create('2023-06-28')->hour('09')->minute('00');
+    //     $lastcall = Carbon::create('2023-07-03')->hour('09')->minute('00');
     //   }
     //   //different berween calls
     //   $cur = Carbon::parse($user->timecall)->subSeconds($user->duration);
@@ -104,7 +104,7 @@ class LogsController extends Controller
 ,(SELECT SEC_TO_TIME(round(AVG(`pausa`),0)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) spausa
 ,(SELECT COUNT(`duration`) FROM `calls` c WHERE `duration` > 0 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) good
 ,(SELECT COUNT(`duration`) FROM `calls` c WHERE `duration` = 0 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) bad
-,(SELECT LEFT(u2.fio,3) FROM `users` u2 WHERE u.group_id = u2.id ) grp
+,(SELECT u2.fio FROM `users` u2 WHERE u.group_id = u2.id ) grp
    FROM
    `users` u
 WHERE u.id IN (SELECT `user_id` FROM `calls` WHERE $office `timecall` BETWEEN '$dateFrom' AND '$dateTo' GROUP BY `user_id`)";
