@@ -92,7 +92,19 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-expansion-panels ref="akk" v-model="akkvalue">
+        <div class="my-3">Поиск пользователей</div>
+        <v-autocomplete
+          v-model="selectedUser"
+          :items="users"
+          label="Выбор"
+          item-text="fio"
+          item-value="id"
+          :return-object="true"
+          append-icon="mdi-close"
+          outlined
+          rounded
+        ></v-autocomplete>
+        <v-expansion-panels v-model="akkvalue">
           <v-expansion-panel v-for="(item, i) in group" :key="i">
             <v-expansion-panel-header>
               <div
@@ -139,7 +151,7 @@ export default {
       { text: "Общее время разговора", value: "dur" },
       { text: "Среднее в режиме разговора", value: "avg" },
       { text: "Эфективные звонки (более 2 минут)", value: "mr2" },
-            { text: "Пауза", value: "pausa" },
+      { text: "Пауза", value: "pausa" },
       { text: "Ср пауза", value: "spausa" },
     ],
     selected: [],
@@ -156,12 +168,28 @@ export default {
     filterOffices: 0,
     loading: false,
     group: [],
+    users: [],
+    selectedUser: {},
+    kkvalue: null,
   }),
   mounted: function () {
     this.getOffices();
     this.getCalls();
   },
+  watch: {
+    selectedUser(user) {
+      this.akkvalue = _.findIndex(this.group, { [group]: user.group });
+    },
+  },
   methods: {
+    getUsers(office_id) {
+      axios
+        .get("/api/getUsersInOffice/" + office_id)
+        .then((res) => {
+          self.users = res.data;
+        })
+        .catch((error) => console.log(error));
+    },
     getOffices() {
       let self = this;
       if (self.$props.user.role_id == 1 && self.$props.user.office_id == 0) {
