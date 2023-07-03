@@ -63,9 +63,9 @@ class LogsController extends Controller
     if (isset($req['office_id'])) {
       $office_id = (int) $req['office_id'];
     }
-    $office = "office_id = $office_id AND";
+    $office = "office_id = $office_id ";
     if ($office_id == 0) {
-      $office = "1 AND";
+      $office = "1 ";
     }
 
     $dateFrom = $req['dateFrom'] . ' 00:00:00';
@@ -105,9 +105,11 @@ class LogsController extends Controller
 ,(SELECT COUNT(`duration`) FROM `calls` c WHERE `duration` > 0 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) good
 ,(SELECT COUNT(`duration`) FROM `calls` c WHERE `duration` = 0 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) bad
 ,(SELECT u2.fio FROM `users` u2 WHERE u.group_id = u2.id ) grp
+
    FROM
    `users` u
-WHERE u.id IN (SELECT `user_id` FROM `calls` WHERE $office `timecall` BETWEEN '$dateFrom' AND '$dateTo' GROUP BY `user_id`)";
+#WHERE u.id IN (SELECT `user_id` FROM `calls` WHERE $office `timecall` BETWEEN '$dateFrom' AND '$dateTo' GROUP BY `user_id`)
+WHERE $office AND INSTR(u.`servers`,';') order by grp ASC";
     return DB::select(DB::raw($sql));
   }
 

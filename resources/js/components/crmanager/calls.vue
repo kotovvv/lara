@@ -95,32 +95,28 @@
         <div class="my-3">Поиск пользователей</div>
         <v-autocomplete
           v-model="selectedUser"
-          :items="users"
+          :items="calls"
           label="Выбор"
-          item-text="fio"
-          item-value="id"
+          item-text="name"
+          item-value="name"
           :return-object="true"
           append-icon="mdi-close"
           outlined
           rounded
         ></v-autocomplete>
         <v-expansion-panels v-model="akkvalue">
-          <v-expansion-panel v-for="(item, i) in group" :key="i">
+          <v-expansion-panel v-for="(item, i) in test" :key="i">
             <v-expansion-panel-header>
-              <div
-                height="60"
-                width="60"
-                class="img v-expansion-panel-header__icon mr-1"
-              >
-                {{ i }}
-              </div>
+              {{ item[0] }}
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-row>
                 <v-data-table
                   :headers="headers"
                   item-key="id"
-                  :items="item"
+                  :items="item[1]"
+                  :hide-default-footer="true"
+                  items-per-page="-1"
                   :loading="loading"
                   loading-text="Загружаю... Ожидайте"
                 >
@@ -170,7 +166,8 @@ export default {
     group: [],
     users: [],
     selectedUser: {},
-    kkvalue: null,
+    akkvalue: [],
+    test: [],
   }),
   mounted: function () {
     this.getOffices();
@@ -178,18 +175,10 @@ export default {
   },
   watch: {
     selectedUser(user) {
-      this.akkvalue = _.findIndex(this.group, { [group]: user.group });
+      this.akkvalue = _.findIndex(this.test, (el) => el[0] == user.grp);
     },
   },
   methods: {
-    getUsers(office_id) {
-      axios
-        .get("/api/getUsersInOffice/" + office_id)
-        .then((res) => {
-          self.users = res.data;
-        })
-        .catch((error) => console.log(error));
-    },
     getOffices() {
       let self = this;
       if (self.$props.user.role_id == 1 && self.$props.user.office_id == 0) {
@@ -224,6 +213,11 @@ export default {
         .then((res) => {
           self.calls = res.data;
           self.group = _.groupBy(self.calls, "grp");
+          self.test = Array.from(Object.keys(self.group), (k) => [
+            `${k}`,
+            self.group[k],
+          ]);
+
           self.loading = false;
         })
         .catch((error) => console.log(error));
