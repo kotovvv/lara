@@ -103,6 +103,7 @@
           append-icon="mdi-close"
           outlined
           rounded
+          @click:append="clearuser()"
         ></v-autocomplete>
         <v-expansion-panels v-model="akkvalue">
           <v-expansion-panel v-for="(item, i) in test" :key="i">
@@ -111,19 +112,17 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-row>
-                <v-col cols="12">
-                  <v-data-table
-                    :headers="headers"
-                    item-key="id"
-                    width="100%"
-                    :items="item[1]"
-                    :hide-default-footer="true"
-                    items-per-page="-1"
-                    :loading="loading"
-                    loading-text="Загружаю... Ожидайте"
-                  >
-                  </v-data-table>
-                </v-col>
+                <v-data-table
+                  :headers="headers"
+                  :search="selectedUser.name"
+                  item-key="id"
+                  :items="item[1]"
+                  :hide-default-footer="true"
+                  :items-per-page="-1"
+                  :loading="loading"
+                  loading-text="Загружаю... Ожидайте"
+                >
+                </v-data-table>
               </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
@@ -182,6 +181,9 @@ export default {
     },
   },
   methods: {
+    clearuser() {
+      this.selectedUser = {};
+    },
     getOffices() {
       let self = this;
       if (self.$props.user.role_id == 1 && self.$props.user.office_id == 0) {

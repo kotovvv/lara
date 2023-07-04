@@ -109,6 +109,14 @@
                             ></v-textarea>
                           </v-col>
                           <v-col cols="6">
+                            <v-switch
+                              v-model="editedItem.sip"
+                              label="sip"
+                              color="deep-purple accent-3"
+                              hide-details
+                            ></v-switch>
+                          </v-col>
+                          <!-- <v-col cols="6">
                             <v-text-field
                               v-model="editedItem.sip_server"
                               label="Server sip"
@@ -131,13 +139,8 @@
                               v-model="editedItem.sip_prefix"
                               label="Prefix sip"
                             ></v-text-field>
-                          </v-col>
-                          <!-- <v-col cols="4">
-                            <v-switch
-                              v-model="editedItem.active"
-                              label="Показывать:"
-                            ></v-switch>
                           </v-col> -->
+
                           <v-col cols="4">
                             <v-text-field
                               v-model="editedItem.order"
@@ -317,10 +320,11 @@ export default {
       role_id: 0,
       password: "",
       group_id: "",
-      sip_server: "",
-      sip_login: "",
-      sip_password: "",
-      sip_prefix: "",
+      // sip_server: "",
+      // sip_login: "",
+      // sip_password: "",
+      // sip_prefix: "",
+      sip: false,
       servers: "",
       order: 99,
     },
@@ -335,10 +339,11 @@ export default {
       role_id: 0,
       password: "",
       group_id: "",
-      sip_server: "",
-      sip_login: "",
-      sip_password: "",
-      sip_prefix: "",
+      // sip_server: "",
+      // sip_login: "",
+      // sip_password: "",
+      // sip_prefix: "",
+      sip: false,
       servers: "",
       active: 1,
       order: 99,
@@ -346,6 +351,7 @@ export default {
     defaultItemOffice: {
       name: "",
     },
+    sip: false,
   }),
 
   computed: {
