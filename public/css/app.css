@@ -10215,3 +10215,7 @@ main .theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr > 
 .border .theme--light.v-icon {
   color: #7620df;
 }
+
+.tablecalls table td {
+  font-size: 1rem !important;
+}

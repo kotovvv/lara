@@ -112,17 +112,20 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-row>
-                <v-data-table
-                  :headers="headers"
-                  :search="selectedUser.name"
-                  item-key="id"
-                  :items="item[1]"
-                  :hide-default-footer="true"
-                  :items-per-page="-1"
-                  :loading="loading"
-                  loading-text="Загружаю... Ожидайте"
-                >
-                </v-data-table>
+                <v-col cols="12">
+                  <v-data-table
+                    class="tablecalls"
+                    :headers="headers"
+                    :search="selectedUser.name"
+                    item-key="id"
+                    :items="item[1]"
+                    :hide-default-footer="true"
+                    :items-per-page="-1"
+                    :loading="loading"
+                    loading-text="Загружаю... Ожидайте"
+                  >
+                  </v-data-table>
+                </v-col>
               </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
