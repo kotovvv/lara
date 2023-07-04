@@ -439,7 +439,7 @@
                 @change="changeLidsUser"
               >
                 <v-expansion-panels ref="akk" v-model="akkvalue">
-                  <v-expansion-panel v-for="item in group" :key="[item]">
+                  <v-expansion-panel v-for="(item, i) in group" :key="i">
                     <v-expansion-panel-header>
                       <div
                         height="60"
