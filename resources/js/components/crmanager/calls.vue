@@ -111,16 +111,19 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-row>
-                <v-data-table
-                  :headers="headers"
-                  item-key="id"
-                  :items="item[1]"
-                  :hide-default-footer="true"
-                  items-per-page="-1"
-                  :loading="loading"
-                  loading-text="Загружаю... Ожидайте"
-                >
-                </v-data-table>
+                <v-col cols="12">
+                  <v-data-table
+                    :headers="headers"
+                    item-key="id"
+                    width="100%"
+                    :items="item[1]"
+                    :hide-default-footer="true"
+                    items-per-page="-1"
+                    :loading="loading"
+                    loading-text="Загружаю... Ожидайте"
+                  >
+                  </v-data-table>
+                </v-col>
               </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
