@@ -109,7 +109,7 @@ class LogsController extends Controller
    FROM
    `users` u
 #WHERE u.id IN (SELECT `user_id` FROM `calls` WHERE $office `timecall` BETWEEN '$dateFrom' AND '$dateTo' GROUP BY `user_id`)
-WHERE $office AND INSTR(u.`servers`,';') order by grp ASC";
+WHERE $office AND INSTR(u.`servers`,';') order by grp ASC ,name ASC";
     return DB::select(DB::raw($sql));
   }
 
