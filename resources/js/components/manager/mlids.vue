@@ -138,7 +138,10 @@
                 :items-per-page="100"
                 hide-default-footer
               >
-                <template v-slot:item.tel="{ item }">
+                <template
+                  v-slot:item.tel="{ item }"
+                  v-if="$props.user.sip == 0"
+                >
                   <a
                     class="tel"
                     :href="'sip:' + item.tel"
@@ -154,7 +157,22 @@
                     <v-icon small> mdi-headset </v-icon>
                   </span>
                 </template>
-
+                <template v-slot:item.tel="{ item }" v-else>
+                  <span class="tel" @click.prevent.stop="wp_call(item)">
+                    {{ item.tel }}
+                  </span>
+                  <span>
+                    <a
+                      :href="'sip:' + item.tel"
+                      @click.stop="
+                        qtytel(item.id);
+                        lid_id = item.id;
+                      "
+                    >
+                      <v-icon small> mdi-headset </v-icon>
+                    </a>
+                  </span>
+                </template>
                 <template v-slot:item.status="{ item }">
                   <div class="status_wrp" @click.stop="openDialog(item)">
                     <b
@@ -227,19 +245,37 @@
 
                 <template v-slot:item.tel="{ item }">
                   <div class="d-flex justify-space-between">
-                    <a
-                      class="tel"
-                      :href="'sip:' + item.tel"
-                      @click.stop="
-                        qtytel(item.id);
-                        lid_id = item.id;
-                      "
-                    >
-                      {{ item.tel }}
-                    </a>
-                    <span @click.prevent.stop="wp_call(item)">
-                      <v-icon small> mdi-headset </v-icon>
-                    </span>
+                    <template v-if="$props.user.sip == 0">
+                      <a
+                        class="tel"
+                        :href="'sip:' + item.tel"
+                        @click.stop="
+                          qtytel(item.id);
+                          lid_id = item.id;
+                        "
+                      >
+                        {{ item.tel }}
+                      </a>
+                      <span @click.prevent.stop="wp_call(item)">
+                        <v-icon small> mdi-headset </v-icon>
+                      </span>
+                    </template>
+                    <template v-else>
+                      <span class="tel" @click.prevent.stop="wp_call(item)">
+                        {{ item.tel }}
+                      </span>
+                      <span>
+                        <a
+                          :href="'sip:' + item.tel"
+                          @click.stop="
+                            qtytel(item.id);
+                            lid_id = item.id;
+                          "
+                        >
+                          <v-icon small> mdi-headset </v-icon>
+                        </a>
+                      </span>
+                    </template>
                     <span @click.prevent.stop="openDialogBTC(item)">
                       <v-icon class="bitcoin"> mdi-bitcoin </v-icon>
                     </span>

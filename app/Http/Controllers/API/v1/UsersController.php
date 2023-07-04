@@ -160,12 +160,13 @@ class UsersController extends Controller
       $arr['group_id'] = $data['group_id'];
       $arr['office_id'] = $data['office_id'];
       $arr['order'] = $data['order'];
-      $arr['sip_server'] = $data['sip_server'] ? $data['sip_server'] : '';
-      $arr['sip_login'] = $data['sip_login'] ? $data['sip_login'] : '';
-      $arr['sip_password'] = $data['sip_password'] ? $data['sip_password'] : '';
-      $arr['sip_prefix'] = $data['sip_prefix'] ? $data['sip_prefix'] : '';
+      $arr['sip'] = $data['sip'] == 'true' ? 1 : 0;
+      // $arr['sip_server'] = $data['sip_server'] ? $data['sip_server'] : '';
+      // $arr['sip_login'] = $data['sip_login'] ? $data['sip_login'] : '';
+      // $arr['sip_password'] = $data['sip_password'] ? $data['sip_password'] : '';
+      // $arr['sip_prefix'] = $data['sip_prefix'] ? $data['sip_prefix'] : '';
       $arr['servers'] = $data['servers'] ? $data['servers'] : '';
-
+      Debugbar::info($arr);
       if (User::where('id', $data['id'])->value('office_id') != $data['office_id']) {
         Lid::where('user_id', $data['id'])->update(['office_id' => $data['office_id']]);
       }
@@ -185,10 +186,11 @@ class UsersController extends Controller
       $user->role_id = $data["role_id"];
       $user->group_id = $data['group_id'];
       // $user->pic = $file_name;
-      $user->sip_server = $data['sip_server'] ? $data['sip_server'] : '';
-      $user->sip_login = $data['sip_login'] ? $data['sip_login'] : '';
-      $user->sip_password = $data['sip_password'] ? $data['sip_password'] : '';
-      $user->sip_prefix = $data['sip_prefix'] ? $data['sip_prefix'] : '';
+      // $user->sip_server = $data['sip_server'] ? $data['sip_server'] : '';
+      // $user->sip_login = $data['sip_login'] ? $data['sip_login'] : '';
+      // $user->sip_password = $data['sip_password'] ? $data['sip_password'] : '';
+      // $user->sip_prefix = $data['sip_prefix'] ? $data['sip_prefix'] : '';
+      $user->sip = $data['sip'] == 'true' ? 1 : 0;
       $user->servers = $data['servers'] ? $data['servers'] : '';
       $user->office_id = $data['office_id'];
       $user->password = $password;
