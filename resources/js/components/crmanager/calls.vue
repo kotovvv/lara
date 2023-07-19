@@ -198,6 +198,8 @@ export default {
             self.filterOffices = self.offices[1].id;
           })
           .catch((error) => console.log(error));
+      } else {
+        self.filterOffices = self.$props.user.office_id;
       }
     },
     cleardate() {

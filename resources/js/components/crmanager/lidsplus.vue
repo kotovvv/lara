@@ -362,7 +362,7 @@
               <v-col cols="3">
                 <v-select
                   v-model="selectedStatus"
-                  :items="statuses"
+                  :items="filterstatuses"
                   item-text="name"
                   item-value="id"
                   outlined
@@ -512,6 +512,7 @@ export default {
     users: [],
     disableuser: 0,
     statuses: [],
+    filterstatuses: [],
     selectedStatus: 0,
     filterStatus: [],
     filterGStatus: 0,
@@ -811,7 +812,7 @@ export default {
           self.lids.map(function (e) {
             e.user = self.users.find((u) => u.id == e.user_id).fio;
             e.date_created = e.created_at.substring(0, 10);
-            if(e.updated_at){
+            if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
             }
             e.provider = self.providers.find((p) => p.id == e.provider_id).name;
@@ -941,7 +942,7 @@ export default {
     getUsers() {
       let self = this;
       // let get = self.$props.user.role_id == 1 ? "/api/users" : "/api/getusers";
-      let get =  "/api/getusers";
+      let get = "/api/getusers";
       axios
         .get(get)
         .then((res) => {
@@ -989,6 +990,11 @@ export default {
             color,
             order,
           }));
+          if (self.$props.user.role_id > 1) {
+            self.filterstatuses = self.statuses.filter((e) => e.id != 8);
+          } else {
+            self.filterstatuses = [...self.statuses];
+          }
         })
         .catch((error) => console.log(error));
     },
@@ -1007,7 +1013,7 @@ export default {
           self.lids = Object.entries(res.data).map((e) => e[1]);
           self.lids.map(function (e) {
             e.date_created = e.created_at.substring(0, 10);
-            if(e.updated_at){
+            if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
             }
             if (e.status_id)
@@ -1042,14 +1048,14 @@ export default {
       let self = this;
       this.loading = true;
       let data = {};
-      if (this.datetimeFrom == ""){
+      if (this.datetimeFrom == "") {
         this.datetimeFrom = new Date(
           new Date().setDate(new Date().getDate() - 14)
         )
           .toISOString()
           .substring(0, 10);
       }
-      if (this.datetimeTo == ""){
+      if (this.datetimeTo == "") {
         this.datetimeTo = new Date().toISOString().substring(0, 10);
       }
 
@@ -1063,7 +1069,7 @@ export default {
           self.lids = Object.entries(res.data).map((e) => e[1]);
           self.lids.map(function (e) {
             e.date_created = e.created_at.substring(0, 10);
-            if(e.updated_at){
+            if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
             }
             if (e.status_id) {
@@ -1123,7 +1129,7 @@ export default {
 
           self.lids.map(function (e) {
             e.date_created = e.created_at.substring(0, 10);
-            if(e.updated_at){
+            if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
             }
             if (self.users.find((u) => u.id == e.user_id)) {

@@ -371,7 +371,7 @@
             <v-col cols="3">
               <v-select
                 v-model="selectedStatus"
-                :items="[{ name: 'Default', id: 0 }, ...statuses]"
+                :items="[{ name: 'Default', id: 0 }, ...filterstatuses]"
                 item-text="name"
                 item-value="id"
                 outlined
@@ -521,6 +521,7 @@ export default {
     users: [],
     disableuser: 0,
     statuses: [],
+    filterstatuses: [],
     selectedStatus: 0,
     filterStatus: [],
     filterGStatus: 0,
@@ -1090,6 +1091,11 @@ export default {
             color,
             order,
           }));
+          if (self.$props.user.role_id > 1) {
+            self.filterstatuses = self.statuses.filter((e) => e.id != 8);
+          } else {
+            self.filterstatuses = [...self.statuses];
+          }
           // self.statuses.unshift({ name: "Default", id: 0 });
         })
         .catch((error) => console.log(error));

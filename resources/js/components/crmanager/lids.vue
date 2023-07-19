@@ -133,7 +133,7 @@
           Назначение статусов
           <v-select
             v-model="selectedStatus"
-            :items="statuses"
+            :items="filterstatuses"
             item-text="name"
             item-value="id"
             outlined
@@ -351,6 +351,7 @@ export default {
     users: [],
     disableuser: 0,
     statuses: [],
+    filterstatuses: [],
     selectedStatus: 0,
     filterStatus: 0,
     filterGStatus: 0,
@@ -452,7 +453,7 @@ export default {
     },
     searchInDB() {
       let self = this;
-      self.loading = true
+      self.loading = true;
       const send = {};
 
       send.group_id = self.$props.user.group_id;
@@ -461,7 +462,7 @@ export default {
       axios
         .post("api/Lid/searchlids", send)
         .then((res) => {
-          self.loading = false
+          self.loading = false;
           self.lids = Object.entries(res.data).map((e) => e[1]);
 
           self.lids.map(function (e) {
@@ -590,13 +591,13 @@ export default {
     },
     getUsers() {
       let self = this;
-      self.loading = true
+      self.loading = true;
       // let get = self.$props.user.role_id == 1 ? "/api/users" : "/api/getusers";
       let get = "/api/getusers";
       axios
         .get(get)
         .then((res) => {
-          self.loading = false
+          self.loading = false;
           self.users = res.data.map(
             ({
               name,
@@ -640,11 +641,11 @@ export default {
 
     getStatuses() {
       let self = this;
-      self.loading = true
+      self.loading = true;
       axios
         .get("/api/statuses")
         .then((res) => {
-          self.loading = false
+          self.loading = false;
           self.statuses = res.data.map(({ uname, name, id, color }) => ({
             uname,
             name,
@@ -653,13 +654,14 @@ export default {
           }));
           self.statuses.unshift({ name: "Default", id: 0 });
           self.getLids(self.$props.user.id);
+          self.filterstatuses = self.statuses.filter((e) => e.id != 8);
         })
         .catch((error) => console.log(error));
     },
 
     getStatusLids(id) {
       let self = this;
-      self.loading = true
+      self.loading = true;
       self.filterStatus = 0;
       self.search = "";
       self.filtertel = "";
@@ -670,7 +672,7 @@ export default {
       axios
         .post("/api/statuslids", send)
         .then((res) => {
-          self.loading = false
+          self.loading = false;
           self.lids = Object.entries(res.data).map((e) => e[1]);
 
           self.lids.map(function (e) {
