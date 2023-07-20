@@ -276,7 +276,7 @@ class UsersController extends Controller
       ->when($office_id > 0, function ($query) use ($office_id) {
         return $query->where('office_id', $office_id);
       })
-      ->when($group_id > 0, function ($query) use ($group_id) {
+      ->when($group_id > 0 && $user['role_id'] != 1, function ($query) use ($group_id) {
         return $query->where('group_id', $group_id);
       })
       ->orderBy('users.order', 'asc')
