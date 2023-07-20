@@ -343,7 +343,7 @@
         <v-card-title class="text-h5">
           <!-- @change="putSelectedLidsDB" -->
           <div class="wrp__statuses">
-            <template v-for="(status, ikey) in statuses">
+            <template v-for="(status, ikey) in statusesnonew">
               <input
                 type="radio"
                 :value="status.id"
@@ -518,6 +518,7 @@ export default {
     users: [],
     disableuser: 0,
     statuses: [],
+    statusesnonew: [],
     filterstatuses: [],
     selectedStatus: 0,
     filterStatus: [],
@@ -889,6 +890,7 @@ export default {
             id,
             color,
           }));
+          self.statusesnonew = self.statuses.filter((e) => e.id != 8);
           self.filterstatuses = self.statuses.map((e) => e);
           self.getLidsPost();
         })
