@@ -105,6 +105,7 @@
               outlined
               rounded
               return-object
+              :change="wp_close"
             >
               <template v-slot:selection="{ item, index }">
                 <span v-if="index <= 2">{{ item.name }} </span>
@@ -501,7 +502,7 @@ export default {
   props: ["user"],
   data: () => ({
     loading: false,
-    webphone: {},
+    webphone: false,
     timeProps: { format: "24hr" },
     dial: false,
     dialog: false,
@@ -608,18 +609,31 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+    wp_close() {
+      if (this.webphone && !this.webphone.closed) {
+        this.webphone.close();
+      }
+      this.webphone = false;
+    },
     wp_call(item) {
-      window.open(
-        `/webphone/softphone.html?wp_serveraddress=${encodeURIComponent(
-          this.selectedServer.server
-        )}&wp_username=${encodeURIComponent(
-          this.selectedServer.login
-        )}&wp_password=${encodeURIComponent(
-          this.selectedServer.password
-        )}&wp_callto=${this.selectedServer.prefix + item.tel}`,
-        "softphone",
-        "width=350,height=540"
-      );
+      if (this.webphone && !this.webphone.closed) {
+        const tel = "" + this.selectedServer.prefix + item.tel;
+        // this.webphone.webphone_api.stop();
+        this.webphone.webphone_api.setparameter("callto", tel);
+        this.webphone.webphone_api.call();
+      } else {
+        this.webphone = window.open(
+          `/webphone/softphone.html?wp_serveraddress=${encodeURIComponent(
+            this.selectedServer.server
+          )}&wp_username=${encodeURIComponent(
+            this.selectedServer.login
+          )}&wp_password=${encodeURIComponent(
+            this.selectedServer.password
+          )}&wp_callto=${this.selectedServer.prefix + item.tel}`,
+          "softphone",
+          "width=350,height=540"
+        );
+      }
     },
     filter: function (evt) {
       evt = evt ? evt : window.event;
