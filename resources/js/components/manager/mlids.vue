@@ -618,9 +618,8 @@ export default {
     wp_call(item) {
       if (this.webphone && !this.webphone.closed) {
         const tel = "" + this.selectedServer.prefix + item.tel;
-        // this.webphone.webphone_api.stop();
-        this.webphone.webphone_api.setparameter("callto", tel);
-        this.webphone.webphone_api.call();
+        this.webphone.webphone_api.call(tel);
+        this.webphone.focus();
       } else {
         this.webphone = window.open(
           `/webphone/softphone.html?wp_serveraddress=${encodeURIComponent(
