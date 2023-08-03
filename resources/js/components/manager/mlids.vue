@@ -616,6 +616,7 @@ export default {
       this.webphone = false;
     },
     wp_call(item) {
+      this.copyTo(item.tel);
       if (this.webphone && !this.webphone.closed) {
         const tel = "" + this.selectedServer.prefix + item.tel;
         this.webphone.webphone_api.call(tel);
@@ -630,7 +631,7 @@ export default {
             this.selectedServer.password
           )}&wp_callto=${this.selectedServer.prefix + item.tel}`,
           "softphone",
-          "width=350,height=540"
+          "width=400,height=540"
         );
       }
     },
