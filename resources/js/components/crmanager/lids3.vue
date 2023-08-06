@@ -479,8 +479,14 @@
                           :disabled="disableuser == user.id"
                           >{{ user.hmlids }}</v-btn
                         >
-                        <v-chip v-if="user.statnew" label small>
+                        <v-chip data="new" v-if="user.statnew" label small>
                           {{ user.statnew }}
+                        </v-chip>
+                        <v-chip data="inp" v-if="user.inp" label small>
+                          {{ user.inp }}
+                        </v-chip>
+                        <v-chip data="cb" v-if="user.cb" label small>
+                          {{ user.cb }}
                         </v-chip>
                       </v-row>
                     </v-expansion-panel-content>
@@ -1058,6 +1064,8 @@ export default {
               order,
               statnew,
               pic,
+              inp,
+              cb,
             }) => ({
               name,
               id,
@@ -1068,6 +1076,8 @@ export default {
               group_id,
               order,
               statnew,
+              inp,
+              cb,
             })
           );
           if (self.$props.user.role_id != 1) {
@@ -1276,5 +1286,37 @@ export default {
   box-shadow: 0px 0px 9.5px 0.5px rgba(118, 32, 223, 0.2);
   border-radius: 30px;
   padding: 3px 5px;
+}
+.v-chip::after {
+  content: attr(data);
+  position: absolute;
+  left: 2px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  z-index: 1;
+}
+#usersradiogroup .v-chip[data="new"] {
+  background: #e0e0e0;
+}
+.v-chip[data="new"]::after {
+  color: #aaa;
+}
+#usersradiogroup .v-chip[data="inp"] {
+  background: #5cf09a;
+}
+.v-chip[data="inp"]::after {
+  color: #4aaf5b;
+}
+#usersradiogroup .v-chip[data="cb"] {
+  background: #9fc6f3;
+}
+.v-chip[data="cb"]::after {
+  color: #7b80cc;
+}
+
+.v-chip__content {
+  position: relative;
+  z-index: 2;
+  font-weight: bold;
 }
 </style>

@@ -270,7 +270,7 @@ class UsersController extends Controller
 
     // $role_id = $user->role_id;
     $group_id = $user['group_id'];
-    return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew ')])
+    return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 9) as cb '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 33) as inp ')])
       //->where('users.role_id', '>', 1)
       ->where('users.active', 1)
       ->when($office_id > 0, function ($query) use ($office_id) {
