@@ -1310,7 +1310,7 @@ export default {
   color: #aaa;
 }
 #usersradiogroup .v-btn[data="inp"] {
-  background: #77dd77;
+  background: #B5D7898C;
 }
 .v-btn[data="inp"]::after {
   color: #4aaf5b;
