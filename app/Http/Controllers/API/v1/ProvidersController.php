@@ -26,8 +26,8 @@ class ProvidersController extends Controller
       $office_id = session()->get('office_id');
 
       return Provider::when($office_id > 0, function ($query) use ($office_id) {
-        return $query->where('office_id','REGEXP','[^0-9]'. $office_id.'[^0-9]');
-      })->orderBy('name','ASC')->get();
+        return $query->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]');
+      })->orderBy('name', 'ASC')->get();
     }
   }
 
@@ -38,7 +38,7 @@ class ProvidersController extends Controller
       $office_id = session()->get('office_id');
 
       return Provider::when($office_id > 0, function ($query) use ($office_id) {
-        return $query->where('office_id','REGEXP','[^0-9]'. $office_id.'[^0-9]');
+        return $query->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]');
       })->get();
     }
   }
@@ -80,25 +80,9 @@ class ProvidersController extends Controller
 
 
         $a_statuses = DB::select(DB::raw($sql));
-        $return['allstatuses'][] = ['date' => 'Итог', 'statuses' => $a_statuses];
+        $return['allstatuses'][] = ['date' => 'result', 'statuses' => $a_statuses];
       }
     }
-    //     $statuses =  DB::select(DB::raw("SELECT
-    //     `statuses`.`name`
-    //     , COUNT(`statuses`.`name`) AS `hm`
-    // FROM
-    //     `providers`
-    //     LEFT JOIN `lids`
-    //         ON (`providers`.`id` = `lids`.`provider_id`)
-    //     LEFT JOIN `logs`
-    //         ON (`lids`.`tel` = `logs`.`tel`)
-    //     LEFT JOIN `statuses`
-    //         ON (`logs`.`status_id` = `statuses`.`id`)
-    // WHERE (`providers`.`id` = " . $data['provider_id'] . ")
-    // GROUP BY `statuses`.`name`, `providers`.`id`
-    // ORDER BY `hm` DESC"));
-    //     $req['hm'] = DB::select(DB::raw("SELECT DATE(`created_at`) dateadd,COUNT(*) hm FROM `lids` WHERE `provider_id` = " . $data['provider_id']));
-    //     $req['statuses'] = $statuses;
 
     return $return;
   }

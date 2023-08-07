@@ -153,13 +153,24 @@
                   >
                     {{ item.tel }}
                   </a>
-                  <span @click.prevent.stop="wp_call(item)">
+                  <span
+                    @click.prevent.stop="
+                      qtytel(item.id);
+                      wp_call(item);
+                    "
+                  >
                     <!-- :class="{ active: active_el == item.id }" -->
                     <v-icon small> mdi-headset </v-icon>
                   </span>
                 </template>
                 <template v-slot:item.tel="{ item }" v-else>
-                  <span class="tel" @click.prevent.stop="wp_call(item)">
+                  <span
+                    class="tel"
+                    @click.prevent.stop="
+                      qtytel(item.id);
+                      wp_call(item);
+                    "
+                  >
                     {{ item.tel }}
                   </span>
                   <span>
@@ -246,7 +257,7 @@
 
                 <template v-slot:item.tel="{ item }">
                   <div class="d-flex justify-space-between">
-                    <template v-if="$props.user.servers.length < 10">
+                    <template v-if="$props.user.sip == 0">
                       <a
                         class="tel"
                         :href="'sip:' + item.tel"

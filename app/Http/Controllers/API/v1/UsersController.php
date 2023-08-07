@@ -223,10 +223,10 @@ class UsersController extends Controller
     $current_date = $datefrom;
     // write dates
 
-    $repoprt[] =  ['color' => '', 'col' => ['Пользователь', $fio[0]->fio]];
-    $repoprt[] = ['color' => '', 'col' => ['Всего лидов', $all[0]->n]];
-    $row_dates = ['color' => '', 'col' => ['Даты']];
-    $row_added = ['color' => '', 'col' => ['Добавлено']];
+    $repoprt[] =  ['color' => '', 'col' => ['User', $fio[0]->fio]];
+    $repoprt[] = ['color' => '', 'col' => ['Total leads', $all[0]->n]];
+    $row_dates = ['color' => '', 'col' => ['Dates']];
+    $row_added = ['color' => '', 'col' => ['Added']];
     $row_status = [];
     $count_status = 0;
     while (strtotime($current_date) <= strtotime($dateto)) {

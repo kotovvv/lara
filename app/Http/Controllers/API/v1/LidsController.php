@@ -1053,14 +1053,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
   public function get_zaliv_p(Request $request)
   {
-    /*
-api_key=11e9c0056d4aa76c3c7b946737f089d4
-starDate=24-12-2007
-stopdate=12-12-2022
-increment=1000
-page=7
-ftd=0  / ftd=1    (0 - всі ліди або 1 - то тільки депозити)
-    */
+
     $req = $request->all();
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
     $limit = $onlydep = '';
