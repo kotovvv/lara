@@ -1310,7 +1310,7 @@ export default {
   color: #aaa;
 }
 #usersradiogroup .v-btn[data="inp"] {
-  background: #B5D7898C;
+  background: #b5d7898c;
 }
 .v-btn[data="inp"]::after {
   color: #4aaf5b;
@@ -1325,6 +1325,9 @@ export default {
 .v-btn__content {
   position: relative;
   z-index: 2;
+  font-weight: bold;
+}
+.v-radio .v-label {
   font-weight: bold;
 }
 </style>
