@@ -443,10 +443,6 @@ class LidsController extends Controller
         }
       }
     }
-    // if (isset($data['sortBy'])) {
-    //   // "afilyator", "provider", "date_created", "date_updated"
-    //   $data['sortBy'][1] = $data['sortBy'][1] === true ? 'DESC' : 'ASC';
-    // }
 
 
     $response = [];

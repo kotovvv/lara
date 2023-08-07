@@ -479,15 +479,15 @@
                           :disabled="disableuser == user.id"
                           >{{ user.hmlids }}</v-btn
                         >
-                        <v-chip data="new" v-if="user.statnew" label small>
+                        <v-btn data="new" v-if="user.statnew" label small>
                           {{ user.statnew }}
-                        </v-chip>
-                        <v-chip data="inp" v-if="user.inp" label small>
+                        </v-btn>
+                        <v-btn data="inp" v-if="user.inp" label small>
                           {{ user.inp }}
-                        </v-chip>
-                        <v-chip data="cb" v-if="user.cb" label small>
+                        </v-btn>
+                        <v-btn data="cb" v-if="user.cb" label small>
                           {{ user.cb }}
-                        </v-chip>
+                        </v-btn>
                       </v-row>
                     </v-expansion-panel-content>
                   </v-expansion-panel>
@@ -1287,34 +1287,42 @@ export default {
   border-radius: 30px;
   padding: 3px 5px;
 }
-.v-chip::after {
+#usersradiogroup .v-btn:not(.ml-3) {
+  margin-left: 3px;
+}
+#usersradiogroup .v-btn {
+  font-size: 1rem;
+}
+.v-btn::after {
   content: attr(data);
   position: absolute;
-  left: 2px;
-  font-size: 1.2rem;
+  left: 0px;
   font-weight: bold;
   z-index: 1;
+  bottom: -4px;
+  font-size: 0.7rem;
+  box-shadow: none;
 }
-#usersradiogroup .v-chip[data="new"] {
+#usersradiogroup .v-btn[data="new"] {
   background: #e0e0e0;
 }
-.v-chip[data="new"]::after {
+.v-btn[data="new"]::after {
   color: #aaa;
 }
-#usersradiogroup .v-chip[data="inp"] {
-  background: #5cf09a;
+#usersradiogroup .v-btn[data="inp"] {
+  background: #77dd77;
 }
-.v-chip[data="inp"]::after {
+.v-btn[data="inp"]::after {
   color: #4aaf5b;
 }
-#usersradiogroup .v-chip[data="cb"] {
+#usersradiogroup .v-btn[data="cb"] {
   background: #9fc6f3;
 }
-.v-chip[data="cb"]::after {
+.v-btn[data="cb"]::after {
   color: #7b80cc;
 }
 
-.v-chip__content {
+.v-btn__content {
   position: relative;
   z-index: 2;
   font-weight: bold;

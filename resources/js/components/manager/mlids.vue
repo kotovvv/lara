@@ -246,12 +246,7 @@
 
                 <template v-slot:item.tel="{ item }">
                   <div class="d-flex justify-space-between">
-                    <template
-                      v-if="
-                        $props.user.servers == 0 ||
-                        $props.user.servers == 'null'
-                      "
-                    >
+                    <template v-if="$props.user.servers.length < 10">
                       <a
                         class="tel"
                         :href="'sip:' + item.tel"
