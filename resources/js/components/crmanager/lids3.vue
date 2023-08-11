@@ -712,7 +712,12 @@ export default {
       }
     },
     getProviderName(i) {
-      return this.providers.find((el) => el.id == i).name;
+      try {
+        return this.providers.find((el) => el.id == i).name;
+      } catch (error) {
+        console.error(error);
+        return "NA";
+      }
     },
     changeFilterProviders(el) {
       this.filterProviders = this.filterProviders.filter((i) => i != el);
