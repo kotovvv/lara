@@ -171,12 +171,12 @@ class LidsController extends Controller
       $response['hm'] = $q_leads->count();
 
       $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
-                 ->when($limit != 'all' && $page * $limit > $limit, function ($query) use ($limit, $page) {
-                    return $query->offset($limit * $page);
-                })
-                ->when($limit != 'all' && $page * $limit <= 0, function ($query) use ($limit) {
-                    return $query->limit($limit);
-                })
+        ->when($limit != 'all' && $page * $limit > $limit, function ($query) use ($limit, $page) {
+          return $query->offset($limit * $page);
+        })
+        ->when($limit != 'all' && $page * $limit <= 0, function ($query) use ($limit) {
+          return $query->limit($limit);
+        })
         ->get();
       return response($response);
     }
@@ -529,17 +529,10 @@ class LidsController extends Controller
       $a_providers[] = $provider['id'];
     }
 
-    // return Lid::select('lids.*', DB::raw('sum(depozits.depozit) as depozit'))
-    //                 ->join('depozits', 'lids.id', '=', 'depozits.lid_id')
-    // // select('lids.*', DB::raw('SELECT SUM(`depozit`) as depozit FROM `depozits` WHERE ))')
-    // ->where('lids.user_id', $id)
-    //   ->when($office_id > 0, function ($query) use ($office_id, $providers) {
-    //     return $query->where('office_id', $office_id)->whereIn('provider_id', $providers);
-    //   })->orderBy('lids.created_at', 'desc')->get();
     if ($office_id > 0) {
       $adnwhere = " AND office_id = $office_id AND provider_id in (" . implode(',', $a_providers) . ") ";
     }
-    $sql = "SELECT DISTINCT `lids`.*, (SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit FROM `lids`  WHERE `lids`.`user_id` = " . (int) $id . $adnwhere . " ORDER BY `lids`.`created_at` DESC";
+    $sql = "SELECT DISTINCT `lids`.*, (SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`) depozit FROM `lids`  WHERE `lids`.`user_id` = " . (int) $id . $adnwhere . " ORDER BY `lids`.`updated_at` DESC";
     return DB::select(DB::raw($sql));
   }
 
