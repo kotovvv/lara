@@ -620,6 +620,11 @@ export default {
   },
 
   watch: {
+    filterOffices(office_id) {
+      if (office_id > 0) {
+        this.getUsers();
+      }
+    },
     selectedUser(user) {
       if (user == {}) {
         this.userid = null;
@@ -1087,6 +1092,11 @@ export default {
               cb,
             })
           );
+          if (self.$props.user.role_id == 1 && self.filterOffices > 0) {
+            self.users = self.users.filter(
+              (f) => f.office_id == self.filterOffices
+            );
+          }
           if (self.$props.user.role_id != 1) {
             self.users = self.users.filter(
               (f) => f.group_id == self.$props.user.group_id
