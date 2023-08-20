@@ -1056,10 +1056,10 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if (!isset($req['increment'])) {
       $req['increment'] = 1000;
     }
-    $req['page'] = (int) $req['page'] - 1;
-    if (!isset($req['page']) || ((int) $req['page'] * (int) $req['increment']) == 0) {
+    if (!isset($req['page']) || ((int) $req['page'] * (int) $req['increment']) <= 0) {
       $limit = ' LIMIT ' .  (int) $req['increment'];
     } else {
+      $req['page'] = (int) $req['page'] - 1;
       $limit = ' LIMIT ' . (int) $req['increment'] . ' OFFSET ' . (int) $req['page'] * (int) $req['increment'];
     }
 
