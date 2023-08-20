@@ -25,9 +25,8 @@ class LogsController extends Controller
   public function onCdr(Request $request)
   {
     $office_id = session()->get('office_id');
+    $user_id = (int) session()->get('user_id');
     $req = $request->all();
-    $office_id = session()->get('office_id');
-    $user_id = session()->get('user_id');
     $caller = $req['q'];
     $called = $req['w'];
     $duration = round($req['z'] / 1000);

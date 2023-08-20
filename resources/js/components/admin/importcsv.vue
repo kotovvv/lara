@@ -221,19 +221,10 @@
         <v-container>
           <v-row>
             <v-col>
-              <v-radio-group
-      v-model="email_tel"
-      row
-    >
-      <v-radio
-        label="email"
-        value="email"
-      ></v-radio>
-      <v-radio
-        label="телефон"
-        value="tel"
-      ></v-radio>
-    </v-radio-group>
+              <v-radio-group v-model="email_tel" row>
+                <v-radio label="email" value="email"></v-radio>
+                <v-radio label="телефон" value="tel"></v-radio>
+              </v-radio-group>
             </v-col>
           </v-row>
           <v-row>
@@ -349,7 +340,7 @@ export default {
     tab: 0,
     Statuses: [],
     leads: [],
-    email_tel:'email',
+    email_tel: "email",
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -390,12 +381,15 @@ export default {
       var wb = XLSX.utils.book_new(); // make Workbook of Excel
       window["list"] = XLSX.utils.json_to_sheet(self.duplicate_leads);
       XLSX.utils.book_append_sheet(wb, window["list"], "duplicate_emailes");
-      const unique = self.out_db.map(i => ({ email: i }));
+      const unique = self.out_db.map((i) => ({ email: i }));
       window["unique"] = XLSX.utils.json_to_sheet(unique);
       XLSX.utils.book_append_sheet(wb, window["unique"], "unique");
 
       // export Excel file
-      XLSX.writeFile(wb, "dupl_"+self.email_tel + new Date().toDateString() + ".xlsx"); // name of the file is 'book.xlsx'
+      XLSX.writeFile(
+        wb,
+        "dupl_" + self.email_tel + new Date().toDateString() + ".xlsx"
+      ); // name of the file is 'book.xlsx'
     },
     checkEmails() {
       let vm = this;
@@ -408,10 +402,10 @@ export default {
       let data = {};
       data.emails = vm.list_email
         .replace(/[\r]/gm, "")
-        .split("\n")
-        .filter((n) => n);
+        .replaceAll(" ", "")
+        .split("\n");
       data.check = 1;
-      data.email_tel = vm.email_tel
+      data.email_tel = vm.email_tel;
       axios
         .post("api/checkEmails", data)
         .then(function (res) {

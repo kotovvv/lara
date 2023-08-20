@@ -186,7 +186,10 @@
             item-value="id"
             outlined
             rounded
-            @change="getPage(0)"
+            @change="
+              getUsers();
+              getPage(0);
+            "
           >
             <!--
             <template v-slot:selection="{ item, index }">
@@ -327,8 +330,6 @@
                       </template>
                     </v-checkbox>
                   </v-row>
-                </v-col>
-                <v-col cols="3" class="mt--3">
                   <v-row class="align-center">
                     <h5 class="mb-0">Всего:{{ hm }}</h5>
                     <v-pagination
@@ -336,9 +337,11 @@
                       class="my--4"
                       :length="parseInt(hm / limit) + 1"
                       @input="getPage()"
-                      total-visible="5"
+                      total-visible="10"
                     ></v-pagination>
                   </v-row>
+                </v-col>
+                <v-col cols="3" class="mt--3">
                   <v-row>
                     <v-select
                       v-model="limit"
@@ -620,11 +623,6 @@ export default {
   },
 
   watch: {
-    filterOffices(office_id) {
-      if (office_id > 0) {
-        this.getUsers();
-      }
-    },
     selectedUser(user) {
       if (user == {}) {
         this.userid = null;
@@ -1078,6 +1076,7 @@ export default {
               pic,
               inp,
               cb,
+              office_id,
             }) => ({
               name,
               id,
@@ -1090,6 +1089,7 @@ export default {
               statnew,
               inp,
               cb,
+              office_id,
             })
           );
           if (self.$props.user.role_id == 1 && self.filterOffices > 0) {
