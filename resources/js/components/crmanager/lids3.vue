@@ -319,8 +319,8 @@
                   <v-row>
                     <v-checkbox
                       v-model="filterGroups"
-                      v-for="(groupa, index) in group"
-                      :key="index"
+                      v-for="groupa in group"
+                      :key="groupa.id"
                       :value="groupa.id"
                       :hide-details="true"
                       @change="getLids3"
