@@ -492,7 +492,8 @@ class LidsController extends Controller
 
     $response['lids'] = $q_leads
       ->when($limit != 'all' && $page * $limit > $limit, function ($query) use ($limit, $page) {
-        return $query->offset($limit * $page);
+
+        return $query->offset($limit * ($page - 1));
       })
       ->when($limit != 'all', function ($query) use ($limit) {
         return $query->limit($limit);
