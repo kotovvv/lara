@@ -46,6 +46,9 @@
         color="deep-purple accent-4"
       ></v-progress-linear>
       <v-row>
+        <v-col cols="2"
+          ><p>Free: {{ count_free }}</p>
+        </v-col>
         <v-col cols="6">
           <v-row>
             <v-col>
@@ -188,6 +191,7 @@ export default {
         .substring(0, 10),
       datetimeTo: new Date().toISOString().substring(0, 10),
       btc: [],
+      free: [],
       offices: [],
       filterOffices: [],
       selectOffice: "",
@@ -203,6 +207,19 @@ export default {
           !this.filterOffices.length || this.filterOffices.includes(i.office_id)
         );
       });
+    },
+    count_free() {
+      if (this.filterOffices.length == 0) {
+        return this.free.reduce((ak, el) => ak + el.count, 0);
+      } else {
+        return this.free.reduce((ak, el) => {
+          if (this.filterOffices.includes(el.office_id)) {
+            ak + el.count;
+          } else {
+            ak + 0;
+          }
+        }, 0);
+      }
     },
   },
   methods: {
@@ -222,7 +239,7 @@ export default {
       const self = this;
       this.loading = true;
       let send = {};
-      send.office_id = self.selectOffice
+      send.office_id = self.selectOffice;
       send.data = this.parse_csv;
       axios
         .post("/api/putBTC", send)
@@ -259,7 +276,8 @@ export default {
       axios
         .post("/api/getBTCsOnDate", data)
         .then(function (response) {
-          self.btc = response.data;
+          self.btc = response.data.list;
+          self.free = response.data.free;
           self.loading = false;
         })
         .catch(function (error) {
