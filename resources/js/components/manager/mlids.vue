@@ -244,6 +244,7 @@
                 <template v-slot:top="{}" v-if="hm > 100">
                   <v-row class="align-center">
                     <v-spacer></v-spacer>
+
                     <h5 class="mb-0">Всего:{{ hm }}</h5>
                     <v-pagination
                       v-model="page"
@@ -252,6 +253,15 @@
                       @input="getLidsPost()"
                       total-visible="10"
                     ></v-pagination>
+                    <v-col cols="1">
+                      <v-select
+                        v-model="limit"
+                        rounded
+                        class="mt-2 border"
+                        :items="[10, 50, 100, 250, 500, 'all']"
+                        @change="getLidsPost(1)"
+                      ></v-select
+                    ></v-col>
                   </v-row>
                 </template>
 
@@ -932,10 +942,11 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    getLidsPost() {
+    getLidsPost(p = this.page) {
       const id = this.$props.user.id;
       let self = this;
       let data = {};
+
       self.loading = true;
       self.disableuser = id;
 
@@ -945,7 +956,7 @@ export default {
       data.tel = self.filtertel;
       data.search = self.search;
       data.limit = self.limit;
-      data.page = self.page;
+      data.page = p;
 
       axios
         .post("/api/getLidsPost", data)
