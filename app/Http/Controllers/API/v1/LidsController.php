@@ -333,7 +333,7 @@ class LidsController extends Controller
       $results['leads'] =  DB::select(DB::raw($sql));
     }
 
-    // DB::select(DB::raw("SET SQL_MODE = '';"));
+    DB::select(DB::raw("SET SQL_MODE = '';"));
     // $sql = "SELECT l.`tel`,l.`name`,8 AS status_id, l.`email`, 252 AS user_id, 75 AS provider_id, p.`name` AS afilyator,NOW() as created_at,3 AS office_id FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) " . $where_email_tel . $group_email_tel;
     $sql = "SELECT l.`tel`, l.`email` FROM `lids` l " . $where_email_tel . $group_email_tel;
     $leads =  DB::select(DB::raw($sql));
@@ -392,7 +392,7 @@ class LidsController extends Controller
 
     $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
       ->when($limit != 'all' && $page * $limit > $limit, function ($query) use ($limit, $page) {
-        return $query->offset($limit * $page);
+        return $query->offset($limit * ($page - 1));
       })
       ->when($limit != 'all', function ($query) use ($limit) {
         return $query->limit($limit);
