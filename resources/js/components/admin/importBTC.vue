@@ -19,14 +19,6 @@
             outlined
             rounded
           >
-            <template v-slot:selection="{ item, index }">
-              <v-chip v-if="index === 0">
-                <span>{{ item.name }}</span>
-              </v-chip>
-              <span v-if="index === 1" class="grey--text text-caption">
-                (+{{ filterOffices.length - 1 }} )
-              </span>
-            </template>
           </v-select>
         </v-col>
         <v-col cols="3">
@@ -47,7 +39,7 @@
       ></v-progress-linear>
       <v-row>
         <v-col cols="2"
-          ><p>Free: {{ count_free }}</p>
+          ><h2>Free: {{ count_free }}</h2>
         </v-col>
         <v-col cols="6">
           <v-row>
@@ -126,6 +118,7 @@
                 outlined
                 rounded
                 multiple
+                @change="set_count_free"
               >
                 <template v-slot:selection="{ item, index }">
                   <v-chip v-if="index === 0">
@@ -195,6 +188,7 @@ export default {
       offices: [],
       filterOffices: [],
       selectOffice: "",
+      count_free: 0,
     };
   },
   mounted() {
@@ -208,21 +202,21 @@ export default {
         );
       });
     },
-    count_free() {
+  },
+  methods: {
+    set_count_free() {
       if (this.filterOffices.length == 0) {
-        return this.free.reduce((ak, el) => ak + el.count, 0);
+        this.count_free = this.free.reduce((ak, el) => ak + el.count, 0);
       } else {
-        return this.free.reduce((ak, el) => {
+        this.count_free = this.free.reduce((ak, el) => {
           if (this.filterOffices.includes(el.office_id)) {
-            ak + el.count;
+            return ak + el.count;
           } else {
-            ak + 0;
+            return ak + 0;
           }
         }, 0);
       }
     },
-  },
-  methods: {
     getOffices() {
       let self = this;
 
@@ -268,10 +262,10 @@ export default {
     },
     getBTCsOnDate() {
       let self = this;
-      this.loading = true;
       let data = {};
-      data.datefrom = this.getLocalDateTime(this.datetimeFrom);
-      data.dateto = this.getLocalDateTime(this.datetimeTo);
+      self.loading = true;
+      data.datefrom = this.getLocalDateTime(self.datetimeFrom);
+      data.dateto = this.getLocalDateTime(self.datetimeTo);
 
       axios
         .post("/api/getBTCsOnDate", data)
