@@ -304,10 +304,15 @@ class UsersController extends Controller
   public function deleteuser($id)
   {
     Lid::where('user_id', '=', $id)->delete();
-    Log::where('user_id', '=', $id)->delete();
+    $group_id = User::where('id', $id)->value('group_id');
+    if ($group_id) {
+      Log::where('user_id', '=', $id)->update(['user_id' => $group_id]);
+    }
     Import::where('user_id', '=', $id)->delete();
     $user = User::find($id);
-    $user->delete();
+    if ($user) {
+      $user->delete();
+    }
   }
 
   public function delDataUser($id)
