@@ -572,7 +572,7 @@ export default {
     Statuses: [],
     hmrow: "",
     offices: [],
-    filterOffices: 0,
+    filterOffices: 1,
     hm: 0,
     snackbar: false,
     message: "",
@@ -783,9 +783,7 @@ export default {
       data.limit = self.limit;
       data.page = self.page;
       data.office_id = self.filterOffices;
-      // if (this.sortBy != "") {
-      //   data.sortBy = [this.sortBy, this.sortDesc];
-      // }
+
       if (this.callback === true) {
         data.callback = 1;
       }
@@ -813,7 +811,7 @@ export default {
                 self.statuses.find((s) => s.id == e.status_id).name || "";
             }
             if (e.user_id) {
-              e.user = self.users.find((u) => u.id == e.user_id).fio;
+              e.user = self.users.find((u) => u.id == e.user_id)?.fio || "";
             }
             if (e.provider_id) {
               e.provider = self.providers.find(
@@ -981,7 +979,7 @@ export default {
         axios
           .post("api/Lid/newlids", send)
           .then(function (response) {
-            self.getUsers();
+            // self.getUsers();
             self.search = "";
             self.filtertel = "";
           })
