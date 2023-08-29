@@ -779,7 +779,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $n_lid->created_at = Now();
 
-    $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
+    /*     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
 
     if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
       //$name = Provider::find($f_key->id)->value('name');
@@ -790,7 +790,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       $n_lid->office_id = User::where('id', 252)->value('office_id');
       $n_lid->save();
       return response('duplicate');
-    }
+    } */
 
     $n_lid->save();
     $id = $n_lid->id;
@@ -857,7 +857,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $n_lid->created_at = Now();
 
-    $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
+    /*     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
     if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
       //  $name = Provider::find($f_key->id)->value('name');
       $n_lid->afilyator = $f_key->name;
@@ -866,7 +866,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       $n_lid->office_id = User::where('id', 252)->value('office_id');
       $n_lid->save();
       return response('duplicate');
-    }
+    } */
     $n_lid->save();
     $id = $n_lid->id;
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
@@ -912,17 +912,17 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
     $n_lid->created_at = Now();
 
-    $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
-    if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
-      //  $name = Provider::find($f_key->id)->value('name');
-      $n_lid->afilyator = $f_key->name;
-      $n_lid->provider_id = 75;
-      $n_lid->user_id = 252;
-      $n_lid->office_id = User::where('id', 252)->value('office_id');
-      $n_lid->save();
-      $res['status'] = 'duplicate';
-      return response($res);
-    }
+    // $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
+    // if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
+    //   //  $name = Provider::find($f_key->id)->value('name');
+    //   $n_lid->afilyator = $f_key->name;
+    //   $n_lid->provider_id = 75;
+    //   $n_lid->user_id = 252;
+    //   $n_lid->office_id = User::where('id', 252)->value('office_id');
+    //   $n_lid->save();
+    //   $res['status'] = 'duplicate';
+    //   return response($res);
+    // }
     $n_lid->save();
     $id = $n_lid->id;
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
