@@ -419,6 +419,7 @@
                 v-model="depozit_val"
                 class="border px-2 mb-4"
                 @keypress="filter()"
+                @paste="paste"
                 prepend-inner-icon="mdi-currency-usd"
               ></v-text-field
             ></v-col>
@@ -665,6 +666,17 @@ export default {
           "softphone",
           "width=400,height=540"
         );
+      }
+    },
+    paste(e) {
+      if (e.type === "paste") {
+        const clip = e.clipboardData.getData("Text");
+        // e.clipboardData.setData("Text", clip.replace(/[^0-9]/g, ""));
+        setTimeout(function () {
+          e.target.value = clip.replace(/[^0-9]/g, "");
+        });
+
+        // e.target.value = clip.replace(/[^0-9]/g, "");
       }
     },
     filter: function (evt) {
