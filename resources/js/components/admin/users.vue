@@ -18,6 +18,12 @@
               <v-toolbar flat>
                 <v-toolbar-title>Пользователи</v-toolbar-title>
                 <v-divider class="mx-4" inset vertical></v-divider>
+                <v-switch
+                  v-model="showActive"
+                  :label="`Показывать : ${
+                    showActive ? 'Активных' : 'Не активных'
+                  }`"
+                ></v-switch>
                 <v-spacer></v-spacer>
                 <v-dialog v-model="dialog" max-width="600px">
                   <template v-slot:activator="{ on, attrs }">
@@ -108,7 +114,7 @@
                               value="editedItem.servers"
                             ></v-textarea>
                           </v-col>
-                          <v-col cols="6">
+                          <v-col cols="4">
                             <v-switch
                               v-model="editedItem.sip"
                               label="sip"
@@ -140,7 +146,12 @@
                               label="Prefix sip"
                             ></v-text-field>
                           </v-col> -->
-
+                          <v-col cols="4">
+                            <v-text-field
+                              v-model="editedItem.active"
+                              label="Видимость"
+                            ></v-text-field>
+                          </v-col>
                           <v-col cols="4">
                             <v-text-field
                               v-model="editedItem.order"
@@ -165,7 +176,7 @@
                 <v-dialog v-model="dialogDelete" max-width="500px">
                   <v-card>
                     <v-card-title class="headline"
-                      >Уверены в удалении пользователя?</v-card-title
+                      >Пользователь станет не активным?</v-card-title
                     >
                     <v-card-actions>
                       <v-spacer></v-spacer>
@@ -333,6 +344,7 @@ export default {
       sip: false,
       servers: "",
       order: 99,
+      active: 1,
     },
     editedItemOffice: {
       id: 0,
@@ -358,6 +370,7 @@ export default {
       name: "",
     },
     sip: false,
+    showActive: true,
   }),
 
   computed: {

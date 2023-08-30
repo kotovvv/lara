@@ -274,10 +274,11 @@ class ProvidersController extends Controller
    */
   public function destroy($id)
   {
-    Provider::where('id', $id)->delete();
-    $tels =  Lid::select('tel')->where('provider_id', '=', $id);
-    Log::whereIn('tel', $tels)->delete();
-    Lid::where('provider_id', '=', $id)->delete();
-    Import::where('provider_id', '=', $id)->delete();
+    Provider::where('id', $id)->update(['active' => 0]);
+    // Provider::where('id', $id)->delete();
+    // $tels =  Lid::select('tel')->where('provider_id', '=', $id);
+    // Log::whereIn('tel', $tels)->delete();
+    // Lid::where('provider_id', '=', $id)->delete();
+    // Import::where('provider_id', '=', $id)->delete();
   }
 }
