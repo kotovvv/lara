@@ -671,12 +671,9 @@ export default {
     paste(e) {
       if (e.type === "paste") {
         const clip = e.clipboardData.getData("Text");
-        // e.clipboardData.setData("Text", clip.replace(/[^0-9]/g, ""));
         setTimeout(function () {
           e.target.value = clip.replace(/[^0-9]/g, "");
         });
-
-        // e.target.value = clip.replace(/[^0-9]/g, "");
       }
     },
     filter: function (evt) {

@@ -19,6 +19,7 @@
                 <v-toolbar-title>Пользователи</v-toolbar-title>
                 <v-divider class="mx-4" inset vertical></v-divider>
                 <v-switch
+                  hide-details
                   v-model="showActive"
                   :label="`Показывать : ${
                     showActive ? 'Активных' : 'Не активных'
@@ -122,35 +123,15 @@
                               hide-details
                             ></v-switch>
                           </v-col>
-                          <!-- <v-col cols="6">
-                            <v-text-field
-                              v-model="editedItem.sip_server"
-                              label="Server sip"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="6">
-                            <v-text-field
-                              v-model="editedItem.sip_login"
-                              label="Login sip"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="6">
-                            <v-text-field
-                              v-model="editedItem.sip_password"
-                              label="Password sip"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="6">
-                            <v-text-field
-                              v-model="editedItem.sip_prefix"
-                              label="Prefix sip"
-                            ></v-text-field>
-                          </v-col> -->
+
                           <v-col cols="4">
-                            <v-text-field
+                            <v-switch
+                              hide-details
                               v-model="editedItem.active"
-                              label="Видимость"
-                            ></v-text-field>
+                              :label="`${
+                                editedItem.active ? 'Активный' : 'Спрятан'
+                              }`"
+                            ></v-switch>
                           </v-col>
                           <v-col cols="4">
                             <v-text-field
@@ -376,7 +357,7 @@ export default {
   computed: {
     filteredUser() {
       return this.users.filter((i) => {
-        return this.filterOffices == i.office_id;
+        return this.filterOffices == i.office_id && i.active == this.showActive;
       });
     },
     formTitle() {
