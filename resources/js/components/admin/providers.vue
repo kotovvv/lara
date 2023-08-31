@@ -76,7 +76,7 @@
                     </v-col>
                     <v-col cols="6">
                       <v-select
-                      multiple
+                        multiple
                         :items="offices"
                         v-model="editedItem.office_id"
                         item-text="name"
@@ -108,7 +108,13 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-        <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+        <v-icon
+          small
+          v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0"
+          @click="deleteItem(item)"
+        >
+          mdi-delete
+        </v-icon>
       </template>
       <template v-slot:item.report="{ item }">
         <statusesProvider :provider="item" />
@@ -148,7 +154,7 @@ export default {
       active: 1,
       related_users_id: [],
       office_id: [],
-      user_id:0,
+      user_id: 0,
     },
     defaultItem: {
       name: "",
@@ -156,7 +162,7 @@ export default {
       active: 1,
       related_users_id: [],
       office_id: [],
-      user_id:0,
+      user_id: 0,
     },
     offices: [],
   }),
@@ -220,8 +226,7 @@ export default {
           self.providers = self.providers.map(function (p) {
             if (p.related_users_id.length > 0)
               p.related_users_id = JSON.parse(p.related_users_id);
-            if (p.office_id.length > 0)
-              p.office_id = JSON.parse(p.office_id);
+            if (p.office_id.length > 0) p.office_id = JSON.parse(p.office_id);
             return p;
           });
         })
@@ -244,8 +249,7 @@ export default {
       this.editedItem = Object.assign({}, item);
       if (!Array.isArray(item.related_users_id))
         this.editedItem.related_users_id = [];
-      if (!Array.isArray(item.office_id))
-        this.editedItem.office_id = [];
+      if (!Array.isArray(item.office_id)) this.editedItem.office_id = [];
       this.dialog = true;
     },
     deleteItem(item) {
