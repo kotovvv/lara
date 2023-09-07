@@ -729,7 +729,7 @@ export default {
     getOffices() {
       let self = this;
       self.filterOffices = self.$props.user.office_id;
-      if (self.$props.user.role_id == 1 && self.$props.user.office_id == 0) {
+      if (self.$props.user.role_id == 1) {
         axios
           .get("/api/getOffices")
           .then((res) => {
@@ -738,6 +738,11 @@ export default {
             self.filterOffices = self.offices[1].id;
           })
           .catch((error) => console.log(error));
+      }
+      if (self.$props.user.office_id > 0) {
+        self.offices = self.offices.filter(
+          (o) => o.id == self.$props.user.office_id
+        );
       }
     },
     getProviderName(i) {
