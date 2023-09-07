@@ -441,7 +441,6 @@
                 v-bind="users"
                 @change="changeLidsUser"
               >
-<template v-for=""
                 <v-expansion-panels ref="akk" v-model="akkvalue">
                   <v-expansion-panel v-for="(item, i) in group" :key="i">
                     <v-expansion-panel-header>
@@ -496,7 +495,6 @@
                     </v-expansion-panel-content>
                   </v-expansion-panel>
                 </v-expansion-panels>
-
               </v-radio-group>
             </v-list>
           </div>

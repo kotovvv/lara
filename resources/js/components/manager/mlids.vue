@@ -651,7 +651,7 @@ export default {
     wp_call(item) {
       this.copyTo(item.tel);
       if (this.webphone && !this.webphone.closed) {
-        const tel = "" + this.selectedServer.prefix + item.tel;
+        const tel = this.selectedServer.prefix.toString() + item.tel;
         this.webphone.webphone_api.call(tel);
         this.webphone.focus();
       } else {
@@ -662,7 +662,7 @@ export default {
             this.selectedServer.login
           )}&wp_password=${encodeURIComponent(
             this.selectedServer.password
-          )}&wp_callto=${this.selectedServer.prefix + item.tel}`,
+          )}&wp_callto=${this.selectedServer.prefix.toString() + item.tel}`,
           "softphone",
           "width=400,height=540"
         );
