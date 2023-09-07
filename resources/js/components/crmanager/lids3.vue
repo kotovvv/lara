@@ -728,6 +728,7 @@ export default {
     },
     getOffices() {
       let self = this;
+      self.filterOffices = self.$props.user.office_id;
       if (self.$props.user.role_id == 1 && self.$props.user.office_id == 0) {
         axios
           .get("/api/getOffices")
