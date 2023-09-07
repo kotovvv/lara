@@ -316,10 +316,20 @@
                   ></v-text-field>
                 </v-col>
                 <v-col class="wrp_group">
-                  <v-row>
+                  <v-row
+                    v-for="office in filterOffices == 0
+                      ? offices
+                      : offices.filter((o) => o.id == filterOffices)"
+                    :key="office.id"
+                  >
+                    <span v-if="office.id > 0" class="pt-5"
+                      >{{ office.name }}:
+                    </span>
                     <v-checkbox
                       v-model="filterGroups"
-                      v-for="groupa in group"
+                      v-for="groupa in group.filter(
+                        (g) => g.office_id == office.id
+                      )"
                       :key="groupa.id"
                       :value="groupa.id"
                       :hide-details="true"
@@ -330,6 +340,7 @@
                       </template>
                     </v-checkbox>
                   </v-row>
+
                   <v-row class="align-center">
                     <h5 class="mb-0">Всего:{{ hm }}</h5>
                     <v-pagination
@@ -441,60 +452,73 @@
                 v-bind="users"
                 @change="changeLidsUser"
               >
-                <v-expansion-panels ref="akk" v-model="akkvalue">
-                  <v-expansion-panel v-for="(item, i) in group" :key="i">
-                    <v-expansion-panel-header>
-                      <div
-                        height="60"
-                        width="60"
-                        class="img v-expansion-panel-header__icon mr-1"
-                      >
-                        {{ item.fio.slice(0, 3) }}
-                      </div>
-
-                      {{ item.fio }}
-                      <div></div>
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <v-row
-                        v-for="user in users.filter(function (i) {
-                          return i.group_id == item.group_id;
-                        })"
-                        :key="user.id"
-                      >
-                        <v-radio
-                          :label="user.fio"
-                          :value="user.id"
-                          :disabled="disableuser == user.id"
+                <div
+                  v-for="office in filterOffices == 0
+                    ? offices
+                    : offices.filter((o) => o.id == filterOffices)"
+                  :key="office.id"
+                >
+                  <p class="title" v-if="office.id > 0">{{ office.name }}</p>
+                  <v-expansion-panels ref="akk" v-model="akkvalue">
+                    <v-expansion-panel
+                      v-for="(item, i) in group.filter(
+                        (g) => g.office_id == office.id
+                      )"
+                      :key="i"
+                    >
+                      <v-expansion-panel-header>
+                        <div
+                          height="60"
+                          width="60"
+                          class="img v-expansion-panel-header__icon mr-1"
                         >
-                        </v-radio>
+                          {{ item.fio.slice(0, 3) }}
+                        </div>
 
-                        <v-btn
-                          class="ml-3"
-                          small
-                          :color="usercolor(user)"
-                          @click="
-                            disableuser = user.id;
-                            filterGroups = [];
-                            getPage();
-                          "
-                          :value="user.hmlids"
-                          :disabled="disableuser == user.id"
-                          >{{ user.hmlids }}</v-btn
+                        {{ item.fio }}
+                        <div></div>
+                      </v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        <v-row
+                          v-for="user in users.filter(function (i) {
+                            return i.group_id == item.group_id;
+                          })"
+                          :key="user.id"
                         >
-                        <v-btn data="new" v-if="user.statnew" label small>
-                          {{ user.statnew }}
-                        </v-btn>
-                        <v-btn data="inp" v-if="user.inp" label small>
-                          {{ user.inp }}
-                        </v-btn>
-                        <v-btn data="cb" v-if="user.cb" label small>
-                          {{ user.cb }}
-                        </v-btn>
-                      </v-row>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                </v-expansion-panels>
+                          <v-radio
+                            :label="user.fio"
+                            :value="user.id"
+                            :disabled="disableuser == user.id"
+                          >
+                          </v-radio>
+
+                          <v-btn
+                            class="ml-3"
+                            small
+                            :color="usercolor(user)"
+                            @click="
+                              disableuser = user.id;
+                              filterGroups = [];
+                              getPage();
+                            "
+                            :value="user.hmlids"
+                            :disabled="disableuser == user.id"
+                            >{{ user.hmlids }}</v-btn
+                          >
+                          <v-btn data="new" v-if="user.statnew" label small>
+                            {{ user.statnew }}
+                          </v-btn>
+                          <v-btn data="inp" v-if="user.inp" label small>
+                            {{ user.inp }}
+                          </v-btn>
+                          <v-btn data="cb" v-if="user.cb" label small>
+                            {{ user.cb }}
+                          </v-btn>
+                        </v-row>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                </div>
               </v-radio-group>
             </v-list>
           </div>
@@ -1344,5 +1368,9 @@ export default {
 }
 .v-radio .v-label {
   font-weight: bold;
+}
+.title {
+  font-weight: bold;
+  font-size: 1.1rem;
 }
 </style>
