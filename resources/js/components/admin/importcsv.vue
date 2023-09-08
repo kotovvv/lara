@@ -412,7 +412,9 @@ export default {
           vm.in_db = res.data.emails.filter((n) => n);
 
           vm.out_db = [
-            ...new Set(data.emails.filter((i) => !vm.in_db.includes(i))),
+            ...new Set(
+              data.emails.filter((i) => !vm.in_db.includes(i.toLowerCase()))
+            ),
           ];
           vm.message =
             "Уникальных: " +
