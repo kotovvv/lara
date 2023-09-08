@@ -862,6 +862,8 @@ export default {
           0,
           this.hmrow
         );
+      } else {
+        this.selected = [];
       }
     },
     cleardate() {

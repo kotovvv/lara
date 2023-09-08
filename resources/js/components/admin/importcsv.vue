@@ -177,7 +177,7 @@
           <v-col cols="12" v-if="leads.length">
             <div class="border pa-4">
               <v-data-table
-                id="tablids"
+                id="tabimplids"
                 :headers="headers_leads"
                 item-key="id"
                 :items="leads"
@@ -567,10 +567,13 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
+
           self.filterStatuses();
           self.loading = false;
           const el = document.getElementById("wrp_stat");
-          el.scrollIntoView({ behavior: "smooth" });
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth" });
+          }
         })
         .catch(function (error) {
           console.log(error);
@@ -595,7 +598,7 @@ export default {
         .get("/api/imports")
         .then((res) => {
           self.imports = res.data.map(
-            ({ id, start, end, provider, provider_id, user, message }) => ({
+            ({
               id,
               start,
               end,
@@ -603,8 +606,23 @@ export default {
               provider_id,
               user,
               message,
+              group_id,
+            }) => ({
+              id,
+              start,
+              end,
+              provider,
+              provider_id,
+              user,
+              message,
+              group_id,
             })
           );
+          if (self.$attrs.user.group_id > 0) {
+            self.imports = self.imports.filter(
+              (i) => i.group_id == self.$attrs.user.group_id
+            );
+          }
         })
         .catch((error) => console.log(error));
     },
