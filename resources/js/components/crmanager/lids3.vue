@@ -729,21 +729,21 @@ export default {
     getOffices() {
       let self = this;
       self.filterOffices = self.$props.user.office_id;
-      if (self.$props.user.role_id == 1) {
-        axios
-          .get("/api/getOffices")
-          .then((res) => {
-            self.offices = res.data;
+      axios
+        .get("/api/getOffices")
+        .then((res) => {
+          self.offices = res.data;
+          if (self.$props.user.role_id == 1) {
             self.offices.unshift({ id: 0, name: "--выбор--" });
             self.filterOffices = self.offices[1].id;
-          })
-          .catch((error) => console.log(error));
-      }
-      if (self.$props.user.office_id > 0) {
-        self.offices = self.offices.filter(
-          (o) => o.id == self.$props.user.office_id
-        );
-      }
+          }
+          if (self.$props.user.office_id > 0) {
+            self.offices = self.offices.filter(
+              (o) => o.id == self.$props.user.office_id
+            );
+          }
+        })
+        .catch((error) => console.log(error));
     },
     getProviderName(i) {
       let name = "NA";
