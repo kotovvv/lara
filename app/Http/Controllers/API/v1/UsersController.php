@@ -153,7 +153,7 @@ class UsersController extends Controller
 
       $arr = [];
       $arr['name'] = $data['name'];
-      $arr['active'] = $data['active'];
+      $arr['active'] = $data['active'] ? 1 : 0;
       $arr['role_id'] = $data['role_id'];
       $arr['fio'] = $data['fio'];
       // $arr['pic'] = $file_name;
