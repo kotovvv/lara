@@ -459,12 +459,12 @@
                   :key="office.id"
                 >
                   <p class="title" v-if="office.id > 0">{{ office.name }}</p>
-                  <v-expansion-panels ref="akk" v-model="akkvalue">
+                  <v-expansion-panels v-model="akkvalue[office.id]">
                     <v-expansion-panel
-                      v-for="(item, i) in group.filter(
+                      v-for="item in group.filter(
                         (g) => g.office_id == office.id
                       )"
-                      :key="i"
+                      :key="item.group_id"
                     >
                       <v-expansion-panel-header>
                         <div
@@ -537,7 +537,7 @@ export default {
   props: ["user"],
   data: () => ({
     savedates: true,
-    akkvalue: null,
+    akkvalue: [],
     loading: false,
     selectedUser: {},
     group: null,
@@ -650,10 +650,17 @@ export default {
     selectedUser(user) {
       if (user == {}) {
         this.userid = null;
+        this.akkvalue = [];
         return;
       }
       //this.disableuser = user.id;
-      this.akkvalue = _.findIndex(this.group, { group_id: user.group_id });
+      this.akkvalue = [];
+      this.akkvalue[user.office_id] = _.findIndex(
+        this.group.filter((g) => g.office_id == user.office_id),
+        {
+          group_id: user.group_id,
+        }
+      );
     },
     filterStatus(newName) {
       localStorage.filterStatus = newName.toString();
@@ -771,6 +778,7 @@ export default {
       }
       this.getLids3();
       this.selectedUser = {};
+      this.akkvalue = [];
     },
     checked(at) {
       //console.log(at["aria-selected"]);
