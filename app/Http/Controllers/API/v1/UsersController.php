@@ -157,8 +157,8 @@ class UsersController extends Controller
       $arr['role_id'] = $data['role_id'];
       $arr['fio'] = $data['fio'];
       // $arr['pic'] = $file_name;
-      $arr['group_id'] = $data['group_id'];
-      $arr['office_id'] = $data['office_id'];
+      $arr['group_id'] = $data['group_id'] > 0 ? $data['group_id'] : 0;
+      $arr['office_id'] = isset($data['office_id']) ? $data['office_id'] : 0;
       $arr['order'] = $data['order'];
       $arr['sip'] = $data['sip'] == 'true' ? 1 : 0;
       // $arr['sip_server'] = $data['sip_server'] ? $data['sip_server'] : '';
@@ -192,7 +192,7 @@ class UsersController extends Controller
       // $user->sip_prefix = $data['sip_prefix'] ? $data['sip_prefix'] : '';
       $user->sip = $data['sip'] == 'true' ? 1 : 0;
       $user->servers = $data['servers'] ? $data['servers'] : '';
-      $user->office_id = $data['office_id'];
+      $user->office_id = isset($data['office_id']) ? $data['office_id'] : 0;
       $user->password = $password;
       $user->order = $data['order'];
       $user->save();

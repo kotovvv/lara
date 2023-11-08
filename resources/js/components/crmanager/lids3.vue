@@ -643,7 +643,9 @@ export default {
         .split()
         .map((el) => parseInt(el));
     }
-    this.getLids3();
+    setTimeout(() => {
+      this.getLids3();
+    }, 100);
   },
 
   watch: {
