@@ -628,8 +628,9 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $a_lid = [
       'tel' => $getlidid['umcfields']['phone'],
       'afilyator' => $getlidid['umcfields']['affiliate_user'],
-      'provider_id' => $f_key,
+      'provider_id' => $f_key->id,
     ];
+
     return Lid::select('id')->where($a_lid)->get();
   }
 
@@ -771,6 +772,11 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } else {
       $n_lid->email = time() . '@none.com';
     }
+    if (isset($req['text']) && strlen($req['text']) > 1) {
+      $n_lid->text = $req['text'];
+    } else {
+      $n_lid->text = '';
+    }
 
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
@@ -778,19 +784,6 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
 
     $n_lid->created_at = Now();
-
-    /*     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
-
-    if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
-      //$name = Provider::find($f_key->id)->value('name');
-
-      $n_lid->afilyator = $f_key->name;
-      $n_lid->provider_id = 75;
-      $n_lid->user_id = 252;
-      $n_lid->office_id = User::where('id', 252)->value('office_id');
-      $n_lid->save();
-      return response('duplicate');
-    } */
 
     $n_lid->save();
     $id = $n_lid->id;
@@ -888,41 +881,30 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $n_lid = new Lid;
 
-    if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
-      $n_lid->name =  $req['umcfields']['name'];
+    if (isset($req['umcfields[name]']) && strlen($req['umcfields[name]']) > 1) {
+      $n_lid->name =  $req['umcfields[name]'];
     } else {
       $n_lid->name = time();
     }
 
-    if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
-      $n_lid->tel =  $req['umcfields']['phone'];
+    if (isset($req['umcfields[phone]']) && strlen($req['umcfields[phone]']) > 1) {
+      $n_lid->tel =  $req['umcfields[phone]'];
     } else {
       $n_lid->tel = time();
     }
 
-    if (isset($req['umcfields']['email']) && strlen($req['umcfields']['email']) > 1) {
-      $n_lid->email = $req['umcfields']['email'];
+    if (isset($req['umcfields[email]']) && strlen($req['umcfields[email]']) > 1) {
+      $n_lid->email = $req['umcfields[email]'];
     } else {
       $n_lid->email = time() . '@none.com';
     }
 
-    $n_lid->afilyator = $req['umcfields']['affiliate_user'];
+    $n_lid->afilyator = $req['umcfields[affiliate_user]'];
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $req['user_id'];
     $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
     $n_lid->created_at = Now();
 
-    // $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
-    // if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
-    //   //  $name = Provider::find($f_key->id)->value('name');
-    //   $n_lid->afilyator = $f_key->name;
-    //   $n_lid->provider_id = 75;
-    //   $n_lid->user_id = 252;
-    //   $n_lid->office_id = User::where('id', 252)->value('office_id');
-    //   $n_lid->save();
-    //   $res['status'] = 'duplicate';
-    //   return response($res);
-    // }
     $n_lid->save();
     $id = $n_lid->id;
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
@@ -941,7 +923,6 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-    // http://91.192.102.34/api/set_zaliv?user_id=152&afilat_id=62&api_key=11e9c0056d4aa76c3c7b946737f089d4&umcfields[email]=$email&umcfields[name]=$fio%20$lastn&umcfields[phone]=$phonestr&umcfields[affiliate_user]=$affiliate
     $n_lid = new Lid;
 
     if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
@@ -1111,7 +1092,6 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     $res['result'] = 'Error';
     $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE DATE(l.`created_at`) >= " . $req['startDate'] . " AND DATE(l.`created_at`) <= " . $req['endDate'] . " AND l.`provider_id` = '" . $f_key->id . "'";
-
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
       $res['data'] = [];
