@@ -265,7 +265,9 @@ class LidsController extends Controller
     $res = [];
     $res['date_start'] = Now();
     $data = $request->all();
-    // Debugbar::info($data['data']);
+    $office_id = User::where('id', (int) $data['user_id'])->value('office_id');
+    //Debugbar::info($data['data']);
+
     foreach ($data['data'] as $lid) {
       $n_lid = new Lid;
 
@@ -276,7 +278,7 @@ class LidsController extends Controller
       }
 
       if (isset($lid['tel'])) {
-        $n_lid->tel = preg_replace('/[^0-9]/', '', $lid['tel']);
+        $n_lid->tel =  preg_replace('/[^0-9]/', '', $lid['tel']);
       } else {
         continue;
       }
@@ -289,7 +291,7 @@ class LidsController extends Controller
 
 
       $n_lid->user_id = $data['user_id'];
-      $n_lid->office_id = User::where('id', (int) $data['user_id'])->value('office_id');
+      $n_lid->office_id = $office_id;
       $n_lid->created_at = Now();
 
       if (isset($lid['afilyator'])) {
@@ -299,7 +301,7 @@ class LidsController extends Controller
       }
       if (isset($data['provider_id'])) $n_lid->provider_id = $data['provider_id'];
       if (isset($data['status_id']))  $n_lid->status_id = $data['status_id'];
-      $f_lid =  Lid::where('tel', '=', $lid['tel'])->get();
+      $f_lid =  Lid::where('tel', '=', "" . $lid['tel'])->get();
 
       if (!$f_lid->isEmpty()) {
         $n_lid->status_id = 22;
