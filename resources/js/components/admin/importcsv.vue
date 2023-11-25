@@ -8,118 +8,147 @@
         </v-btn>
       </template>
     </v-snackbar>
-
-    <v-row>
-      <v-col cols="2">
-        <v-select
-          v-model="selectedProvider"
-          :items="providers"
-          label="Провайдер"
-          item-text="name"
-          item-value="id"
-        ></v-select>
-      </v-col>
-      <v-col cols="3" v-if="selectedProvider">
-        <v-file-input
-          v-model="files"
-          ref="fileupload"
-          label="загрузить Excel"
-          show-size
-          truncate-length="24"
-          @change="onFileChange"
-        ></v-file-input>
-      </v-col>
-      <v-col cols="3">
-        <v-select
-          v-model="selectedStatus"
-          :items="statuses"
-          label="Статус"
-          item-text="name"
-          item-value="id"
-        ></v-select>
-      </v-col>
-      <v-col cols="4">
-        <v-textarea v-model="message" label="Сообщение" rows="1"></v-textarea>
-      </v-col>
-    </v-row>
-    <v-progress-linear
-      :active="loading"
-      indeterminate
-      color="purple"
-    ></v-progress-linear>
-    <v-row v-if="table.length && files">
-      <v-col>
-        <v-simple-table id="loadedTable">
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th v-for="el in table[0].length" :key="el">
-                  <v-select
-                    :items="['', 'name', 'email', 'tel', 'afilyator', 'text']"
-                    outlined
-                    @change="makeHeader"
+    <v-tabs v-model="tab" background-color="primary" dark>
+      <v-tab> Провайдер </v-tab>
+      <v-tab v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
+        ВТС
+      </v-tab>
+      <!-- <v-tab>CHECK DUBLIKATE MAIL</v-tab> -->
+    </v-tabs>
+    <v-tabs-items v-model="tab">
+      <v-tab-item>
+        <v-row>
+          <v-col cols="2">
+            <v-select
+              v-model="selectedProvider"
+              :items="providers"
+              label="Провайдер"
+              item-text="name"
+              item-value="id"
+            ></v-select>
+          </v-col>
+          <v-col cols="3" v-if="selectedProvider">
+            <v-file-input
+              v-model="files"
+              ref="fileupload"
+              label="загрузить Excel"
+              show-size
+              truncate-length="24"
+              @change="onFileChange"
+            ></v-file-input>
+          </v-col>
+          <v-col cols="3">
+            <v-select
+              v-model="selectedStatus"
+              :items="statuses"
+              label="Статус"
+              item-text="name"
+              item-value="id"
+            ></v-select>
+          </v-col>
+          <v-col cols="4">
+            <v-textarea
+              v-model="message"
+              label="Сообщение"
+              rows="1"
+            ></v-textarea>
+          </v-col>
+        </v-row>
+        <v-progress-linear
+          :active="loading"
+          indeterminate
+          color="purple"
+        ></v-progress-linear>
+        <v-row v-if="table.length && files">
+          <v-col>
+            <v-simple-table id="loadedTable">
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th v-for="el in table[0].length" :key="el">
+                      <v-select
+                        :items="[
+                          '',
+                          'name',
+                          'email',
+                          'tel',
+                          'afilyator',
+                          'text',
+                        ]"
+                        outlined
+                        @change="makeHeader"
+                      >
+                      </v-select>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, ix) in table" :key="ix">
+                    <td v-for="(it, i) in item" :key="i">{{ it }}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-col>
+          <v-col cols="3" v-if="header.length > 2">
+            <v-card height="100%" class="pa-5">
+              Укажите пользователя для лидов
+              <v-list>
+                <v-radio-group
+                  @change="putSelectedLidsDB"
+                  ref="radiogroup"
+                  v-model="userid"
+                  v-bind="users"
+                  id="usersradiogroup"
+                >
+                  <v-radio
+                    :value="user.id"
+                    v-for="user in users"
+                    :key="user.id"
                   >
-                  </v-select>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, ix) in table" :key="ix">
-                <td v-for="(it, i) in item" :key="i">{{ it }}</td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
-      </v-col>
-      <v-col cols="3" v-if="header.length > 2">
-        <v-card height="100%" class="pa-5">
-          Укажите пользователя для лидов
-          <v-list>
-            <v-radio-group
-              @change="putSelectedLidsDB"
-              ref="radiogroup"
-              v-model="userid"
-              v-bind="users"
-              id="usersradiogroup"
-            >
-              <v-radio :value="user.id" v-for="user in users" :key="user.id">
-                <template v-slot:label>
-                  {{ user.fio }}
-                  <v-badge
-                    :content="user.hmlids"
-                    :value="user.hmlids"
-                    :color="usercolor(user)"
-                    overlap
-                  >
-                    <v-icon large v-if="user.role_id === 2">
-                      mdi-account-group-outline
-                    </v-icon>
-                    <v-icon large v-else> mdi-account-outline </v-icon>
-                  </v-badge>
-                </template>
-              </v-radio>
-            </v-radio-group>
-          </v-list>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row v-else>
-      <v-data-table
-        :headers="import_headers"
-        item-key="id"
-        :items="imports"
-        ref="importtable"
-        @click:row="clickrow"
-      >
-        <template v-slot:item.id="{ item }"> </template>
-      </v-data-table>
-    </v-row>
+                    <template v-slot:label>
+                      {{ user.fio }}
+                      <v-badge
+                        :content="user.hmlids"
+                        :value="user.hmlids"
+                        :color="usercolor(user)"
+                        overlap
+                      >
+                        <v-icon large v-if="user.role_id === 2">
+                          mdi-account-group-outline
+                        </v-icon>
+                        <v-icon large v-else> mdi-account-outline </v-icon>
+                      </v-badge>
+                    </template>
+                  </v-radio>
+                </v-radio-group>
+              </v-list>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row v-else>
+          <v-data-table
+            :headers="import_headers"
+            item-key="id"
+            :items="imports"
+            ref="importtable"
+            @click:row="clickrow"
+          >
+            <template v-slot:item.id="{ item }"> </template>
+          </v-data-table>
+        </v-row>
+      </v-tab-item>
+      <v-tab-item v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
+        <importBTC></importBTC>
+      </v-tab-item>
+    </v-tabs-items>
   </div>
 </template>
 
 <script>
 import XLSX from "xlsx";
 import axios from "axios";
+import importBTC from "./importBTC";
 import _ from "lodash";
 
 export default {
@@ -146,6 +175,7 @@ export default {
     header: [],
     userid: null,
     related_user: [],
+    tab: 0,
   }),
 
   mounted() {
@@ -429,6 +459,9 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+  },
+  components: {
+    importBTC,
   },
 };
 </script>
