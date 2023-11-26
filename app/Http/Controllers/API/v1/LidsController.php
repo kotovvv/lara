@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Provider;
 use DB;
 use Debugbar;
+use Carbon\Carbon;
 
 class LidsController extends Controller
 {
@@ -299,7 +300,8 @@ class LidsController extends Controller
       }
       if (isset($data['provider_id'])) $n_lid->provider_id = $data['provider_id'];
       if (isset($data['status_id']))  $n_lid->status_id = $data['status_id'];
-      $f_lid =  Lid::where('tel', '=', $lid['tel'])->get();
+      $f_lid =  Lid::where('tel', '=', $lid['tel'])->orderBy('created_at', 'desc')->value('created_at');
+
 
       if (!$f_lid->isEmpty()) {
         $n_lid->status_id = 22;
@@ -752,8 +754,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-
     $n_lid = new Lid;
+    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
 
     if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
       $n_lid->name =  $req['umcfields']['name'];
@@ -762,10 +764,19 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
 
     if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
-      $n_lid->tel =  $req['umcfields']['phone'];
+      $n_lid->tel =  preg_replace('/[^0-9]/', '', $req['umcfields']['phone']);
+      $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
+      if ($added_date != '') {
+        $date = Carbon::now();
+        $added_date = Carbon::parse($added_date);
+        if ($date->diffInDays($added_date) < 14) {
+          return response('you have to wait ');
+        }
+      }
     } else {
-      $n_lid->tel = time();
+      return response('No tel');
     }
+
 
     if (isset($req['umcfields']['email']) && strlen($req['umcfields']['email']) > 1) {
       $n_lid->email = $req['umcfields']['email'];
@@ -781,7 +792,6 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = (int) $req['user_id'];
-    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
 
     $n_lid->created_at = Now();
 
@@ -832,9 +842,17 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
 
     if ($phonestr) {
-      $n_lid->tel =  $phonestr;
+      $n_lid->tel = preg_replace('/[^0-9]/', '', $phonestr);
+      $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
+      if ($added_date !='') {
+        $date = Carbon::now();
+        $added_date = Carbon::parse($added_date);
+        if ($date->diffInDays($added_date) < 14) {
+          return response('you have to wait ');
+        }
+      }
     } else {
-      $n_lid->tel = time();
+      return response('No tel');
     }
 
     if ($email) {
@@ -888,9 +906,17 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
 
     if (isset($req['umcfields[phone]']) && strlen($req['umcfields[phone]']) > 1) {
-      $n_lid->tel =  $req['umcfields[phone]'];
+      $n_lid->tel =  preg_replace('/[^0-9]/', '', $req['umcfields[phone]']);
+      $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
+      if ($added_date != '') {
+        $date = Carbon::now();
+        $added_date = Carbon::parse($added_date);
+        if ($date->diffInDays($added_date) < 14) {
+          return response('you have to wait ');
+        }
+      }
     } else {
-      $n_lid->tel = time();
+      return response('No tel');
     }
 
     if (isset($req['umcfields[email]']) && strlen($req['umcfields[email]']) > 1) {
@@ -933,9 +959,18 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
       $n_lid->tel =  $req['umcfields']['phone'];
+      $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
+      if ($added_date != '') {
+        $date = Carbon::now();
+        $added_date = Carbon::parse($added_date);
+        if ($date->diffInDays($added_date) < 14) {
+          return response('you have to wait ');
+        }
+      }
     } else {
-      $n_lid->tel = time();
+      return response('No tel');
     }
+
     $n_lid->email = $req['umcfields']['email'];
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
