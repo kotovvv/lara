@@ -13,7 +13,7 @@
       <v-tab v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
         ВТС
       </v-tab>
-      <!-- <v-tab>CHECK DUBLIKATE MAIL</v-tab> -->
+      <v-tab>CHECK DUBLIKATE MAIL</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item>
@@ -141,6 +141,9 @@
       <v-tab-item v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
         <importBTC></importBTC>
       </v-tab-item>
+      <v-tab-item v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
+        <checkEmailTel></checkEmailTel>
+      </v-tab-item>
     </v-tabs-items>
   </div>
 </template>
@@ -149,6 +152,7 @@
 import XLSX from "xlsx";
 import axios from "axios";
 import importBTC from "./importBTC";
+import checkEmailTel from "./checkEmailTel";
 import _ from "lodash";
 
 export default {
@@ -462,6 +466,7 @@ export default {
   },
   components: {
     importBTC,
+    checkEmailTel,
   },
 };
 </script>
