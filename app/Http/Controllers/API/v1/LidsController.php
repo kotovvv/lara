@@ -560,7 +560,6 @@ class LidsController extends Controller
     $lead_id = (int) $getparams['id'];
     $f_key =   DB::table('apikeys')->where('api_key', $getparams['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-    // $sql = 'SELECT  "Success" AS status,"1" AS status_code, `lid_id` AS order_lead_id, `created_at` AS ftd_date, "FTD=1" AS description  FROM `depozits` WHERE `lid_id` = ' . (int) $getparams['id'];
     $leads = Depozit::select(DB::raw('"Success" as status, 1 as status_code, `lid_id` as  order_lead_id, `created_at` as ftd_date'))->where('lid_id', $lead_id)->first();
     $leads['dateAdd'] = date('Y-m-d H:i:s', strtotime(Lid::where('id', $lead_id)->value('created_at')));
     $leads['FTD'] = Lid::where('id', $lead_id)->value('status_id') == 10 ? 1 : 0;
