@@ -557,11 +557,13 @@ class LidsController extends Controller
   public function InfoDeposit(Request $request)
   {
     $getparams = $request->all();
+    $lead_id = (int) $getparams['id'];
     $f_key =   DB::table('apikeys')->where('api_key', $getparams['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     // $sql = 'SELECT  "Success" AS status,"1" AS status_code, `lid_id` AS order_lead_id, `created_at` AS ftd_date, "FTD=1" AS description  FROM `depozits` WHERE `lid_id` = ' . (int) $getparams['id'];
-    $leads = Depozit::select(DB::raw('"Success" as status, 1 as status_code, `lid_id` as  order_lead_id, `created_at` as ftd_date, "FTD=1" as description'))->where('lid_id', (int) $getparams['id'])->first();
-    $leads['dateAdd'] = date('Y-m-d H:i:s', strtotime(Lid::where('id', (int) $getparams['id'])->value('created_at')));
+    $leads = Depozit::select(DB::raw('"Success" as status, 1 as status_code, `lid_id` as  order_lead_id, `created_at` as ftd_date'))->where('lid_id', $lead_id)->first();
+    $leads['dateAdd'] = date('Y-m-d H:i:s', strtotime(Lid::where('id', $lead_id)->value('created_at')));
+    $leads['FTD'] = Lid::where('id', $lead_id)->value('status_id') == 10 ? 1 : 0;
     $response = [];
     $response["status"] = "Success";
     $response["status_code"] = "1";
@@ -588,7 +590,7 @@ class LidsController extends Controller
     d.`lid_id` AS `order_lead_id`
     , d.`created_at` AS `ftd_date`
     , l.`created_at` AS 'dateAdd'
-    ,'FTD=1' AS description
+    , IF(l.status_id = '10','1','0') AS FTD
 FROM
     `depozits` d
     INNER JOIN `lids` l
@@ -844,7 +846,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if ($phonestr) {
       $n_lid->tel = preg_replace('/[^0-9]/', '', $phonestr);
       $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
-      if ($added_date !='') {
+      if ($added_date != '') {
         $date = Carbon::now();
         $added_date = Carbon::parse($added_date);
         if ($date->diffInDays($added_date) < 14) {
