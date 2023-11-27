@@ -70,6 +70,7 @@
                         :items="[
                           '',
                           'name',
+                          'lastname',
                           'email',
                           'tel',
                           'afilyator',
