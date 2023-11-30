@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Provider;
 use DB;
 use Debugbar;
+use Carbon\Carbon;
 
 class LidsController extends Controller
 {
@@ -299,7 +300,8 @@ class LidsController extends Controller
       }
       if (isset($data['provider_id'])) $n_lid->provider_id = $data['provider_id'];
       if (isset($data['status_id']))  $n_lid->status_id = $data['status_id'];
-      $f_lid =  Lid::where('tel', '=', $lid['tel'])->get();
+      $f_lid =  Lid::where('tel', '=', $lid['tel'])->orderBy('created_at', 'desc')->value('created_at');
+
 
       if (!$f_lid->isEmpty()) {
         $n_lid->status_id = 22;
@@ -555,11 +557,12 @@ class LidsController extends Controller
   public function InfoDeposit(Request $request)
   {
     $getparams = $request->all();
+    $lead_id = (int) $getparams['id'];
     $f_key =   DB::table('apikeys')->where('api_key', $getparams['api_key'])->first();
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-    // $sql = 'SELECT  "Success" AS status,"1" AS status_code, `lid_id` AS order_lead_id, `created_at` AS ftd_date, "FTD=1" AS description  FROM `depozits` WHERE `lid_id` = ' . (int) $getparams['id'];
-    $leads = Depozit::select(DB::raw('"Success" as status, 1 as status_code, `lid_id` as  order_lead_id, `created_at` as ftd_date, "FTD=1" as description'))->where('lid_id', (int) $getparams['id'])->first();
-    $leads['dateAdd'] = date('Y-m-d H:i:s', strtotime(Lid::where('id', (int) $getparams['id'])->value('created_at')));
+    $leads = Depozit::select(DB::raw('"Success" as status, 1 as status_code, `lid_id` as  order_lead_id, `created_at` as ftd_date'))->where('lid_id', $lead_id)->first();
+    $leads['dateAdd'] = date('Y-m-d H:i:s', strtotime(Lid::where('id', $lead_id)->value('created_at')));
+    $leads['FTD'] = Lid::where('id', $lead_id)->value('status_id') == 10 ? 1 : 0;
     $response = [];
     $response["status"] = "Success";
     $response["status_code"] = "1";
@@ -586,7 +589,7 @@ class LidsController extends Controller
     d.`lid_id` AS `order_lead_id`
     , d.`created_at` AS `ftd_date`
     , l.`created_at` AS 'dateAdd'
-    ,'FTD=1' AS description
+    , IF(l.status_id = '10','1','0') AS FTD
 FROM
     `depozits` d
     INNER JOIN `lids` l
@@ -628,8 +631,9 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $a_lid = [
       'tel' => $getlidid['umcfields']['phone'],
       'afilyator' => $getlidid['umcfields']['affiliate_user'],
-      'provider_id' => $f_key,
+      'provider_id' => $f_key->id,
     ];
+
     return Lid::select('id')->where($a_lid)->get();
   }
 
@@ -751,8 +755,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-
     $n_lid = new Lid;
+    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
 
     if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
       $n_lid->name =  $req['umcfields']['name'];
@@ -761,36 +765,36 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
 
     if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
-      $n_lid->tel =  $req['umcfields']['phone'];
+      $n_lid->tel =  preg_replace('/[^0-9]/', '', $req['umcfields']['phone']);
+      $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
+      if ($added_date != '') {
+        $date = Carbon::now();
+        $added_date = Carbon::parse($added_date);
+        if ($date->diffInDays($added_date) < 14) {
+          return response('you have to wait ');
+        }
+      }
     } else {
-      $n_lid->tel = time();
+      return response('No tel');
     }
+
 
     if (isset($req['umcfields']['email']) && strlen($req['umcfields']['email']) > 1) {
       $n_lid->email = $req['umcfields']['email'];
     } else {
       $n_lid->email = time() . '@none.com';
     }
+    if (isset($req['text']) && strlen($req['text']) > 1) {
+      $n_lid->text = $req['text'];
+    } else {
+      $n_lid->text = '';
+    }
 
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = (int) $req['user_id'];
-    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
 
     $n_lid->created_at = Now();
-
-    /*     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
-
-    if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
-      //$name = Provider::find($f_key->id)->value('name');
-
-      $n_lid->afilyator = $f_key->name;
-      $n_lid->provider_id = 75;
-      $n_lid->user_id = 252;
-      $n_lid->office_id = User::where('id', 252)->value('office_id');
-      $n_lid->save();
-      return response('duplicate');
-    } */
 
     $n_lid->save();
     $id = $n_lid->id;
@@ -839,9 +843,17 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
 
     if ($phonestr) {
-      $n_lid->tel =  $phonestr;
+      $n_lid->tel = preg_replace('/[^0-9]/', '', $phonestr);
+      $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
+      if ($added_date != '') {
+        $date = Carbon::now();
+        $added_date = Carbon::parse($added_date);
+        if ($date->diffInDays($added_date) < 14) {
+          return response('you have to wait ');
+        }
+      }
     } else {
-      $n_lid->tel = time();
+      return response('No tel');
     }
 
     if ($email) {
@@ -888,41 +900,38 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $n_lid = new Lid;
 
-    if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
-      $n_lid->name =  $req['umcfields']['name'];
+    if (isset($req['umcfields[name]']) && strlen($req['umcfields[name]']) > 1) {
+      $n_lid->name =  $req['umcfields[name]'];
     } else {
       $n_lid->name = time();
     }
 
-    if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
-      $n_lid->tel =  $req['umcfields']['phone'];
+    if (isset($req['umcfields[phone]']) && strlen($req['umcfields[phone]']) > 1) {
+      $n_lid->tel =  preg_replace('/[^0-9]/', '', $req['umcfields[phone]']);
+      $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
+      if ($added_date != '') {
+        $date = Carbon::now();
+        $added_date = Carbon::parse($added_date);
+        if ($date->diffInDays($added_date) < 14) {
+          return response('you have to wait ');
+        }
+      }
     } else {
-      $n_lid->tel = time();
+      return response('No tel');
     }
 
-    if (isset($req['umcfields']['email']) && strlen($req['umcfields']['email']) > 1) {
-      $n_lid->email = $req['umcfields']['email'];
+    if (isset($req['umcfields[email]']) && strlen($req['umcfields[email]']) > 1) {
+      $n_lid->email = $req['umcfields[email]'];
     } else {
       $n_lid->email = time() . '@none.com';
     }
 
-    $n_lid->afilyator = $req['umcfields']['affiliate_user'];
+    $n_lid->afilyator = $req['umcfields[affiliate_user]'];
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $req['user_id'];
     $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
     $n_lid->created_at = Now();
 
-    // $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
-    // if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
-    //   //  $name = Provider::find($f_key->id)->value('name');
-    //   $n_lid->afilyator = $f_key->name;
-    //   $n_lid->provider_id = 75;
-    //   $n_lid->user_id = 252;
-    //   $n_lid->office_id = User::where('id', 252)->value('office_id');
-    //   $n_lid->save();
-    //   $res['status'] = 'duplicate';
-    //   return response($res);
-    // }
     $n_lid->save();
     $id = $n_lid->id;
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
@@ -941,7 +950,6 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-    // http://91.192.102.34/api/set_zaliv?user_id=152&afilat_id=62&api_key=11e9c0056d4aa76c3c7b946737f089d4&umcfields[email]=$email&umcfields[name]=$fio%20$lastn&umcfields[phone]=$phonestr&umcfields[affiliate_user]=$affiliate
     $n_lid = new Lid;
 
     if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
@@ -952,9 +960,18 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
       $n_lid->tel =  $req['umcfields']['phone'];
+      $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
+      if ($added_date != '') {
+        $date = Carbon::now();
+        $added_date = Carbon::parse($added_date);
+        if ($date->diffInDays($added_date) < 14) {
+          return response('you have to wait ');
+        }
+      }
     } else {
-      $n_lid->tel = time();
+      return response('No tel');
     }
+
     $n_lid->email = $req['umcfields']['email'];
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
@@ -1111,7 +1128,6 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     $res['result'] = 'Error';
     $sql = "SELECT l.name,l.tel,l.afilyator,l.status_id,l.email,l.id,s.name statusName FROM `lids` l LEFT JOIN statuses s on (s.id = l.status_id ) WHERE DATE(l.`created_at`) >= " . $req['startDate'] . " AND DATE(l.`created_at`) <= " . $req['endDate'] . " AND l.`provider_id` = '" . $f_key->id . "'";
-
     $lids = DB::select(DB::raw($sql));
     if ($lids) {
       $res['data'] = [];

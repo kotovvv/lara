@@ -911,7 +911,7 @@ export default {
           console.log(error);
         });
       this.setTime();
-      if (this.depozit_val > 0) {
+      if (this.depozit_val > 0 && self.selectedStatus == 10) {
         self.setDepozit();
       }
     },
