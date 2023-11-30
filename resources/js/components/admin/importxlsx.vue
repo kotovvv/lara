@@ -12,21 +12,42 @@
     <v-content>
       <v-row>
         <v-col cols="2">
-          <v-select v-model="selectedProvider" :items="providers" label="Провайдер" item-text="name"
-            item-value="id"></v-select>
+          <v-select
+            v-model="selectedProvider"
+            :items="providers"
+            label="Провайдер"
+            item-text="name"
+            item-value="id"
+          ></v-select>
         </v-col>
         <v-col cols="3" v-if="selectedProvider">
-          <v-file-input v-model="files" ref="fileupload" label="загрузить Excel" show-size truncate-length="24"
-            @change="onFileChange"></v-file-input>
+          <v-file-input
+            v-model="files"
+            ref="fileupload"
+            label="загрузить Excel"
+            show-size
+            truncate-length="24"
+            @change="onFileChange"
+          ></v-file-input>
         </v-col>
         <v-col cols="3">
-          <v-select v-model="selectedStatus" :items="statuses" label="Статус" item-text="name" item-value="id"></v-select>
+          <v-select
+            v-model="selectedStatus"
+            :items="statuses"
+            label="Статус"
+            item-text="name"
+            item-value="id"
+          ></v-select>
         </v-col>
         <v-col cols="4">
           <v-textarea v-model="message" label="Сообщение" rows="1"></v-textarea>
         </v-col>
       </v-row>
-      <v-progress-linear :active="loading" indeterminate color="purple"></v-progress-linear>
+      <v-progress-linear
+        :active="loading"
+        indeterminate
+        color="purple"
+      ></v-progress-linear>
       <v-row v-if="table.length && files">
         <v-col>
           <v-simple-table id="loadedTable">
@@ -34,15 +55,19 @@
               <thead>
                 <tr>
                   <th v-for="el in table[0].length" :key="el">
-                    <v-select :items="[
-                      '',
-                      'name',
-                      'lastname',
-                      'email',
-                      'tel',
-                      'afilyator',
-                      'text',
-                    ]" outlined @change="makeHeader">
+                    <v-select
+                      :items="[
+                        '',
+                        'name',
+                        'lastname',
+                        'email',
+                        'tel',
+                        'afilyator',
+                        'text',
+                      ]"
+                      outlined
+                      @change="makeHeader"
+                    >
                     </v-select>
                   </th>
                 </tr>
@@ -59,12 +84,22 @@
           <v-card height="100%" class="pa-5">
             Укажите пользователя для лидов
             <v-list>
-              <v-radio-group @change="putSelectedLidsDB" ref="radiogroup" v-model="userid" v-bind="users"
-                id="usersradiogroup">
+              <v-radio-group
+                @change="putSelectedLidsDB"
+                ref="radiogroup"
+                v-model="userid"
+                v-bind="users"
+                id="usersradiogroup"
+              >
                 <v-radio :value="user.id" v-for="user in users" :key="user.id">
                   <template v-slot:label>
                     {{ user.fio }}
-                    <v-badge :content="user.hmlids" :value="user.hmlids" :color="usercolor(user)" overlap>
+                    <v-badge
+                      :content="user.hmlids"
+                      :value="user.hmlids"
+                      :color="usercolor(user)"
+                      overlap
+                    >
                       <v-icon large v-if="user.role_id === 2">
                         mdi-account-group-outline
                       </v-icon>
@@ -86,6 +121,7 @@ import XLSX from "xlsx";
 import axios from "axios";
 
 export default {
+  props: ["user_id"],
   data: () => ({
     loading: false,
     message: "",
@@ -104,7 +140,6 @@ export default {
   }),
 
   mounted() {
-
     this.getProviders();
     this.getStatuses();
   },
@@ -195,9 +230,9 @@ export default {
       //remove empty columns
       json = Object.entries(json).map(
         (e) =>
-        (e[1] = Object.fromEntries(
-          Object.entries(e[1]).filter((el) => el[0])
-        ))
+          (e[1] = Object.fromEntries(
+            Object.entries(e[1]).filter((el) => el[0])
+          ))
       );
 
       let start = new Date().toJSON().slice(0, 19).replace("T", " ");
@@ -217,23 +252,23 @@ export default {
           self.loading = false;
           self.files = [];
           self.table = [];
-          // save to imports db
-          //======================
-          let info = {};
-
-          info.start = start;
-          info.end = new Date().toJSON().slice(0, 19).replace("T", " ");
-          info.provider_id = self.selectedProvider;
-          info.user_id = self.$attrs.user.id;
-          info.message = self.message;
-
-          axios
-            .post("api/imports", info)
-            .then(function (response) { })
-            .catch(function (error) {
-              console.log(error);
-            });
         })
+        .catch(function (error) {
+          console.log(error);
+        });
+      // save to imports db
+      //======================
+      let info = {};
+
+      info.start = start;
+      info.end = new Date().toJSON().slice(0, 19).replace("T", " ");
+      info.provider_id = self.selectedProvider;
+      info.user_id = self.$props.user_id;
+      info.message = self.message;
+
+      axios
+        .post("api/imports", info)
+        .then(function (response) {})
         .catch(function (error) {
           console.log(error);
         });
