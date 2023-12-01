@@ -504,7 +504,7 @@ class LidsController extends Controller
       ->when($limit != 'all', function ($query) use ($limit) {
         return $query->limit($limit);
       })
-      ->orderBy('lids.updated_at', 'DESC')
+      ->orderBy('lids.created_at', 'DESC')
       ->get();
 
     if ($page == 0) {

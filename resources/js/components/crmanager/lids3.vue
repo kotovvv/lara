@@ -499,7 +499,7 @@
                             @click="
                               disableuser = user.id;
                               filterGroups = [];
-                              getPage();
+                              getPage(0);
                             "
                             :value="user.hmlids"
                             :disabled="disableuser == user.id"
