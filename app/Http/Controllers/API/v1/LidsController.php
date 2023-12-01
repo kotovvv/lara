@@ -511,6 +511,7 @@ class LidsController extends Controller
       $response['statuses'] = $q_leads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
         ->groupBy('id')
+        //->orderBy('lids.created_at', 'DESC')
         ->orderBy('statuses.order', 'ASC')
         ->get();
     }
