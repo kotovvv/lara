@@ -427,6 +427,14 @@ class LidsController extends Controller
     $providers = $date = $users_ids = [];
     $where_date = '';
     $duplicate_tel = [];
+    if (isset($data['sortBy'])) {
+      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator'][$data['sortBy']];
+      $sortDesc = $data['sortDesc'] ? 'DESC' : 'ASC';
+    } else {
+      $sortBy = 'created_at';
+      $sortDesc = 'DESC';
+    }
+
     if (isset($data['duplicate_tel'])) {
       $duplicate_tel = Lid::select('tel')->where('user_id', $id)->groupBy('tel')->having(DB::raw('count(tel)'), '>', 1);
     }
@@ -504,7 +512,16 @@ class LidsController extends Controller
       ->when($limit != 'all', function ($query) use ($limit) {
         return $query->limit($limit);
       })
-      ->orderBy('lids.created_at', 'DESC')
+      ->when($sortBy && !in_array($sortBy, ['provider_id', 'user_id']), function ($query) use ($sortBy, $sortDesc) {
+        return $query->orderBy('lids.' . $sortBy, $sortDesc);
+      })
+      ->when($sortBy && $sortBy == 'provider_id', function ($query) use ($sortDesc) {
+        return $query->leftJoin('providers', 'providers.id', '=', 'lids.provider_id')->orderBy('providers.name', $sortDesc);
+      })
+      ->when($sortBy && $sortBy == 'user_id', function ($query) use ($sortDesc) {
+        return $query->leftJoin('users', 'users.id', '=', 'lids.user_id')->orderBy('users.name', $sortDesc);
+      })
+
       ->get();
 
     if ($page == 0) {

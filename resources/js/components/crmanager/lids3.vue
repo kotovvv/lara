@@ -278,6 +278,7 @@
             item-key="id"
             show-select
             show-expand
+            :options.sync="options"
             @click:row="clickrow"
             :items="lids"
             :disable-pagination="true"
@@ -569,16 +570,16 @@ export default {
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
-      { text: "Афилятор", value: "afilyator" },
+      { text: "Афилятор", value: "afilyator"},
       { text: "Поставщик", value: "provider" },
       { text: "Менеджер", value: "user" },
       { text: "Создан", value: "date_created" },
       { text: "Изменён", value: "date_updated" },
-      { text: "Статус", value: "status" },
-      { text: "Депозит", value: "depozit" },
-      { text: "Сообщение", value: "text" },
-      { text: "Звонков", value: "qtytel" },
-      { text: "ПЕРЕЗВОН", value: "ontime" },
+      { text: "Статус", value: "status", sortable: false },
+      { text: "Депозит", value: "depozit", sortable: false },
+      { text: "Сообщение", value: "text", sortable: false },
+      { text: "Звонков", value: "qtytel", sortable: false },
+      { text: "ПЕРЕЗВОН", value: "ontime", sortable: false },
     ],
     parse_header: [],
     sortOrders: {},
@@ -605,6 +606,7 @@ export default {
     archSelected: [],
     sortBy: "",
     sortDesc: true,
+    options: {},
   }),
   mounted: function () {
     this.getUsers();
@@ -698,6 +700,12 @@ export default {
         this.getStatusLids(newval);
       }
     },
+    options: {
+      handler() {
+        this.getLids3();
+      },
+      deep: true,
+    },
   },
   computed: {},
   methods: {
@@ -789,6 +797,11 @@ export default {
     getLids3() {
       let self = this;
       let data = {};
+      const { sortBy, sortDesc } = self.options;
+      if (sortBy.length === 1) {
+        data.sortBy = sortBy[0];
+        data.sortDesc = sortDesc[0];
+      }
       self.loading = true;
       if (this.savedates == true) {
         if (this.datetimeFrom == "") {
