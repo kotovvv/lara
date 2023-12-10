@@ -428,7 +428,7 @@ class LidsController extends Controller
     $where_date = '';
     $duplicate_tel = [];
     if (isset($data['sortBy'])) {
-      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator'][$data['sortBy']];
+      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'status' => 'status_id', 'depozit' => 'depozit'][$data['sortBy']];
       $sortDesc = $data['sortDesc'] ? 'DESC' : 'ASC';
     } else {
       $sortBy = 'created_at';
@@ -512,7 +512,7 @@ class LidsController extends Controller
       ->when($limit != 'all', function ($query) use ($limit) {
         return $query->limit($limit);
       })
-      ->when($sortBy && !in_array($sortBy, ['provider_id', 'user_id']), function ($query) use ($sortBy, $sortDesc) {
+      ->when($sortBy && !in_array($sortBy, ['provider_id', 'user_id', 'depozit']), function ($query) use ($sortBy, $sortDesc) {
         return $query->orderBy('lids.' . $sortBy, $sortDesc);
       })
       ->when($sortBy && $sortBy == 'provider_id', function ($query) use ($sortDesc) {
@@ -521,17 +521,20 @@ class LidsController extends Controller
       ->when($sortBy && $sortBy == 'user_id', function ($query) use ($sortDesc) {
         return $query->leftJoin('users', 'users.id', '=', 'lids.user_id')->orderBy('users.name', $sortDesc);
       })
-
+      ->when($sortBy && $sortBy == 'depozit', function ($query) use ($sortBy, $sortDesc) {
+        return $query->orderBy($sortBy, $sortDesc);
+      })
       ->get();
 
     if ($page == 0) {
-      $response['statuses'] = $q_leads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
+      $response['statuses'] = $q_leads->select(DB::Raw('count(statuses.id) hm'), DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') depozit'), 'statuses.id', 'statuses.name', 'statuses.color')
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
         ->groupBy('id')
         //->orderBy('lids.created_at', 'DESC')
         ->orderBy('statuses.order', 'ASC')
         ->get();
     }
+
     return response($response);
   }
 
