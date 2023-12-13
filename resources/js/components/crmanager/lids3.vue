@@ -618,6 +618,11 @@ export default {
         .split()
         .map((el) => parseInt(el));
     }
+    if (localStorage.filterOffices) {
+      this.filterOffices = parseInt(localStorage.filterOffices);
+      // .split()
+      // .map((el) => parseInt(el));
+    }
     if (localStorage.savedates) {
       this.savedates = localStorage.savedates == "true" ? true : false;
     }
@@ -669,6 +674,9 @@ export default {
     filterStatus(newName) {
       localStorage.filterStatus = newName.toString();
       this.selectRow();
+    },
+    filterOffices(newName) {
+      localStorage.filterOffices = newName;
     },
     callback(newName) {
       localStorage.callback = newName;
@@ -745,14 +753,22 @@ export default {
     },
     getOffices() {
       let self = this;
-      self.filterOffices = self.$props.user.office_id;
+      if (localStorage.filterOffices) {
+        self.filterOffices = parseInt(localStorage.filterOffices);
+      } else {
+        self.filterOffices = self.$props.user.office_id;
+      }
       axios
         .get("/api/getOffices")
         .then((res) => {
           self.offices = res.data;
           if (self.$props.user.role_id == 1) {
             self.offices.unshift({ id: 0, name: "--выбор--" });
-            self.filterOffices = self.offices[1].id;
+            if (localStorage.filterOffices) {
+              self.filterOffices = parseInt(localStorage.filterOffices);
+            } else {
+              self.filterOffices = self.offices[1].id;
+            }
           }
           if (self.$props.user.office_id > 0) {
             self.offices = self.offices.filter(
