@@ -136,6 +136,23 @@
           </v-row>
         </v-main>
         <v-row v-else>
+          <v-col cols="12">
+            <v-progress-linear
+              :active="loading"
+              indeterminate
+              color="purple"
+            ></v-progress-linear>
+          </v-col>
+          <v-col cols="12">
+            <v-data-table
+              :headers="import_headers"
+              item-key="id"
+              :items="imports"
+              ref="importtable"
+              @click:row="clickrow"
+            >
+            </v-data-table>
+          </v-col>
           <v-col cols="12" v-if="leads.length">
             <v-row>
               <v-col>
@@ -155,62 +172,48 @@
                 </div>
               </v-col>
             </v-row>
-          </v-col>
-          <v-col cols="12">
-            <v-progress-linear
-              :active="loading"
-              indeterminate
-              color="purple"
-            ></v-progress-linear>
-          </v-col>
-          <v-col cols="12">
-            <v-data-table
-              :headers="import_headers"
-              item-key="id"
-              :items="imports"
-              ref="importtable"
-              @click:row="clickrow"
-            >
-              <template v-slot:item.id="{ item }"> </template>
-            </v-data-table>
-          </v-col>
-          <v-col cols="12" v-if="leads.length">
-            <div class="border pa-4">
-              <v-data-table
-                id="tabimplids"
-                :headers="headers_leads"
-                item-key="id"
-                :items="leads"
-                :footer-props="{
-                  'items-per-page-options': [],
-                  'items-per-page-text': '',
-                }"
-                :disable-items-per-page="true"
-                :loading="loading"
-                loading-text="Загружаю... Ожидайте"
-              >
-                <template
-                  v-slot:top="{ pagination, options, updateOptions }"
-                  :footer-props="{
-                    'items-per-page-options': [50, 10, 100, 250, 500, -1],
-                    'items-per-page-text': '',
-                  }"
-                >
-                  <v-row>
-                    <!-- <v-spacer></v-spacer> -->
-                    <v-col cols="3" class="mt-3">
-                      <v-data-footer
-                        :pagination="pagination"
-                        :options="options"
-                        @update:options="updateOptions"
-                        :items-per-page-options="[50, 10, 100, 250, 500, -1]"
-                        :items-per-page-text="''"
-                      />
-                    </v-col>
-                  </v-row>
-                </template>
-              </v-data-table>
-            </div>
+            <v-row>
+              <v-col>
+                <div class="border pa-4">
+                  <v-data-table
+                    id="tabimplids"
+                    :headers="headers_leads"
+                    item-key="id"
+                    :items="leads"
+                    :footer-props="{
+                      'items-per-page-options': [],
+                      'items-per-page-text': '',
+                    }"
+                    :disable-items-per-page="true"
+                    :loading="loading"
+                    loading-text="Загружаю... Ожидайте"
+                  >
+                    <template
+                      v-slot:top="{ pagination, options, updateOptions }"
+                      :footer-props="{
+                        'items-per-page-options': [50, 10, 100, 250, 500, -1],
+                        'items-per-page-text': '',
+                      }"
+                    >
+                      <v-row>
+                        <!-- <v-spacer></v-spacer> -->
+                        <v-col cols="3" class="mt-3">
+                          <v-data-footer
+                            :pagination="pagination"
+                            :options="options"
+                            @update:options="updateOptions"
+                            :items-per-page-options="[
+                              50, 10, 100, 250, 500, -1,
+                            ]"
+                            :items-per-page-text="''"
+                          />
+                        </v-col>
+                      </v-row>
+                    </template>
+                  </v-data-table>
+                </div>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-tab-item>
@@ -302,9 +305,9 @@ export default {
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
       // { text: "Афилятор", value: "afilyator" },
-      // { text: "Поставщик", value: "provider" },
+      { text: "Поставщик", value: "provider" },
       // { text: "Менеджер", value: "user" },
-      // { text: "Создан", value: "date_created" },
+      { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status" },
     ],
     headers: [
@@ -450,6 +453,12 @@ export default {
         });
       });
       self.Statuses = _.orderBy(self.Statuses, "order");
+      setTimeout(() => {
+        const el = document.getElementById("wrp_stat");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
@@ -554,6 +563,8 @@ export default {
       console.log(item);
       let self = this;
       let data = {};
+      self.leads = [];
+      self.Statuses = [];
       self.loading = true;
       data.provider_id = item.provider_id;
       data.start = item.start;
@@ -568,12 +579,15 @@ export default {
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
-
-          self.filterStatuses();
           self.loading = false;
-          const el = document.getElementById("wrp_stat");
-          if (el) {
-            el.scrollIntoView({ behavior: "smooth" });
+          if (self.leads.length) {
+            self.leads = self.leads.map((el) => {
+              el.provider = self.providers.find(
+                (pel) => pel.id == el.provider_id
+              ).name;
+              return el;
+            });
+            self.filterStatuses();
           }
         })
         .catch(function (error) {
