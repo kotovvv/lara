@@ -158,10 +158,10 @@ class LidsController extends Controller
 
       return response($response);
     } else {
-      $office_id = (int) $data['office_id'];
+      $office_ids = $data['office_ids'];
       $q_leads = Lid::select('*')
-        ->when($office_id > 0, function ($query) use ($office_id) {
-          return $query->where('office_id', $office_id);
+        ->when(in_array(0, $office_ids), function ($query) use ($office_ids) {
+          return $query->whereIn('office_id', $office_ids);
         })
         ->when(strpos($search, '@') != false, function ($query) use ($search) {
           return $query->where('email', $search);
@@ -414,9 +414,9 @@ class LidsController extends Controller
   {
     $data = $request->all();
 
-    $office_id = session()->get('office_id');
-    if ($office_id == 0) {
-      $office_id =  $data['office_id'];
+    $office_ids = [session()->get('office_id')];
+    if (in_array(0, $office_ids)) {
+      $office_ids =  $data['office_ids'];
     }
 
     $id = $data['id'];
@@ -452,8 +452,8 @@ class LidsController extends Controller
     if (count($data['provider_id']) > 0) {
       $providers = $data['provider_id'];
     } else {
-      if ($office_id > 0) {
-        $res = Provider::select('id')->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]')->get()->toArray();
+      if (!in_array(0, $office_ids)) {
+        $res = Provider::select('id')->whereIn('office_id',  $office_ids)->get()->toArray();
         foreach ($res as $item) {
           $providers[] = $item['id'];
         }
@@ -469,8 +469,8 @@ class LidsController extends Controller
       ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
         return $query->whereIn('lids.user_id', $users_ids);
       })
-      ->when($office_id > 0, function ($query) use ($office_id) {
-        return $query->where('lids.office_id', $office_id);
+      ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
+        return $query->whereIn('lids.office_id', $office_ids);
       })
       ->when(count($providers) > 0, function ($query) use ($providers) {
         return $query->whereIn('provider_id', $providers);

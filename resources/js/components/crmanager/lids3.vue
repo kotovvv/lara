@@ -186,6 +186,7 @@
             item-value="id"
             outlined
             rounded
+            multiple
             @change="
               getUsers();
               getPage(0);
@@ -318,9 +319,9 @@
                 </v-col>
                 <v-col class="wrp_group">
                   <v-row
-                    v-for="office in filterOffices == 0
+                    v-for="office in filterOffices.includes(0)
                       ? offices
-                      : offices.filter((o) => o.id == filterOffices)"
+                      : offices.filter((o) => filterOffices.includes(o.id))"
                     :key="office.id"
                   >
                     <span v-if="office.id > 0" class="pt-5"
@@ -454,9 +455,9 @@
                 @change="changeLidsUser"
               >
                 <div
-                  v-for="office in filterOffices == 0
+                  v-for="office in filterOffices.includes(0)
                     ? offices
-                    : offices.filter((o) => o.id == filterOffices)"
+                    : offices.filter((o) => filterOffices.includes(o.id))"
                   :key="office.id"
                 >
                   <p class="title" v-if="office.id > 0">{{ office.name }}</p>
@@ -597,7 +598,7 @@ export default {
     Statuses: [],
     hmrow: "",
     offices: [],
-    filterOffices: 1,
+    filterOffices: [],
     hm: 0,
     snackbar: false,
     message: "",
@@ -615,13 +616,13 @@ export default {
     this.getOffices();
     if (localStorage.filterStatus) {
       this.filterStatus = localStorage.filterStatus
-        .split()
+        .split(",")
         .map((el) => parseInt(el));
     }
     if (localStorage.filterOffices) {
-      this.filterOffices = parseInt(localStorage.filterOffices);
-      // .split()
-      // .map((el) => parseInt(el));
+      this.filterOffices = localStorage.filterOffices
+        .split(",")
+        .map((el) => parseInt(el));
     }
     if (localStorage.savedates) {
       this.savedates = localStorage.savedates == "true" ? true : false;
@@ -647,7 +648,7 @@ export default {
 
     if (localStorage.filterProviders) {
       this.filterProviders = localStorage.filterProviders
-        .split()
+        .split(",")
         .map((el) => parseInt(el));
     }
     setTimeout(() => {
@@ -676,7 +677,7 @@ export default {
       this.selectRow();
     },
     filterOffices(newName) {
-      localStorage.filterOffices = newName;
+      localStorage.filterOffices = newName.toString();
     },
     callback(newName) {
       localStorage.callback = newName;
@@ -754,20 +755,24 @@ export default {
     getOffices() {
       let self = this;
       if (localStorage.filterOffices) {
-        self.filterOffices = parseInt(localStorage.filterOffices);
+        self.filterOffices = localStorage.filterOffices
+          .split(",")
+          .map((el) => parseInt(el));
       } else {
-        self.filterOffices = self.$props.user.office_id;
+        self.filterOffices = [self.$props.user.office_id];
       }
       axios
         .get("/api/getOffices")
         .then((res) => {
           self.offices = res.data;
           if (self.$props.user.role_id == 1) {
-            self.offices.unshift({ id: 0, name: "--выбор--" });
+            self.offices.unshift({ id: 0, name: "--все--" });
             if (localStorage.filterOffices) {
-              self.filterOffices = parseInt(localStorage.filterOffices);
+              self.filterOffices = localStorage.filterOffices
+                .split(",")
+                .map((el) => parseInt(el));
             } else {
-              self.filterOffices = self.offices[1].id;
+              self.filterOffices = [self.offices[1].id];
             }
           }
           if (self.$props.user.office_id > 0) {
@@ -851,7 +856,7 @@ export default {
       data.search = self.search;
       data.limit = self.limit;
       data.page = self.page;
-      data.office_id = self.filterOffices;
+      data.office_ids = self.filterOffices;
 
       if (this.callback === true) {
         data.callback = 1;
@@ -985,7 +990,7 @@ export default {
       data.limit = self.limit;
       data.page = self.page;
       data.search = self.searchAll;
-      data.office_id = self.filterOffices;
+      data.office_ids = self.filterOffices;
       axios
         .post("api/Lid/searchlids3", data)
         .then((res) => {
@@ -1161,9 +1166,12 @@ export default {
               office_id,
             })
           );
-          if (self.$props.user.role_id == 1 && self.filterOffices > 0) {
-            self.users = self.users.filter(
-              (f) => f.office_id == self.filterOffices
+          if (
+            self.$props.user.role_id == 1 &&
+            !self.filterOffices.includes(0)
+          ) {
+            self.users = self.users.filter((f) =>
+              self.filterOffices.includes(f.office_id)
             );
           }
           if (self.$props.user.role_id != 1) {
@@ -1227,7 +1235,7 @@ export default {
           self.searchAll = "";
           if (localStorage.filterStatus) {
             self.filterStatus = localStorage.filterStatus
-              .split()
+              .split(",")
               .map((el) => parseInt(el));
           }
         })
