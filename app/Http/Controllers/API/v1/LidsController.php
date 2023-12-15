@@ -158,11 +158,11 @@ class LidsController extends Controller
 
       return response($response);
     } else {
-      $office_ids = $data['office_ids'];
+      // $office_ids = $data['office_ids'];
       $q_leads = Lid::select('*')
-        ->when(in_array(0, $office_ids), function ($query) use ($office_ids) {
-          return $query->whereIn('office_id', $office_ids);
-        })
+        // ->when(in_array(0, $office_ids), function ($query) use ($office_ids) {
+        //   return $query->whereIn('office_id', $office_ids);
+        // })
         ->when(strpos($search, '@') != false, function ($query) use ($search) {
           return $query->where('email', $search);
         })

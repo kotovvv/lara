@@ -652,7 +652,7 @@ export default {
         .map((el) => parseInt(el));
     }
     setTimeout(() => {
-      this.getLids3();
+      this.getPage();
     }, 100);
   },
 
@@ -711,7 +711,7 @@ export default {
     },
     options: {
       handler() {
-        this.getLids3();
+        this.getPage();
       },
       deep: true,
     },
