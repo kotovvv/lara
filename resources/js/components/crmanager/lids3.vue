@@ -677,6 +677,12 @@ export default {
       this.selectRow();
     },
     filterOffices(newName) {
+      if (newName.includes(0) && newName.length > 1) {
+        newName = newName.filter(function (item) {
+          return item !== 0;
+        });
+        this.filterOffices = newName;
+      }
       localStorage.filterOffices = newName.toString();
     },
     callback(newName) {
