@@ -473,16 +473,16 @@ class LidsController extends Controller
         return $query->whereIn('lids.office_id', $office_ids);
       })
       ->when(count($providers) > 0, function ($query) use ($providers) {
-        return $query->whereIn('provider_id', $providers);
+        return $query->whereIn('lids.provider_id', $providers);
       })
       ->when(count($status_id) > 0, function ($query) use ($status_id) {
-        return $query->whereIn('status_id', $status_id);
+        return $query->whereIn('lids.status_id', $status_id);
       })
       ->when($tel != '', function ($query) use ($tel) {
-        return $query->where('tel', 'like', $tel . '%');
+        return $query->where('lids.tel', 'like', $tel . '%');
       })
       ->when(isset($data['duplicate_tel']), function ($query) use ($duplicate_tel) {
-        return $query->whereIn('tel', $duplicate_tel);
+        return $query->whereIn('lids.tel', $duplicate_tel);
       })
       ->when(count($date) > 0, function ($query) use ($date) {
         return $query->whereBetween('lids.created_at', $date);
