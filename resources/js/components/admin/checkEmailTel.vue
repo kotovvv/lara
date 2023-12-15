@@ -88,21 +88,21 @@ export default {
     files: [],
   }),
   computed: {
-    filteredItems() {
-      let reg = new RegExp("^" + this.filtertel);
-      return this.parse_csv.filter((i) => {
-        return !this.filtertel || reg.test(i.tel);
-      });
-    },
+    // filteredItems() {
+    //   let reg = new RegExp("^" + this.filtertel);
+    //   return this.parse_csv.filter((i) => {
+    //     return !this.filtertel || reg.test(i.tel);
+    //   });
+    // },
   },
   methods: {
     exportXlsx() {
       const self = this;
-      const obj = _.groupBy(self.filteredItems, "status");
-      const lidsByStatus = Array.from(Object.keys(obj), (k) => [
-        `${k}`,
-        obj[k],
-      ]);
+      // const obj = _.groupBy(self.filteredItems, "status");
+      // const lidsByStatus = Array.from(Object.keys(obj), (k) => [
+      //   `${k}`,
+      //   obj[k],
+      // ]);
 
       var wb = XLSX.utils.book_new(); // make Workbook of Excel
       window["list"] = XLSX.utils.json_to_sheet(self.duplicate_leads);
