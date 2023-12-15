@@ -124,6 +124,13 @@ class LidsController extends Controller
     if ($data['search'] == '') {
       return response(['hm' => 0, 'lids' => []]);
     }
+    if (isset($data['sortBy'])) {
+      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'status' => 'status_id', 'depozit' => false][$data['sortBy']];
+      $sortDesc = $data['sortDesc'] ? 'DESC' : 'ASC';
+    } else {
+      $sortBy = 'created_at';
+      $sortDesc = 'DESC';
+    }
     $limit = $page = 0;
     $response = [];
     if (isset($data['limit'])) {
@@ -154,6 +161,16 @@ class LidsController extends Controller
         ->when($limit != 'all', function ($query) use ($limit) {
           return $query->limit($limit);
         })
+        ->when($sortBy && !in_array($sortBy, ['provider_id', 'user_id']), function ($query) use ($sortBy, $sortDesc) {
+          return $query->orderBy('lids.' . $sortBy, $sortDesc);
+        })
+        ->when($sortBy && $sortBy == 'provider_id', function ($query) use ($sortDesc) {
+          return $query->leftJoin('providers', 'providers.id', '=', 'lids.provider_id')->orderBy('providers.name', $sortDesc);
+        })
+        ->when($sortBy && $sortBy == 'user_id', function ($query) use ($sortDesc) {
+          return $query->leftJoin('users', 'users.id', '=', 'lids.user_id')->orderBy('users.name', $sortDesc);
+        })
+
         ->get();
 
       return response($response);
@@ -177,6 +194,15 @@ class LidsController extends Controller
         })
         ->when($limit != 'all', function ($query) use ($limit) {
           return $query->limit($limit);
+        })
+        ->when($sortBy && !in_array($sortBy, ['provider_id', 'user_id']), function ($query) use ($sortBy, $sortDesc) {
+          return $query->orderBy('lids.' . $sortBy, $sortDesc);
+        })
+        ->when($sortBy && $sortBy == 'provider_id', function ($query) use ($sortDesc) {
+          return $query->leftJoin('providers', 'providers.id', '=', 'lids.provider_id')->orderBy('providers.name', $sortDesc);
+        })
+        ->when($sortBy && $sortBy == 'user_id', function ($query) use ($sortDesc) {
+          return $query->leftJoin('users', 'users.id', '=', 'lids.user_id')->orderBy('users.name', $sortDesc);
         })
         ->get();
       return response($response);

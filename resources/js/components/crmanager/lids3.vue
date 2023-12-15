@@ -990,6 +990,11 @@ export default {
     searchlids3() {
       let self = this;
       const data = {};
+      const { sortBy, sortDesc } = self.options;
+      if (sortBy.length === 1) {
+        data.sortBy = sortBy[0];
+        data.sortDesc = sortDesc[0];
+      }
       self.loading = true;
       data.group_id = self.$props.user.group_id;
       data.role_id = self.$props.user.role_id;
