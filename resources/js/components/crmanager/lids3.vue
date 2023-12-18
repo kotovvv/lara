@@ -479,7 +479,7 @@
                         <div></div>
                       </v-expansion-panel-header>
                       <v-expansion-panel-content>
-                        <v-row
+                        <v-col
                           v-for="user in users.filter(function (i) {
                             return i.group_id == item.group_id;
                           })"
@@ -491,30 +491,42 @@
                             :disabled="disableuser == user.id"
                           >
                           </v-radio>
-
-                          <v-btn
-                            class="ml-3"
-                            small
-                            :color="usercolor(user)"
-                            @click="
-                              disableuser = user.id;
-                              filterGroups = [];
-                              getPage();
-                            "
-                            :value="user.hmlids"
-                            :disabled="disableuser == user.id"
-                            >{{ user.hmlids }}</v-btn
-                          >
-                          <v-btn data="new" v-if="user.statnew" label small>
-                            {{ user.statnew }}
-                          </v-btn>
-                          <v-btn data="inp" v-if="user.inp" label small>
-                            {{ user.inp }}
-                          </v-btn>
-                          <v-btn data="cb" v-if="user.cb" label small>
-                            {{ user.cb }}
-                          </v-btn>
-                        </v-row>
+                          <div class="mb-3 grp_btn">
+                            <v-btn
+                              small
+                              :color="usercolor(user)"
+                              @click="
+                                disableuser = user.id;
+                                filterGroups = [];
+                                getPage();
+                              "
+                              :value="user.hmlids"
+                              :disabled="disableuser == user.id"
+                              >{{ user.hmlids }}</v-btn
+                            >
+                            <v-btn data="new" v-if="user.statnew" label small>
+                              {{ user.statnew }}
+                            </v-btn>
+                            <v-btn data="inp" v-if="user.inp" label small>
+                              {{ user.inp }}
+                            </v-btn>
+                            <v-btn data="cb" v-if="user.cb" label small>
+                              {{ user.cb }}
+                            </v-btn>
+                            <v-btn data="notint" v-if="user.notint" label small>
+                              {{ user.notint }}
+                            </v-btn>
+                            <v-btn data="noans" v-if="user.noans" label small>
+                              {{ user.noans }}
+                            </v-btn>
+                            <v-btn data="lang" v-if="user.lang" label small>
+                              {{ user.lang }}
+                            </v-btn>
+                            <v-btn data="trash" v-if="user.trash" label small>
+                              {{ user.trash }}
+                            </v-btn>
+                          </div>
+                        </v-col>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
                   </v-expansion-panels>
@@ -1117,6 +1129,10 @@ export default {
               inp,
               cb,
               office_id,
+              notint,
+              noans,
+              lang,
+              trash,
             }) => ({
               name,
               id,
@@ -1130,6 +1146,10 @@ export default {
               inp,
               cb,
               office_id,
+              notint,
+              noans,
+              lang,
+              trash,
             })
           );
           if (self.$props.user.role_id == 1 && self.filterOffices > 0) {
@@ -1375,6 +1395,18 @@ export default {
 #usersradiogroup .v-btn[data="cb"] {
   background: #9fc6f3;
 }
+.v-btn[data="notint"]::after {
+  color: #a544d2b2;
+}
+.v-btn[data="noans"]::after {
+  color: #efa0238c;
+}
+.v-btn[data="lang"]::after {
+  color: #ff000061;
+}
+.v-btn[data="trash"]::after {
+  color: #ff0000a6;
+}
 .v-btn[data="cb"]::after {
   color: #7b80cc;
 }
@@ -1390,5 +1422,10 @@ export default {
 .title {
   font-weight: bold;
   font-size: 1.1rem;
+}
+.grp_btn {
+  gap: 0.2rem;
+  display: flex;
+  flex-wrap: wrap;
 }
 </style>
