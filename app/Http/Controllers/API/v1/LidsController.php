@@ -706,8 +706,9 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
         return $lids;
       } else {
         // $date_end = substr($req['end'],0,10);
-        $date_start = date('Y-m-d H:i:s', strtotime('-2 hour', strtotime($req['end'])));
-        $date_end = date('Y-m-d H:i:s', strtotime('+2 hour +4 minutes', strtotime($req['end'])));
+        // $date_start = date('Y-m-d H:i:s', strtotime('0', strtotime($req['end'])));
+        $date_start = $req['start'];
+        $date_end = date('Y-m-d H:i:s', strtotime('+2 hour +1 minutes', strtotime($req['end'])));
         return  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$date_start, $date_end])->get();
       }
     }

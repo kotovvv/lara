@@ -677,12 +677,22 @@ export default {
       this.selectRow();
     },
     filterOffices(newName) {
-      if (newName.includes(0) && newName.length > 1) {
+      console.log(newName.slice(-1)[0]);
+      console.log("off" + this.filterOffices);
+      if (newName[0] == 0 && newName.length > 1) {
         newName = newName.filter(function (item) {
           return item !== 0;
         });
         this.filterOffices = newName;
       }
+      if (newName.length > 1 && newName.slice(-1)[0] == 0) {
+        newName = [0];
+        this.filterOffices = newName;
+      }
+      // if (newName.includes(0) && !this.filterOffices.includes(0)) {
+      //   newName = [0];
+      //   this.filterOffices = newName;
+      // }
       localStorage.filterOffices = newName.toString();
     },
     callback(newName) {
