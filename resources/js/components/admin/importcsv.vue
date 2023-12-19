@@ -551,10 +551,37 @@ export default {
       this.$refs.radiogroup.lazyValue = null;
       this.getUsers();
     },
+    filterStatuses() {
+      const self = this;
+      self.Statuses = [];
+      let stord = this.leads;
+      stord = Object.entries(_.groupBy(stord, "status"));
+      stord.map(function (i) {
+        //i[0]//name
+        //i[1]//array
+        let el = self.statuses.find((s) => s.name == i[0]);
+        self.Statuses.push({
+          id: el.id,
+          name: i[0],
+          hm: i[1].length,
+          order: el.order,
+          color: el.color,
+        });
+      });
+      self.Statuses = _.orderBy(self.Statuses, "order");
+      setTimeout(() => {
+        const el = document.getElementById("wrp_stat");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    },
     clickrow(item) {
       console.log(item);
       let self = this;
       let data = {};
+      self.leads = [];
+      self.Statuses = [];
       self.loading = true;
       data.provider_id = item.provider_id;
       data.start = item.start;
@@ -568,14 +595,14 @@ export default {
             e.date_created = e.created_at.substring(0, 10);
             if (e.status_id)
               e.status = self.statuses.find((s) => s.id == e.status_id).name;
+            if (e.provider_id)
+              e.provider = self.providers.find(
+                (s) => s.id == e.provider_id
+              ).name;
           });
 
           self.filterStatuses();
           self.loading = false;
-          const el = document.getElementById("wrp_stat");
-          if (el) {
-            el.scrollIntoView({ behavior: "smooth" });
-          }
         })
         .catch(function (error) {
           console.log(error);
