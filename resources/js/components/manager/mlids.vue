@@ -49,6 +49,10 @@
               append-icon="mdi-phone"
               outlined
               rounded
+              @keydown.enter="
+                page = 0;
+                getLidsPost();
+              "
               @click:append="
                 page = 0;
                 getLidsPost();
