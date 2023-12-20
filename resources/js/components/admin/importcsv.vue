@@ -19,7 +19,7 @@
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item>
-        <importxlsx></importxlsx>
+        <importxlsx :user="$attrs.user"></importxlsx>
       </v-tab-item>
       <v-tab-item>
         <v-row>

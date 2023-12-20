@@ -121,6 +121,7 @@ import XLSX from "xlsx";
 import axios from "axios";
 
 export default {
+  props: ["user"],
   data: () => ({
     loading: false,
     message: "",
@@ -234,7 +235,6 @@ export default {
           ))
       );
 
-      let start = new Date().toJSON().slice(0, 19).replace("T", " ");
       let self = this;
       self.loading = true;
       let send = {};
@@ -255,12 +255,12 @@ export default {
           //======================
           let info = {};
 
-          info.start = start;
-          info.end = new Date().toJSON().slice(0, 19).replace("T", " ");
+          info.start = response.data.date_start;
+          info.end = response.data.date_end;
           info.provider_id = self.selectedProvider;
-          info.user_id = self.$attrs.user.id;
+          info.user_id = self.user.id;
           info.message = self.message;
-
+          console.log(info);
           axios
             .post("api/imports", info)
             .then(function (response) {})
@@ -268,6 +268,7 @@ export default {
               console.log(error);
             });
         })
+
         .catch(function (error) {
           console.log(error);
         });
