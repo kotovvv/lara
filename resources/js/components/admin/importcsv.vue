@@ -750,19 +750,7 @@ export default {
       promise.then(
         (result) => {
           let vm = this;
-          console.log(vm.tab);
-          if (vm.tab == 2) {
-            vm.parse_txt_emails = vm.txt2Array(vm.fileinput);
-          } else {
-            vm.parse_csv = vm
-              .csvJSON(this.fileinput)
-              .filter(
-                (v, i, a) =>
-                  a.findIndex(
-                    (t) => t.afilyator + t.tel == v.afilyator + v.tel
-                  ) === i
-              );
-          }
+          vm.parse_txt_emails = vm.txt2Array(vm.fileinput);
         },
         (error) => {
           /* handle an error */
