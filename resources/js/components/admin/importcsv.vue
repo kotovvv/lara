@@ -455,7 +455,6 @@ export default {
       return user.role_id == 2 ? "green" : "blue";
     },
     putSelectedLidsDB() {
-      let start = new Date().toJSON().slice(0, 19).replace("T", " ");
       let self = this;
       self.loading = true;
       let send = {};
@@ -486,8 +485,8 @@ export default {
             //======================
             let info = {};
 
-            info.start = start;
-            info.end = new Date().toJSON().slice(0, 19).replace("T", " ");
+            info.start = response.data.date_start;
+            info.end = response.data.date_end;
             info.provider_id = self.selectedProvider;
             info.user_id = self.$attrs.user.id;
             info.message = self.message;
