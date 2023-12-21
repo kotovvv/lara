@@ -691,11 +691,21 @@ export default {
         "text/comma-separated-values",
         "text/csv",
         "application/csv",
-        "application/excel",
-        "application/vnd.ms-excel",
-        "application/vnd.msexcel",
         "text/anytext",
         "text/plain",
+
+        "application/excel",
+        "application/xls",
+        "application/x-xls",
+        "application/vnd-xls",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.ms-excel",
+        "application/vnd.ms-excel",
+        "application/msexcel",
+        "application/x-msexcel",
+        "application/x-ms-excel",
+        "application/x-excel",
+        "application/x-dos_ms_excel",
       ];
       if (ftype.indexOf(f.type) >= 0) {
         this.createInput(f);
@@ -736,20 +746,50 @@ export default {
 
       return result; // JavaScript object
     },
+    fixdata(data) {
+      var o = "",
+        l = 0,
+        w = 10240;
+      for (; l < data.byteLength / w; ++l)
+        o += String.fromCharCode.apply(
+          null,
+          new Uint8Array(data.slice(l * w, l * w + w))
+        );
+      o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
+      return o;
+    },
     createInput(file) {
+      let ext = file.name.slice(
+        (Math.max(0, file.name.lastIndexOf(".")) || Infinity) + 1
+      );
+
       let promise = new Promise((resolve, reject) => {
         var reader = new FileReader();
         var vm = this;
         reader.onload = (e) => {
           resolve((vm.fileinput = reader.result));
         };
-        reader.readAsText(file);
+        if (ext == "txt" || ext == "csv") {
+          reader.readAsText(file);
+        } else {
+          reader.readAsBinaryString(file);
+        }
       });
 
       promise.then(
         (result) => {
           let vm = this;
-          vm.parse_txt_emails = vm.txt2Array(vm.fileinput);
+          if (ext == "txt" || ext == "csv") {
+            vm.parse_txt_emails = vm.txt2Array(vm.fileinput);
+          } else {
+            var workbook = XLSX.read(result, { type: "binary" }),
+              firstSheetName = workbook.SheetNames[0],
+              worksheet = workbook.Sheets[firstSheetName];
+
+            vm.list_email = XLSX.utils.sheet_to_csv(worksheet, {
+              header: 1,
+            });
+          }
         },
         (error) => {
           /* handle an error */
