@@ -260,7 +260,7 @@ export default {
           info.provider_id = self.selectedProvider;
           info.user_id = self.user.id;
           info.message = self.message;
-          console.log(info);
+          // console.log(info);
           axios
             .post("api/imports", info)
             .then(function (response) {})
