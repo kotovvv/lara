@@ -494,8 +494,12 @@ export default {
             //======================
             let info = {};
 
-            info.start = response.data.date_start;
-            info.end = response.data.date_end;
+            info.start = response.data.date_start
+              .substring(0, 19)
+              .replace("T", " ");
+            info.end = response.data.date_end
+              .substring(0, 19)
+              .replace("T", " ");
             info.provider_id = self.selectedProvider;
             info.user_id = self.$attrs.user.id;
             info.message = self.message;
@@ -532,8 +536,12 @@ export default {
             //======================
             let info = {};
 
-            info.start = response.data.date_start;
-            info.end = response.data.date_end;
+            info.start = response.data.date_start
+              .substring(0, 19)
+              .replace("T", " ");
+            info.end = response.data.date_end
+              .substring(0, 19)
+              .replace("T", " ");
             info.provider_id = self.selectedProvider;
             info.user_id = self.$attrs.user.id;
             info.message = self.message;
