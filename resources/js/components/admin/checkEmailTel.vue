@@ -34,6 +34,12 @@
             truncate-length="24"
             @change="onFileChange"
           ></v-file-input>
+          <v-select
+            v-model="printfields"
+            :items="printfield"
+            label="Поля для отчёта"
+            multiple
+          ></v-select>
           <v-btn @click="checkEmails" v-if="list_email" class="primary"
             >Проверить<v-progress-circular
               v-if="loading"
@@ -84,6 +90,32 @@ export default {
       { text: "Оператор", value: "user_name" },
       { text: "Создан", value: "created" },
     ],
+    printfield: [
+      "tel",
+      "name",
+      "created",
+      "updated",
+      "status_id",
+      "status_name",
+      "email",
+      "user_name",
+      "provider_name",
+      "afilyator",
+      "office_name",
+    ],
+    printfields: [
+      "tel",
+      "name",
+      "created",
+      "updated",
+      "status_id",
+      "status_name",
+      "email",
+      "user_name",
+      "provider_name",
+      "afilyator",
+      "office_name",
+    ],
     duplicate_leads: [],
     files: [],
   }),
@@ -132,6 +164,7 @@ export default {
         .split("\n");
       data.check = 1;
       data.email_tel = vm.email_tel;
+      data.printfields = vm.printfields;
       axios
         .post("api/checkEmails", data)
         .then(function (res) {

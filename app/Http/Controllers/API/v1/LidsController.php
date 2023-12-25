@@ -334,8 +334,21 @@ class LidsController extends Controller
       $where_email_tel = " WHERE `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\")";
       $group_email_tel = " GROUP BY `email`";
     }
+
+    $a_select = [];
+    if (isset($data['printfields'])) {
+      $array = ['tel' => 'l.tel', 'name' => 'l.name', 'created' => 'l.created_at created', 'updated' => 'l.updated_at updated', 'status_id' => 'l.status_id', 'status_name' => 's.name status_name', 'email' => 'l.email', 'user_name' => 'u.name user_name', 'provider_name' => 'p.name provider_name', 'afilyator' => 'l.afilyator', 'office_name' => 'o.name office_name'];
+      foreach ($data['printfields'] as $el) {
+        if ($array[$el]) {
+          $a_select[$el] = $array[$el];
+        }
+      }
+    } else {
+      $a_select = ['l.tel', 'l.name', 'l.created_at created', 'l.updated_at updated', 'l.status_id', 's.name status_name', 'l.email', 'u.name user_name', 'p.name provider_name', 'l.afilyator', 'o.name office_name'];
+    }
+
     if (isset($data['check'])) {
-      $sql = "SELECT l.`id`, l.`tel`,l.`name`,l.`created_at` created, l.`updated_at` updated, l.`status_id`, s.`name` status_name, l.`email`, u.`name` user_name, p.`name` provider_name, l.`afilyator`, o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel . " ORDER BY l.created_at ASC";
+      $sql = "SELECT l.`id`," . implode(',', $a_select) . " FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel . " ORDER BY l.created_at ASC";
       $results['leads'] =  DB::select(DB::raw($sql));
     }
 
