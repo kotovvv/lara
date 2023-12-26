@@ -412,7 +412,14 @@ export default {
       ]);
 
       var wb = XLSX.utils.book_new(); // make Workbook of Excel
-      window["list"] = XLSX.utils.json_to_sheet(self.duplicate_leads);
+      const newLeads = self.duplicate_leads.map((obj) => {
+        const newObj = {};
+        self.printfields.forEach((prop) => {
+          newObj[prop] = obj[prop];
+        });
+        return newObj;
+      });
+      window["list"] = XLSX.utils.json_to_sheet(newLeads);
       XLSX.utils.book_append_sheet(wb, window["list"], "duplicate_emailes");
       const unique = self.out_db.map((i) => ({ email: i }));
       window["unique"] = XLSX.utils.json_to_sheet(unique);
@@ -439,7 +446,6 @@ export default {
         .split("\n");
       data.check = 1;
       data.email_tel = vm.email_tel;
-      data.printfields = vm.printfields;
       axios
         .post("api/checkEmails", data)
         .then(function (res) {
