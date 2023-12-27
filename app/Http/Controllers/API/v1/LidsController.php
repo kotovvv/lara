@@ -600,7 +600,7 @@ FROM
     INNER JOIN `lids` l
         ON (d.`lid_id` = l.`id`)
 WHERE (l.`provider_id` = '" . $f_key->id . "'
-    AND d.`created_at` BETWEEN '" . $date[0] . "' AND  '" . $date[1] . "')";
+    AND d.`created_at` BETWEEN '" . $date[0] . " 00:00:00' AND  '" . $date[1] . " 23:59:59')";
 
     $leads =  DB::select(DB::raw($sql));
     $response = [];
