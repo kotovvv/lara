@@ -251,9 +251,9 @@ class LidsController extends Controller
       $a_lid['text'] = isset($lid['text']) ? $lid['text'] : '';
       $a_lid['created_at'] = Now();
       unset($a_lid['office_id']);
-if($a_lid['tel']){
-  DB::table('logs')->insert($a_lid);
-}
+      if ($a_lid['tel']) {
+        DB::table('logs')->insert($a_lid);
+      }
     }
     if ($res) {
       return response('Lids updated', 200);
