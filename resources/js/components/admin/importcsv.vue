@@ -153,7 +153,11 @@
               ref="importtable"
               @click:row="clickrow"
             >
-              <template v-slot:item.id="{ item }"> </template>
+              <template v-slot:item.id="{ item }">
+                <v-btn @click.stop="deleteImport(item)" plain
+                  ><v-icon>mdi-delete</v-icon></v-btn
+                >
+              </template>
             </v-data-table>
           </v-col>
           <v-col cols="12" v-if="Statuses">
@@ -274,6 +278,7 @@
         </v-container>
       </v-tab-item>
     </v-tabs-items>
+    <ConfirmDlg ref="confirm" />
   </div>
 </template>
 
@@ -403,6 +408,24 @@ export default {
     },
   },
   methods: {
+    async deleteImport(item) {
+      const self = this;
+      if (
+        await this.$refs.confirm.open(
+          "Видалити???",
+          "Усі імпортовані ліди за вказаним записом будуть видалені безповоротно. Видаляємо?"
+        )
+      ) {
+        axios
+          .post("api/deleteImportedLids", item)
+          .then(function (response) {
+            self.getImports();
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    },
     exportXlsx() {
       const self = this;
       const obj = _.groupBy(self.filteredItems, "status");
@@ -849,6 +872,7 @@ export default {
   components: {
     importBTC,
     importxlsx,
+    ConfirmDlg: () => import("./ConfirmDlg"),
   },
 };
 </script>

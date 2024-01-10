@@ -753,6 +753,18 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     Log::whereIn('lid_id', $lids)->delete();
   }
 
+  public function deleteImportedLids(Request $request)
+  {
+    $imported = $request->all();
+    $request = new Request();
+
+    $lids = Lid::select('id')->where('provider_id', $imported['provider_id'])->whereBetween('created_at', [$imported['start'], $imported['end']])->get()->toArray();
+
+    $this->deletelids($request->merge($lids));
+    DB::table('imports')->where('id', $imported['id'])->delete();
+
+    return response('Delete lids ' . count($lids), 200);
+  }
 
   public function set_zaliv(Request $request)
   {

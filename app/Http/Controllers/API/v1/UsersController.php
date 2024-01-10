@@ -135,7 +135,9 @@ class UsersController extends Controller
   {
     $data = $request->all();
 
-    if (isset($data['password'])) $password = $data['password'] ? Hash::make($data['password']) : Auth::user()->password;
+    if (isset($data['password'])) {
+      $password = $data['password'] ? Hash::make($data['password']) : Auth::user()->password;
+    }
     // $file_name = $data['pic'] == 'null' ? NULL : $data['pic'];
     // if ($data['pic'] != 'null' && is_file($data['pic'])) {
     //   $file_name = pathinfo($data['pic']->getClientOriginalName(), PATHINFO_FILENAME) . time() . '.' . $data['pic']->getClientOriginalExtension();
