@@ -274,13 +274,11 @@ class LidsController extends Controller
 
       if (isset($lid['name'])) {
         $n_lid->name =  substr(trim($lid['name']), 0, 50);
-      } else {
-        $n_lid->name = time();
+      }
+      if (isset($lid['lastname'])) {
+        $n_lid->name =  substr($n_lid->name . ' ' . trim($lid['lastname']), 0, 50);
       }
 
-      if (isset($lid['lastname'])) {
-        $n_lid->name =  $n_lid->name . ' ' . substr(trim($lid['lastname']), 0, 50);
-      }
 
       if (isset($lid['tel'])) {
         $n_lid->tel =  preg_replace('/[^0-9]/', '', $lid['tel']);
