@@ -209,6 +209,58 @@
                         :items-per-page-text="''"
                       />
                     </v-col>
+                    <v-col cols="3">
+                      <v-select
+                        label="Отбор по статусам"
+                        ref="filterStatus"
+                        color="red"
+                        v-model="filterStatus"
+                        :items="Statuses"
+                        item-text="name"
+                        item-value="id"
+                        outlined
+                        rounded
+                        :multiple="true"
+                      >
+                        <template v-slot:selection="{ item, index }">
+                          <span v-if="index === 0">{{ item.name }} </span>
+                          <span
+                            v-if="index === 1"
+                            class="grey--text text-caption"
+                          >
+                            (+{{ filterStatus.length - 1 }} )
+                          </span>
+                        </template>
+                        <template v-slot:item="{ item, attrs }">
+                          <v-badge
+                            :value="attrs['aria-selected'] == 'true'"
+                            color="#7620df"
+                            dot
+                            left
+                          >
+                            <i
+                              :style="{
+                                background: item.color,
+                                outline: '1px solid grey',
+                              }"
+                              class="sel_stat mr-4"
+                            ></i>
+                          </v-badge>
+                          {{ item.name }}
+                        </template>
+                      </v-select>
+                    </v-col>
+                    <v-col cols="3">
+                      <v-btn
+                        outlined
+                        rounded
+                        @click="exportImportedXlsx"
+                        class="border"
+                      >
+                        <v-icon left> mdi-file-excel </v-icon>
+                        Скачать таблицу
+                      </v-btn>
+                    </v-col>
                   </v-row>
                 </template>
               </v-data-table>
@@ -351,6 +403,7 @@ export default {
     sortKey: "tel",
     tab: 0,
     Statuses: [],
+    filterStatus: [],
     leads: [],
     email_tel: "email",
     printfield: [
@@ -379,6 +432,7 @@ export default {
       "afilyator",
       "office_name",
     ],
+    item: {},
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -425,6 +479,31 @@ export default {
             console.log(error);
           });
       }
+    },
+    exportImportedXlsx() {
+      const self = this;
+      let flids;
+      if (self.filterStatus.length > 0) {
+        flids = _.filter(self.leads, (el) => {
+          return self.filterStatus.includes(el.status_id);
+        }).map(({ name, email, tel, status }) => ({
+          name,
+          email,
+          tel,
+          status,
+        }));
+      }
+      flids = self.leads;
+      var wb = XLSX.utils.book_new(); // make Workbook of Excel
+
+      window["list"] = XLSX.utils.json_to_sheet(flids);
+      XLSX.utils.book_append_sheet(wb, window["list"], "imported leads");
+
+      // export Excel file
+      XLSX.writeFile(
+        wb,
+        "imported_" + self.item.start.replaceAll(/ |:/g, "_") + ".xlsx"
+      );
     },
     exportXlsx() {
       const self = this;
@@ -647,12 +726,12 @@ export default {
       }, 100);
     },
     clickrow(item) {
-      console.log(item);
       let self = this;
       let data = {};
       self.leads = [];
       self.Statuses = [];
       self.loading = true;
+      self.item = item;
       data.provider_id = item.provider_id;
       data.start = item.start;
       data.end = item.end;
