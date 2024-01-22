@@ -863,7 +863,9 @@ export default {
 
           if (self.page == 0) {
             self.Statuses = res.data.statuses;
-            self.load_mess = res.data.load_mess;
+            if (self.filter_load_mess.length == 0) {
+              self.load_mess = res.data.load_mess;
+            }
           }
 
           self.lids = res.data.lids;
