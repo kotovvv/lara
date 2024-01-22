@@ -273,10 +273,10 @@ class LidsController extends Controller
       $n_lid = new Lid;
 
       if (isset($lid['name'])) {
-        $n_lid->name = utf8_encode(substr(trim($lid['name']), 0, 50));
+        $n_lid->name = substr(trim($lid['name']), 0, 50);
       }
       if (isset($lid['lastname'])) {
-        $n_lid->name = substr($n_lid->name . ' ' . utf8_encode(trim($lid['lastname'])), 0, 50);
+        $n_lid->name = substr($n_lid->name . ' ' . trim($lid['lastname']), 0, 50);
         $n_lid->name = substr($n_lid->name, 0, 50);
       }
 
