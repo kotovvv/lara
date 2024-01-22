@@ -268,6 +268,10 @@ class LidsController extends Controller
     $data = $request->all();
     $office_id = User::where('id', (int) $data['user_id'])->value('office_id');
     //Debugbar::info($data['data']);
+    $load_mess = '';
+    if (isset($data['message'])) {
+      $load_mess = $data['message'];
+    }
 
     foreach ($data['data'] as $lid) {
       $n_lid = new Lid;
@@ -293,9 +297,10 @@ class LidsController extends Controller
       if (isset($lid['email'])) {
         $n_lid->email = $lid['email'];
       } else {
-        $n_lid->email = time() . '@none.com';
+        $n_lid->email = '';
       }
 
+      $n_lid->load_mess = $load_mess;
 
       $n_lid->user_id = $data['user_id'];
       $n_lid->office_id = $office_id;
@@ -434,6 +439,9 @@ class LidsController extends Controller
     $providers = $date = $users_ids = [];
     $where_date = '';
     $duplicate_tel = [];
+
+    $load_mess = isset($data['load_mess']) && $data['load_mess'] != '' ? $data['load_mess'] : '';
+
     if (isset($data['duplicate_tel'])) {
       $duplicate_tel = Lid::select('tel')->where('user_id', $id)->groupBy('tel')->having(DB::raw('count(tel)'), '>', 1);
     }
@@ -486,6 +494,9 @@ class LidsController extends Controller
       ->when(count($date) > 0, function ($query) use ($date) {
         return $query->whereBetween('lids.created_at', $date);
       })
+      ->when($load_mess != '', function ($query) use ($load_mess) {
+        return $query->where('load_mess', $load_mess);
+      })
       ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {
         return $query->where(DB::Raw('(SELECT count(*) cnt FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9)'), '>', 0);
       });
@@ -515,6 +526,7 @@ class LidsController extends Controller
       ->get();
 
     if ($page == 0) {
+      $response['load_mess'] = $q_leads->select('load_mess')->groupBy('load_mess')->pluck('load_mess');
       $response['statuses'] = $q_leads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
         ->groupBy('id')

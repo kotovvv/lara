@@ -177,6 +177,18 @@
             rounded
           ></v-text-field>
         </v-col>
+        <v-col>
+          <p>Фильтр по базам</p>
+          <v-select
+            v-model="filter_load_mess"
+            :items="load_mess"
+            @change="getPage(0)"
+            outlined
+            rounded
+            clearable
+          >
+          </v-select>
+        </v-col>
         <v-col v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
           <p>Фильтр office</p>
           <v-select
@@ -580,6 +592,7 @@ export default {
     headers: [
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
+      { text: "Название базы", value: "load_mess" },
       { text: "Телефон.", align: "start", value: "tel" },
       { text: "Афилятор", value: "afilyator" },
       { text: "Поставщик", value: "provider" },
@@ -592,6 +605,8 @@ export default {
       { text: "Звонков", value: "qtytel" },
       { text: "ПЕРЕЗВОН", value: "ontime" },
     ],
+    filter_load_mess: "",
+    load_mess: [],
     parse_header: [],
     sortOrders: {},
     sortKey: "tel",
@@ -835,6 +850,7 @@ export default {
       data.limit = self.limit;
       data.page = self.page;
       data.office_id = self.filterOffices;
+      data.load_mess = self.filter_load_mess;
 
       if (this.callback === true) {
         data.callback = 1;
@@ -847,6 +863,7 @@ export default {
 
           if (self.page == 0) {
             self.Statuses = res.data.statuses;
+            self.load_mess = res.data.load_mess;
           }
 
           self.lids = res.data.lids;
@@ -968,6 +985,7 @@ export default {
       data.limit = self.limit;
       data.page = self.page;
       data.search = self.searchAll;
+      data.load_mess = self.filter_load_mess;
       data.office_id = self.filterOffices;
       axios
         .post("api/Lid/searchlids3", data)

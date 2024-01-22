@@ -243,6 +243,7 @@ export default {
       if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
       }
+      send.message = self.message;
       send.data = json;
       axios
         .post("api/Lid/newlids", send)

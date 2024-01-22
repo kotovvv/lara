@@ -492,8 +492,14 @@ export default {
           tel,
           status,
         }));
+      } else {
+        flids = self.leads.map(({ name, email, tel, status }) => ({
+          name,
+          email,
+          tel,
+          status,
+        }));
       }
-      flids = self.leads;
       var wb = XLSX.utils.book_new(); // make Workbook of Excel
 
       window["list"] = XLSX.utils.json_to_sheet(flids);
@@ -601,6 +607,7 @@ export default {
       self.loading = true;
       let send = {};
       send.user_id = this.userid;
+      send.message = this.message;
       send.provider_id = this.selectedProvider;
       if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
