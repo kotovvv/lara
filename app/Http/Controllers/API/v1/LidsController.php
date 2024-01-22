@@ -283,6 +283,9 @@ class LidsController extends Controller
 
       if (isset($lid['tel'])) {
         $n_lid->tel =  preg_replace('/[^0-9]/', '', $lid['tel']);
+        if (strlen($n_lid->tel) < 6) {
+          continue;
+        }
       } else {
         continue;
       }
