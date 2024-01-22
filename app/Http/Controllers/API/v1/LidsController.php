@@ -273,10 +273,10 @@ class LidsController extends Controller
       $n_lid = new Lid;
 
       if (isset($lid['name'])) {
-        $n_lid->name = substr(trim($lid['name']), 0, 50);
+        $n_lid->name = mb_convert_encoding(substr(trim($lid['name']), 0, 50), 'UTF-8', 'UTF-8');
       }
       if (isset($lid['lastname'])) {
-        $n_lid->name = substr($n_lid->name . ' ' . trim($lid['lastname']), 0, 50);
+        $n_lid->name = $n_lid->name . ' ' . mb_convert_encoding(substr(trim($lid['lastname']), 0, 50), 'UTF-8', 'UTF-8');
         $n_lid->name = substr($n_lid->name, 0, 50);
       }
 
@@ -316,7 +316,11 @@ class LidsController extends Controller
       if ($n_lid->provider_id == '76') {
         $n_lid->status_id = 8;
       }
-      $n_lid->save();
+      try {
+        $n_lid->save();
+      } catch (\Throwable $th) {
+        //throw $th;
+      }
     }
     $res['date_end'] = Now();
     return response($res, 200);
