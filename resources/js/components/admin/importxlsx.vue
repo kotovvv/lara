@@ -248,9 +248,11 @@ export default {
       axios
         .post("api/Lid/newlids", send)
         .then(function (response) {
-          self.getUsers();
-          self.loading = false;
-          self.files = [];
+          // self.getUsers();
+          json = {};
+          send = {};
+          self.header = [];
+          self.files = null;
           self.table = [];
           // save to imports db
           //======================
@@ -264,14 +266,19 @@ export default {
           info.user_id = self.user.id;
           info.message = self.message;
           // console.log(info);
+          return info;
+        })
+        .then((res) => {
           axios
-            .post("api/imports", info)
-            .then(function (response) {})
+            .post("api/imports", res)
+            .then(function (response) {
+              self.selectedProvider = null;
+              self.loading = false;
+            })
             .catch(function (error) {
               console.log(error);
             });
         })
-
         .catch(function (error) {
           console.log(error);
         });
