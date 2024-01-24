@@ -145,7 +145,7 @@
           </v-row>
         </v-main>
         <v-row v-else>
-          <v-col cols="12">
+          <v-col cols="8">
             <v-data-table
               :headers="import_headers"
               item-key="id"
@@ -160,6 +160,22 @@
               </template>
             </v-data-table>
           </v-col>
+          <v-col cols="4">
+            <v-data-table
+              :headers="import_prov_headers"
+              item-key="provider_id + start"
+              :items="importsProvLeads"
+              ref="importprovtable"
+              @click:row="clickrow"
+            >
+              <!-- <template v-slot:item.id="{ item }">
+                <v-btn @click.stop="deleteImport(item)" plain
+                  ><v-icon>mdi-delete</v-icon></v-btn
+                >
+              </template> -->
+            </v-data-table>
+          </v-col>
+
           <v-col cols="12" v-if="Statuses">
             <div class="wrp__statuses" id="wrp_stat">
               <template v-for="(i, x) in Statuses">
@@ -396,6 +412,11 @@ export default {
       { text: "Оператор", value: "user_name" },
       { text: "Создан", value: "created" },
     ],
+    import_prov_headers: [
+      { text: "Провайдер", value: "name" },
+      { text: "Дата", value: "start" },
+    ],
+    importsProvLeads: [],
     duplicate_leads: [],
     parse_header: [],
     parse_csv: [],
@@ -449,6 +470,7 @@ export default {
   },
   mounted() {
     this.getImports();
+    this.ImportedProvLids();
     this.getProviders();
     // this.getUsers();
     this.getStatuses();
@@ -462,6 +484,17 @@ export default {
     },
   },
   methods: {
+    ImportedProvLids() {
+      const self = this;
+      axios
+        .get("api/ImportedProvLids")
+        .then(function (response) {
+          self.importsProvLeads = response.data;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     async deleteImport(item) {
       const self = this;
       if (
@@ -732,6 +765,7 @@ export default {
         }
       }, 100);
     },
+
     clickrow(item) {
       let self = this;
       let data = {};
@@ -741,7 +775,9 @@ export default {
       self.item = item;
       data.provider_id = item.provider_id;
       data.start = item.start;
-      data.end = item.end;
+      if (item.end != undefined) {
+        data.end = item.end;
+      }
 
       axios
         .post("api/getlidsImportedProvider", data)

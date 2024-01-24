@@ -682,6 +682,9 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
         $date_end = date('Y-m-d H:i:s', strtotime('+1 hour', strtotime($req['end'])));
         return  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$date_start, $date_end])->get();
       }
+    } else {
+      $sql = "SELECT `id`,`tel`,`name`,`email`,`created_at`,`status_id` FROM `lids` l WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "')";
+      return DB::select(DB::raw($sql));
     }
     return response('Some not good(', 404);
   }
@@ -1235,6 +1238,13 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     return response($qtytel);
   }
 
+
+  public function ImportedProvLids()
+  {
+
+    $sql = "SELECT il.`api_key_id` provider_id,p.`name`, DATE(`upload_time`) start FROM `imported_leads` il LEFT JOIN `providers` p ON (p.id = il.`api_key_id`) GROUP BY start ORDER BY start DESC";
+    return DB::select(DB::raw($sql));
+  }
   /**
    * Remove the specified resource from storage.
    *
