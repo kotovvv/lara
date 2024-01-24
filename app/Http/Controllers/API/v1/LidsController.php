@@ -1241,7 +1241,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
   public function ImportedProvLids()
   {
-
+    DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
     $sql = "SELECT il.`api_key_id` provider_id,p.`name`, DATE(`upload_time`) start FROM `imported_leads` il LEFT JOIN `providers` p ON (p.id = il.`api_key_id`) GROUP BY start ORDER BY start DESC";
     return DB::select(DB::raw($sql));
   }

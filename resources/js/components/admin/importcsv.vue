@@ -175,7 +175,7 @@
               </template> -->
             </v-data-table>
           </v-col>
-
+          <v-col cols="12"> {{ item.name }} {{ item.start }} </v-col>
           <v-col cols="12" v-if="Statuses">
             <div class="wrp__statuses" id="wrp_stat">
               <template v-for="(i, x) in Statuses">
@@ -773,6 +773,9 @@ export default {
       self.Statuses = [];
       self.loading = true;
       self.item = item;
+      self.item.name = self.providers.find(
+        (s) => s.id == item.provider_id
+      ).name;
       data.provider_id = item.provider_id;
       data.start = item.start;
       if (item.end != undefined) {
