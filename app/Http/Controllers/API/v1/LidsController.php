@@ -677,6 +677,11 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       $lids =  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$req['start'], $req['end']])->get();
       if ($lids->count()) {
         return $lids;
+      } else {
+        $sql = "SELECT `message` FROM `imports` WHERE `start` = '" . $req['start'] . "' AND `end` = '" . $req['end'] . "' AND `provider_id` = " . $req['provider_id'];
+        $message =  DB::select(DB::raw($sql));
+        // return $message;
+        return  Lid::where('load_mess', $message[0]->message)->get();
       }
       // else {
       //   // $date_end = substr($req['end'],0,10);
