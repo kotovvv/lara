@@ -264,7 +264,7 @@ class LidsController extends Controller
   public function newlids(Request $request)
   {
     $res = [];
-    $res['date_start'] = Now();
+    $res['date_start'] = date('Y-m-d H:i:s');
     $data = $request->all();
     $office_id = User::where('id', (int) $data['user_id'])->value('office_id');
     //Debugbar::info($data['data']);
@@ -327,7 +327,7 @@ class LidsController extends Controller
         //throw $th;
       }
     }
-    $res['date_end'] = Now();
+    $res['date_end'] = date('Y-m-d H:i:s');
     return response($res, 200);
   }
 
@@ -677,12 +677,13 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       $lids =  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$req['start'], $req['end']])->get();
       if ($lids->count()) {
         return $lids;
-      } else {
-        // $date_end = substr($req['end'],0,10);
-        $date_start = date('Y-m-d H:i:s', strtotime('-1 hour', strtotime($req['end'])));
-        $date_end = date('Y-m-d H:i:s', strtotime('+1 hour', strtotime($req['end'])));
-        return  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$date_start, $date_end])->get();
       }
+      // else {
+      //   // $date_end = substr($req['end'],0,10);
+      //   $date_start = date('Y-m-d H:i:s', strtotime('-1 hour', strtotime($req['end'])));
+      //   $date_end = date('Y-m-d H:i:s', strtotime('+1 hour', strtotime($req['end'])));
+      //   return  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$date_start, $date_end])->get();
+      // }
     } else {
       $sql = "SELECT `id`,`tel`,`name`,`email`,`created_at`,`status_id` FROM `lids` l WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "')";
       return DB::select(DB::raw($sql));
@@ -800,21 +801,16 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
       $n_lid->name =  $req['umcfields']['name'];
-    } else {
-      $n_lid->name = time();
     }
 
     if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
       $n_lid->tel =  $req['umcfields']['phone'];
-    } else {
-      $n_lid->tel = time();
     }
 
     if (isset($req['umcfields']['email']) && strlen($req['umcfields']['email']) > 1) {
       $n_lid->email = $req['umcfields']['email'];
-    } else {
-      $n_lid->email = time() . '@none.com';
     }
+
     if (isset($req['text']) && strlen($req['text']) > 1) {
       $n_lid->text = $req['text'];
     } else {
@@ -823,6 +819,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
+    $n_lid->load_mess = Provider::where('id', $f_key->id)->value('name') . ' ' . date('d-m') . '(API)';
+
     $n_lid->user_id = (int) $req['user_id'];
     $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
 
@@ -870,24 +868,18 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     if ($fio) {
       $n_lid->name =  $fio;
-    } else {
-      $n_lid->name = time();
     }
-
     if ($phonestr) {
       $n_lid->tel =  $phonestr;
-    } else {
-      $n_lid->tel = time();
     }
 
     if ($email) {
       $n_lid->email = $email;
-    } else {
-      $n_lid->email = time() . '@none.com';
     }
 
     $n_lid->afilyator = $affiliate;
     $n_lid->provider_id = $f_key->id;
+    $n_lid->load_mess = Provider::where('id', $f_key->id)->value('name') . ' ' . date('d-m') . '(API)';
     $n_lid->user_id = (int) $req['user_id'];
     $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
 
@@ -926,24 +918,19 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     if (isset($req['umcfields[name]']) && strlen($req['umcfields[name]']) > 1) {
       $n_lid->name =  $req['umcfields[name]'];
-    } else {
-      $n_lid->name = time();
     }
 
     if (isset($req['umcfields[phone]']) && strlen($req['umcfields[phone]']) > 1) {
       $n_lid->tel =  $req['umcfields[phone]'];
-    } else {
-      $n_lid->tel = time();
     }
 
     if (isset($req['umcfields[email]']) && strlen($req['umcfields[email]']) > 1) {
       $n_lid->email = $req['umcfields[email]'];
-    } else {
-      $n_lid->email = time() . '@none.com';
     }
 
     $n_lid->afilyator = $req['umcfields[affiliate_user]'];
     $n_lid->provider_id = $f_key->id;
+    $n_lid->load_mess = Provider::where('id', $f_key->id)->value('name') . ' ' . date('d-m') . '(API)';
     $n_lid->user_id = $req['user_id'];
     $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
     $n_lid->created_at = Now();
@@ -970,18 +957,15 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
       $n_lid->name =  $req['umcfields']['name'];
-    } else {
-      $n_lid->name = time();
     }
 
     if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
       $n_lid->tel =  $req['umcfields']['phone'];
-    } else {
-      $n_lid->tel = time();
     }
     $n_lid->email = $req['umcfields']['email'];
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
     $n_lid->provider_id = $f_key->id;
+    $n_lid->load_mess = Provider::where('id', $f_key->id)->value('name') . ' ' . date('d-m') . '(API)';
     $n_lid->user_id = $req['user_id'];
     $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
     $n_lid->created_at = Now();
