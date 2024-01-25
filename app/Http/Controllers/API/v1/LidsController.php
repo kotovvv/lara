@@ -290,7 +290,7 @@ class LidsController extends Controller
   public function newlids(Request $request)
   {
     $res = [];
-    $res['date_start'] = Now();
+    $res['date_start'] = date('Y-m-d H:i:s');;
     $data = $request->all();
     $office_id = User::where('id', (int) $data['user_id'])->value('office_id');
     //Debugbar::info($data['data']);
@@ -300,8 +300,6 @@ class LidsController extends Controller
 
       if (isset($lid['name'])) {
         $n_lid->name =  substr(trim($lid['name']), 0, 50);
-      } else {
-        $n_lid->name = time();
       }
 
       if (isset($lid['lastname'])) {
@@ -316,8 +314,6 @@ class LidsController extends Controller
 
       if (isset($lid['email'])) {
         $n_lid->email = $lid['email'];
-      } else {
-        $n_lid->email = time() . '@none.com';
       }
 
 
@@ -342,7 +338,7 @@ class LidsController extends Controller
       }
       $n_lid->save();
     }
-    $res['date_end'] = Now();
+    $res['date_end'] = date('Y-m-d H:i:s');
     return response($res, 200);
   }
 
@@ -704,13 +700,14 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       $lids =  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$req['start'], $req['end']])->get();
       if ($lids->count()) {
         return $lids;
-      } else {
-        // $date_end = substr($req['end'],0,10);
-        // $date_start = date('Y-m-d H:i:s', strtotime('0', strtotime($req['end'])));
-        $date_start = $req['start'];
-        $date_end = date('Y-m-d H:i:s', strtotime('+2 hour +1 minutes', strtotime($req['end'])));
-        return  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$date_start, $date_end])->get();
       }
+      //  else {
+      //   // $date_end = substr($req['end'],0,10);
+      //   // $date_start = date('Y-m-d H:i:s', strtotime('0', strtotime($req['end'])));
+      //   $date_start = $req['start'];
+      //   $date_end = date('Y-m-d H:i:s', strtotime('+2 hour +1 minutes', strtotime($req['end'])));
+      //   return  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$date_start, $date_end])->get();
+      // }
     }
     return response('Some not good(', 404);
   }
