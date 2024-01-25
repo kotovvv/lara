@@ -526,13 +526,13 @@ class LidsController extends Controller
       ->get();
 
     if ($page == 0) {
-      $qq_leads = $q_leads;
-      $response['load_mess'] = $q_leads->select('load_mess')->groupBy('load_mess')->pluck('load_mess');
-      $response['statuses'] = $qq_leads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
+
+      $response['statuses'] = $q_leads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
-        ->groupBy('id')
+        ->groupBy('statuses.id')
         ->orderBy('statuses.order', 'ASC')
         ->get();
+      $response['load_mess'] = $q_leads->select('load_mess')->groupBy('load_mess')->pluck('load_mess');
     }
     return response($response);
   }
