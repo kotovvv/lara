@@ -40,7 +40,11 @@
           ></v-select>
         </v-col>
         <v-col cols="4">
-          <v-textarea v-model="message" label="Сообщение" rows="1"></v-textarea>
+          <v-textarea
+            v-model="load_mess"
+            label="Сообщение"
+            rows="1"
+          ></v-textarea>
         </v-col>
       </v-row>
       <v-progress-linear
@@ -124,6 +128,7 @@ export default {
   props: ["user"],
   data: () => ({
     loading: false,
+    load_mess: "",
     message: "",
     snackbar: false,
     providers: [],
@@ -214,8 +219,12 @@ export default {
       return o;
     },
     putSelectedLidsDB() {
-      this.loading = true;
-
+      let self = this;
+      if (self.load_mess == "") {
+        self.message = 'Обязательно заполните поле "Сообщение"';
+        self.snackbar = true;
+        return false;
+      }
       let json = {};
       //make json from header and body
       json = this.table.map((_, row) =>
@@ -235,7 +244,6 @@ export default {
           ))
       );
 
-      let self = this;
       self.loading = true;
       let send = {};
       send.user_id = this.userid;
@@ -243,7 +251,7 @@ export default {
       if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
       }
-      send.message = self.message;
+      send.message = self.load_mess;
       send.data = json;
       axios
         .post("api/Lid/newlids", send)
@@ -264,7 +272,7 @@ export default {
           info.end = response.data.date_end.substring(0, 19).replace("T", " ");
           info.provider_id = self.selectedProvider;
           info.user_id = self.user.id;
-          info.message = self.message;
+          info.message = self.load_mess;
           // console.log(info);
           return info;
         })

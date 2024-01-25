@@ -789,6 +789,9 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if (count($lids) > 0) {
       $this->deletelids($request->merge($lids));
     } else {
+      if ($imported['message'] == '') {
+        return response('Empty load_mess', 404);
+      }
       Lid::where('load_mess', $imported['message'])->delete();
     }
     DB::table('imports')->where('id', $imported['id'])->delete();
