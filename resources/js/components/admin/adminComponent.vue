@@ -71,7 +71,8 @@ const calls = () => import("../crmanager/calls");
 const lids3 = () => import("../crmanager/lids3");
 const report = () => import("./report");
 const reportPie = () => import("./reportPie");
-const reportBTC = () => import("./reportBTC");
+const reportUserPie = () => import("./reportUserPie");
+// const reportBTC = () => import("./reportBTC");
 
 export default {
   props: ["user"],
@@ -104,7 +105,11 @@ export default {
       { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
       { text: "Отчёт", name: "report", icon: "mdi-receipt" },
       { text: "Отчёты", name: "reportPie", icon: "mdi-timetable" },
-      { text: "Отчёт по BTC", name: "reportBTC", icon: "mdi-cash" },
+      {
+        text: "Отчёт по менеджерам",
+        name: "reportUserPie",
+        icon: "mdi-chart-pie",
+      },
     ],
     adminMenu: "",
   }),
@@ -122,7 +127,7 @@ export default {
       if (this.adminMenu == "calls") return calls;
       if (this.adminMenu == "report") return report;
       if (this.adminMenu == "reportPie") return reportPie;
-      if (this.adminMenu == "reportBTC") return reportBTC;
+      if (this.adminMenu == "reportUserPie") return reportUserPie;
     },
   },
   mounted: function () {
