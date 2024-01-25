@@ -678,10 +678,9 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
       if ($lids->count()) {
         return $lids;
       } else {
-        $sql = "SELECT `message` FROM `imports` WHERE `start` = '" . $req['start'] . "' AND `end` = '" . $req['end'] . "' AND `provider_id` = " . $req['provider_id'];
-        $message =  DB::select(DB::raw($sql));
-        // return $message;
-        return  Lid::where('load_mess', $message[0]->message)->get();
+        $message = DB::table('imports')->where('start', $req['start'])->where('end', $req['end'])->where('provider_id', $req['provider_id'])->first()->message;
+
+        return  Lid::where('load_mess', $message)->get();
       }
       // else {
       //   // $date_end = substr($req['end'],0,10);
@@ -787,8 +786,11 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $request = new Request();
 
     $lids = Lid::select('id')->where('provider_id', $imported['provider_id'])->whereBetween('created_at', [$imported['start'], $imported['end']])->get()->toArray();
-
-    $this->deletelids($request->merge($lids));
+    if (count($lids) > 0) {
+      $this->deletelids($request->merge($lids));
+    } else {
+      Lid::where('load_mess', $imported['message'])->delete();
+    }
     DB::table('imports')->where('id', $imported['id'])->delete();
 
     return response('Delete lids ' . count($lids), 200);
