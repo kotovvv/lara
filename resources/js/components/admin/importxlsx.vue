@@ -3,13 +3,21 @@
     <v-snackbar v-model="snackbar" top right timeout="-1">
       <v-card-text v-html="message"></v-card-text>
       <template v-slot:action="{ attrs }">
-        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="
+            snackbar = false;
+            userid = null;
+          "
+        >
           X
         </v-btn>
       </template>
     </v-snackbar>
 
-    <v-content>
+    <v-container fluid>
       <v-row>
         <v-col cols="2">
           <v-select
@@ -116,7 +124,7 @@
           </v-card>
         </v-col>
       </v-row>
-    </v-content>
+    </v-container>
   </div>
 </template>
 
@@ -223,6 +231,8 @@ export default {
       if (self.load_mess == "") {
         self.message = 'Обязательно заполните поле "Сообщение"';
         self.snackbar = true;
+        self.userid = null;
+
         return false;
       }
       let json = {};
