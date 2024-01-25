@@ -564,7 +564,7 @@ export default {
     akkvalue: [],
     loading: false,
     selectedUser: {},
-    group: null,
+    group: [],
     modal: false,
     dateFrom: false,
     dateTo: false,

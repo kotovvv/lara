@@ -83,6 +83,20 @@
     <v-row>
       <v-col cols="8">
         <PieChart :datap="chartDataTime" />
+        <div class="wrp__statuses pt-5">
+          <template v-for="(i, x) in statuses_time">
+            <div class="status_wrp" :key="x">
+              <b
+                :style="{
+                  background: i.color,
+                  outline: '1px solid' + i.color,
+                }"
+                >{{ i.hm }}</b
+              >
+              <span>{{ i.name }}</span>
+            </div>
+          </template>
+        </div>
       </v-col>
       <v-col cols="4">
         <div class="pa-5 w-100 border wrp_users">
@@ -107,7 +121,7 @@
                 ref="radiogroup"
                 v-model="userid"
                 v-bind="users"
-                @change="changeLidsUser"
+                @change="pieUser()"
               >
                 <div
                   v-for="office in filterOffices == 0
@@ -124,15 +138,15 @@
                       :key="item.group_id"
                     >
                       <v-expansion-panel-header>
-                        <div
+                        <!-- <div
                           height="60"
                           width="60"
                           class="img v-expansion-panel-header__icon mr-1"
                         >
                           {{ item.fio.slice(0, 3) }}
-                        </div>
+                        </div> -->
+                        <v-btn text>{{ item.fio }}</v-btn>
 
-                        {{ item.fio }}
                         <div></div>
                       </v-expansion-panel-header>
                       <v-expansion-panel-content>
@@ -143,12 +157,12 @@
                           :key="user.id"
                         >
                           <v-radio
-                            :label="user.fio"
+                            :label="user.fio + ' (' + user.hmlids + ')'"
                             :value="user.id"
                             :disabled="disableuser == user.id"
                           >
                           </v-radio>
-                          <div class="mb-3 grp_btn">
+                          <!-- <div class="mb-3 grp_btn">
                             <v-btn
                               small
                               :color="usercolor(user)"
@@ -161,7 +175,7 @@
                               :disabled="disableuser == user.id"
                               >{{ user.hmlids }}</v-btn
                             >
-                          </div>
+                          </div> -->
                         </v-col>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
@@ -217,13 +231,15 @@ export default {
       offices: [],
       filterOffices: 1,
       akkvalue: [],
-      group: null,
+      group: [],
+      statuses_time: [],
     };
   },
 
   mounted() {
     this.getUsers();
     this.getOffices();
+    this.getStatuses();
   },
   watch: {
     selectedUser(user) {
@@ -234,76 +250,68 @@ export default {
       }
       //this.disableuser = user.id;
       this.akkvalue = [];
-      this.akkvalue[user.office_id] = _.findIndex(
-        this.group.filter((g) => g.office_id == user.office_id),
-        {
-          group_id: user.group_id,
-        }
-      );
+      console.log(this.group);
+      if (this.group) {
+        this.akkvalue[user.office_id] = _.findIndex(
+          this.group.filter((g) => g.office_id == user.office_id),
+          {
+            group_id: user.group_id,
+          }
+        );
+      }
     },
   },
   methods: {
+    getStatuses() {
+      let self = this;
+      axios
+        .get("/api/statuses")
+        .then((res) => {
+          self.statuses = res.data.map(({ uname, name, id, color, order }) => ({
+            uname,
+            name,
+            id,
+            color,
+            order,
+          }));
+          if (self.$attrs.user.role_id > 1) {
+            self.filterstatuses = self.statuses.filter((e) => e.id != 8);
+          } else {
+            self.filterstatuses = [...self.statuses];
+          }
+          // self.statuses.unshift({ name: "Default", id: 0 });
+        })
+        .catch((error) => console.log(error));
+    },
     pieUser() {
       const self = this;
-      const user_id = this.user.id;
       self.loading = true;
       axios
-        .get("api/pieUser/" + user_id + "/" + self.dateFrom + "/" + self.dateTo)
+        .get(
+          "api/pieUser/" +
+            self.userid +
+            "/" +
+            self.dateTimeFrom +
+            "/" +
+            self.dateTimeTo
+        )
         .then(function (res) {
           self.chartDataTime.labels = res.data.labels;
           self.chartDataTime.datasets[0].backgroundColor =
             res.data.backgroundColor;
           self.chartDataTime.datasets[0].data = res.data.data;
           self.statuses_time = res.data.statuses;
-          self.allLidsTime = self.statuses_time.reduce(
-            (all, el) => all + el.hm,
-            0
-          );
+          // self.allLidsTime = self.statuses_time.reduce(
+          //   (all, el) => all + el.hm,
+          //   0
+          // );
           self.loading = false;
         })
         .catch(function (error) {
           console.log(error);
         });
     },
-    changeLidsUser() {
-      const self = this;
-      let send = {};
-      send.data = [];
-      send.user_id = this.userid;
 
-      if (this.selectedStatus !== 0) {
-        send.status_id = this.selectedStatus;
-      }
-      if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-        send.data = this.selected;
-      } else {
-        this.userid = null;
-        return false;
-      }
-      if (self.$attrs.user.role_id == 2) {
-        //CallBack user not change
-        send.data = send.data.filter((f) => f.status_id != 9);
-      }
-      axios
-        .post("api/Lid/changelidsuser", send)
-        .then(function (response) {
-          self.search = "";
-          self.$refs.radiogroup.lazyValue = null;
-          self.selected = [];
-          self.archSelected = [];
-          // if (self.savedates == true) {
-          //   self.disableuser = 0;
-          // }
-
-          // self.getUsers();
-          // self.pieUser();
-          // self.userid = null;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      self.searchAll = "";
-    },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
     },
@@ -325,6 +333,11 @@ export default {
           }
         })
         .catch((error) => console.log(error));
+    },
+    getGroup() {
+      return _.filter(this.users, function (o) {
+        return o.group_id == o.id;
+      });
     },
     getUsers() {
       let self = this;
@@ -384,11 +397,13 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    getGroup() {
-      return _.filter(this.users, function (o) {
-        return o.group_id == o.id;
-      });
-    },
   },
 };
 </script>
+
+<style>
+.scroll-y {
+  max-height: 60vh;
+  overflow: auto;
+}
+</style>
