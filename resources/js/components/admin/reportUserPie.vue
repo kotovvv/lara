@@ -121,7 +121,10 @@
                 ref="radiogroup"
                 v-model="userid"
                 v-bind="users"
-                @change="pieUser()"
+                @change="
+                  group_id = 0;
+                  pieUser();
+                "
               >
                 <div
                   v-for="office in filterOffices == 0
@@ -145,7 +148,14 @@
                         >
                           {{ item.fio.slice(0, 3) }}
                         </div> -->
-                        <v-btn text>{{ item.fio }}</v-btn>
+                        <v-btn
+                          text
+                          @click.stop="
+                            group_id = item.id;
+                            pieUser();
+                          "
+                          >{{ item.fio }}</v-btn
+                        >
 
                         <div></div>
                       </v-expansion-panel-header>
@@ -194,6 +204,28 @@
         color="deep-purple accent-4"
       ></v-progress-linear>
     </v-row>
+    <v-row>
+      <v-col>
+        <div class="border pa-4">
+          <!-- :search="search"
+          :single-select="false"
+          v-model.lazy.trim="selected"
+          show-select-->
+          <v-data-table
+            id="tablids"
+            :headers="headers"
+            item-key="id"
+            :items="leads"
+            ref="datatable"
+            :footer-props="{
+              'items-per-page-options': [50, 10, 100, 250, 500, -1],
+              'items-per-page-text': '',
+            }"
+          >
+          </v-data-table>
+        </div>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -232,7 +264,25 @@ export default {
       filterOffices: 1,
       akkvalue: [],
       group: [],
+      group_id: 0,
       statuses_time: [],
+      headers: [
+        { text: "Имя", value: "name" },
+        { text: "Email", value: "email" },
+        // { text: "Название базы", value: "load_mess" },
+        { text: "Телефон.", align: "start", value: "tel" },
+        // { text: "Афилятор", value: "afilyator" },
+        // { text: "Поставщик", value: "provider" },
+        // { text: "Менеджер", value: "user" },
+        { text: "Создан", value: "date_created" },
+        // { text: "Изменён", value: "date_updated" },
+        { text: "Статус", value: "status" },
+        // { text: "Депозит", value: "depozit" },
+        // { text: "Сообщение", value: "text" },
+        // { text: "Звонков", value: "qtytel" },
+        // { text: "ПЕРЕЗВОН", value: "ontime" },
+      ],
+      leads: [],
     };
   },
 
@@ -250,7 +300,6 @@ export default {
       }
       //this.disableuser = user.id;
       this.akkvalue = [];
-      console.log(this.group);
       if (this.group) {
         this.akkvalue[user.office_id] = _.findIndex(
           this.group.filter((g) => g.office_id == user.office_id),
@@ -285,6 +334,11 @@ export default {
     },
     pieUser() {
       const self = this;
+      let group = "";
+      if (self.group_id) {
+        group = "/" + self.group_id;
+        self.userid = self.group_id;
+      }
       self.loading = true;
       axios
         .get(
@@ -293,7 +347,8 @@ export default {
             "/" +
             self.dateTimeFrom +
             "/" +
-            self.dateTimeTo
+            self.dateTimeTo +
+            group
         )
         .then(function (res) {
           self.chartDataTime.labels = res.data.labels;
@@ -301,6 +356,18 @@ export default {
             res.data.backgroundColor;
           self.chartDataTime.datasets[0].data = res.data.data;
           self.statuses_time = res.data.statuses;
+          self.leads = res.data.leads;
+          self.leads.map(function (e) {
+            // e.user = self.users.find((u) => u.id == e.user_id).fio;
+            e.date_created = e.created_at.substring(0, 10);
+            // if (self.providers.find((p) => p.id == e.provider_id)) {
+            //   e.provider = self.providers.find(
+            //     (p) => p.id == e.provider_id
+            //   ).name;
+            // }
+            if (e.status_id)
+              e.status = self.statuses.find((s) => s.id == e.status_id).name;
+          });
           // self.allLidsTime = self.statuses_time.reduce(
           //   (all, el) => all + el.hm,
           //   0
