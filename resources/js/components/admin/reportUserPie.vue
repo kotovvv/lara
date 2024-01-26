@@ -91,7 +91,12 @@
                   background: i.color,
                   outline: '1px solid' + i.color,
                 }"
-                >{{ i.hm }}</b
+                >{{ i.hm
+                }}{{
+                  parseInt((i.hm * 100) / leads.length)
+                    ? " - " + parseInt((i.hm * 100) / leads.length) + "%"
+                    : ""
+                }}</b
               >
               <span>{{ i.name }}</span>
             </div>
