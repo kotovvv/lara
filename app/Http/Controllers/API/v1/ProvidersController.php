@@ -11,6 +11,7 @@ use Hash;
 use App\Models\Lid;
 use App\Models\Log;
 use App\Models\Import;
+use App\Models\User;
 
 
 class ProvidersController extends Controller
@@ -156,26 +157,36 @@ class ProvidersController extends Controller
   }
 
   // Get all lids for user
-  public function pieUser($id, $start_day, $stop_day)
+  public function pieUser($id, $start_day, $stop_day, $group = 0)
   {
-    $sql = "SELECT `status_id`,s.`name`,s.`color`,COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE `user_id` = " . (int) $id . " AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "' GROUP BY `status_id` ORDER BY s.order ASC";
-    $usersLids = DB::select(DB::raw($sql));
+    if ($group) {
+      $users = User::where('group_id', $group)->pluck('id')->all();
+      $where = " `user_id` IN (" . implode(',', $users) . ")";
+    } else {
+      $where = " `user_id` = " . (int) $id;
+    }
+    $sql = "SELECT `status_id`, s.`name`, s.`color`, COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE " . $where . " AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "' GROUP BY `status_id` ORDER BY s.order ASC";
+    $statusLids = DB::select(DB::raw($sql));
 
     $labels = [];
     $backgroundColor = [];
     $data = [];
-    foreach ($usersLids as $row) {
+    foreach ($statusLids as $row) {
       $labels[] = $row->name;
       $backgroundColor[] = $row->color;
       $data[] = $row->hm;
     }
 
+    $sql = "SELECT `id`,`tel`,`name`,`email`,`status_id`,`user_id`,`created_at` FROM `lids` l WHERE " . $where . " AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "'";
+    $usersLids = DB::select(DB::raw($sql));
+
     return response()->json([
       "status" => 'ok',
-      "statuses" => $usersLids,
+      "statuses" => $statusLids,
       "labels" => $labels,
       "backgroundColor" => $backgroundColor,
       "data" => $data,
+      "leads" => $usersLids
     ])->setStatusCode(200);
   }
 
