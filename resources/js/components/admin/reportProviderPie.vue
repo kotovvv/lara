@@ -138,13 +138,6 @@
                       :key="item.group_id"
                     >
                       <v-expansion-panel-header>
-                        <!-- <div
-                          height="60"
-                          width="60"
-                          class="img v-expansion-panel-header__icon mr-1"
-                        >
-                          {{ item.fio.slice(0, 3) }}
-                        </div> -->
                         <v-btn text>{{ item.fio }}</v-btn>
 
                         <div></div>
@@ -162,20 +155,6 @@
                             :disabled="disableuser == user.id"
                           >
                           </v-radio>
-                          <!-- <div class="mb-3 grp_btn">
-                            <v-btn
-                              small
-                              :color="usercolor(user)"
-                              @click="
-                                disableuser = user.id;
-                                filterGroups = [];
-                                getPage();
-                              "
-                              :value="user.hmlids"
-                              :disabled="disableuser == user.id"
-                              >{{ user.hmlids }}</v-btn
-                            >
-                          </div> -->
                         </v-col>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
@@ -238,7 +217,8 @@ export default {
   },
 
   mounted() {
-    this.getUsers();
+    // this.getUsers();
+    this.getProviders();
     this.getOffices();
     this.getStatuses();
   },
@@ -263,6 +243,17 @@ export default {
     },
   },
   methods: {
+    getProviders() {
+      let self = this;
+      axios
+        .get("/api/provider")
+        .then((res) => {
+          self.providers = res.data.map(({ name, id }) => ({ name, id }));
+          // self.providers.unshift({ name: "выбор", id: 0 });
+          // self.getLidsOnDate();
+        })
+        .catch((error) => console.log(error));
+    },
     getStatuses() {
       let self = this;
       axios
