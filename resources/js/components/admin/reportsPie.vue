@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-tabs v-model="tab" background-color="primary" dark>
-      <v-tab> Users report </v-tab>
-      <v-tab> Providers report </v-tab>
+      <v-tab> Менеджеры </v-tab>
+      <v-tab> Поставщики </v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item>

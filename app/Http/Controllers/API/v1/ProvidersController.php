@@ -156,6 +156,47 @@ class ProvidersController extends Controller
     return $provider;
   }
 
+  // Get all providers for time
+  public function getProvidersForTime($start_day, $stop_day)
+  {
+    $office_id = session()->get('office_id');
+    $where_office_id = '';
+    if ($office_id > 0) {
+      $where_office_id =  ' AND l.office_id = ' . $office_id;
+    }
+    $sql = "SELECT p.id,p.name,COUNT(provider_id) hm FROM `lids` l LEFT JOIN `providers` p ON (p.id = l.`provider_id`) WHERE l.`created_at` > '" . $start_day . " 00:00:00' AND l.`created_at` < '" . $stop_day . " 23:59:59' " . $where_office_id . " GROUP BY `provider_id` ORDER BY p.`name` ASC";
+    return DB::select(DB::raw($sql));
+  }
+
+  // Get all lids for provider
+  public function pieProvider($id, $start_day, $stop_day)
+  {
+
+    $sql = "SELECT `status_id`, s.`name`, s.`color`, COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE l.provider_id = '" . $id . "' AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "' GROUP BY `status_id` ORDER BY s.order ASC";
+    $statusLids = DB::select(DB::raw($sql));
+
+    $labels = [];
+    $backgroundColor = [];
+    $data = [];
+    foreach ($statusLids as $row) {
+      $labels[] = $row->name;
+      $backgroundColor[] = $row->color;
+      $data[] = $row->hm;
+    }
+
+    $sql = "SELECT `id`,`tel`,`name`,`email`,`status_id`,`user_id`,`created_at` FROM `lids` l WHERE l.provider_id = '" . $id . "' AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "'";
+    $usersLids = DB::select(DB::raw($sql));
+
+    return response()->json([
+      "status" => 'ok',
+      "statuses" => $statusLids,
+      "labels" => $labels,
+      "backgroundColor" => $backgroundColor,
+      "data" => $data,
+      "leads" => $usersLids
+    ])->setStatusCode(200);
+  }
+
   // Get all lids for user
   public function pieUser($id, $start_day, $stop_day, $group = 0)
   {
