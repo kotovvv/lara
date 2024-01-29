@@ -206,7 +206,7 @@ class ProvidersController extends Controller
     } else {
       $where = " `user_id` = " . (int) $id;
     }
-    $sql = "SELECT `status_id`, s.`name`, s.`color`, COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE " . $where . " AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "' GROUP BY `status_id` ORDER BY s.order ASC";
+    $sql = "SELECT `status_id`, s.`name`, s.`color`, COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE " . $where . " AND l.`updated_at` > '" . $start_day . " 00:00:00' AND l.`updated_at` < '" . $stop_day . " 23:59:59' GROUP BY `status_id` ORDER BY s.order ASC";
     $statusLids = DB::select(DB::raw($sql));
 
     $labels = [];
@@ -218,7 +218,7 @@ class ProvidersController extends Controller
       $data[] = $row->hm;
     }
 
-    $sql = "SELECT `id`,`tel`,`name`,`email`,`status_id`,`user_id`,`created_at` FROM `lids` l WHERE " . $where . " AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "'";
+    $sql = "SELECT `id`,`tel`,`name`,`email`,`status_id`,`user_id`,`updated_at` FROM `lids` l WHERE " . $where . " AND l.`updated_at` > '" . $start_day . " 00:00:00' AND l.`updated_at` < '" . $stop_day . " 23:59:59'";
     $usersLids = DB::select(DB::raw($sql));
 
     return response()->json([
