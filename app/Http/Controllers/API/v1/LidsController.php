@@ -807,6 +807,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
 
+    $provider = Provider::where('id', $f_key->id);
     $n_lid = new Lid;
 
     if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
@@ -828,11 +829,11 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
 
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
-    $n_lid->provider_id = $f_key->id;
-    $n_lid->load_mess = Provider::where('id', $f_key->id)->value('name') . ' ' . date('d-m') . '(API)';
+    $n_lid->provider_id = $provider->id;
+    $n_lid->load_mess = $provider->name . ' ' . date('d-m') . '(API)';
 
-    $n_lid->user_id = (int) $req['user_id'];
-    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
+    $n_lid->user_id = $provider->user_id;
+    $n_lid->office_id = User::where('id', $provider->user_id)->value('office_id');
 
     $n_lid->created_at = Now();
 
@@ -853,7 +854,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-
+    $provider = Provider::where('id', $f_key->id);
     $n_lid = new Lid;
 
     $fio = $req['namedata'];
@@ -888,10 +889,10 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
 
     $n_lid->afilyator = $affiliate;
-    $n_lid->provider_id = $f_key->id;
-    $n_lid->load_mess = Provider::where('id', $f_key->id)->value('name') . ' ' . date('d-m') . '(API)';
-    $n_lid->user_id = (int) $req['user_id'];
-    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
+    $n_lid->provider_id = $provider->id;
+    $n_lid->load_mess = $provider->name . ' ' . date('d-m') . '(API)';
+    $n_lid->user_id = $provider->user_id;
+    $n_lid->office_id = User::where('id', $provider->user_id)->value('office_id');
 
     $n_lid->created_at = Now();
 
@@ -923,7 +924,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
-
+    $provider = Provider::where('id', $f_key->id);
     $n_lid = new Lid;
 
     if (isset($req['umcfields[name]']) && strlen($req['umcfields[name]']) > 1) {
@@ -939,10 +940,10 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
 
     $n_lid->afilyator = $req['umcfields[affiliate_user]'];
-    $n_lid->provider_id = $f_key->id;
-    $n_lid->load_mess = Provider::where('id', $f_key->id)->value('name') . ' ' . date('d-m') . '(API)';
-    $n_lid->user_id = $req['user_id'];
-    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
+    $n_lid->provider_id = $provider->id;
+    $n_lid->load_mess = $provider->name . ' ' . date('d-m') . '(API)';
+    $n_lid->user_id = $provider->user_id;
+    $n_lid->office_id = User::where('id', $provider->user_id)->value('office_id');
     $n_lid->created_at = Now();
 
     $n_lid->save();
@@ -963,6 +964,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
+    $provider = Provider::where('id', $f_key->id);
     $n_lid = new Lid;
 
     if (isset($req['umcfields']['name']) && strlen($req['umcfields']['name']) > 1) {
@@ -974,10 +976,10 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     }
     $n_lid->email = $req['umcfields']['email'];
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
-    $n_lid->provider_id = $f_key->id;
-    $n_lid->load_mess = Provider::where('id', $f_key->id)->value('name') . ' ' . date('d-m') . '(API)';
-    $n_lid->user_id = $req['user_id'];
-    $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
+    $n_lid->provider_id = $provider->id;
+    $n_lid->load_mess = $provider->name . ' ' . date('d-m') . '(API)';
+    $n_lid->user_id = $provider->user_id;
+    $n_lid->office_id = User::where('id', $provider->user_id)->value('office_id');
     $n_lid->created_at = Now();
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
