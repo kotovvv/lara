@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\v1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Import;
+use App\Models\Lid;
 use DB;
 use Debugbar;
 use Storage;
@@ -229,7 +230,9 @@ class ImportsController extends Controller
   private function parseIni($filename)
   {
     // $file = file_get_contents($filename);
-    $file = Storage::get(public_path() . $filename);
+    $file = Storage::disk('public')->get($filename);
+    // $file = Storage::get($filename);
+
     $file = mb_convert_encoding($file, "UTF-8", "UTF-16LE");
     $lines = explode("\n", $file);
     $rows = [];
@@ -263,15 +266,33 @@ class ImportsController extends Controller
     }
     return $rows;
   }
+  private function getLeadOnTel($tel)
+  {
+
+    $lid = Lid::select('id', 'tel', 'user_id', 'updated_at')->where('tel', $tel)->get()->toArray();
+    if ($lid) {
+      return $lid[0]['tel'] . ' ' . date('Y-m-d H:i:s', strtotime($lid[0]['updated_at'])) . ' ' . $lid[0]['user_id'];
+    }
+    return $tel;
+  }
 
   public function importCalls()
   {
     $directory = 'copy';
+    // $files = Storage::disk('public')->allFiles($directory);
     $files = Storage::disk('public')->files($directory);
+
     foreach ($files as  $file) {
 
-      $rows = $this->parseIni(Storage::url($file));
-      return $rows;
+      $a_row = $this->parseIni($file);
+      foreach ($a_row as $row) {
+        // $row[0] - tel
+        // $row[3] - date
+        // $row[4] - sec
+        // $row[5] - status
+        print ($this->getLeadOnTel($row[0])) . ' ' . $row[4] . 'c ' . $row[5] . '<br>';
+      }
+      //return $a_row;
     }
   }
 }
