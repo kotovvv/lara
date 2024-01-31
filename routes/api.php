@@ -93,7 +93,7 @@ Route::get('historyLid/{id}', [ProvidersController::class, 'historyLid'])->name(
 Route::get('pieAll/{id}', [ProvidersController::class, 'pieAll'])->name('pieAll');
 Route::get('pieTime/{id}/{start_day}/{stop_day}', [ProvidersController::class, 'pieTime'])->name('pieTime');
 Route::get('pieUser/{id}/{start_day}/{stop_day}/{group?}', [ProvidersController::class, 'pieUser'])->name('pieUser');
-Route::get('pieProvider/{id}/{start_day}/{stop_day}', [ProvidersController::class, 'pieProvider'])->name('pieProvider');
+Route::get('pieProvider/{id}/{start_day}/{stop_day}/{dep_reg}', [ProvidersController::class, 'pieProvider'])->name('pieProvider');
 Route::get('getProvidersForTime/{start_day}/{stop_day}', [ProvidersController::class, 'getProvidersForTime']);
 Route::get('getDataTime/{id}/{start_day}/{stop_day}', [ProvidersController::class, 'getDataTime'])->name('getDataTime');
 Route::get('getOffices', [UsersController::class, 'getOffices']);

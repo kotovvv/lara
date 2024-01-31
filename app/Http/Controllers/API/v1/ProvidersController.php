@@ -169,10 +169,13 @@ class ProvidersController extends Controller
   }
 
   // Get all lids for provider
-  public function pieProvider($id, $start_day, $stop_day)
+  public function pieProvider($id, $start_day, $stop_day, $dep_reg)
   {
-
-    $sql = "SELECT `status_id`, s.`name`, s.`color`, COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE l.provider_id = '" . $id . "' AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "' GROUP BY `status_id` ORDER BY s.order ASC";
+    $where = '';
+    if ($dep_reg > 0) {
+      $where = ' l.dep_reg = ' . (int) $dep_reg . ' AND ';
+    }
+    $sql = "SELECT `status_id`, s.`name`, s.`color`, COUNT(`status_id`) hm FROM `lids` l LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) WHERE " . $where . " l.provider_id = '" . $id . "' AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "' GROUP BY `status_id` ORDER BY s.order ASC";
     $statusLids = DB::select(DB::raw($sql));
 
     $labels = [];
@@ -184,7 +187,7 @@ class ProvidersController extends Controller
       $data[] = $row->hm;
     }
 
-    $sql = "SELECT `id`,`tel`,`name`,`email`,`status_id`,`user_id`,`created_at` FROM `lids` l WHERE l.provider_id = '" . $id . "' AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "'";
+    $sql = "SELECT `id`,`tel`,`name`,`email`,`status_id`,`user_id`,`created_at` FROM `lids` l WHERE  " . $where . " l.provider_id = '" . $id . "' AND CAST(l.`created_at` AS DATE) BETWEEN '" . $start_day . "' AND '" . $stop_day . "'";
     $usersLids = DB::select(DB::raw($sql));
 
     return response()->json([

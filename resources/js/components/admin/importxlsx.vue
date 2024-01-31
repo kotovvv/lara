@@ -28,7 +28,13 @@
             item-value="id"
           ></v-select>
         </v-col>
-        <v-col cols="3" v-if="selectedProvider">
+        <v-col cols="2">
+          <v-radio-group v-model="dep_reg" row>
+            <v-radio label="Депозиторы" :value="1"></v-radio>
+            <v-radio label="Регистраторы" :value="2"></v-radio>
+          </v-radio-group>
+        </v-col>
+        <v-col cols="2" v-if="selectedProvider">
           <v-file-input
             v-model="files"
             ref="fileupload"
@@ -38,7 +44,7 @@
             @change="onFileChange"
           ></v-file-input>
         </v-col>
-        <v-col cols="3">
+        <v-col cols="2">
           <v-select
             v-model="selectedStatus"
             :items="statuses"
@@ -47,7 +53,7 @@
             item-value="id"
           ></v-select>
         </v-col>
-        <v-col cols="4">
+        <v-col cols="3">
           <v-textarea
             v-model="load_mess"
             label="Сообщение"
@@ -150,6 +156,7 @@ export default {
     userid: null,
     related_user: [],
     tab: 0,
+    dep_reg: 1,
   }),
 
   mounted() {
@@ -262,6 +269,7 @@ export default {
         send.status_id = this.selectedStatus;
       }
       send.message = self.load_mess;
+      send.dep_reg = self.dep_reg;
       send.data = json;
       axios
         .post("api/Lid/newlids", send)

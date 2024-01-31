@@ -275,6 +275,7 @@ class LidsController extends Controller
 
     foreach ($data['data'] as $lid) {
       $n_lid = new Lid;
+      $n_lid->dep_reg = $data['dep_reg'];
 
       if (isset($lid['name'])) {
         $n_lid->name = mb_convert_encoding(substr(trim($lid['name']), 0, 50), 'UTF-8', 'UTF-8');

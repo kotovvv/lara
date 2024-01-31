@@ -79,6 +79,13 @@
         >
         </v-select>
       </v-col> -->
+      <v-col>
+        <v-radio-group v-model="dep_reg" @change="pieProvider()" row>
+          <v-radio label="Депозиторы" :value="1"></v-radio>
+          <v-radio label="Регистраторы" :value="2"></v-radio>
+          <v-radio label="Все" :value="0"></v-radio>
+        </v-radio-group>
+      </v-col>
     </v-row>
     <v-row>
       <v-col cols="8">
@@ -227,6 +234,7 @@ export default {
         // { text: "ПЕРЕЗВОН", value: "ontime" },
       ],
       leads: [],
+      dep_reg: 1,
     };
   },
 
@@ -302,7 +310,9 @@ export default {
             "/" +
             self.dateTimeFrom +
             "/" +
-            self.dateTimeTo
+            self.dateTimeTo +
+            "/" +
+            self.dep_reg
         )
         .then(function (res) {
           self.chartDataTime.labels = res.data.labels;
