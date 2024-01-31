@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Import;
 use DB;
 use Debugbar;
+use Storage;
 
 class ImportsController extends Controller
 {
@@ -223,5 +224,54 @@ class ImportsController extends Controller
   public function destroy($id)
   {
     //
+  }
+
+  private function parseIni($filename)
+  {
+    // $file = file_get_contents($filename);
+    $file = Storage::get(public_path() . $filename);
+    $file = mb_convert_encoding($file, "UTF-8", "UTF-16LE");
+    $lines = explode("\n", $file);
+    $rows = [];
+    $read = false;
+    if (!empty($lines)) {
+      // If lines exists
+      foreach ($lines as $line) {
+        // Skipping the empty line and Comment line
+        if ((empty(trim($line))) || (preg_match('/^#/', $line) > 0))
+          continue;
+
+        // Output Line Content
+        $line = trim($line);
+        if (strpos($line, "Calls") === 1) {
+          $read = true;
+          continue;
+        }
+        if (strpos($line, "[") === 0) {
+          $read = false;
+          continue;
+        }
+        if ($read === true) {
+          $a1 = explode('=', $line);
+          $a2 = explode(';', $a1[1]);
+          // print_r($a2);
+          $da = date('Y-m-d H:i:s', $a2[3]);
+          // echo "Тел:{$a2[0]} time:{$da} sek:{$a2[4]} status:{$a2[5]}<br>\n";
+          $rows[] = $a2;
+        }
+      }
+    }
+    return $rows;
+  }
+
+  public function importCalls()
+  {
+    $directory = 'copy';
+    $files = Storage::disk('public')->files($directory);
+    foreach ($files as  $file) {
+
+      $rows = $this->parseIni(Storage::url($file));
+      return $rows;
+    }
   }
 }
