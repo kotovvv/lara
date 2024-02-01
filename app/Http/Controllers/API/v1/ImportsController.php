@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API\v1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Import;
+use App\Models\Lid;
+use Storage;
 use DB;
 use Debugbar;
 
@@ -255,8 +257,14 @@ class ImportsController extends Controller
         if ($read === true) {
           $a1 = explode('=', $line);
           $a2 = explode(';', $a1[1]);
+
           // print_r($a2);
-          $da = date('Y-m-d H:i:s', $a2[3]);
+          try {
+            $a2[3];
+          } catch (\Throwable $th) {
+            continue;
+          }
+          // $da = date('Y-m-d H:i:s', $a2[3]);
           // echo "Тел:{$a2[0]} time:{$da} sek:{$a2[4]} status:{$a2[5]}<br>\n";
           $rows[] = $a2;
         }
@@ -267,29 +275,50 @@ class ImportsController extends Controller
   private function getLeadOnTel($tel)
   {
 
-    $lid = Lid::select('id', 'tel', 'user_id', 'updated_at')->where('tel', $tel)->get()->toArray();
+    $lid = Lid::select('id', 'tel', 'user_id', 'updated_at', 'office_id')->where('tel', $tel)->get()->toArray();
     if ($lid) {
-      return $lid[0]['tel'] . ' ' . date('Y-m-d H:i:s', strtotime($lid[0]['updated_at'])) . ' ' . $lid[0]['user_id'];
+
+      // return $lid[0]['tel'] . ' ' . date('Y-m-d H:i:s', strtotime($lid[0]['updated_at'])) . ' ' . $lid[0]['user_id'];
     }
-    return $tel;
+    return $lid;
   }
 
   public function importCalls()
   {
     $directory = 'copy';
-    // $files = Storage::disk('public')->allFiles($directory);
-    $files = Storage::disk('public')->files($directory);
+    $files = Storage::disk('public')->allFiles($directory);
+    // $files = Storage::disk('public')->files($directory);
 
     foreach ($files as  $file) {
+      $data = [];
       $a_row = $this->parseIni($file);
       foreach ($a_row as $row) {
         // $row[0] - tel
         // $row[3] - date
         // $row[4] - sec
         // $row[5] - status
-        print ($this->getLeadOnTel($row[0])) . ' ' . $row[4] . 'c ' . $row[5] . '<br>';
+        if (!is_array($row)) continue;
+        if (!preg_match('/^[0-9]+$/', $row[0])) continue;
+        $a_lid =  $this->getLeadOnTel($row[0]);
+        if (count($a_lid)) {
+          $data['user_id'] = $a_lid[0]['user_id'];
+          $data['office_id'] = $a_lid[0]['office_id'];
+        } else {
+          continue;
+        }
+        $data['tel'] = $row[0];
+        $data['timecall'] = date('Y-m-d H:i:s', $row[3]);
+        $data['duration'] = $row[4];
+        $data['status'] = $row[5];
+        try {
+          DB::table('calls')->updateOrInsert($data);
+        } catch (\Throwable $th) {
+          return response('Bad' . $th, 505);
+        }
       }
       //return $a_row;
+      Storage::disk('public')->delete($file);
     }
+    return response('Ok', 200);
   }
 }
