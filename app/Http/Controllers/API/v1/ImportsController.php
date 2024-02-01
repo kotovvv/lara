@@ -145,7 +145,7 @@ class ImportsController extends Controller
     } else {
       $office_id = session()->get('office_id');
     }
-    $where = $office_id > 0 ? "  `office_id` = " . $office_id . " AND " : "";
+    $where = $office_id > 0 ? "  l.`office_id` = " . $office_id . " AND " : "";
 
     $date = [date('Y-m-d', strtotime($req['datefrom'])) . ' ' . date("H:i:s", mktime(0, 0, 0)), date('Y-m-d', strtotime($req['dateto'])) . ' ' . date("H:i:s", mktime(23, 59, 59))];
 
