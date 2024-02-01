@@ -108,3 +108,5 @@ Route::post('checkEmails', [LidsController::class, 'checkEmails']);
 Route::post('getlidsImportedProvider', [LidsController::class, 'getlidsImportedProvider']);
 Route::get('onCdr', [LogsController::class, 'onCdr']);
 Route::post('getCalls', [LogsController::class, 'getCalls']);
+
+Route::get('importCalls', [ImportsController::class, 'importCalls']);

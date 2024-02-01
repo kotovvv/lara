@@ -224,4 +224,72 @@ class ImportsController extends Controller
   {
     //
   }
+
+  private function parseIni($filename)
+  {
+    // $file = file_get_contents($filename);
+    $file = Storage::disk('public')->get($filename);
+    // $file = Storage::get($filename);
+
+    $file = mb_convert_encoding($file, "UTF-8", "UTF-16LE");
+    $lines = explode("\n", $file);
+    $rows = [];
+    $read = false;
+    if (!empty($lines)) {
+      // If lines exists
+      foreach ($lines as $line) {
+        // Skipping the empty line and Comment line
+        if ((empty(trim($line))) || (preg_match('/^#/', $line) > 0))
+          continue;
+
+        // Output Line Content
+        $line = trim($line);
+        if (strpos($line, "Calls") === 1) {
+          $read = true;
+          continue;
+        }
+        if (strpos($line, "[") === 0) {
+          $read = false;
+          continue;
+        }
+        if ($read === true) {
+          $a1 = explode('=', $line);
+          $a2 = explode(';', $a1[1]);
+          // print_r($a2);
+          $da = date('Y-m-d H:i:s', $a2[3]);
+          // echo "Тел:{$a2[0]} time:{$da} sek:{$a2[4]} status:{$a2[5]}<br>\n";
+          $rows[] = $a2;
+        }
+      }
+    }
+    return $rows;
+  }
+  private function getLeadOnTel($tel)
+  {
+
+    $lid = Lid::select('id', 'tel', 'user_id', 'updated_at')->where('tel', $tel)->get()->toArray();
+    if ($lid) {
+      return $lid[0]['tel'] . ' ' . date('Y-m-d H:i:s', strtotime($lid[0]['updated_at'])) . ' ' . $lid[0]['user_id'];
+    }
+    return $tel;
+  }
+
+  public function importCalls()
+  {
+    $directory = 'copy';
+    // $files = Storage::disk('public')->allFiles($directory);
+    $files = Storage::disk('public')->files($directory);
+
+    foreach ($files as  $file) {
+      $a_row = $this->parseIni($file);
+      foreach ($a_row as $row) {
+        // $row[0] - tel
+        // $row[3] - date
+        // $row[4] - sec
+        // $row[5] - status
+        print ($this->getLeadOnTel($row[0])) . ' ' . $row[4] . 'c ' . $row[5] . '<br>';
+      }
+      //return $a_row;
+    }
+  }
 }
