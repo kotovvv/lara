@@ -272,14 +272,14 @@ class ImportsController extends Controller
     }
     return $rows;
   }
-  private function getLeadOnTel($tel)
+  private function getLeadOnTel($tel, $datecall)
   {
 
-    $lid = Lid::select('id', 'tel', 'user_id', 'updated_at', 'office_id')->where('tel', $tel)->get()->toArray();
-    if ($lid) {
+    $lid = Lid::select('id', 'tel', 'user_id', 'updated_at', 'office_id')->where('tel', $tel)->where('created_at', '<', date('Y-m-d H:i:s', $datecall))->orderBy('created_at', 'DESC')->get()->toArray();
+    // if ($lid) {
 
-      // return $lid[0]['tel'] . ' ' . date('Y-m-d H:i:s', strtotime($lid[0]['updated_at'])) . ' ' . $lid[0]['user_id'];
-    }
+    //   print ($lid[0]['tel'] . ' ' . date('Y-m-d H:i:s', strtotime($lid[0]['updated_at'])) . ' ' . $lid[0]['user_id']) . '<br>';
+    // }
     return $lid;
   }
 
@@ -288,7 +288,7 @@ class ImportsController extends Controller
     $directory = 'copy';
     $files = Storage::disk('public')->allFiles($directory);
     // $files = Storage::disk('public')->files($directory);
-
+    $curdate = date('Y-m-d');
     foreach ($files as  $file) {
       $data = [];
       $a_row = $this->parseIni($file);
@@ -299,7 +299,8 @@ class ImportsController extends Controller
         // $row[5] - status
         if (!is_array($row)) continue;
         if (!preg_match('/^[0-9]+$/', $row[0])) continue;
-        $a_lid =  $this->getLeadOnTel($row[0]);
+        if ($curdate != date('Y-m-d', $row[3])) continue; //only today
+        $a_lid =  $this->getLeadOnTel($row[0], $row[3]);
         if (count($a_lid)) {
           $data['user_id'] = $a_lid[0]['user_id'];
           $data['office_id'] = $a_lid[0]['office_id'];
