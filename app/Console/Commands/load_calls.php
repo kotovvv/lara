@@ -3,24 +3,30 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-
+use App\Models\Lid;
+use Storage;
 use DB;
 
-class load_calls extends Command
+
+//$ php artisan loadcalls:two
+//$ php artisan schedule:list
+//* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+
+class Load_calls extends Command
 {
   /**
    * The name and signature of the console command.
    *
    * @var string
    */
-  protected $signature = 'loadcalls:minute';
+  protected $signature = 'loadcalls:two';
 
   /**
    * The console command description.
    *
    * @var string
    */
-  protected $description = 'Parse file with calls and write in log on phone namber';
+  protected $description = 'Parse files with calls and write in table calls on phone namber';
 
   /**
    * Create a new command instance.
@@ -39,96 +45,96 @@ class load_calls extends Command
    */
   public function handle()
   {
-    $file = './calls/MicroSIP.ini';
-    if (!file_exists($file)) exit;
-    $a_calls = $this->parse_ini($file)['Calls'];
-
-    // $a_calls = array_reverse($a_calls);
-    $a_all = [];
-
-    $last_writed = DB::table('logs')->selectRaw('CAST(DATE_SUB(`created_at`, INTERVAL 1 DAY) AS DATE) as lastdate')->whereNotNull('cols')->latest()->limit(1)->first();
-    if ($last_writed) $last_writed = $last_writed->lastdate;
-
-    foreach ($a_calls as $param) {
-      $date = date('Y-m-d', $param[3]);
-      if ($last_writed) {
-        //get only new
-        if ($date <= $last_writed) continue;
+    $directory = 'copy';
+    $files = Storage::disk('public')->allFiles($directory);
+    // $files = Storage::disk('public')->files($directory);
+    $curdate = date('Y-m-d');
+    foreach ($files as  $file) {
+      $data = [];
+      $a_row = $this->parseIni($file);
+      foreach ($a_row as $row) {
+        // $row[0] - tel
+        // $row[3] - date
+        // $row[4] - sec
+        // $row[5] - status
+        if (!is_array($row)) continue;
+        if (!preg_match('/^[0-9]+$/', $row[0])) continue;
+        if ($curdate != date('Y-m-d', $row[3])) continue; //only today
+        $a_lid =  $this->getLeadOnTel($row[0], $row[3]);
+        if (count($a_lid)) {
+          $data['user_id'] = $a_lid[0]['user_id'];
+          $data['office_id'] = $a_lid[0]['office_id'];
+        } else {
+          continue;
+        }
+        $data['tel'] = $row[0];
+        $data['timecall'] = date('Y-m-d H:i:s', $row[3]);
+        $data['duration'] = $row[4];
+        $data['status'] = $row[5];
+        try {
+          DB::table('calls')->updateOrInsert($data);
+        } catch (\Throwable $th) {
+          return 0;
+        }
       }
-      $tel = $param[0];
-      $duration = $param[4];
-      if (!isset($a_all[$tel][$date]['col'])) $a_all[$tel][$date]['col'] = 0;
-      if (!isset($a_all[$tel][$date]['duration'])) $a_all[$tel][$date]['duration'] = 0;
-      $a_all[$tel][$date]['col'] += 1;
-      $a_all[$tel][$date]['duration'] += $duration;
+      //return $a_row;
+      Storage::disk('public')->delete($file);
     }
-
-    $a_calls = [];
-    //  echo count($a_all).PHP_EOL;
-    $all = count($a_all);
-    $i = $all;
-    foreach ($a_all as $tel => $params) {
-      foreach ($params as $date => $value) {
-        DB::update(DB::Raw("UPDATE `logs` SET `cols` = '" . $value['col'] . "', `duration`='" . $value['duration'] . "' WHERE `tel` = '" . $tel . "' AND CAST( `created_at` AS DATE) = '" . $date . "' ORDER BY id DESC LIMIT 1"));
-        //echo "tel:" . $tel . " date:" . $date . " count:" . $value['col'] . ":" . $value['duration'] . " <br>";
-        $i--;
-      }
-    }
-    if ($i == 0) unlink($file);
-    return 0;
+    return 1;
   }
 
-
-  protected function parse_ini($filepath)
+  protected function parseIni($filename)
   {
-    $ini = file($filepath);
-    if (count($ini) == 0) {
-      return array();
-    }
-    $sections = array();
-    $values = array();
-    $globals = array();
+    // $file = file_get_contents($filename);
+    $file = Storage::disk('public')->get($filename);
+    // $file = Storage::get($filename);
 
-    $i = 0;
-    foreach ($ini as $line) {
-      $line = trim($line);
-      // Comments
-      if ($line == '' || $line[0] == ';') {
-        continue;
-      }
-      // Sections
-      if ($line[0] == '[') {
-        $sections[] = substr($line, 1, -1);
-        $i++;
-        continue;
-      }
-      // Key-value pair
-      list($key, $value) = explode('=', $line, 2);
-      $key = trim($key);
-      $value = trim($value);
+    $file = mb_convert_encoding($file, "UTF-8", "UTF-16LE");
+    $lines = explode("\n", $file);
+    $rows = [];
+    $read = false;
+    if (!empty($lines)) {
+      // If lines exists
+      foreach ($lines as $line) {
+        // Skipping the empty line and Comment line
+        if ((empty(trim($line))) || (preg_match('/^#/', $line) > 0))
+          continue;
 
-      if (strpos($value, ";") !== false)
-        $value = explode(";", $value);
-
-      if ($i == 0) {
-        // Array values
-        if (substr($line, -1, 2) == '[]') {
-          $globals[$key][] = $value;
-        } else {
-          $globals[$key] = $value;
+        // Output Line Content
+        $line = trim($line);
+        if (strpos($line, "Calls") === 1) {
+          $read = true;
+          continue;
         }
-      } else {
-        // Array values
-        if (substr($line, -1, 2) == '[]') {
-          $values[$i - 1][$key][] = $value;
-        } else {
-          $values[$i - 1][$key] = $value;
+        if (strpos($line, "[") === 0) {
+          $read = false;
+          continue;
+        }
+        if ($read === true) {
+          $a1 = explode('=', $line);
+          $a2 = explode(';', $a1[1]);
+
+          // print_r($a2);
+          try {
+            $a2[3];
+          } catch (\Throwable $th) {
+            continue;
+          }
+          // $da = date('Y-m-d H:i:s', $a2[3]);
+          // echo "Тел:{$a2[0]} time:{$da} sek:{$a2[4]} status:{$a2[5]}<br>\n";
+          $rows[] = $a2;
         }
       }
     }
-    for ($j = 0; $j < $i; $j++) {
-      $result[$sections[$j]] = $values[$j];
-    }
-    return $result + $globals;
+    return $rows;
+  }
+  protected function getLeadOnTel($tel, $datecall)
+  {
+
+    $lid = Lid::select('id', 'tel', 'user_id', 'updated_at', 'office_id')->where('tel', $tel)->where('created_at', '<', date('Y-m-d H:i:s', $datecall))->orderBy('created_at', 'DESC')->get()->toArray();
+    // if ($lid) {
+    //   print ($lid[0]['tel'] . ' ' . date('Y-m-d H:i:s', strtotime($lid[0]['updated_at'])) . ' ' . $lid[0]['user_id']) . '<br>';
+    // }
+    return $lid;
   }
 }
