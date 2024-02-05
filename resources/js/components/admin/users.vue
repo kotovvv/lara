@@ -139,6 +139,12 @@
                               label="Номер сортировки"
                             ></v-text-field>
                           </v-col>
+                          <v-col cols="4">
+                            <v-text-field
+                              v-model="editedItem.user_serv"
+                              label="Имя менеджера на сервере (User*)"
+                            ></v-text-field>
+                          </v-col>
                         </v-row>
                       </v-container>
                     </v-card-text>
@@ -326,6 +332,7 @@ export default {
       servers: "",
       order: 99,
       active: 1,
+      user_serv: "",
     },
     editedItemOffice: {
       id: 0,
@@ -346,6 +353,7 @@ export default {
       servers: "",
       active: 1,
       order: 99,
+      user_serv: "",
     },
     defaultItemOffice: {
       name: "",

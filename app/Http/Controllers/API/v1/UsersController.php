@@ -166,6 +166,7 @@ class UsersController extends Controller
       // $arr['sip_password'] = $data['sip_password'] ? $data['sip_password'] : '';
       // $arr['sip_prefix'] = $data['sip_prefix'] ? $data['sip_prefix'] : '';
       $arr['servers'] = $data['servers'] ? $data['servers'] : '';
+      $arr['user_serv'] = $data['user_serv'] ? $data['user_serv'] : '';
 
       if (User::where('id', $data['id'])->value('office_id') != $data['office_id']) {
         Lid::where('user_id', $data['id'])->update(['office_id' => $data['office_id']]);

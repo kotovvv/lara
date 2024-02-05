@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Lid;
+use App\Models\User;
 use Storage;
 use DB;
 
@@ -50,6 +51,7 @@ class Load_calls extends Command
     // $files = Storage::disk('public')->files($directory);
     $curdate = date('Y-m-d');
     foreach ($files as  $file) {
+      $user_serv = explode('/', $file)[1];
       $data = [];
       $a_row = $this->parseIni($file);
       foreach ($a_row as $row) {
@@ -60,13 +62,15 @@ class Load_calls extends Command
         if (!is_array($row)) continue;
         if (!preg_match('/^[0-9]+$/', $row[0])) continue;
         if ($curdate != date('Y-m-d', $row[3])) continue; //only today
-        $a_lid =  $this->getLeadOnTel($row[0], $row[3]);
-        if (count($a_lid)) {
-          $data['user_id'] = $a_lid[0]['user_id'];
-          $data['office_id'] = $a_lid[0]['office_id'];
-        } else {
+        // $a_lid =  $this->getLeadOnTel($row[0], $row[3]);
+        $user = User::where('user_serv', $user_serv)->first();
+        if (!$user) {
           continue;
         }
+
+        $data['user_id'] = $user['id'];
+        $data['office_id'] = $user['office_id'];
+
         $data['tel'] = $row[0];
         $data['timecall'] = date('Y-m-d H:i:s', $row[3]);
         $data['duration'] = $row[4];
