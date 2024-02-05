@@ -141,6 +141,12 @@
                           </v-col>
                           <v-col cols="4">
                             <v-text-field
+                              v-model="editedItem.serv"
+                              label="Имя сервера"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="4">
+                            <v-text-field
                               v-model="editedItem.user_serv"
                               label="Имя менеджера на сервере (User*)"
                             ></v-text-field>
@@ -333,6 +339,7 @@ export default {
       order: 99,
       active: 1,
       user_serv: "",
+      serv: "",
     },
     editedItemOffice: {
       id: 0,
@@ -354,6 +361,7 @@ export default {
       active: 1,
       order: 99,
       user_serv: "",
+      serv: "",
     },
     defaultItemOffice: {
       name: "",

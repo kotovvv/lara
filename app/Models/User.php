@@ -27,7 +27,8 @@ class User extends Authenticatable
     'office_id',
     'sip',
     'servers',
-    'user_serv'
+    'user_serv',
+    'serv'
     // 'sip_server',
     // 'sip_login',
     // 'sip_password',

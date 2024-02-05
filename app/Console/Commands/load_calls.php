@@ -51,7 +51,8 @@ class Load_calls extends Command
     // $files = Storage::disk('public')->files($directory);
     $curdate = date('Y-m-d');
     foreach ($files as  $file) {
-      $user_serv = explode('/', $file)[1];
+      $user_serv = explode('/', $file)[2];
+      $serv = explode('/', $file)[1];
       $data = [];
       $a_row = $this->parseIni($file);
       foreach ($a_row as $row) {
@@ -63,7 +64,7 @@ class Load_calls extends Command
         if (!preg_match('/^[0-9]+$/', $row[0])) continue;
         if ($curdate != date('Y-m-d', $row[3])) continue; //only today
         // $a_lid =  $this->getLeadOnTel($row[0], $row[3]);
-        $user = User::where('user_serv', $user_serv)->first();
+        $user = User::where(['serv' => $serv, 'user_serv' => $user_serv])->first();
         if (!$user) {
           continue;
         }
