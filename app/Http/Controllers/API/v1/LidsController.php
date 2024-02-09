@@ -184,7 +184,7 @@ class LidsController extends Controller
           return $query->where('email', $search);
         })
         ->when(strpos($search, '@') === false, function ($query) use ($search) {
-          return $query->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")');
+          return $query->whereRaw('MATCH(lids.name,lids.tel,lids.text) AGAINST (\'"' . $search . '"\' IN NATURAL LANGUAGE MODE)');
         });
       $response['hm'] = $q_leads->count();
 
