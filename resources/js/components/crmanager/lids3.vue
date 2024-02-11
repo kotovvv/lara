@@ -179,7 +179,18 @@
         </v-col>
         <v-col>
           <p>Фильтр по базам</p>
-          <v-select
+          <!-- item-text="fio"
+          item-value="id" -->
+          <v-autocomplete
+            v-model="filter_load_mess"
+            :items="load_mess"
+            label="Выбор"
+            outlined
+            rounded
+            @change="getPage(0)"
+            clearable
+          ></v-autocomplete>
+          <!-- <v-select
             v-model="filter_load_mess"
             :items="load_mess"
             @change="getPage(0)"
@@ -187,7 +198,7 @@
             rounded
             clearable
           >
-          </v-select>
+          </v-select> -->
         </v-col>
         <v-col v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
           <p>Фильтр office</p>
@@ -600,6 +611,7 @@ export default {
       { text: "Создан", value: "date_created" },
       { text: "Изменён", value: "date_updated" },
       { text: "Статус", value: "status" },
+      { text: "Депозит", value: "deposit" },
       { text: "Депозит", value: "depozit" },
       { text: "Сообщение", value: "text" },
       { text: "Звонков", value: "qtytel" },
@@ -850,7 +862,9 @@ export default {
       data.limit = self.limit;
       data.page = self.page;
       data.office_id = self.filterOffices;
-      data.load_mess = self.filter_load_mess;
+      if (self.filter_load_mess) {
+        data.load_mess = self.filter_load_mess;
+      }
 
       if (this.callback === true) {
         data.callback = 1;

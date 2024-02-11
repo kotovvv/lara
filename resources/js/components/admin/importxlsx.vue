@@ -82,6 +82,7 @@
                         'tel',
                         'afilyator',
                         'text',
+                        'deposit',
                       ]"
                       outlined
                       @change="makeHeader"
