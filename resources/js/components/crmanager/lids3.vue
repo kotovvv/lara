@@ -617,7 +617,7 @@ export default {
       { text: "Звонков", value: "qtytel" },
       { text: "ПЕРЕЗВОН", value: "ontime" },
     ],
-    filter_load_mess: "",
+    filter_load_mess: null,
     load_mess: [],
     parse_header: [],
     sortOrders: {},
@@ -877,7 +877,7 @@ export default {
 
           if (self.page == 0) {
             self.Statuses = res.data.statuses;
-            if (self.filter_load_mess.length == 0) {
+            if (self.filter_load_mess == null) {
               self.load_mess = res.data.load_mess;
             }
           }
@@ -1001,7 +1001,9 @@ export default {
       data.limit = self.limit;
       data.page = self.page;
       data.search = self.searchAll;
-      data.load_mess = self.filter_load_mess;
+      if (self.filter_load_mess) {
+        data.load_mess = self.filter_load_mess;
+      }
       data.office_id = self.filterOffices;
       axios
         .post("api/Lid/searchlids3", data)
