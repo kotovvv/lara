@@ -304,7 +304,7 @@ class LidsController extends Controller
       if (isset($lid['deposit'])) {
         $n_lid->deposit = $lid['deposit'];
       } else {
-        $n_lid->deposit = '';
+        $n_lid->deposit = "";
       }
 
       $n_lid->load_mess = $load_mess;
@@ -331,7 +331,7 @@ class LidsController extends Controller
       try {
         $n_lid->save();
       } catch (\Throwable $th) {
-        //throw $th;
+        throw $th;
       }
     }
     $res['date_end'] = date('Y-m-d H:i:s');
