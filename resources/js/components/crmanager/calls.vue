@@ -166,7 +166,7 @@ export default {
       .toISOString()
       .substring(0, 10),
     offices: [],
-    filterOffices: 0,
+    filterOffices: 1,
     loading: false,
     group: [],
     users: [],
@@ -176,7 +176,6 @@ export default {
   }),
   mounted: function () {
     this.getOffices();
-    this.getCalls();
   },
   watch: {
     selectedUser(user) {
@@ -201,6 +200,7 @@ export default {
       } else {
         self.filterOffices = self.$props.user.office_id;
       }
+      this.getCalls();
     },
     cleardate() {
       this.datetimeFrom = new Date(new Date().setDate(new Date().getDate() - 1))
