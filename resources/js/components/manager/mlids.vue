@@ -573,6 +573,7 @@ export default {
       { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status" },
       { text: "Дата", value: "date" },
+      { text: "Депозит", value: "deposit" },
       { text: "Перезвон", value: "ontime" },
       { text: "Сообщение", value: "text" },
       { text: "Адрес", value: "address" },
@@ -586,6 +587,7 @@ export default {
       { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status" },
       { text: "Дата", value: "date" },
+      { text: "Депозит", value: "deposit" },
       { text: "Сообщение", value: "text" },
       { text: "Адрес", value: "address" },
 
