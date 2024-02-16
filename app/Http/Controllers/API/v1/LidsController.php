@@ -797,6 +797,12 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     Log::whereIn('lid_id', $lids)->delete();
   }
 
+  public function clearLiads(Request $request)
+  {
+    $lids = $request->all();
+    Lid::whereIn('id', $lids)->update(['status_id' => 8]);
+    Log::whereIn('lid_id', $lids)->delete();
+  }
 
   public function set_zaliv(Request $request)
   {

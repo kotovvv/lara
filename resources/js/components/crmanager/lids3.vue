@@ -380,6 +380,12 @@
                 Скачать таблицу
               </v-btn>
             </v-col>
+            <v-btn
+              @click.stop="clearLiads()"
+              plain
+              v-if="selected.length && $props.user.role_id === 1"
+              ><v-icon>mdi-delete</v-icon>Видалити логи</v-btn
+            >
             <v-spacer></v-spacer>
             <v-col>
               <h6>Назначение статусов</h6>
@@ -527,6 +533,7 @@
         </div>
       </v-col>
     </v-row>
+    <ConfirmDlg ref="confirm" />
   </div>
 </template>
 
@@ -1331,9 +1338,44 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+    async clearLiads(item) {
+      const self = this;
+      if (
+        await this.$refs.confirm.open(
+          "Очистити логи???",
+          "Усі логи лідів за вказаним записом будуть видалені безповоротно. Видаляємо?"
+        )
+      ) {
+        let ids = [];
+        self.selected.forEach(function (el) {
+          ids.push(el.id);
+          const lidindex = self.lids.findIndex((l) => {
+            return l.id === el.id;
+          });
+
+          if (lidindex !== -1) {
+            self.lids[lidindex].status_id = 8;
+            self.lids[lidindex].status = self.statuses.find(
+              (s) => s.id == 8
+            ).name;
+          }
+        });
+
+        axios
+          .post("api/clearLiads", ids)
+          .then(function (response) {
+            // self.getLids3();
+            self.selected = [];
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    },
   },
   components: {
     logtel,
+    ConfirmDlg: () => import("../admin/ConfirmDlg"),
   },
 };
 </script>
