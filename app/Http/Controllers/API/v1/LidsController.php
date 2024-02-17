@@ -290,14 +290,15 @@ class LidsController extends Controller
   public function newlids(Request $request)
   {
     $res = [];
-    $res['date_start'] = date('Y-m-d H:i:s');;
+    $res['date_start'] = date('Y-m-d H:i:s');
+
     $data = $request->all();
     $office_id = User::where('id', (int) $data['user_id'])->value('office_id');
     //Debugbar::info($data['data']);
 
     foreach ($data['data'] as $lid) {
       $n_lid = new Lid;
-
+      $n_lid->load_key = strtotime($res['date_start']);
       if (isset($lid['name'])) {
         $n_lid->name =  substr(trim($lid['name']), 0, 50);
       }

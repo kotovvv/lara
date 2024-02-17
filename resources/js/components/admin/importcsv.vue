@@ -151,6 +151,14 @@
               ref="importtable"
               @click:row="clickrow"
             >
+              <template v-slot:item.id="{ item }">
+                <v-btn
+                  @click.stop="deleteLoad(item)"
+                  plain
+                  v-if="item.load_key > 0"
+                  ><v-icon>mdi-delete</v-icon></v-btn
+                >
+              </template>
             </v-data-table>
           </v-col>
           <v-col cols="12" v-if="leads.length">
@@ -271,6 +279,7 @@
         </v-container>
       </v-tab-item>
     </v-tabs-items>
+    <ConfirmDlg ref="confirm" />
   </div>
 </template>
 
@@ -502,7 +511,9 @@ export default {
 
             axios
               .post("api/imports", info)
-              .then(function (response) {})
+              .then(function (response) {
+                self.getImports();
+              })
               .catch(function (error) {
                 console.log(error);
               });
@@ -546,6 +557,7 @@ export default {
               .post("api/imports", info)
               .then(function (response) {
                 // console.log(response);
+                self.getImports();
               })
               .catch(function (error) {
                 console.log(error);
@@ -611,6 +623,24 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+    async deleteLoad(item) {
+      const self = this;
+      if (
+        await this.$refs.confirm.open(
+          "Видалити???",
+          "Усі імпортовані ліди за вказаним записом будуть видалені безповоротно. Видаляємо?"
+        )
+      ) {
+        axios
+          .get("api/deleteLoad/" + item.load_key)
+          .then(function (response) {
+            self.getImports();
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    },
     getImports() {
       let self = this;
       axios
@@ -626,6 +656,7 @@ export default {
               user,
               message,
               group_id,
+              load_key,
             }) => ({
               id,
               start,
@@ -635,6 +666,7 @@ export default {
               user,
               message,
               group_id,
+              load_key,
             })
           );
           if (self.$attrs.user.group_id > 0) {
@@ -763,6 +795,7 @@ export default {
   },
   components: {
     importBTC,
+    ConfirmDlg: () => import("./ConfirmDlg"),
   },
 };
 </script>

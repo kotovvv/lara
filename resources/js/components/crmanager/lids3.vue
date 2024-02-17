@@ -383,7 +383,11 @@
             <v-btn
               @click.stop="clearLiads()"
               plain
-              v-if="selected.length && $props.user.role_id === 1"
+              v-if="
+                selected.length &&
+                $props.user.role_id === 1 &&
+                $props.user.group_id == 0
+              "
               ><v-icon>mdi-delete</v-icon>Видалити логи</v-btn
             >
             <v-spacer></v-spacer>

@@ -177,9 +177,15 @@ class ImportsController extends Controller
   {
     //  Debugbar::info($request->all());
     $a_import = $request->all();
-    $date = date("Y-m-d H:i:s");
-    // array_merge($a_import,['created_at'=>$date,'updated_at'=>$date ]);
+
+    $a_import = array_merge($a_import, ['load_key' => strtotime($a_import['start'])]);
     DB::table('imports')->insert($a_import);
+  }
+
+  public function deleteLoad(Request $request, $load_key)
+  {
+    DB::table('lids')->where('load_key', $load_key)->delete();
+    DB::table('imports')->where('load_key', $load_key)->delete();
   }
 
   /**

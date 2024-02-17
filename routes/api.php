@@ -101,6 +101,7 @@ Route::post('session', [loginController::class, 'session']);
 Route::post('putBTC', [ImportsController::class, 'putBTC']);
 Route::post('getBTCsOnDate', [ImportsController::class, 'getBTCsOnDate']);
 Route::post('getBTCotherOnDate', [ImportsController::class, 'getBTCotherOnDate']);
+Route::get('deleteLoad/{load_key}', [ImportsController::class, 'deleteLoad']);
 Route::post('changeDateBTC', [LidsController::class, 'changeDateBTC']);
 Route::post('getAssignedBTC', [LidsController::class, 'getAssignedBTC']);
 Route::post('provider_importlid', [LidsController::class, 'provider_importlid']);
