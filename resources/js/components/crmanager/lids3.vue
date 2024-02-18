@@ -388,7 +388,7 @@
                 $props.user.role_id === 1 &&
                 $props.user.group_id == 0
               "
-              ><v-icon>mdi-delete</v-icon>Видалити логи</v-btn
+              ><v-icon>mdi-delete</v-icon>Удалить логи</v-btn
             >
             <v-spacer></v-spacer>
             <v-col>
@@ -1346,8 +1346,8 @@ export default {
       const self = this;
       if (
         await this.$refs.confirm.open(
-          "Очистити логи???",
-          "Усі логи лідів за вказаним записом будуть видалені безповоротно. Видаляємо?"
+          "Удалить логи???",
+          "Все логи отмеченных лидов будут удалены безвозвратно. Удаляем?"
         )
       ) {
         let ids = [];
