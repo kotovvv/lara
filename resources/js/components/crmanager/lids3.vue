@@ -1359,6 +1359,7 @@ export default {
 
           if (lidindex !== -1) {
             self.lids[lidindex].status_id = 8;
+            self.lids[lidindex].text = "";
             self.lids[lidindex].status = self.statuses.find(
               (s) => s.id == 8
             ).name;
