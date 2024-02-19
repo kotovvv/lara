@@ -262,7 +262,7 @@
                 ></v-progress-circular
               ></v-btn>
             </v-col>
-            <v-col cols="12" v-if="duplicate_leads.length">
+            <v-col cols="12" v-if="duplicate_leads.length || out_db.length">
               <v-btn outlined rounded @click="exportXlsx" class="border">
                 <v-icon left> mdi-file-excel </v-icon>
                 Скачать таблицу
@@ -384,19 +384,47 @@ export default {
   methods: {
     exportXlsx() {
       const self = this;
+      let unique = {};
       const obj = _.groupBy(self.filteredItems, "status");
       const lidsByStatus = Array.from(Object.keys(obj), (k) => [
         `${k}`,
         obj[k],
       ]);
-
       var wb = XLSX.utils.book_new(); // make Workbook of Excel
-      window["list"] = XLSX.utils.json_to_sheet(self.duplicate_leads);
-      XLSX.utils.book_append_sheet(wb, window["list"], "duplicate_emailes");
-      const unique = self.out_db.map((i) => ({ email: i }));
+
+      if (self.email_tel === "tel") {
+        unique = self.out_db.map((i) => ({
+          tel: i,
+          email: i + "@unique.com",
+          name: "name" + i,
+        }));
+      } else {
+        unique = self.out_db.map((i) => ({ email: i }));
+      }
       window["unique"] = XLSX.utils.json_to_sheet(unique);
       XLSX.utils.book_append_sheet(wb, window["unique"], "unique");
 
+      window["list"] = XLSX.utils.json_to_sheet(self.duplicate_leads);
+      XLSX.utils.book_append_sheet(wb, window["list"], "duplicate");
+
+      // - 3ая -  все дубли со статусом депозит
+      const dup_dep = self.duplicate_leads.filter((dd) => {
+        dd.status_id == 10;
+      });
+      window["dup_dep"] = XLSX.utils.json_to_sheet(dup_dep);
+      XLSX.utils.book_append_sheet(wb, window["dup_dep"], "duplicate_doposit");
+      // - 4ая - все дубли со статусом колбек
+      const dup_cb = self.duplicate_leads.filter((dd) => {
+        dd.status_id == 9;
+      });
+      window["dup_cb"] = XLSX.utils.json_to_sheet(dup_cb);
+      XLSX.utils.book_append_sheet(wb, window["dup_cb"], "duplicate_callback");
+      // - 5ая - все дубли которые имеют статус -  deposit, callback, trash, badphone моложе трех недель)
+      const dup_3week = self.duplicate_leads.filter((dd) => {
+        [9, 10, 11, 23].includes(dd.status_id);
+      });
+      window["dup_3week"] = XLSX.utils.json_to_sheet(dup_3week);
+      XLSX.utils.book_append_sheet(wb, window["dup_3week"], "duplicate_3week");
       // export Excel file
       XLSX.writeFile(
         wb,
