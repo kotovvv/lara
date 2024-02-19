@@ -394,9 +394,9 @@ export default {
 
       if (self.email_tel === "tel") {
         unique = self.out_db.map((i) => ({
-          tel: i,
-          email: i + "@unique.com",
           name: "name" + i,
+          email: i + "@unique.com",
+          tel: i,
         }));
       } else {
         unique = self.out_db.map((i) => ({ email: i }));
@@ -406,25 +406,41 @@ export default {
 
       window["list"] = XLSX.utils.json_to_sheet(self.duplicate_leads);
       XLSX.utils.book_append_sheet(wb, window["list"], "duplicate");
-
-      // - 3ая -  все дубли со статусом депозит
-      const dup_dep = self.duplicate_leads.filter((dd) => {
-        dd.status_id == 10;
-      });
-      window["dup_dep"] = XLSX.utils.json_to_sheet(dup_dep);
-      XLSX.utils.book_append_sheet(wb, window["dup_dep"], "duplicate_doposit");
-      // - 4ая - все дубли со статусом колбек
-      const dup_cb = self.duplicate_leads.filter((dd) => {
-        dd.status_id == 9;
-      });
-      window["dup_cb"] = XLSX.utils.json_to_sheet(dup_cb);
-      XLSX.utils.book_append_sheet(wb, window["dup_cb"], "duplicate_callback");
-      // - 5ая - все дубли которые имеют статус -  deposit, callback, trash, badphone моложе трех недель)
-      const dup_3week = self.duplicate_leads.filter((dd) => {
-        [9, 10, 11, 23].includes(dd.status_id);
-      });
-      window["dup_3week"] = XLSX.utils.json_to_sheet(dup_3week);
-      XLSX.utils.book_append_sheet(wb, window["dup_3week"], "duplicate_3week");
+      if (self.email_tel === "tel") {
+        // - 3ая -  все дубли со статусом депозит
+        const dup_dep = self.duplicate_leads.filter((dd) => {
+          return dd.status_id == 10;
+        });
+        window["dup_dep"] = XLSX.utils.json_to_sheet(dup_dep);
+        XLSX.utils.book_append_sheet(
+          wb,
+          window["dup_dep"],
+          "duplicate_doposit"
+        );
+        // - 4ая - все дубли со статусом колбек
+        const dup_cb = self.duplicate_leads.filter((dd) => {
+          return dd.status_id == 9;
+        });
+        window["dup_cb"] = XLSX.utils.json_to_sheet(dup_cb);
+        XLSX.utils.book_append_sheet(
+          wb,
+          window["dup_cb"],
+          "duplicate_callback"
+        );
+        // - 5ая - все дубли которые имеют статус -  deposit, callback, trash, badphone моложе трех недель)
+        const dup_3week = self.duplicate_leads.filter((dd) => {
+          return (
+            [9, 10, 11, 23].includes(dd.status_id) &&
+            (Date.now() - Date.parse(dd.created)) / (60 * 60 * 24 * 1000) < 21
+          );
+        });
+        window["dup_3week"] = XLSX.utils.json_to_sheet(dup_3week);
+        XLSX.utils.book_append_sheet(
+          wb,
+          window["dup_3week"],
+          "duplicate_3week"
+        );
+      }
       // export Excel file
       XLSX.writeFile(
         wb,
