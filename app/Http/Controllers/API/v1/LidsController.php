@@ -801,7 +801,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   public function clearLiads(Request $request)
   {
     $lids = $request->all();
-    Lid::whereIn('id', $lids)->update(['status_id' => 8, 'text' => '']);
+    Lid::whereIn('id', $lids)->update(['status_id' => 8, 'text' => '', 'qtytel' => 0]);
     Log::whereIn('lid_id', $lids)->delete();
   }
 
