@@ -384,7 +384,7 @@ export default {
   methods: {
     exportXlsx() {
       const self = this;
-      let unique = {};
+      let unique = [];
       const obj = _.groupBy(self.filteredItems, "status");
       const lidsByStatus = Array.from(Object.keys(obj), (k) => [
         `${k}`,
@@ -394,6 +394,11 @@ export default {
 
       if (self.email_tel === "tel") {
         unique = self.out_db.map((i) => ({
+          id: "",
+          created: "",
+          updated: "",
+          status_id: "",
+          status_name: "",
           name: "name" + i,
           email: i + "@unique.com",
           tel: i,
@@ -401,6 +406,22 @@ export default {
       } else {
         unique = self.out_db.map((i) => ({ email: i }));
       }
+      if (self.email_tel === "tel") {
+        let con = [];
+        const dup_not = self.duplicate_leads.filter((dd) => {
+          return ![10, 11, 23].includes(dd.status_id);
+        });
+        const dup_call = self.duplicate_leads.filter((dd) => {
+          return (
+            dd.status_id == 9 &&
+            (Date.now() - Date.parse(dd.updated)) / (60 * 60 * 24 * 1000) > 21
+          );
+        });
+        con = con.concat(unique, dup_not, dup_call);
+        window["con"] = XLSX.utils.json_to_sheet(con);
+        XLSX.utils.book_append_sheet(wb, window["con"], "CHECK_TO_UPLOAD");
+      }
+
       window["unique"] = XLSX.utils.json_to_sheet(unique);
       XLSX.utils.book_append_sheet(wb, window["unique"], "unique");
 
