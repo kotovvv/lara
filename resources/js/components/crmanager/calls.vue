@@ -194,13 +194,14 @@ export default {
           .then((res) => {
             self.offices = res.data;
             self.offices.unshift({ id: 0, name: "--выбор--" });
-            self.filterOffices = self.offices[1].id;
+            self.filterOffices = 0;
+            self.getCalls();
           })
           .catch((error) => console.log(error));
       } else {
         self.filterOffices = self.$props.user.office_id;
+        self.getCalls();
       }
-      this.getCalls();
     },
     cleardate() {
       this.datetimeFrom = new Date(new Date().setDate(new Date().getDate() - 1))
