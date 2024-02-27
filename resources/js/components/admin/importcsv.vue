@@ -54,7 +54,96 @@
             ></v-textarea>
           </v-col>
         </v-row>
+        <v-row class="align-center">
+          <v-col cols="1">
+            <v-menu
+              v-model="dateFrom"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="datetimeFrom"
+                  label="С даты"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                locale="ru-ru"
+                v-model="datetimeFrom"
+                @input="
+                  dateFrom = false;
+                  takedates ? getImports() : '';
+                "
+              ></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="1">
+            <v-menu
+              v-model="dateTo"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="datetimeTo"
+                  label="По дату"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                locale="ru-ru"
+                v-model="datetimeTo"
+                @input="
+                  dateTo = false;
+                  takedates ? getImports() : '';
+                "
+              ></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-checkbox v-model="takedates" @change="getImports"></v-checkbox>
 
+          <v-col cols="2">
+            <v-select
+              v-model="filter_import_provider"
+              :items="i_providers"
+              label="Фильтр провайдер"
+              item-text="name"
+              item-value="id"
+              outlined
+              rounded
+              multiple
+            >
+              <template v-slot:selection="{ item, index }">
+                <span v-if="index === 0">{{ item.name }} </span>
+                <span v-if="index === 1" class="grey--text text-caption">
+                  (+{{ filterProviders.length - 1 }} )
+                </span>
+              </template>
+              <template v-slot:item="{ item, attrs }">
+                <v-badge
+                  :value="attrs['aria-selected'] == 'true'"
+                  color="#7620df"
+                  dot
+                  left
+                >
+                  {{ item.name }}
+                </v-badge>
+              </template>
+            </v-select>
+          </v-col>
+          <v-spacer></v-spacer>
+        </v-row>
         <v-main v-if="parse_csv.length && files">
           <v-row>
             <v-col cols="8">
@@ -147,7 +236,7 @@
             <v-data-table
               :headers="import_headers"
               item-key="id"
-              :items="imports"
+              :items="filter_imports"
               ref="importtable"
               @click:row="clickrow"
             >
@@ -375,6 +464,14 @@ import importBTC from "./importBTC";
 import _ from "lodash";
 export default {
   data: () => ({
+    takedates: 0,
+    dateFrom: false,
+    dateTo: false,
+    dateProps: { locale: "ru-RU", format: "24hr" },
+    datetimeFrom: new Date(new Date().setDate(new Date().getDate() - 3))
+      .toISOString()
+      .substring(0, 10),
+    datetimeTo: new Date().toISOString().substring(0, 10),
     list_email: "",
     file_emails: [],
     in_db: [],
@@ -386,10 +483,12 @@ export default {
     users: [],
     filter_status: [],
     filter_provider: [],
+    filter_import_provider: [],
     filter_office: [],
     providers: [],
     statuses: [],
     offices: [],
+    i_providers: [],
     d_providers: [],
     d_statuses: [],
     d_offices: [],
@@ -472,6 +571,14 @@ export default {
       let reg = new RegExp("^" + this.filtertel);
       return this.parse_csv.filter((i) => {
         return !this.filtertel || reg.test(i.tel);
+      });
+    },
+    filter_imports() {
+      return this.imports.filter((i) => {
+        return (
+          this.filter_import_provider.length == 0 ||
+          this.filter_import_provider.includes(i.provider_id)
+        );
       });
     },
     filtereduplicate_leads() {
@@ -852,8 +959,15 @@ export default {
     },
     getImports() {
       let self = this;
+      self.loading = true;
+      let datefrom = self.datetimeFrom,
+        dateto = self.datetimeTo;
+      if (self.takedates == 0) {
+        datefrom = 0;
+        dateto = 0;
+      }
       axios
-        .get("/api/imports")
+        .get("/api/imports/" + datefrom + "/" + dateto)
         .then((res) => {
           self.imports = res.data.map(
             ({
@@ -878,11 +992,21 @@ export default {
               load_key,
             })
           );
+          let a_prov = _.uniq(
+            _.map(self.imports, (el) => {
+              return el.provider_id;
+            })
+          );
+          self.i_providers = self.providers.filter((i) => {
+            return a_prov.includes(i.id);
+          });
+
           if (self.$attrs.user.group_id > 0) {
             self.imports = self.imports.filter(
               (i) => i.group_id == self.$attrs.user.group_id
             );
           }
+          self.loading = false;
         })
         .catch((error) => console.log(error));
     },

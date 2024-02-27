@@ -31,7 +31,7 @@ Route::resource('provider', ProvidersController::class);
 Route::resource('statuses', StatusesController::class);
 Route::resource('users', UsersController::class);
 Route::resource('lids', LidsController::class);
-Route::resource('imports', ImportsController::class);
+Route::resource('imports/{from}/{to}/', ImportsController::class);
 
 Route::get('statusall', [StatusesController::class, 'getall'])->name('stasusall');
 Route::get('providerall', [ProvidersController::class, 'getall'])->name('providerall');

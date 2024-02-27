@@ -17,9 +17,12 @@ class ImportsController extends Controller
    *
    * @return \Illuminate\Http\Response
    */
-  public function index()
+  public function index($from = 0, $to = 0)
   {
-    return Import::select(['imports.*', DB::raw('(SELECT `name` FROM `providers` WHERE `id` = `provider_id`) AS provider'), DB::raw('(SELECT `name` FROM `users` WHERE `id` = `user_id`) AS user'), DB::raw('(SELECT `group_id` FROM `users` WHERE `id` = `user_id`) AS group_id')])->orderByDesc('end')->get();
+
+    return Import::select(['imports.*', DB::raw('(SELECT `name` FROM `providers` WHERE `id` = `provider_id`) AS provider'), DB::raw('(SELECT `name` FROM `users` WHERE `id` = `user_id`) AS user'), DB::raw('(SELECT `group_id` FROM `users` WHERE `id` = `user_id`) AS group_id')])->when($from != 0 && $to != 0, function ($query) use ($from, $to,) {
+      return $query->whereBetween('start', [$from . ' 00:00:00', $to . ' 23:59:59']);
+    })->orderByDesc('end')->get();
   }
 
   public function putBTC(Request $request)

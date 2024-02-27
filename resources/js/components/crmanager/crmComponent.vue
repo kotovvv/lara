@@ -55,10 +55,11 @@
 </template>
 
 <script>
-const lids = () => import("../crmanager/lids.vue");
+// const lids = () => import("../crmanager/lids.vue");
 const lids3 = () => import("../crmanager/lids3.vue");
 const mlids = () => import("../manager/mlids.vue");
 const report = () => import("../manager/report.vue");
+const calls = () => import("../crmanager/calls");
 
 export default {
   props: ["user"],
@@ -67,7 +68,8 @@ export default {
     selectedItem: 0,
     managerMenu: "lids",
     items: [
-      { text: "Распределение", name: "lids", icon: "mdi-account-arrow-left" },
+      // { text: "Распределение", name: "lids", icon: "mdi-account-arrow-left" },
+      { text: "Звонки", name: "calls", icon: "mdi-headset-dock" },
       { text: "Распределение3", name: "lids3", icon: "mdi-sitemap" },
       { text: "Управление", name: "mlids", icon: "mdi-phone-log-outline" },
       { text: "Отчёты", name: "report", icon: "mdi-timetable" },
@@ -75,7 +77,8 @@ export default {
   }),
   computed: {
     managerComponent() {
-      if (this.managerMenu == "lids") return lids;
+      // if (this.managerMenu == "lids") return lids;
+      if (this.adminMenu == "calls") return calls;
       if (this.managerMenu == "lids3") return lids3;
       if (this.managerMenu == "mlids") return mlids;
       if (this.managerMenu == "report") return report;
