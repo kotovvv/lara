@@ -263,14 +263,99 @@
               ></v-btn>
             </v-col>
             <v-col cols="12" v-if="duplicate_leads.length || out_db.length">
-              <v-btn outlined rounded @click="exportXlsx" class="border">
-                <v-icon left> mdi-file-excel </v-icon>
-                Скачать таблицу
-              </v-btn>
+              <v-row>
+                <v-col>
+                  <v-select
+                    ref="filterStatus"
+                    label="Фильтр статус"
+                    color="red"
+                    v-model="filter_status"
+                    :items="d_statuses"
+                    item-text="name"
+                    item-value="id"
+                    outlined
+                    rounded
+                    :multiple="true"
+                  >
+                    <template v-slot:selection="{ item, index }">
+                      <span v-if="index === 0">{{ item.name }} </span>
+                      <span v-if="index === 1" class="grey--text text-caption">
+                        (+{{ filter_status.length - 1 }} )
+                      </span>
+                    </template>
+                    <template v-slot:item="{ item, attrs }">
+                      <v-badge
+                        :value="attrs['aria-selected'] == 'true'"
+                        color="#7620df"
+                        dot
+                        left
+                      >
+                        <i
+                          :style="{
+                            background: item.color,
+                            outline: '1px solid grey',
+                          }"
+                          class="sel_stat mr-4"
+                        ></i>
+                      </v-badge>
+                      {{ item.name }}
+                    </template>
+                  </v-select></v-col
+                >
+                <v-col>
+                  <v-select
+                    v-model="filter_provider"
+                    label="Фильтр поставщик"
+                    :items="d_providers"
+                    item-text="name"
+                    item-value="id"
+                    outlined
+                    rounded
+                    multiple
+                  >
+                    <template v-slot:selection="{ item, index }">
+                      <span v-if="index === 0">{{ item.name }} </span>
+                      <span v-if="index === 1" class="grey--text text-caption">
+                        (+{{ filter_provider.length - 1 }} )
+                      </span>
+                    </template>
+                    <template v-slot:item="{ item, attrs }">
+                      <v-badge
+                        :value="attrs['aria-selected'] == 'true'"
+                        color="#7620df"
+                        dot
+                        left
+                      >
+                        {{ item.name }}
+                      </v-badge>
+                    </template>
+                  </v-select></v-col
+                >
+                <v-col>
+                  <v-select
+                    v-model="filter_office"
+                    :items="d_offices"
+                    item-text="name"
+                    item-value="id"
+                    label="Фильтр офис"
+                    outlined
+                    rounded
+                    multiple
+                  >
+                  </v-select
+                ></v-col>
+                <v-col>
+                  <v-btn outlined rounded @click="exportXlsx" class="border">
+                    <v-icon left> mdi-file-excel </v-icon>
+                    Скачать таблицу
+                  </v-btn></v-col
+                >
+              </v-row>
+
               <v-data-table
                 :headers="duplicate_leads_headers"
                 item-key="id"
-                :items="duplicate_leads"
+                :items="filtereduplicate_leads"
                 ref="duplicatetable"
               >
               </v-data-table>
@@ -299,8 +384,15 @@ export default {
     loading: false,
     userid: null,
     users: [],
+    filter_status: [],
+    filter_provider: [],
+    filter_office: [],
     providers: [],
     statuses: [],
+    offices: [],
+    d_providers: [],
+    d_statuses: [],
+    d_offices: [],
     imports: [],
     selectedStatus: 8,
     selectedProvider: 0,
@@ -372,7 +464,7 @@ export default {
   mounted() {
     this.getImports();
     this.getProviders();
-    // this.getUsers();
+    this.getOffices();
     this.getStatuses();
   },
   computed: {
@@ -382,8 +474,34 @@ export default {
         return !this.filtertel || reg.test(i.tel);
       });
     },
+    filtereduplicate_leads() {
+      return this.duplicate_leads.filter((i) => {
+        return (
+          (this.filter_status.length == 0 ||
+            this.filter_status.includes(i.status_id)) &&
+          (this.filter_provider.length == 0 ||
+            this.filter_provider.includes(i.provider_id)) &&
+          (this.filter_office.length == 0 ||
+            this.filter_office.includes(i.office_id))
+        );
+      });
+    },
   },
   methods: {
+    getOffices() {
+      let self = this;
+      if (self.$attrs.user.role_id == 1 && self.$attrs.user.office_id == 0) {
+        axios
+          .get("/api/getOffices")
+          .then((res) => {
+            self.offices = res.data;
+            self.offices.push(self.offices[0].id);
+          })
+          .catch((error) => console.log(error));
+      } else {
+        self.offices.push(self.$attrs.user.office_id);
+      }
+    },
     exportXlsx() {
       const self = this;
       let unique = [];
@@ -410,10 +528,10 @@ export default {
       }
       if (self.email_tel === "tel") {
         let con = [];
-        const dup_not = self.duplicate_leads.filter((dd) => {
+        const dup_not = self.filtereduplicate_leads.filter((dd) => {
           return ![10, 11, 23].includes(dd.status_id);
         });
-        const dup_call = self.duplicate_leads.filter((dd) => {
+        const dup_call = self.filtereduplicate_leads.filter((dd) => {
           return (
             dd.status_id == 9 &&
             (Date.now() - Date.parse(dd.updated)) / (60 * 60 * 24 * 1000) > 21
@@ -427,11 +545,11 @@ export default {
       window["unique"] = XLSX.utils.json_to_sheet(unique);
       XLSX.utils.book_append_sheet(wb, window["unique"], "unique");
 
-      window["list"] = XLSX.utils.json_to_sheet(self.duplicate_leads);
+      window["list"] = XLSX.utils.json_to_sheet(self.filtereduplicate_leads);
       XLSX.utils.book_append_sheet(wb, window["list"], "duplicate");
       if (self.email_tel === "tel") {
         // - 3ая -  все дубли со статусом депозит
-        const dup_dep = self.duplicate_leads.filter((dd) => {
+        const dup_dep = self.filtereduplicate_leads.filter((dd) => {
           return dd.status_id == 10;
         });
         window["dup_dep"] = XLSX.utils.json_to_sheet(dup_dep);
@@ -441,7 +559,7 @@ export default {
           "duplicate_doposit"
         );
         // - 4ая - все дубли со статусом колбек
-        const dup_cb = self.duplicate_leads.filter((dd) => {
+        const dup_cb = self.filtereduplicate_leads.filter((dd) => {
           return dd.status_id == 9;
         });
         window["dup_cb"] = XLSX.utils.json_to_sheet(dup_cb);
@@ -451,7 +569,7 @@ export default {
           "duplicate_callback"
         );
         // - 5ая - все дубли которые имеют статус -  deposit, callback, trash, badphone моложе трех недель)
-        const dup_3week = self.duplicate_leads.filter((dd) => {
+        const dup_3week = self.filtereduplicate_leads.filter((dd) => {
           return (
             [9, 10, 11, 23].includes(dd.status_id) &&
             (Date.now() - Date.parse(dd.created)) / (60 * 60 * 24 * 1000) < 21
@@ -502,6 +620,30 @@ export default {
             vm.in_db.length;
           vm.snackbar = true;
           vm.duplicate_leads = res.data.leads;
+          let a_status = _.uniq(
+            _.map(vm.duplicate_leads, (el) => {
+              return el.status_id;
+            })
+          );
+          vm.d_statuses = vm.statuses.filter((i) => {
+            return a_status.includes(i.id);
+          });
+          let a_prov = _.uniq(
+            _.map(vm.duplicate_leads, (el) => {
+              return el.provider_id;
+            })
+          );
+          vm.d_providers = vm.providers.filter((i) => {
+            return a_prov.includes(i.id);
+          });
+          let a_offices = _.uniq(
+            _.map(vm.duplicate_leads, (el) => {
+              return el.office_id;
+            })
+          );
+          vm.d_offices = vm.offices.filter((i) => {
+            return a_offices.includes(i.id);
+          });
 
           vm.loading = false;
           vm.list_email = "";
