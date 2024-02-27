@@ -64,7 +64,7 @@ class Load_calls extends Command
         if (!preg_match('/^[0-9]+$/', $row[0])) continue;
         if ($curdate != date('Y-m-d', $row[3])) continue; //only today
         // $a_lid =  $this->getLeadOnTel($row[0], $row[3]);
-        $user = User::where(['serv' => $serv, 'user_serv' => $user_serv])->first();
+        $user = User::where(['serv' => $serv, 'user_serv' => $user_serv, 'active' => 1])->first();
         if (!$user) {
           continue;
         }
