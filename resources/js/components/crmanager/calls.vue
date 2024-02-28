@@ -195,6 +195,7 @@ export default {
             self.offices = res.data;
             self.offices.unshift({ id: 0, name: "--выбор--" });
             self.filterOffices = 0;
+
             self.getCalls();
           })
           .catch((error) => console.log(error));
@@ -218,6 +219,12 @@ export default {
       data.dateFrom = this.datetimeFrom;
       data.dateTo = this.datetimeTo;
       data.office_id = self.filterOffices;
+      if (
+        self.$props.user.role_id == 2 &&
+        self.$props.user.id == self.$props.user.group_id
+      ) {
+        data.user_id_group = self.$props.user.id;
+      }
 
       axios
         .post("/api/getCalls", data)

@@ -66,30 +66,14 @@ class LogsController extends Controller
     if ($office_id == 0) {
       $office = "1 ";
     }
+    $where_user_group = '';
+    if (isset($req['user_id_group'])) {
+      $where_user_group = ' AND u.group_id = ' . $req['user_id_group'];
+    }
 
     $dateFrom = $req['dateFrom'] . ' 00:00:00';
     $dateTo = $req['dateTo'] . ' 23:59:59';
-    //====================
 
-
-    // $sql = "SELECT `id`,`user_id`,`timecall`,`duration` FROM `calls` WHERE DATE(`timecall`) = '2023-07-03'";
-    // $list = DB::select(DB::raw($sql));
-    // foreach ($list as $user) {
-    //   $sql = "SELECT `timecall` FROM `calls` WHERE `user_id` = $user->user_id  AND `timecall` < '$user->timecall' AND DATE(`timecall`) = '2023-07-03' ORDER BY id DESC LIMIT 1";
-    //   $lastcall = DB::select(DB::raw($sql));
-    //   if ($lastcall) {
-    //     $lastcall = Carbon::parse($lastcall[0]->timecall);
-    //   } else {
-    //     $lastcall = Carbon::create('2023-07-03')->hour('09')->minute('00');
-    //   }
-    //   //different berween calls
-    //   $cur = Carbon::parse($user->timecall)->subSeconds($user->duration);
-    //   $diff = $cur->diffInSeconds($lastcall);
-    //   $sql = "UPDATE `calls` SET `pausa` = $diff WHERE id = $user->id";
-    //   DB::select(DB::raw($sql));
-    // }
-
-    //===================================
     $sql = "SELECT
     u.id
     ,u.name
@@ -108,7 +92,7 @@ class LogsController extends Controller
    FROM
    `users` u
 #WHERE u.id IN (SELECT `user_id` FROM `calls` WHERE $office `timecall` BETWEEN '$dateFrom' AND '$dateTo' GROUP BY `user_id`)
-WHERE $office AND INSTR(u.`servers`,';') order by grp ASC ,name ASC";
+WHERE $office $where_user_group AND INSTR(u.`servers`,';') order by grp ASC ,name ASC";
     return DB::select(DB::raw($sql));
   }
 
