@@ -56,10 +56,10 @@
 
 <script>
 // const lids = () => import("../crmanager/lids.vue");
-const lids3 = () => import("../crmanager/lids3.vue");
+const lids3 = () => import("./lids3.vue");
 const mlids = () => import("../manager/mlids.vue");
 const report = () => import("../manager/report.vue");
-const calls = () => import("../crmanager/calls");
+const calls = () => import("./calls");
 
 export default {
   props: ["user"],
@@ -78,7 +78,7 @@ export default {
   computed: {
     managerComponent() {
       // if (this.managerMenu == "lids") return lids;
-      if (this.adminMenu == "calls") return calls;
+      if (this.managerMenu == "calls") return calls;
       if (this.managerMenu == "lids3") return lids3;
       if (this.managerMenu == "mlids") return mlids;
       if (this.managerMenu == "report") return report;

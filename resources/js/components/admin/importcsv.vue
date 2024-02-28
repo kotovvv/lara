@@ -826,7 +826,7 @@ export default {
             info.message = self.message;
 
             axios
-              .post("api/imports", info)
+              .post("api/imports/0/0", info)
               .then(function (response) {
                 self.getImports();
               })

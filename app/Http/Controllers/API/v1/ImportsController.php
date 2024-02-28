@@ -176,7 +176,7 @@ class ImportsController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store(Request $request, $from = 0, $to = 0)
   {
     //  Debugbar::info($request->all());
     $a_import = $request->all();
