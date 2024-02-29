@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
   protected function schedule(Schedule $schedule)
   {
     // $schedule->command('inspire')->hourly();
-    $schedule->command('loadcalls:two')->hourlyAt(10)->between('10:00', '20:00')->appendOutputTo(storage_path('logs/loadcalls.log'));
+    $schedule->command('loadcalls:two')->everyThirtyMinutes()->between('10:00', '20:00')->appendOutputTo(storage_path('logs/loadcalls.log'));
   }
 
   /**
