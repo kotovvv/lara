@@ -219,10 +219,8 @@ export default {
       data.dateFrom = this.datetimeFrom;
       data.dateTo = this.datetimeTo;
       data.office_id = self.filterOffices;
-      if (
-        self.$props.user.role_id == 2
-      ) {
-        data.user_id_group = self.$props.user.id;
+      if (self.$props.user.role_id == 2) {
+        data.user_id_group = self.$props.user.group_id;
       }
 
       axios
