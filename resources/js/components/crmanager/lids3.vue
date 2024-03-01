@@ -137,6 +137,7 @@
             rounded
             multiple
             :menu-props="{ maxHeight: '80vh' }"
+            clearable="true"
           >
             <template v-slot:selection="{ item, index }">
               <span v-if="index === 0">{{ item.name }} </span>
