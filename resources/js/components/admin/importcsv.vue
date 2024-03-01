@@ -19,13 +19,14 @@
       <v-tab-item>
         <v-row>
           <v-col cols="2">
-            <v-select
+            <v-autocomplete
               v-model="selectedProvider"
               :items="providers"
               label="Провайдер"
               item-text="name"
               item-value="id"
-            ></v-select>
+              :menu-props="{ maxHeight: '80vh' }"
+            ></v-autocomplete>
           </v-col>
           <v-col cols="3" v-if="selectedProvider">
             <v-file-input

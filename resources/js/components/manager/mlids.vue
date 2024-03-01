@@ -20,7 +20,7 @@
           </v-col>
           <v-col cols="2">
             Запрос по поставщикам
-            <v-select
+            <v-autocomplete
               v-model="filterProviders"
               :items="providers"
               item-text="name"
@@ -32,6 +32,7 @@
                 page = 0;
                 getLidsPost();
               "
+              :menu-props="{ maxHeight: '80vh' }"
             >
               <template v-slot:selection="{ item, index }">
                 <span v-if="index <= 2">{{ item.name }} </span>
@@ -39,7 +40,7 @@
                   (+{{ filterProviders.length - 1 }} )
                 </span>
               </template>
-            </v-select>
+            </v-autocomplete>
           </v-col>
           <v-col cols="2">
             Запрос по номеру
@@ -69,6 +70,7 @@
                 page = 0;
                 getLidsPost();
               "
+              :menu-props="{ maxHeight: '80vh' }"
             >
               <template v-slot:selection="{ item, index }">
                 <span v-if="index === 0">{{ item.name }} </span>

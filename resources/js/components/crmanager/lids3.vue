@@ -97,6 +97,7 @@
             outlined
             rounded
             :multiple="true"
+            :menu-props="{ maxHeight: '80vh' }"
           >
             <template v-slot:selection="{ item, index }">
               <span v-if="index === 0">{{ item.name }} </span>
@@ -126,7 +127,7 @@
 
         <v-col>
           <p>Отбор по поставщикам</p>
-          <v-select
+          <v-autocomplete
             v-model="filterProviders"
             :items="providers"
             item-text="name"
@@ -135,6 +136,7 @@
             outlined
             rounded
             multiple
+            :menu-props="{ maxHeight: '80vh' }"
           >
             <template v-slot:selection="{ item, index }">
               <span v-if="index === 0">{{ item.name }} </span>
@@ -152,7 +154,7 @@
                 {{ item.name }}
               </v-badge>
             </template>
-          </v-select>
+          </v-autocomplete>
         </v-col>
 
         <v-col>
