@@ -468,7 +468,8 @@
                 @change="changeLidsUser"
               >
                 <div
-                  v-for="office in filterOffices.includes(0)
+                  v-for="office in filterOffices.includes(0) ||
+                  ($props.user.group_id < 1 && $props.user.office_id < 1)
                     ? offices
                     : offices.filter((o) => filterOffices.includes(o.id))"
                   :key="office.id"
