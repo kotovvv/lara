@@ -393,7 +393,7 @@
                   </v-select></v-col
                 >
                 <v-col>
-                  <v-select
+                  <v-autocomplete
                     v-model="filter_provider"
                     label="Фильтр поставщик"
                     :items="d_providers"
@@ -402,6 +402,8 @@
                     outlined
                     rounded
                     multiple
+                    :menu-props="{ maxHeight: '80vh' }"
+                    clearable="true"
                   >
                     <template v-slot:selection="{ item, index }">
                       <span v-if="index === 0">{{ item.name }} </span>
@@ -419,7 +421,7 @@
                         {{ item.name }}
                       </v-badge>
                     </template>
-                  </v-select></v-col
+                  </v-autocomplete></v-col
                 >
                 <v-col>
                   <v-select

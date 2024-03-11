@@ -136,7 +136,8 @@
             outlined
             rounded
             multiple
-            :menu-props="{ maxHeight: '80vh' }"
+            :menu-props="{ maxHeight: '70vh' }"
+            clearable="clearable"
           >
             <template v-slot:selection="{ item, index }">
               <span v-if="index === 0">{{ item.name }} </span>
@@ -551,6 +552,7 @@ import logtel from "../manager/logtel";
 export default {
   props: ["user"],
   data: () => ({
+    clearable: true,
     savedates: true,
     akkvalue: [],
     loading: false,
@@ -1500,5 +1502,8 @@ export default {
 .title {
   font-weight: bold;
   font-size: 1.1rem;
+}
+.v-select__selections {
+  gap: 1rem;
 }
 </style>
