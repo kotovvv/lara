@@ -468,7 +468,8 @@
                 @change="changeLidsUser"
               >
                 <div
-                  v-for="office in filterOffices.includes(0)
+                  v-for="office in filterOffices.includes(0) ||
+                  ($props.user.group_id < 1 && $props.user.office_id < 1)
                     ? offices
                     : offices.filter((o) => filterOffices.includes(o.id))"
                   :key="office.id"
@@ -1204,7 +1205,9 @@ export default {
           );
           if (
             self.$props.user.role_id == 1 &&
-            !self.filterOffices.includes(0)
+            !self.filterOffices.includes(0) &&
+            self.$props.user.group_id > 0 &&
+            self.$props.user.office_id > 0
           ) {
             self.users = self.users.filter((f) =>
               self.filterOffices.includes(f.office_id)
