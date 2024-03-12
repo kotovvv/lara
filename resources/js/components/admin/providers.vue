@@ -141,6 +141,7 @@ export default {
     providers: [],
     users: [],
     headers: [
+      { text: "ID", value: "id" },
       { text: "Наименование", value: "name" },
 
       { text: "Редактировать", value: "actions", sortable: false },

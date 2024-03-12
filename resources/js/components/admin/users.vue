@@ -306,6 +306,7 @@ export default {
       { id: 3, name: "Manager" },
     ],
     headers: [
+      { text: "ID", value: "id" },
       { text: "Логин", value: "name" },
       { text: "ФИО", value: "fio" },
       { text: "Роль", value: "role" },
