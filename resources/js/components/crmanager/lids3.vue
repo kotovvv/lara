@@ -912,10 +912,14 @@ export default {
             if (e.created_at) {
               e.date_created = e.created_at.substring(0, 10);
             }
-            if (e.status_id) {
+
+            try {
               e.status =
                 self.statuses.find((s) => s.id == e.status_id).name || "";
+            } catch (error) {
+              e.status = "";
             }
+
             if (e.user_id) {
               e.user = self.users.find((u) => u.id == e.user_id)?.fio || "";
             }
