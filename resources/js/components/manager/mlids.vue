@@ -982,10 +982,13 @@ export default {
               e.date = e.updated_at.substring(0, 10);
             }
             e.date_created = e.created_at.substring(0, 10);
-            if (e.status_id) {
+            try {
               e.status =
                 self.statuses.find((s) => s.id == e.status_id).name || "";
+            } catch (error) {
+              e.status = "";
             }
+
             if (self.providers.find((p) => p.id == e.provider_id)) {
               e.provider = self.providers.find(
                 (p) => p.id == e.provider_id
@@ -1025,10 +1028,14 @@ export default {
           self.lids.map(function (e) {
             e.date = e.updated_at.substring(0, 10);
             e.date_created = e.created_at.substring(0, 10);
-            if (e.status_id) {
+
+            try {
               e.status =
                 self.statuses.find((s) => s.id == e.status_id).name || "";
+            } catch (error) {
+              e.status = "";
             }
+
             if (self.providers.find((p) => p.id == e.provider_id)) {
               e.provider = self.providers.find(
                 (p) => p.id == e.provider_id
@@ -1085,9 +1092,11 @@ export default {
     },
     stylecolor(status_id) {
       if (status_id == null) return;
-      if (this.statuses.length) {
-        return this.statuses.find((e) => e.id == status_id).color;
-      }
+      let color = "";
+      try {
+        color = this.statuses.find((e) => e.id == status_id).color;
+      } catch (error) {}
+      return color;
     },
     getProviders() {
       let self = this;
