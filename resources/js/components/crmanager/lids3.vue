@@ -1,21 +1,17 @@
 <template>
   <div>
     <v-container fluid>
-      <v-row>
-        <v-col cols="1">
-          <p>Сброс</p>
-          <v-btn @click="clearFilter" class="border" outlined rounded
-            ><v-icon>close</v-icon></v-btn
-          >
-        </v-col>
-        <v-col>
+      <v-row style="font-size: 0.8rem; gap: 6px">
+        <div style="width: 26rem">
           <v-row class="px-4">
-            <v-col><p>С Дата</p></v-col>
-            <v-col><p>По Дата</p></v-col>
+            <v-col><p>Даты С По</p></v-col>
           </v-row>
 
           <div class="status_wrp wrp_date px-3">
             <v-row align="center">
+              <btn @click="clearFilter" small text>
+                <v-icon>close</v-icon>
+              </btn>
               <v-col>
                 <v-menu
                   v-model="dateFrom"
@@ -81,11 +77,11 @@
               >
             </v-row>
           </div>
-        </v-col>
+        </div>
 
-        <v-col>
+        <div>
           <!-- statuses_lids -->
-          <p>Отбор по статусам</p>
+          <p>Статусы</p>
           <v-select
             ref="filterStatus"
             color="red"
@@ -98,11 +94,12 @@
             rounded
             :multiple="true"
             :menu-props="{ maxHeight: '80vh' }"
+            style="width: 14rem"
           >
             <template v-slot:selection="{ item, index }">
               <span v-if="index === 0">{{ item.name }} </span>
               <span v-if="index === 1" class="grey--text text-caption">
-                (+{{ filterStatus.length - 1 }} )
+                +
               </span>
             </template>
             <template v-slot:item="{ item, attrs }">
@@ -123,10 +120,10 @@
               {{ item.name }}
             </template>
           </v-select>
-        </v-col>
+        </div>
 
-        <v-col>
-          <p>Отбор по поставщикам</p>
+        <div>
+          <p>Поставщики</p>
           <v-autocomplete
             v-model="filterProviders"
             :items="providers"
@@ -138,11 +135,12 @@
             multiple
             :menu-props="{ maxHeight: '70vh' }"
             clearable="clearable"
+            style="width: 15rem"
           >
             <template v-slot:selection="{ item, index }">
               <span v-if="index === 0">{{ item.name }} </span>
               <span v-if="index === 1" class="grey--text text-caption">
-                (+{{ filterProviders.length - 1 }} )
+                +
               </span>
             </template>
             <template v-slot:item="{ item, attrs }">
@@ -156,9 +154,9 @@
               </v-badge>
             </template>
           </v-autocomplete>
-        </v-col>
+        </div>
 
-        <v-col>
+        <div>
           <p>Телефон</p>
           <!-- @click:append="getPage(0)" -->
           <v-text-field
@@ -167,10 +165,11 @@
             @input="getPage"
             outlined
             rounded
+            style="width: 12rem"
           ></v-text-field>
-        </v-col>
+        </div>
         <!-- v-if="$props.user.role_id == 1" -->
-        <v-col>
+        <div>
           <p>Глобальный поиск</p>
           <v-text-field
             v-model="searchAll"
@@ -178,9 +177,10 @@
             @click:append="searchlids3"
             outlined
             rounded
+            style="width: 13rem"
           ></v-text-field>
-        </v-col>
-        <v-col v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
+        </div>
+        <div v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
           <p>Фильтр office</p>
           <v-select
             v-model="filterOffices"
@@ -194,6 +194,7 @@
               getUsers();
               getPage(0);
             "
+            style="width: 13rem"
           >
             <!--
             <template v-slot:selection="{ item, index }">
@@ -204,7 +205,9 @@
               </v-chip>
             </template>-->
           </v-select>
-        </v-col>
+        </div>
+        <v-col></v-col>
+        <v-col></v-col>
       </v-row>
     </v-container>
     <v-progress-linear
@@ -269,7 +272,7 @@
       </template>
     </v-snackbar>
     <v-row>
-      <v-col cols="9">
+      <v-col cols="10">
         <div class="border pa-4">
           <!-- @update:sort-by="makeSort"
           @update:sort-desc="makeSort" -->
@@ -295,32 +298,11 @@
             ref="datatable"
             :loading="loading"
             loading-text="Загружаю... Ожидайте"
+            expand-icon=""
           >
             <template v-slot:top="{}">
-              <v-row>
-                <v-col cols="2">
-                  <div class="d-flex pl-2 align-center border">
-                    Отбор
-                    <v-text-field
-                      class="mx-2 mt-0 pt-0 talign-center nn"
-                      @input="selectRow"
-                      :max="limit"
-                      v-model.number="hmrow"
-                      hide-details="auto"
-                      color="#004D40"
-                    ></v-text-field>
-                  </div>
-
-                  <v-text-field
-                    v-model="search"
-                    append-icon="mdi-magnify"
-                    label="Поиск"
-                    single-line
-                    hide-details
-                    class="border px-2"
-                  ></v-text-field>
-                </v-col>
-                <v-col class="wrp_group">
+              <v-row class="mb-4">
+                <v-col class="ml-3 wrp_group">
                   <v-row
                     v-for="office in filterOffices.includes(0)
                       ? offices
@@ -347,6 +329,17 @@
                   </v-row>
 
                   <v-row class="align-center">
+                    <div class="d-flex pl-2 align-center border">
+                      Отбор
+                      <v-text-field
+                        class="mx-2 mt-0 pt-0 talign-center nn"
+                        @input="selectRow"
+                        :max="limit"
+                        v-model.number="hmrow"
+                        hide-details="auto"
+                        color="#004D40"
+                      ></v-text-field>
+                    </div>
                     <h5 class="mb-0">Всего:{{ hm }}</h5>
                     <v-pagination
                       v-model="page"
@@ -357,7 +350,18 @@
                     ></v-pagination>
                   </v-row>
                 </v-col>
-                <v-col cols="3" class="mt--3">
+                <v-col cols="2">
+                  <v-text-field
+                    v-model="search"
+                    append-icon="mdi-magnify"
+                    label="Поиск"
+                    single-line
+                    hide-details
+                    class="border px-2"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="1" class="pt-5">
                   <v-row>
                     <v-select
                       v-model="limit"
@@ -442,13 +446,13 @@
           </v-row>
         </div>
       </v-col>
-      <v-col cols="3">
-        <div class="pa-5 w-100 border wrp_users">
-          <div class="my-3">Поиск пользователей</div>
+      <v-col cols="2">
+        <div class="pa-3 w-100 border wrp_users">
+          <!-- <div class="my-3">Поиск пользователей</div> -->
           <v-autocomplete
             v-model="selectedUser"
             :items="users"
-            label="Выбор"
+            label="Поиск пользователей"
             item-text="fio"
             item-value="id"
             :return-object="true"
@@ -494,22 +498,24 @@
                         {{ item.fio }}
                         <div></div>
                       </v-expansion-panel-header>
-                      <v-expansion-panel-content>
-                        <v-row
+                      <v-expansion-panel-content style="pa-0">
+                        <div
                           v-for="user in users.filter(function (i) {
                             return i.group_id == item.group_id;
                           })"
                           :key="user.id"
+                          class="mb-3"
                         >
                           <v-radio
                             :label="user.fio"
                             :value="user.id"
                             :disabled="disableuser == user.id"
+                            class="mb-0"
                           >
                           </v-radio>
 
                           <v-btn
-                            class="ml-3"
+                            class="ml-5"
                             small
                             :color="usercolor(user)"
                             @click="
@@ -530,7 +536,7 @@
                           <v-btn data="cb" v-if="user.cb" label small>
                             {{ user.cb }}
                           </v-btn>
-                        </v-row>
+                        </div>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
                   </v-expansion-panels>
@@ -597,6 +603,7 @@ export default {
       { text: "Сообщение", value: "text" },
       { text: "Звонков", value: "qtytel" },
       { text: "ПЕРЕЗВОН", value: "ontime" },
+      { text: "", value: "data-table-expand" },
     ],
     parse_header: [],
     sortOrders: {},
@@ -1401,11 +1408,15 @@ export default {
 .scroll-y {
   max-height: 60vh;
   overflow: auto;
+  padding: 2px;
 }
 
 #tablids .v-data-table__wrapper {
   overflow: auto;
   max-height: 54vh;
+}
+#tablids .text-start.sortable {
+  vertical-align: top;
 }
 
 #tablids .v-data-footer .v-data-footer__select,
@@ -1510,5 +1521,8 @@ export default {
 }
 .v-select__selections {
   gap: 1rem;
+}
+.wrp_users .v-expansion-panel-content__wrap {
+  padding: 0;
 }
 </style>
