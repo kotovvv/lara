@@ -4,7 +4,7 @@
       <v-row style="font-size: 0.8rem; gap: 6px">
         <div style="width: 26rem">
           <v-row class="px-4">
-            <v-col><p>Даты С По</p></v-col>
+            <v-col><p></p></v-col>
           </v-row>
 
           <div class="status_wrp wrp_date px-3">
@@ -81,7 +81,7 @@
 
         <div>
           <!-- statuses_lids -->
-          <p>Статусы</p>
+          <p></p>
           <v-select
             ref="filterStatus"
             color="red"
@@ -94,6 +94,7 @@
             rounded
             :multiple="true"
             :menu-props="{ maxHeight: '80vh' }"
+            label="Статусы"
             style="width: 14rem"
           >
             <template v-slot:selection="{ item, index }">
@@ -123,7 +124,7 @@
         </div>
 
         <div>
-          <p>Поставщики</p>
+          <p></p>
           <v-autocomplete
             v-model="filterProviders"
             :items="providers"
@@ -135,6 +136,7 @@
             multiple
             :menu-props="{ maxHeight: '70vh' }"
             clearable="clearable"
+            label="Поставщики"
             style="width: 15rem"
           >
             <template v-slot:selection="{ item, index }">
@@ -157,7 +159,7 @@
         </div>
 
         <div>
-          <p>Телефон</p>
+          <p></p>
           <!-- @click:append="getPage(0)" -->
           <v-text-field
             v-model.lazy.trim="filtertel"
@@ -165,23 +167,25 @@
             @input="getPage"
             outlined
             rounded
+            label="Телефон"
             style="width: 12rem"
           ></v-text-field>
         </div>
         <!-- v-if="$props.user.role_id == 1" -->
         <div>
-          <p>Глобальный поиск</p>
+          <p></p>
           <v-text-field
             v-model="searchAll"
             append-icon="mdi-magnify"
             @click:append="searchlids3"
             outlined
             rounded
+            label="Глобальный поиск"
             style="width: 13rem"
           ></v-text-field>
         </div>
         <div v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
-          <p>Фильтр office</p>
+          <p></p>
           <v-select
             v-model="filterOffices"
             :items="offices"
@@ -190,6 +194,7 @@
             outlined
             rounded
             multiple
+            label="Фильтр office"
             @change="
               getUsers();
               getPage(0);
@@ -302,14 +307,14 @@
           >
             <template v-slot:top="{}">
               <v-row class="mb-4">
-                <v-col class="ml-3 wrp_group">
+                <v-col class="ml-3 wrp_group" cols="8">
                   <v-row
                     v-for="office in filterOffices.includes(0)
                       ? offices
                       : offices.filter((o) => filterOffices.includes(o.id))"
                     :key="office.id"
                   >
-                    <span v-if="office.id > 0" class="pt-5"
+                    <span v-if="office.id > 0" class="pt-5" style="width: 80px"
                       >{{ office.name }}:
                     </span>
                     <v-checkbox
@@ -350,7 +355,8 @@
                     ></v-pagination>
                   </v-row>
                 </v-col>
-                <v-col cols="2">
+                <v-spacer></v-spacer>
+                <v-col>
                   <v-text-field
                     v-model="search"
                     append-icon="mdi-magnify"
@@ -358,19 +364,19 @@
                     single-line
                     hide-details
                     class="border px-2"
+                    style="width: 12rem"
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="1" class="pt-5">
-                  <v-row>
-                    <v-select
-                      v-model="limit"
-                      rounded
-                      class="mt-2 border"
-                      :items="[10, 50, 100, 250, 500, 'all']"
-                      @change="getPage(0)"
-                    ></v-select
-                  ></v-row>
+                <v-col>
+                  <v-select
+                    v-model="limit"
+                    rounded
+                    class="border"
+                    :items="[10, 50, 100, 250, 500, 'all']"
+                    @change="getPage(0)"
+                    style="width: 10rem"
+                  ></v-select>
                 </v-col>
               </v-row>
             </template>
@@ -387,15 +393,17 @@
                 Скачать таблицу
               </v-btn>
             </v-col>
-            <v-btn
-              @click.stop="clearLiads()"
-              plain
-              v-if="
-                selected.length &&
-                $props.user.role_id === 1 &&
-                $props.user.group_id == 0
-              "
-              ><v-icon>mdi-delete</v-icon>Удалить логи</v-btn
+            <v-col>
+              <v-btn
+                @click.stop="clearLiads()"
+                plain
+                v-if="
+                  selected.length &&
+                  $props.user.role_id === 1 &&
+                  $props.user.group_id == 0
+                "
+                ><v-icon>mdi-delete</v-icon>Удалить логи</v-btn
+              ></v-col
             >
             <v-spacer></v-spacer>
             <v-col>
@@ -432,17 +440,17 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col cols="3">
-              <v-btn
-                :disable="!selected.length && selectedStatus == 0"
-                class="border ma-2"
-                outlined
-                rounded
-                @click="changeStatus"
-              >
-                Сменить статус
-              </v-btn>
-            </v-col>
+            <!-- <v-col> -->
+            <v-btn
+              :disable="!selected.length && selectedStatus == 0"
+              class="border ma-2"
+              outlined
+              rounded
+              @click="changeStatus"
+            >
+              Сменить статус
+            </v-btn>
+            <!-- </v-col> -->
           </v-row>
         </div>
       </v-col>
