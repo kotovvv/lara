@@ -51,6 +51,7 @@ class Load_calls extends Command
     // $files = Storage::disk('public')->files($directory);
     $curdate = date('Y-m-d');
     foreach ($files as  $file) {
+      if (!file_exists(Storage::disk('public')->get($file))) continue;
       $user_serv = explode('/', $file)[2];
       $serv = explode('/', $file)[1];
       $data = [];
