@@ -1,21 +1,17 @@
 <template>
   <div>
     <v-container fluid>
-      <v-row>
-        <v-col cols="1">
-          <p>Сброс</p>
-          <v-btn @click="clearFilter" class="border" outlined rounded
-            ><v-icon>close</v-icon></v-btn
-          >
-        </v-col>
-        <v-col>
+      <v-row style="font-size: 0.8rem; gap: 6px">
+        <div style="width: 26rem">
           <v-row class="px-4">
-            <v-col><p>С Дата</p></v-col>
-            <v-col><p>По Дата</p></v-col>
+            <v-col><p></p></v-col>
           </v-row>
 
           <div class="status_wrp wrp_date px-3">
             <v-row align="center">
+              <btn @click="clearFilter" small text>
+                <v-icon>close</v-icon>
+              </btn>
               <v-col>
                 <v-menu
                   v-model="dateFrom"
@@ -81,11 +77,11 @@
               >
             </v-row>
           </div>
-        </v-col>
+        </div>
 
-        <v-col>
+        <div>
           <!-- statuses_lids -->
-          <p>Отбор по статусам</p>
+          <p></p>
           <v-select
             ref="filterStatus"
             color="red"
@@ -98,11 +94,13 @@
             rounded
             :multiple="true"
             :menu-props="{ maxHeight: '80vh' }"
+            label="Статусы"
+            style="width: 14rem"
           >
             <template v-slot:selection="{ item, index }">
               <span v-if="index === 0">{{ item.name }} </span>
               <span v-if="index === 1" class="grey--text text-caption">
-                (+{{ filterStatus.length - 1 }} )
+                +
               </span>
             </template>
             <template v-slot:item="{ item, attrs }">
@@ -123,10 +121,10 @@
               {{ item.name }}
             </template>
           </v-select>
-        </v-col>
+        </div>
 
-        <v-col>
-          <p>Отбор по поставщикам</p>
+        <div>
+          <p></p>
           <v-autocomplete
             v-model="filterProviders"
             :items="providers"
@@ -138,11 +136,13 @@
             multiple
             :menu-props="{ maxHeight: '70vh' }"
             clearable="clearable"
+            label="Поставщики"
+            style="width: 15rem"
           >
             <template v-slot:selection="{ item, index }">
               <span v-if="index === 0">{{ item.name }} </span>
               <span v-if="index === 1" class="grey--text text-caption">
-                (+{{ filterProviders.length - 1 }} )
+                +
               </span>
             </template>
             <template v-slot:item="{ item, attrs }">
@@ -156,10 +156,10 @@
               </v-badge>
             </template>
           </v-autocomplete>
-        </v-col>
+        </div>
 
-        <v-col>
-          <p>Телефон</p>
+        <div>
+          <p></p>
           <!-- @click:append="getPage(0)" -->
           <v-text-field
             v-model.lazy.trim="filtertel"
@@ -167,21 +167,25 @@
             @input="getPage"
             outlined
             rounded
+            label="Телефон"
+            style="width: 12rem"
           ></v-text-field>
-        </v-col>
+        </div>
         <!-- v-if="$props.user.role_id == 1" -->
-        <v-col>
-          <p>Глобальный поиск</p>
+        <div>
+          <p></p>
           <v-text-field
             v-model="searchAll"
             append-icon="mdi-magnify"
             @click:append="searchlids3"
             outlined
             rounded
+            label="Глобальный поиск"
+            style="width: 13rem"
           ></v-text-field>
-        </v-col>
-        <v-col v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
-          <p>Фильтр office</p>
+        </div>
+        <div v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
+          <p></p>
           <v-select
             v-model="filterOffices"
             :items="offices"
@@ -190,10 +194,12 @@
             outlined
             rounded
             multiple
+            label="Фильтр office"
             @change="
               getUsers();
               getPage(0);
             "
+            style="width: 13rem"
           >
             <!--
             <template v-slot:selection="{ item, index }">
@@ -204,7 +210,9 @@
               </v-chip>
             </template>-->
           </v-select>
-        </v-col>
+        </div>
+        <v-col></v-col>
+        <v-col></v-col>
       </v-row>
     </v-container>
     <v-progress-linear
@@ -269,7 +277,7 @@
       </template>
     </v-snackbar>
     <v-row>
-      <v-col cols="9">
+      <v-col cols="10">
         <div class="border pa-4">
           <!-- @update:sort-by="makeSort"
           @update:sort-desc="makeSort" -->
@@ -295,39 +303,18 @@
             ref="datatable"
             :loading="loading"
             loading-text="Загружаю... Ожидайте"
+            expand-icon=""
           >
             <template v-slot:top="{}">
-              <v-row>
-                <v-col cols="2">
-                  <div class="d-flex pl-2 align-center border">
-                    Отбор
-                    <v-text-field
-                      class="mx-2 mt-0 pt-0 talign-center nn"
-                      @input="selectRow"
-                      :max="limit"
-                      v-model.number="hmrow"
-                      hide-details="auto"
-                      color="#004D40"
-                    ></v-text-field>
-                  </div>
-
-                  <v-text-field
-                    v-model="search"
-                    append-icon="mdi-magnify"
-                    label="Поиск"
-                    single-line
-                    hide-details
-                    class="border px-2"
-                  ></v-text-field>
-                </v-col>
-                <v-col class="wrp_group">
+              <v-row class="mb-4">
+                <v-col class="ml-3 wrp_group" cols="8">
                   <v-row
                     v-for="office in filterOffices.includes(0)
                       ? offices
                       : offices.filter((o) => filterOffices.includes(o.id))"
                     :key="office.id"
                   >
-                    <span v-if="office.id > 0" class="pt-5"
+                    <span v-if="office.id > 0" class="pt-5" style="width: 80px"
                       >{{ office.name }}:
                     </span>
                     <v-checkbox
@@ -347,6 +334,17 @@
                   </v-row>
 
                   <v-row class="align-center">
+                    <div class="d-flex pl-2 align-center border">
+                      Отбор
+                      <v-text-field
+                        class="mx-2 mt-0 pt-0 talign-center nn"
+                        @input="selectRow"
+                        :max="limit"
+                        v-model.number="hmrow"
+                        hide-details="auto"
+                        color="#004D40"
+                      ></v-text-field>
+                    </div>
                     <h5 class="mb-0">Всего:{{ hm }}</h5>
                     <v-pagination
                       v-model="page"
@@ -357,16 +355,28 @@
                     ></v-pagination>
                   </v-row>
                 </v-col>
-                <v-col cols="3" class="mt--3">
-                  <v-row>
-                    <v-select
-                      v-model="limit"
-                      rounded
-                      class="mt-2 border"
-                      :items="[10, 50, 100, 250, 500, 'all']"
-                      @change="getPage(0)"
-                    ></v-select
-                  ></v-row>
+                <v-spacer></v-spacer>
+                <v-col>
+                  <v-text-field
+                    v-model="search"
+                    append-icon="mdi-magnify"
+                    label="Поиск"
+                    single-line
+                    hide-details
+                    class="border px-2"
+                    style="width: 12rem"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col>
+                  <v-select
+                    v-model="limit"
+                    rounded
+                    class="border"
+                    :items="[10, 50, 100, 250, 500, 'all']"
+                    @change="getPage(0)"
+                    style="width: 10rem"
+                  ></v-select>
                 </v-col>
               </v-row>
             </template>
@@ -383,15 +393,17 @@
                 Скачать таблицу
               </v-btn>
             </v-col>
-            <v-btn
-              @click.stop="clearLiads()"
-              plain
-              v-if="
-                selected.length &&
-                $props.user.role_id === 1 &&
-                $props.user.group_id == 0
-              "
-              ><v-icon>mdi-delete</v-icon>Удалить логи</v-btn
+            <v-col>
+              <v-btn
+                @click.stop="clearLiads()"
+                plain
+                v-if="
+                  selected.length &&
+                  $props.user.role_id === 1 &&
+                  $props.user.group_id == 0
+                "
+                ><v-icon>mdi-delete</v-icon>Удалить логи</v-btn
+              ></v-col
             >
             <v-spacer></v-spacer>
             <v-col>
@@ -428,27 +440,27 @@
                 </template>
               </v-select>
             </v-col>
-            <v-col cols="3">
-              <v-btn
-                :disable="!selected.length && selectedStatus == 0"
-                class="border ma-2"
-                outlined
-                rounded
-                @click="changeStatus"
-              >
-                Сменить статус
-              </v-btn>
-            </v-col>
+            <!-- <v-col> -->
+            <v-btn
+              :disable="!selected.length && selectedStatus == 0"
+              class="border ma-2"
+              outlined
+              rounded
+              @click="changeStatus"
+            >
+              Сменить статус
+            </v-btn>
+            <!-- </v-col> -->
           </v-row>
         </div>
       </v-col>
-      <v-col cols="3">
-        <div class="pa-5 w-100 border wrp_users">
-          <div class="my-3">Поиск пользователей</div>
+      <v-col cols="2">
+        <div class="pa-3 w-100 border wrp_users">
+          <!-- <div class="my-3">Поиск пользователей</div> -->
           <v-autocomplete
             v-model="selectedUser"
             :items="users"
-            label="Выбор"
+            label="Поиск пользователей"
             item-text="fio"
             item-value="id"
             :return-object="true"
@@ -494,22 +506,24 @@
                         {{ item.fio }}
                         <div></div>
                       </v-expansion-panel-header>
-                      <v-expansion-panel-content>
-                        <v-row
+                      <v-expansion-panel-content style="pa-0">
+                        <div
                           v-for="user in users.filter(function (i) {
                             return i.group_id == item.group_id;
                           })"
                           :key="user.id"
+                          class="mb-3"
                         >
                           <v-radio
                             :label="user.fio"
                             :value="user.id"
                             :disabled="disableuser == user.id"
+                            class="mb-0"
                           >
                           </v-radio>
 
                           <v-btn
-                            class="ml-3"
+                            class="ml-5"
                             small
                             :color="usercolor(user)"
                             @click="
@@ -530,7 +544,7 @@
                           <v-btn data="cb" v-if="user.cb" label small>
                             {{ user.cb }}
                           </v-btn>
-                        </v-row>
+                        </div>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
                   </v-expansion-panels>
@@ -597,6 +611,7 @@ export default {
       { text: "Сообщение", value: "text" },
       { text: "Звонков", value: "qtytel" },
       { text: "ПЕРЕЗВОН", value: "ontime" },
+      { text: "", value: "data-table-expand" },
     ],
     parse_header: [],
     sortOrders: {},
@@ -912,10 +927,14 @@ export default {
             if (e.created_at) {
               e.date_created = e.created_at.substring(0, 10);
             }
-            if (e.status_id) {
+
+            try {
               e.status =
                 self.statuses.find((s) => s.id == e.status_id).name || "";
+            } catch (error) {
+              e.status = "";
             }
+
             if (e.user_id) {
               e.user = self.users.find((u) => u.id == e.user_id)?.fio || "";
             }
@@ -1397,11 +1416,15 @@ export default {
 .scroll-y {
   max-height: 60vh;
   overflow: auto;
+  padding: 2px;
 }
 
 #tablids .v-data-table__wrapper {
   overflow: auto;
   max-height: 54vh;
+}
+#tablids .text-start.sortable {
+  vertical-align: top;
 }
 
 #tablids .v-data-footer .v-data-footer__select,
@@ -1506,5 +1529,8 @@ export default {
 }
 .v-select__selections {
   gap: 1rem;
+}
+.wrp_users .v-expansion-panel-content__wrap {
+  padding: 0;
 }
 </style>
