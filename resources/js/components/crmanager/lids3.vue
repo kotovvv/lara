@@ -454,8 +454,8 @@
           </v-row>
         </div>
       </v-col>
-      <v-col cols="2">
-        <div class="pa-3 w-100 border wrp_users">
+      <v-col cols="2" class="px-0">
+        <div class="py-3 w-100 border wrp_users">
           <!-- <div class="my-3">Поиск пользователей</div> -->
           <v-autocomplete
             v-model="selectedUser"
@@ -507,7 +507,7 @@
                         <div></div>
                       </v-expansion-panel-header>
                       <v-expansion-panel-content style="pa-0">
-                        <div
+                        <v-row
                           v-for="user in users.filter(function (i) {
                             return i.group_id == item.group_id;
                           })"
@@ -523,7 +523,7 @@
                           </v-radio>
 
                           <v-btn
-                            class="ml-5"
+                            class="ml-1"
                             small
                             :color="usercolor(user)"
                             @click="
@@ -544,7 +544,7 @@
                           <v-btn data="cb" v-if="user.cb" label small>
                             {{ user.cb }}
                           </v-btn>
-                        </div>
+                        </v-row>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
                   </v-expansion-panels>
@@ -1414,7 +1414,7 @@ export default {
 
 <style>
 .scroll-y {
-  max-height: 60vh;
+  max-height: 77vh;
   overflow: auto;
   padding: 2px;
 }
@@ -1529,8 +1529,5 @@ export default {
 }
 .v-select__selections {
   gap: 1rem;
-}
-.wrp_users .v-expansion-panel-content__wrap {
-  padding: 0;
 }
 </style>
