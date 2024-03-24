@@ -805,11 +805,12 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     Log::whereIn('lid_id', $lids)->delete();
   }
 
+  // /api/set_zaliv?api_key=rdfgsdfgsdfgsghethsdghdsf&user_id=383&umcfields[name]=name&umcfields[phone]=phone&umcfields[email]=email&text=text&umcfields[affiliate_user]=affiliate_user&client_lang=client_lang&client_geo=client_geo&client_funnel=client_funnel&client_answers=client_answers&company_name=company_name
   public function set_zaliv(Request $request)
   {
     $req = $request->all();
 
-    $f_key =   DB::table('apikeys')->where('api_key', $req['api_key'])->first();
+    $f_key = DB::table('apikeys')->where('api_key', $req['api_key'])->first();
 
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
     $n_lid = new Lid;
@@ -838,13 +839,36 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     if (isset($req['umcfields']['email']) && strlen($req['umcfields']['email']) > 1) {
       $n_lid->email = $req['umcfields']['email'];
-    } else {
-      $n_lid->email = time() . '@none.com';
     }
     if (isset($req['text']) && strlen($req['text']) > 1) {
       $n_lid->text = $req['text'];
     } else {
       $n_lid->text = '';
+    }
+    if (isset($req['client_lang'])) {
+      $n_lid->client_lang = $req['client_lang'];
+    } else {
+      $n_lid->client_lang = '';
+    }
+    if (isset($req['client_geo'])) {
+      $n_lid->client_geo = $req['client_geo'];
+    } else {
+      $n_lid->client_geo = '';
+    }
+    if (isset($req['client_funnel'])) {
+      $n_lid->client_funnel = $req['client_funnel'];
+    } else {
+      $n_lid->client_funnel = '';
+    }
+    if (isset($req['client_answers'])) {
+      $n_lid->client_answers = $req['client_answers'];
+    } else {
+      $n_lid->client_answers = '';
+    }
+    if (isset($req['company_name'])) {
+      $n_lid->company_name = $req['company_name'];
+    } else {
+      $n_lid->company_name = '';
     }
 
     $n_lid->afilyator = $req['umcfields']['affiliate_user'];
@@ -895,8 +919,6 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     if ($fio) {
       $n_lid->name =  $fio;
-    } else {
-      $n_lid->name = time();
     }
 
     if ($phonestr) {
@@ -918,7 +940,31 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } else {
       $n_lid->email = time() . '@none.com';
     }
-
+    if (isset($req['client_lang'])) {
+      $n_lid->client_lang = $req['client_lang'];
+    } else {
+      $n_lid->client_lang = '';
+    }
+    if (isset($req['client_geo'])) {
+      $n_lid->client_geo = $req['client_geo'];
+    } else {
+      $n_lid->client_geo = '';
+    }
+    if (isset($req['client_funnel'])) {
+      $n_lid->client_funnel = $req['client_funnel'];
+    } else {
+      $n_lid->client_funnel = '';
+    }
+    if (isset($req['client_answers'])) {
+      $n_lid->client_answers = $req['client_answers'];
+    } else {
+      $n_lid->client_answers = '';
+    }
+    if (isset($req['company_name'])) {
+      $n_lid->company_name = $req['company_name'];
+    } else {
+      $n_lid->company_name = '';
+    }
     $n_lid->afilyator = $affiliate;
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = (int) $req['user_id'];
@@ -982,7 +1028,31 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } else {
       $n_lid->email = time() . '@none.com';
     }
-
+    if (isset($req['client_lang'])) {
+      $n_lid->client_lang = $req['client_lang'];
+    } else {
+      $n_lid->client_lang = '';
+    }
+    if (isset($req['client_geo'])) {
+      $n_lid->client_geo = $req['client_geo'];
+    } else {
+      $n_lid->client_geo = '';
+    }
+    if (isset($req['client_funnel'])) {
+      $n_lid->client_funnel = $req['client_funnel'];
+    } else {
+      $n_lid->client_funnel = '';
+    }
+    if (isset($req['client_answers'])) {
+      $n_lid->client_answers = $req['client_answers'];
+    } else {
+      $n_lid->client_answers = '';
+    }
+    if (isset($req['company_name'])) {
+      $n_lid->company_name = $req['company_name'];
+    } else {
+      $n_lid->company_name = '';
+    }
     $n_lid->afilyator = $req['umcfields[affiliate_user]'];
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $req['user_id'];
@@ -1034,6 +1104,31 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $req['user_id'];
     $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
+    if (isset($req['client_lang'])) {
+      $n_lid->client_lang = $req['client_lang'];
+    } else {
+      $n_lid->client_lang = '';
+    }
+    if (isset($req['client_geo'])) {
+      $n_lid->client_geo = $req['client_geo'];
+    } else {
+      $n_lid->client_geo = '';
+    }
+    if (isset($req['client_funnel'])) {
+      $n_lid->client_funnel = $req['client_funnel'];
+    } else {
+      $n_lid->client_funnel = '';
+    }
+    if (isset($req['client_answers'])) {
+      $n_lid->client_answers = $req['client_answers'];
+    } else {
+      $n_lid->client_answers = '';
+    }
+    if (isset($req['company_name'])) {
+      $n_lid->company_name = $req['company_name'];
+    } else {
+      $n_lid->company_name = '';
+    }
     $n_lid->created_at = Now();
 
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
