@@ -9,9 +9,9 @@
 
           <div class="status_wrp wrp_date px-3">
             <v-row align="center">
-              <btn @click="clearFilter" small text>
+              <v-btn @click="clearFilter" small text>
                 <v-icon>close</v-icon>
-              </btn>
+              </v-btn>
               <v-col>
                 <v-menu
                   v-model="dateFrom"
@@ -211,7 +211,24 @@
             </template>-->
           </v-select>
         </div>
-        <v-col></v-col>
+        <div>
+          <p></p>
+          <v-select
+            ref="filterLang"
+            v-model="filterLang"
+            @change="getPage(0)"
+            :items="languges"
+            item-text="name"
+            item-value="name"
+            outlined
+            rounded
+            :menu-props="{ maxHeight: '80vh' }"
+            label="Языки"
+            style="width: 14rem"
+            clearable
+          >
+          </v-select>
+        </div>
         <v-col></v-col>
       </v-row>
     </v-container>
@@ -386,7 +403,7 @@
               </td>
             </template>
           </v-data-table>
-          <v-row class="align-center">
+          <v-row class="align-center mt-2">
             <v-col cols="2" v-if="$props.user.role_id == 1">
               <v-btn outlined rounded @click="exportXlsx" class="border">
                 <v-icon left> mdi-file-excel </v-icon>
@@ -407,7 +424,9 @@
             >
             <v-spacer></v-spacer>
             <v-col>
-              <h6>Назначение статусов</h6>
+              <v-btn class="btn" v-if="selected" @click="dialog = true"
+                >Редактировать</v-btn
+              >
             </v-col>
             <v-col cols="3">
               <v-select
@@ -417,6 +436,7 @@
                 item-value="id"
                 outlined
                 rounded
+                label="Назначение статусов"
               >
                 <template v-slot:selection="{ item }">
                   <i
@@ -556,6 +576,33 @@
       </v-col>
     </v-row>
     <ConfirmDlg ref="confirm" />
+    <v-dialog v-model="dialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Редактировать</span>
+        </v-card-title>
+
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field v-model="change_lang" label="Язык"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="dialog = false">
+            Отмена
+          </v-btn>
+          <v-btn color="blue darken-1" text @click="editSelect">
+            Сохранить
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -567,12 +614,14 @@ import logtel from "../manager/logtel";
 export default {
   props: ["user"],
   data: () => ({
+    change_lang: "",
+    dialog: false,
     clearable: true,
     savedates: true,
     akkvalue: [],
     loading: false,
     selectedUser: {},
-    group: null,
+    group: [],
     modal: false,
     dateFrom: false,
     dateTo: false,
@@ -644,6 +693,8 @@ export default {
     sortBy: "",
     sortDesc: true,
     options: {},
+    filterLang: "",
+    languges: [],
   }),
   mounted: function () {
     this.getUsers();
@@ -770,6 +821,31 @@ export default {
   },
   computed: {},
   methods: {
+    editSelect() {
+      if (this.selected) {
+        const self = this;
+        let ids = [];
+        self.selected.forEach(function (el) {
+          ids.push(el.id);
+          const lidindex = self.lids.findIndex((l) => {
+            return l.id === el.id;
+          });
+
+          if (lidindex !== -1) {
+            self.lids[lidindex].client_lang = self.change_lang;
+          }
+        });
+        let data = {};
+        data.lids = ids;
+        data.param = { client_lang: self.change_lang };
+        axios
+          .post("/api/updateLiads", data)
+          .then((res) => {})
+          .catch((error) => console.log(error));
+      }
+      this.dialog = false;
+    },
+
     // makeSort(sort) {
     //   if (
     //     ["afilyator", "provider", "date_created", "date_updated"].includes(sort)
@@ -909,6 +985,7 @@ export default {
       data.limit = self.limit;
       data.page = self.page;
       data.office_ids = self.filterOffices;
+      data.filterLang = self.filterLang;
 
       if (this.callback === true) {
         data.callback = 1;
@@ -921,6 +998,7 @@ export default {
 
           if (self.page == 0) {
             self.Statuses = res.data.statuses;
+            self.languges = res.data.languges;
           }
 
           self.lids = res.data.lids;
