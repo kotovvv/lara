@@ -424,7 +424,7 @@
             >
             <v-spacer></v-spacer>
             <v-col>
-              <v-btn class="btn" v-if="selected" @click="dialog = true"
+              <v-btn class="btn" v-if="selected.length" @click="dialog = true"
                 >Редактировать</v-btn
               >
             </v-col>
@@ -588,6 +588,9 @@
               <v-col cols="12">
                 <v-text-field v-model="change_lang" label="Язык"></v-text-field>
               </v-col>
+              <v-col cols="12">
+                <v-text-field v-model="change_geo" label="ГЕО"></v-text-field>
+              </v-col>
             </v-row>
           </v-container>
         </v-card-text>
@@ -615,6 +618,7 @@ export default {
   props: ["user"],
   data: () => ({
     change_lang: "",
+    change_geo: "",
     dialog: false,
     clearable: true,
     savedates: true,
@@ -824,6 +828,7 @@ export default {
     editSelect() {
       if (this.selected) {
         const self = this;
+        if (self.change_lang == "" && self.change_geo == "") return;
         let ids = [];
         self.selected.forEach(function (el) {
           ids.push(el.id);
@@ -832,12 +837,23 @@ export default {
           });
 
           if (lidindex !== -1) {
-            self.lids[lidindex].client_lang = self.change_lang;
+            if (self.change_lang != "") {
+              self.lids[lidindex].client_lang = self.change_lang;
+            }
+            if (self.change_geo != "") {
+              self.lids[lidindex].client_geo = self.change_geo;
+            }
           }
         });
         let data = {};
         data.lids = ids;
-        data.param = { client_lang: self.change_lang };
+        data.param = {};
+        if (self.change_lang != "") {
+          data.param.client_lang = self.change_lang;
+        }
+        if (self.change_geo != "") {
+          data.param.client_geo = self.change_geo;
+        }
         axios
           .post("/api/updateLiads", data)
           .then((res) => {})
