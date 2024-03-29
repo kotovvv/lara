@@ -732,6 +732,7 @@ export default {
     filterLang: "",
     filterGeo: "",
     languges: [],
+    geo: [],
     GeoTel,
   }),
   mounted: function () {
