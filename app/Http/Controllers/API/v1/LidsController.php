@@ -448,6 +448,7 @@ class LidsController extends Controller
     $limit = $data['limit'];
     $page = (int) $data['page'];
     $filterLang = $data['filterLang'];
+    $filterGeo = $data['filterGeo'];
     $providers = $date = $users_ids = [];
     $where_date = '';
     $duplicate_tel = [];
@@ -513,6 +514,9 @@ class LidsController extends Controller
       })
       ->when($filterLang != '', function ($query) use ($filterLang) {
         return $query->where('lids.client_lang', $filterLang);
+      })
+      ->when($filterGeo != '', function ($query) use ($filterGeo) {
+        return $query->where('lids.client_geo', $filterGeo);
       })
       ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {
         return $query->where(DB::Raw('(SELECT count(*) cnt FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9)'), '>', 0);
@@ -590,6 +594,22 @@ class LidsController extends Controller
         //->orderBy('lids.created_at', 'DESC')
         ->orderBy('client_lang', 'ASC')
         ->get();
+      $response['geo'] = Lid::where('client_geo', '!=', null)
+        ->when(count($date) > 0, function ($query) use ($date) {
+          return $query->whereBetween('lids.created_at', $date);
+        })
+        ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
+          return $query->where('lids.user_id', $id);
+        })
+        ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
+          return $query->whereIn('lids.user_id', $users_ids);
+        })
+        ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
+          return $query->whereIn('lids.office_id', $office_ids);
+        })
+        ->groupBy('client_geo')
+        //->orderBy('lids.created_at', 'DESC')
+        ->pluck('client_geo');
     }
 
     return response($response);

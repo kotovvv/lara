@@ -224,10 +224,38 @@
             rounded
             :menu-props="{ maxHeight: '80vh' }"
             label="Языки"
-            style="width: 14rem"
+            style="width: 9rem"
             clearable
           >
           </v-select>
+        </div>
+        <div>
+          <p></p>
+          <v-autocomplete
+            v-model="filterGeo"
+            :items="
+              GeoTel.filter((g) => {
+                return this.geo.includes(g.code);
+              })
+            "
+            @change="getPage(0)"
+            item-text="dial_code"
+            item-value="code"
+            outlined
+            rounded
+            clearable
+            label="GEO код"
+            style="width: 9rem"
+          >
+            <template v-slot:selection="{ item }">
+              {{ item.code }}
+            </template>
+            <template v-slot:item="{ item }">
+              <svg class="icon">
+                <use :xlink:href="'#' + item.code"></use></svg
+              >{{ item.name }} {{ item.code }} {{ item.dial_code }}
+            </template>
+          </v-autocomplete>
         </div>
         <v-col></v-col>
       </v-row>
@@ -296,8 +324,6 @@
     <v-row>
       <v-col cols="10">
         <div class="border pa-4">
-          <!-- @update:sort-by="makeSort"
-          @update:sort-desc="makeSort" -->
           <v-data-table
             v-model.lazy.trim="selected"
             id="tablids"
@@ -397,6 +423,14 @@
                 </v-col>
               </v-row>
             </template>
+            <template v-slot:item.client_geo="{ item }">
+              <div class="d-flex align-center">
+                <svg class="icon small">
+                  <use :xlink:href="'#' + item.client_geo"></use>
+                </svg>
+                {{ item.client_geo }}
+              </div>
+            </template>
             <template v-slot:expanded-item="{ headers, item }">
               <td :colspan="headers.length" class="blackborder">
                 <logtel :lid_id="item.id" :key="item.id" />
@@ -424,7 +458,7 @@
             >
             <v-spacer></v-spacer>
             <v-col>
-              <v-btn class="btn" v-if="selected" @click="dialog = true"
+              <v-btn class="btn" v-if="selected.length" @click="dialog = true"
                 >Редактировать</v-btn
               >
             </v-col>
@@ -588,6 +622,30 @@
               <v-col cols="12">
                 <v-text-field v-model="change_lang" label="Язык"></v-text-field>
               </v-col>
+              <v-col cols="12">
+                <v-autocomplete
+                  v-model="change_geo"
+                  :items="GeoTel"
+                  item-text="dial_code"
+                  item-value="code"
+                  outlined
+                  rounded
+                  clearable
+                  label="Назначение GEO код"
+                >
+                  <template v-slot:selection="{ item }">
+                    <svg class="icon">
+                      <use :xlink:href="'#' + item.code"></use>
+                    </svg>
+                    {{ item.name }} {{ item.code }} {{ item.dial_code }}
+                  </template>
+                  <template v-slot:item="{ item }">
+                    <svg class="icon">
+                      <use :xlink:href="'#' + item.code"></use></svg
+                    >{{ item.name }} {{ item.code }} {{ item.dial_code }}
+                  </template>
+                </v-autocomplete>
+              </v-col>
             </v-row>
           </v-container>
         </v-card-text>
@@ -603,6 +661,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <FlagsSVG />
   </div>
 </template>
 
@@ -611,10 +670,13 @@ import XLSX from "xlsx";
 import axios from "axios";
 import _ from "lodash";
 import logtel from "../manager/logtel";
+import GeoTel from "../UI/GeoTel";
 export default {
   props: ["user"],
   data: () => ({
     change_lang: "",
+    change_geo: "",
+    geo: [],
     dialog: false,
     clearable: true,
     savedates: true,
@@ -694,7 +756,9 @@ export default {
     sortDesc: true,
     options: {},
     filterLang: "",
+    filterGeo: "",
     languges: [],
+    GeoTel,
   }),
   mounted: function () {
     this.getUsers();
@@ -824,6 +888,7 @@ export default {
     editSelect() {
       if (this.selected) {
         const self = this;
+        if (self.change_lang == "" && self.change_geo == "") return;
         let ids = [];
         self.selected.forEach(function (el) {
           ids.push(el.id);
@@ -832,12 +897,23 @@ export default {
           });
 
           if (lidindex !== -1) {
-            self.lids[lidindex].client_lang = self.change_lang;
+            if (self.change_lang != "") {
+              self.lids[lidindex].client_lang = self.change_lang;
+            }
+            if (self.change_geo != "") {
+              self.lids[lidindex].client_geo = self.change_geo;
+            }
           }
         });
         let data = {};
         data.lids = ids;
-        data.param = { client_lang: self.change_lang };
+        data.param = {};
+        if (self.change_lang != "") {
+          data.param.client_lang = self.change_lang;
+        }
+        if (self.change_geo != "") {
+          data.param.client_geo = self.change_geo;
+        }
         axios
           .post("/api/updateLiads", data)
           .then((res) => {})
@@ -986,6 +1062,7 @@ export default {
       data.page = self.page;
       data.office_ids = self.filterOffices;
       data.filterLang = self.filterLang;
+      data.filterGeo = self.filterGeo;
 
       if (this.callback === true) {
         data.callback = 1;
@@ -999,6 +1076,7 @@ export default {
           if (self.page == 0) {
             self.Statuses = res.data.statuses;
             self.languges = res.data.languges;
+            self.geo = res.data.geo;
           }
 
           self.lids = res.data.lids;
@@ -1491,6 +1569,7 @@ export default {
   components: {
     logtel,
     ConfirmDlg: () => import("../admin/ConfirmDlg"),
+    FlagsSVG: () => import("../UI/FlagsSVG"),
   },
 };
 </script>
@@ -1612,5 +1691,15 @@ export default {
 }
 .v-select__selections {
   gap: 1rem;
+}
+svg.icon {
+  width: 60px;
+  height: 60px;
+  margin-right: 1rem;
+}
+svg.icon.small {
+  width: 30px;
+  height: 30px;
+  display: inline-block;
 }
 </style>
