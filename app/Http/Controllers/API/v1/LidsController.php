@@ -558,7 +558,7 @@ class LidsController extends Controller
       ->get();
 
     if ($page == 0) {
-      $response['statuses'] = Lid::select(DB::Raw('count(statuses.id) hm'), DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') depozit'), 'statuses.id', 'statuses.name', 'statuses.color')
+      $response['statuses'] = $q_leads->select(DB::Raw('count(statuses.id) hm'), DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') depozit'), 'statuses.id', 'statuses.name', 'statuses.color')
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
         ->when(count($date) > 0, function ($query) use ($date) {
           return $query->whereBetween('lids.created_at', $date);

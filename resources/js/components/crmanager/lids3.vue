@@ -458,7 +458,7 @@
             >
             <v-spacer></v-spacer>
             <v-col>
-              <v-btn class="btn" v-if="selected.length" @click="dialog = true"
+              <v-btn class="btn" v-if="selected" @click="dialog = true"
                 >Редактировать</v-btn
               >
             </v-col>
@@ -622,30 +622,6 @@
               <v-col cols="12">
                 <v-text-field v-model="change_lang" label="Язык"></v-text-field>
               </v-col>
-              <v-col cols="12">
-                <v-autocomplete
-                  v-model="change_geo"
-                  :items="GeoTel"
-                  item-text="dial_code"
-                  item-value="code"
-                  outlined
-                  rounded
-                  clearable
-                  label="Назначение GEO код"
-                >
-                  <template v-slot:selection="{ item }">
-                    <svg class="icon">
-                      <use :xlink:href="'#' + item.code"></use>
-                    </svg>
-                    {{ item.name }} {{ item.code }} {{ item.dial_code }}
-                  </template>
-                  <template v-slot:item="{ item }">
-                    <svg class="icon">
-                      <use :xlink:href="'#' + item.code"></use></svg
-                    >{{ item.name }} {{ item.code }} {{ item.dial_code }}
-                  </template>
-                </v-autocomplete>
-              </v-col>
             </v-row>
           </v-container>
         </v-card-text>
@@ -675,8 +651,6 @@ export default {
   props: ["user"],
   data: () => ({
     change_lang: "",
-    change_geo: "",
-    geo: [],
     dialog: false,
     clearable: true,
     savedates: true,
