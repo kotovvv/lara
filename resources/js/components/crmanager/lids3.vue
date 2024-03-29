@@ -224,7 +224,7 @@
             rounded
             :menu-props="{ maxHeight: '80vh' }"
             label="Языки"
-            style="width: 9rem"
+            style="width: 12rem"
             clearable
           >
           </v-select>
@@ -245,7 +245,7 @@
             rounded
             clearable
             label="GEO код"
-            style="width: 9rem"
+            style="width: 12rem"
           >
             <template v-slot:selection="{ item }">
               {{ item.code }}
@@ -620,7 +620,36 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field v-model="change_lang" label="Язык"></v-text-field>
+                <v-text-field
+                  v-model="change_lang"
+                  label="Язык"
+                  outlined
+                  rounded
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-autocomplete
+                  v-model="change_geo"
+                  :items="GeoTel"
+                  item-text="dial_code"
+                  item-value="code"
+                  outlined
+                  rounded
+                  clearable
+                  label="Назначение GEO код"
+                >
+                  <template v-slot:selection="{ item }">
+                    <svg class="icon">
+                      <use :xlink:href="'#' + item.code"></use>
+                    </svg>
+                    {{ item.name }} {{ item.code }} {{ item.dial_code }}
+                  </template>
+                  <template v-slot:item="{ item }">
+                    <svg class="icon">
+                      <use :xlink:href="'#' + item.code"></use></svg
+                    >{{ item.name }} {{ item.code }} {{ item.dial_code }}
+                  </template>
+                </v-autocomplete>
               </v-col>
             </v-row>
           </v-container>
@@ -651,6 +680,7 @@ export default {
   props: ["user"],
   data: () => ({
     change_lang: "",
+    change_geo: "",
     dialog: false,
     clearable: true,
     savedates: true,
@@ -803,8 +833,6 @@ export default {
       this.selectRow();
     },
     filterOffices(newName) {
-      console.log(newName.slice(-1)[0]);
-      console.log("off" + this.filterOffices);
       if (newName[0] == 0 && newName.length > 1) {
         newName = newName.filter(function (item) {
           return item !== 0;
