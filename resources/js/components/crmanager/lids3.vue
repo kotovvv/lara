@@ -458,7 +458,7 @@
             >
             <v-spacer></v-spacer>
             <v-col>
-              <v-btn class="btn" v-if="selected" @click="dialog = true"
+              <v-btn class="btn" v-if="selected.length" @click="dialog = true"
                 >Редактировать</v-btn
               >
             </v-col>
