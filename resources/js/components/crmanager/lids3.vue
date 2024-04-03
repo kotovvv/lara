@@ -636,6 +636,9 @@
                   clearable
                   label="Язык"
                 >
+                  <template v-slot:item="{ item }">
+                    {{ item.name }} {{ item.id }}
+                  </template>
                 </v-autocomplete>
               </v-col>
               <v-col cols="12">
