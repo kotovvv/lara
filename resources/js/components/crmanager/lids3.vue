@@ -928,7 +928,7 @@ export default {
   computed: {},
   methods: {
     getLangName(ln) {
-      if (ln.client_lang == null) return "";
+      if (!ln.client_lang) return "";
       return this.lng.find(({ id }) => id == ln.client_lang).name;
     },
     editSelect() {
