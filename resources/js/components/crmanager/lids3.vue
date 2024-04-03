@@ -219,7 +219,7 @@
             @change="getPage(0)"
             :items="languges"
             item-text="name"
-            item-value="name"
+            item-value="id"
             outlined
             rounded
             :menu-props="{ maxHeight: '80vh' }"
@@ -227,6 +227,9 @@
             style="width: 12rem"
             clearable
           >
+            <template v-slot:item="{ item }">
+              {{ item.name }} {{ item.id }}
+            </template>
           </v-select>
         </div>
         <div>
@@ -422,6 +425,9 @@
                   ></v-select>
                 </v-col>
               </v-row>
+            </template>
+            <template v-slot:item.client_lang="{ item }">
+              {{ getLangName(item) }}
             </template>
             <template v-slot:item.client_geo="{ item }">
               <div class="d-flex align-center">
@@ -620,12 +626,17 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field
+                <v-autocomplete
                   v-model="change_lang"
-                  label="Язык"
+                  :items="lng"
+                  item-text="name"
+                  item-value="id"
                   outlined
                   rounded
-                ></v-text-field>
+                  clearable
+                  label="Язык"
+                >
+                </v-autocomplete>
               </v-col>
               <v-col cols="12">
                 <v-autocomplete
@@ -732,6 +743,31 @@ export default {
       { text: "Ответы", value: "client_answers" },
       { text: "Компания", value: "company_name" },
       { text: "", value: "data-table-expand" },
+    ],
+    lng: [
+      { id: "BG", name: "болгарский" },
+      { id: "CS", name: "чешский" },
+      { id: "DA", name: "датский" },
+      { id: "DE", name: "немецкий" },
+      { id: "EL", name: "греческий" },
+      { id: "EN", name: "английский" },
+      { id: "ES", name: "испанский" },
+      { id: "ET", name: "эстонский" },
+      { id: "FI", name: "финский" },
+      { id: "FR", name: "французский" },
+      { id: "HR", name: "хорватский" },
+      { id: "HU", name: "венгерский" },
+      { id: "IT", name: "итальнский" },
+      { id: "LT", name: "литовский" },
+      { id: "LV", name: "латвийский" },
+      { id: "MT", name: "мальтийский" },
+      { id: "NL", name: "голландский" },
+      { id: "PL", name: "польский" },
+      { id: "PT", name: "португалский" },
+      { id: "RO", name: "румынский" },
+      { id: "SK", name: "словацкий" },
+      { id: "SL", name: "словенский" },
+      { id: "SV", name: "шведский" },
     ],
     parse_header: [],
     sortOrders: {},
@@ -888,6 +924,10 @@ export default {
   },
   computed: {},
   methods: {
+    getLangName(ln) {
+      if (ln.client_lang == null) return "";
+      return this.lng.find(({ id }) => id == ln.client_lang).name;
+    },
     editSelect() {
       if (this.selected) {
         const self = this;
@@ -1064,6 +1104,7 @@ export default {
       data.limit = self.limit;
       data.page = self.page;
       data.office_ids = self.filterOffices;
+
       data.filterLang = self.filterLang;
       data.filterGeo = self.filterGeo;
 
@@ -1078,7 +1119,16 @@ export default {
 
           if (self.page == 0) {
             self.Statuses = res.data.statuses;
-            self.languges = res.data.languges;
+            if (Array.isArray(res.data.languges)) {
+              let a_l = res.data.languges.reduce(
+                (ac, cv) => ac.concat(cv.name),
+                []
+              );
+              self.languges = self.lng.filter((l) => {
+                return a_l.includes(l.id);
+              });
+            }
+
             self.geo = res.data.geo;
           }
 
