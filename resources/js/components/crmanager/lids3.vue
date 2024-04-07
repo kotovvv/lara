@@ -660,12 +660,12 @@
                     <svg class="icon">
                       <use :xlink:href="'#' + item.code"></use>
                     </svg>
-                    {{ item.name }} {{ item.code }} {{ item.dial_code }}
+                    {{ item.txt }}
                   </template>
                   <template v-slot:item="{ item }">
                     <svg class="icon">
                       <use :xlink:href="'#' + item.code"></use></svg
-                    >{{ item.text }}
+                    >{{ item.txt }}
                   </template>
                 </v-autocomplete>
               </v-col>
