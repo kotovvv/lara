@@ -228,7 +228,7 @@
             clearable
           >
             <template v-slot:item="{ item }">
-              {{ item.name }} {{ item.id }}
+              {{ item.id }} <span>{{ item.name }} </span>
             </template>
           </v-select>
         </div>
@@ -427,14 +427,16 @@
               </v-row>
             </template>
             <template v-slot:item.client_lang="{ item }">
-              {{ getLangName(item) }}
+              <span class="light-green--text lighten-1 lngtxt">{{
+                getLangName(item)
+              }}</span>
             </template>
             <template v-slot:item.client_geo="{ item }">
               <div class="d-flex align-center">
                 <svg class="icon small">
                   <use :xlink:href="'#' + item.client_geo"></use>
                 </svg>
-                {{ item.client_geo }}
+                <span class="blue--text lighten-1">{{ item.client_geo }}</span>
               </div>
             </template>
             <template v-slot:expanded-item="{ headers, item }">
@@ -637,7 +639,9 @@
                   label="Язык"
                 >
                   <template v-slot:item="{ item }">
-                    {{ item.name }} {{ item.id }}
+                    <span :style="{ fontSize: '1.2rem' }"
+                      >{{ item.name }}
+                    </span>
                   </template>
                 </v-autocomplete>
               </v-col>
@@ -645,7 +649,7 @@
                 <v-autocomplete
                   v-model="change_geo"
                   :items="GeoTel"
-                  item-text="dial_code"
+                  item-text="txt"
                   item-value="code"
                   outlined
                   rounded
@@ -661,7 +665,7 @@
                   <template v-slot:item="{ item }">
                     <svg class="icon">
                       <use :xlink:href="'#' + item.code"></use></svg
-                    >{{ item.name }} {{ item.code }} {{ item.dial_code }}
+                    >{{ item.text }}
                   </template>
                 </v-autocomplete>
               </v-col>
@@ -690,6 +694,7 @@ import axios from "axios";
 import _ from "lodash";
 import logtel from "../manager/logtel";
 import GeoTel from "../UI/GeoTel";
+
 export default {
   props: ["user"],
   data: () => ({
@@ -730,6 +735,8 @@ export default {
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
+      { text: "ГЕО", value: "client_geo" },
+      { text: "Язык", value: "client_lang" },
       { text: "Афилятор", value: "afilyator" },
       { text: "Поставщик", value: "provider" },
       { text: "Менеджер", value: "user" },
@@ -740,37 +747,35 @@ export default {
       { text: "Сообщение", value: "text" },
       { text: "Звонков", value: "qtytel" },
       { text: "ПЕРЕЗВОН", value: "ontime" },
-      { text: "Язык", value: "client_lang" },
-      { text: "ГЕО", value: "client_geo" },
       { text: "Воронка", value: "client_funnel" },
       { text: "Ответы", value: "client_answers" },
       { text: "Компания", value: "company_name" },
       { text: "", value: "data-table-expand" },
     ],
     lng: [
-      { id: "BG", name: "болгарский" },
-      { id: "CS", name: "чешский" },
-      { id: "DA", name: "датский" },
-      { id: "DE", name: "немецкий" },
-      { id: "EL", name: "греческий" },
-      { id: "EN", name: "английский" },
-      { id: "ES", name: "испанский" },
-      { id: "ET", name: "эстонский" },
-      { id: "FI", name: "финский" },
-      { id: "FR", name: "французский" },
-      { id: "HR", name: "хорватский" },
-      { id: "HU", name: "венгерский" },
-      { id: "IT", name: "итальнский" },
-      { id: "LT", name: "литовский" },
-      { id: "LV", name: "латвийский" },
-      { id: "MT", name: "мальтийский" },
-      { id: "NL", name: "голландский" },
-      { id: "PL", name: "польский" },
-      { id: "PT", name: "португалский" },
-      { id: "RO", name: "румынский" },
-      { id: "SK", name: "словацкий" },
-      { id: "SL", name: "словенский" },
-      { id: "SV", name: "шведский" },
+      { id: "BG", name: "BG Болгарский" },
+      { id: "CS", name: "CS Чешский" },
+      { id: "DA", name: "DA Датский" },
+      { id: "DE", name: "DE Немецкий" },
+      { id: "EL", name: "EL Греческий" },
+      { id: "EN", name: "EN Английский" },
+      { id: "ES", name: "ES Испанский" },
+      { id: "ET", name: "ET Эстонский" },
+      { id: "FI", name: "FI Финский" },
+      { id: "FR", name: "FR Французский" },
+      { id: "HR", name: "HR Хорватский" },
+      { id: "HU", name: "HU Венгерский" },
+      { id: "IT", name: "IT Итальнский" },
+      { id: "LT", name: "LT Литовский" },
+      { id: "LV", name: "LV Латвийский" },
+      { id: "MT", name: "MT Мальтийский" },
+      { id: "NL", name: "NL Голландский" },
+      { id: "PL", name: "PL Польский" },
+      { id: "PT", name: "PT Португалский" },
+      { id: "RO", name: "RO Румынский" },
+      { id: "SK", name: "SK Словацкий" },
+      { id: "SL", name: "SL Словенский" },
+      { id: "SV", name: "SV Шведский" },
     ],
     parse_header: [],
     sortOrders: {},
@@ -1579,7 +1584,18 @@ export default {
       axios
         .get("/api/provider")
         .then((res) => {
-          self.providers = res.data.map(({ name, id }) => ({ name, id }));
+          self.providers = res.data.map(({ name, id, office_id }) => ({
+            name,
+            id,
+            office_id,
+          }));
+          if (self.$props.user.office_id > 0) {
+            self.providers = self.providers.filter((p) => {
+              return JSON.parse(p.office_id).includes(
+                self.$props.user.office_id
+              );
+            });
+          }
           // self.providers.unshift({ name: "выбор", id: 0 });
           // self.getLidsOnDate();
         })
@@ -1757,5 +1773,8 @@ svg.icon.small {
   width: 30px;
   height: 30px;
   display: inline-block;
+}
+.lngtxt {
+  font-variant-caps: all-small-caps;
 }
 </style>

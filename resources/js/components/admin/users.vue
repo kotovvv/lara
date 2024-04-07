@@ -26,7 +26,11 @@
                   }`"
                 ></v-switch>
                 <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" max-width="600px">
+                <v-dialog
+                  v-model="dialog"
+                  max-width="600px"
+                  content-class="dialogtop"
+                >
                   <template v-slot:activator="{ on, attrs }">
                     <statusUsers :o_users="selected" />
                     <v-btn
@@ -91,15 +95,6 @@
                           </v-col>
                           <v-col cols="6">
                             <v-select
-                              :items="group"
-                              v-model="editedItem.group_id"
-                              item-text="fio"
-                              item-value="id"
-                              label="Группа"
-                            ></v-select>
-                          </v-col>
-                          <v-col cols="6">
-                            <v-select
                               :items="offices"
                               v-model="editedItem.office_id"
                               item-text="name"
@@ -107,6 +102,21 @@
                               label="Office"
                             ></v-select>
                           </v-col>
+                          <v-col cols="6">
+                            <v-autocomplete
+                              :items="
+                                group.filter((g) => {
+                                  return g.office_id == editedItem.office_id;
+                                })
+                              "
+                              v-model="editedItem.group_id"
+                              item-text="fio"
+                              item-value="id"
+                              label="Группа"
+                              :menu-props="{ maxHeight: '60vh' }"
+                            ></v-autocomplete>
+                          </v-col>
+
                           <v-col cols="12">
                             <v-textarea
                               outlined
@@ -429,7 +439,8 @@ export default {
           self.users.map(function (u) {
             // u.role = self.roles.find((r) => r.id == u.role_id).name;
             self.rolename(u);
-            if (u.role_id == 2) self.group.push({ fio: u.fio, id: u.id });
+            if (u.role_id == 2)
+              self.group.push({ fio: u.fio, id: u.id, office_id: u.office_id });
             u.group = "";
             if (u.office_id != null) {
               u.office =
@@ -437,6 +448,19 @@ export default {
                   return o.id == u.office_id;
                 }).name || "";
             }
+          });
+          self.group.sort((a, b) => {
+            const fioA = a.fio.toUpperCase(); // ignore upper and lowercase
+            const fioB = b.fio.toUpperCase(); // ignore upper and lowercase
+            if (fioA < fioB) {
+              return -1;
+            }
+            if (fioA > fioB) {
+              return 1;
+            }
+
+            // names must be equal
+            return 0;
           });
           self.users.map((u) => {
             if (u.group_id > 0) {
@@ -578,3 +602,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+>>> .dialogtop {
+  align-self: flex-start;
+}
+</style>
