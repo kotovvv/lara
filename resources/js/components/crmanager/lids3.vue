@@ -1167,6 +1167,8 @@ export default {
             }
           });
           self.loading = false;
+          self.filterLang = "";
+          self.filterGeo = "";
         })
         .then(() => {
           self.selectRow();
