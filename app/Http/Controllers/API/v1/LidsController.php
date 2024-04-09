@@ -930,11 +930,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } else {
       $n_lid->client_lang = '';
     }
-    if (isset($req['client_geo'])) {
-      $n_lid->client_geo = $req['client_geo'];
-    } else {
-      $n_lid->client_geo = '';
-    }
+
     if (isset($req['client_funnel'])) {
       $n_lid->client_funnel = $req['client_funnel'];
     } else {
@@ -1026,11 +1022,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } else {
       $n_lid->client_lang = '';
     }
-    if (isset($req['client_geo'])) {
-      $n_lid->client_geo = $req['client_geo'];
-    } else {
-      $n_lid->client_geo = '';
-    }
+
     if (isset($req['client_funnel'])) {
       $n_lid->client_funnel = $req['client_funnel'];
     } else {
@@ -1115,11 +1107,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } else {
       $n_lid->client_lang = '';
     }
-    if (isset($req['client_geo'])) {
-      $n_lid->client_geo = $req['client_geo'];
-    } else {
-      $n_lid->client_geo = '';
-    }
+
     if (isset($req['client_funnel'])) {
       $n_lid->client_funnel = $req['client_funnel'];
     } else {
@@ -1192,11 +1180,7 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } else {
       $n_lid->client_lang = '';
     }
-    if (isset($req['client_geo'])) {
-      $n_lid->client_geo = $req['client_geo'];
-    } else {
-      $n_lid->client_geo = '';
-    }
+
     if (isset($req['client_funnel'])) {
       $n_lid->client_funnel = $req['client_funnel'];
     } else {
