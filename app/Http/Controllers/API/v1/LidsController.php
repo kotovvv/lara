@@ -475,7 +475,7 @@ class LidsController extends Controller
       $sortDesc = 'DESC';
     }
 
-    if (isset($data['duplicate_tel'])) {
+    if (isset($data['duplicate_tel']) && $id) {
       $duplicate_tel = Lid::select('tel')->where('user_id', $id)->groupBy('tel')->having(DB::raw('count(tel)'), '>', 1);
     }
     if (isset($data['group_ids'])) {

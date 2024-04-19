@@ -1012,9 +1012,9 @@ export default {
         .split(",")
         .map((el) => parseInt(el));
     }
-    setTimeout(() => {
-      this.getPage();
-    }, 100);
+    //setTimeout(() => {
+    //  this.getPage();
+    //}, 100);
   },
 
   watch: {
@@ -1255,11 +1255,11 @@ export default {
         data.datefrom = this.getLocalDateTime(this.datetimeFrom);
         data.dateto = this.getLocalDateTime(this.datetimeTo);
         data.id = this.disableuser;
-        if (this.$props.user.role_id == 2 && this.disableuser == 0) {
-          data.id = this.$props.user.id;
-        }
+        //if (this.$props.user.role_id == 2 && this.disableuser == 0) {
+        //  data.id = this.$props.user.id;
+        //}
       } else {
-        let id = this.disableuser > 0 ? this.disableuser : this.$props.user.id;
+        let id = this.disableuser > 0 ? this.disableuser : 0;
         this.disableuser = id;
         data.id = id;
       }
