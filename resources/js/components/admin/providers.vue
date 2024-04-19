@@ -11,7 +11,11 @@
           <v-toolbar-title>Поставщики</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
+          <v-dialog
+            v-model="dialog"
+            max-width="500px"
+            content-class="dialogtop"
+          >
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
                 Добавить поставщика
@@ -49,15 +53,49 @@
                       label="Показывать:"
                     ></v-switch>
                   </v-col> -->
-                    <v-col cols="12">
+                    <v-col cols="6">
                       <v-select
                         multiple
-                        :items="users"
+                        :items="offices"
+                        v-model="editedItem.office_id"
+                        item-text="name"
+                        item-value="id"
+                        label="Office"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-autocomplete
+                        multiple
+                        :items="
+                          users.filter((u) => {
+                            return editedItem.office_id.includes(u.office_id);
+                          })
+                        "
                         v-model="editedItem.related_users_id"
                         item-text="name"
                         item-value="id"
                         label="Связанные пользователи"
-                      ></v-select>
+                      >
+                        <template v-slot:selection="{ item, index }">
+                          <span v-if="index === 0">{{ item.name }} </span>
+                          <span
+                            v-if="index === 1"
+                            class="grey--text text-caption"
+                          >
+                            +
+                          </span>
+                        </template>
+                        <template v-slot:item="{ item, attrs }">
+                          <v-badge
+                            :value="attrs['aria-selected'] == 'true'"
+                            color="#7620df"
+                            dot
+                            left
+                          >
+                            {{ item.name }}
+                          </v-badge>
+                        </template>
+                      </v-autocomplete>
                     </v-col>
                     <v-col cols="12">
                       <v-select
@@ -73,16 +111,6 @@
                         v-model="editedItem.tel"
                         label="ApiKey"
                       ></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-select
-                        multiple
-                        :items="offices"
-                        v-model="editedItem.office_id"
-                        item-text="name"
-                        item-value="id"
-                        label="Office"
-                      ></v-select>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -302,3 +330,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+>>> .dialogtop {
+  align-self: flex-start;
+}
+</style>
