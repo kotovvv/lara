@@ -451,6 +451,7 @@ class LidsController extends Controller
   public function getLids3(Request $request)
   {
     $data = $request->all();
+    $data = $data['params'];
 
     $office_ids = [session()->get('office_id')];
     if (in_array(0, $office_ids)) {

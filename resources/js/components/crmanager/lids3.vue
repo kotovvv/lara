@@ -969,6 +969,7 @@ export default {
     languges: [],
     geo: [],
     GeoTel,
+    cancelToken: null,
   }),
   mounted: function () {
     this.getUsers();
@@ -1231,6 +1232,86 @@ export default {
       //console.log(at["aria-selected"]);
       return at["aria-selected"];
     },
+    async fetchData(params) {
+      // If there's an ongoing request, cancel it
+      if (this.cancelToken) {
+        this.cancelToken.cancel("Request canceled");
+      }
+
+      // Create a new cancel token for the current request
+      this.cancelToken = axios.CancelToken.source();
+      const self = this;
+      try {
+        const response = await axios
+          .post("/api/getLids3", {
+            cancelToken: this.cancelToken.token,
+            params: params,
+          })
+          .then((res) => {
+            self.hm = res.data.hm;
+
+            if (self.page == 0) {
+              self.Statuses = res.data.statuses;
+              if (Array.isArray(res.data.languges)) {
+                let a_l = res.data.languges.reduce(
+                  (ac, cv) => ac.concat(cv.name),
+                  []
+                );
+                self.languges = self.lng.filter((l) => {
+                  return a_l.includes(l.id);
+                });
+              }
+
+              self.geo = res.data.geo;
+            }
+
+            self.lids = res.data.lids;
+
+            self.lids.map(function (e) {
+              if (e.updated_at) {
+                e.date_updated = e.updated_at.substring(0, 10);
+              }
+              if (e.created_at) {
+                e.date_created = e.created_at.substring(0, 10);
+              }
+
+              try {
+                e.status =
+                  self.statuses.find((s) => s.id == e.status_id).name || "";
+              } catch (error) {
+                e.status = "";
+              }
+
+              if (e.user_id) {
+                e.user = self.users.find((u) => u.id == e.user_id)?.fio || "";
+              }
+              if (e.provider_id) {
+                e.provider = self.providers.find(
+                  (p) => p.id == e.provider_id
+                ).name;
+              }
+            });
+            self.loading = false;
+            self.filterLang = "";
+            self.filterGeo = "";
+          })
+          .then(() => {
+            self.selectRow();
+          })
+          .catch((error) => console.log(error));
+        // Handle the response
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log("Request canceled", error.message);
+        } else {
+          console.error("Request failed", error.message);
+        }
+      }
+    },
+    debouncedFetchData: _.debounce(function (params) {
+      this.fetchData(params);
+    }, 3 * 60 * 1000), // Adjust debounce time as needed
+
     getLids3() {
       let self = this;
       let data = {};
@@ -1281,60 +1362,7 @@ export default {
         data.callback = 1;
       }
 
-      axios
-        .post("/api/getLids3", data)
-        .then((res) => {
-          self.hm = res.data.hm;
-
-          if (self.page == 0) {
-            self.Statuses = res.data.statuses;
-            if (Array.isArray(res.data.languges)) {
-              let a_l = res.data.languges.reduce(
-                (ac, cv) => ac.concat(cv.name),
-                []
-              );
-              self.languges = self.lng.filter((l) => {
-                return a_l.includes(l.id);
-              });
-            }
-
-            self.geo = res.data.geo;
-          }
-
-          self.lids = res.data.lids;
-
-          self.lids.map(function (e) {
-            if (e.updated_at) {
-              e.date_updated = e.updated_at.substring(0, 10);
-            }
-            if (e.created_at) {
-              e.date_created = e.created_at.substring(0, 10);
-            }
-
-            try {
-              e.status =
-                self.statuses.find((s) => s.id == e.status_id).name || "";
-            } catch (error) {
-              e.status = "";
-            }
-
-            if (e.user_id) {
-              e.user = self.users.find((u) => u.id == e.user_id)?.fio || "";
-            }
-            if (e.provider_id) {
-              e.provider = self.providers.find(
-                (p) => p.id == e.provider_id
-              ).name;
-            }
-          });
-          self.loading = false;
-          self.filterLang = "";
-          self.filterGeo = "";
-        })
-        .then(() => {
-          self.selectRow();
-        })
-        .catch((error) => console.log(error));
+      this.debouncedFetchData(data);
     },
     selectRow() {
       if (this.hmrow) {
