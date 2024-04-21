@@ -573,24 +573,48 @@ class LidsController extends Controller
       ->get();
 
     if ($page == 0) {
-      $response['statuses'] = $q_leads->select(DB::Raw('count(statuses.id) hm'), DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') depozit'), 'statuses.id', 'statuses.name', 'statuses.color')
+
+      $response['statuses'] = Lid::select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
+
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
-        // ->when(count($date) > 0, function ($query) use ($date) {
-        //   return $query->whereBetween('lids.created_at', $date);
-        // })
-        // ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
-        //   return $query->where('lids.user_id', $id);
-        // })
-        // ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
-        //   return $query->whereIn('lids.user_id', $users_ids);
-        // })
-        // ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
-        //   return $query->whereIn('lids.office_id', $office_ids);
-        // })
+        ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
+          return $query->where('lids.user_id', $id);
+        })
+        ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
+          return $query->whereIn('lids.user_id', $users_ids);
+        })
+        ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
+          return $query->whereIn('lids.office_id', $office_ids);
+        })
+        ->when(count($providers) > 0, function ($query) use ($providers) {
+          return $query->whereIn('lids.provider_id', $providers);
+        })
+        ->when(count($status_id) > 0, function ($query) use ($status_id) {
+          return $query->whereIn('lids.status_id', $status_id);
+        })
+        ->when($tel != '', function ($query) use ($tel) {
+          return $query->where('lids.tel', 'like', $tel . '%');
+        })
+        ->when(isset($data['duplicate_tel']), function ($query) use ($duplicate_tel) {
+          return $query->whereIn('lids.tel', $duplicate_tel);
+        })
+        ->when(count($date) > 0, function ($query) use ($date) {
+          return $query->whereBetween('lids.created_at', $date);
+        })
+        ->when($filterLang != '', function ($query) use ($filterLang) {
+          return $query->where('lids.client_lang', $filterLang);
+        })
+        ->when($filterGeo != '', function ($query) use ($filterGeo) {
+          return $query->where('lids.client_geo', $filterGeo);
+        })
+        ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {
+          return $query->where(DB::Raw('(SELECT count(*) cnt FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9)'), '>', 0);
+        })
         ->groupBy('id')
         //->orderBy('lids.created_at', 'DESC')
         ->orderBy('statuses.order', 'ASC')
         ->get();
+
       $response['languges'] = Lid::select('client_lang as name')
         ->where('client_lang', '!=', null)
         ->when(count($date) > 0, function ($query) use ($date) {

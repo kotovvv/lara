@@ -969,6 +969,7 @@ export default {
     languges: [],
     geo: [],
     GeoTel,
+    process: 0,
   }),
   mounted: function () {
     this.getUsers();
@@ -1235,11 +1236,16 @@ export default {
       let self = this;
       let data = {};
       const { sortBy, sortDesc } = self.options;
+      self.process++;
+      console.log(self.process);
+      if (self.process > 1) {
+        return;
+      }
+      self.loading = true;
       if (sortBy.length === 1) {
         data.sortBy = sortBy[0];
         data.sortDesc = sortDesc[0];
       }
-      self.loading = true;
       if (this.savedates == true) {
         if (this.datetimeFrom == "") {
           this.datetimeFrom = new Date(
@@ -1330,6 +1336,15 @@ export default {
           self.loading = false;
           self.filterLang = "";
           self.filterGeo = "";
+          if (self.process > 1) {
+            console.log("time");
+            self.process = 0;
+            setTimeout(() => {
+              this.getLids3();
+            }, 300);
+          } else {
+            self.process = 0;
+          }
         })
         .then(() => {
           self.selectRow();
