@@ -1261,17 +1261,18 @@ export default {
         data.datefrom = this.getLocalDateTime(this.datetimeFrom);
         data.dateto = this.getLocalDateTime(this.datetimeTo);
         data.id = this.disableuser;
-        //if (this.$props.user.role_id == 2 && this.disableuser == 0) {
-        //  data.id = this.$props.user.id;
-        //}
       } else {
         let id = this.disableuser > 0 ? this.disableuser : 0;
         this.disableuser = id;
         data.id = id;
       }
+
       if (this.filterGroups.length) {
         data.group_ids = this.filterGroups;
+      } else if (this.$props.user.role_id > 0 && this.disableuser == 0) {
+        data.group_ids = [this.$props.user.group_id];
       }
+
       data.provider_id = self.filterProviders;
       data.status_id = self.filterStatus;
       data.tel = self.filtertel;
@@ -1324,13 +1325,17 @@ export default {
               e.status = "";
             }
 
-            if (e.user_id) {
-              e.user = self.users.find((u) => u.id == e.user_id)?.fio || "";
+            try {
+              e.user = self.users.find((u) => u.id == e.user_id).fio;
+            } catch (error) {
+              e.user = "";
             }
-            if (e.provider_id) {
+            try {
               e.provider = self.providers.find(
                 (p) => p.id == e.provider_id
               ).name;
+            } catch (error) {
+              e.provider = "";
             }
           });
           self.loading = false;
