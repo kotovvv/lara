@@ -478,7 +478,7 @@ class LidsController extends Controller
     if (isset($data['duplicate_tel']) && $id) {
       $duplicate_tel = Lid::select('tel')->where('user_id', $id)->groupBy('tel')->having(DB::raw('count(tel)'), '>', 1);
     }
-    if (isset($data['group_ids'])) {
+    if (isset($data['group_ids']) && $data['group_ids'][0] != 0) {
       $res = User::select('id')->whereIn('group_id', $data['group_ids'])->get()->toArray();
       foreach ($res as $item) {
         $users_ids[] = $item['id'];
