@@ -32,10 +32,7 @@
                   <v-date-picker
                     locale="ru-ru"
                     v-model="datetimeFrom"
-                    @input="
-                      dateFrom = false;
-                      savedates == true ? getLids3(0) : null;
-                    "
+                    @input="dateFrom = false"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
