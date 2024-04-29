@@ -9,7 +9,7 @@
 
           <div class="status_wrp wrp_date px-3">
             <v-row align="center">
-              <v-btn @click="clearFilter;" small text>
+              <v-btn @click="clearFilter()" small text>
                 <v-icon>close</v-icon>
               </v-btn>
               <v-btn @click="clearuser" small text
@@ -1235,7 +1235,6 @@ export default {
       let data = {};
       const { sortBy, sortDesc } = self.options;
       self.process++;
-      console.log(self.process);
       if (self.process > 1) {
         return;
       }
