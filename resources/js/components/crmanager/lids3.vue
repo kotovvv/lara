@@ -9,7 +9,7 @@
 
           <div class="status_wrp wrp_date px-3">
             <v-row align="center">
-              <v-btn @click="clearFilter" small text>
+              <v-btn @click="clearFilter;" small text>
                 <v-icon>close</v-icon>
               </v-btn>
               <v-btn @click="clearuser" small text
@@ -967,6 +967,7 @@ export default {
     geo: [],
     GeoTel,
     process: 0,
+    controller: new AbortController(),
   }),
   mounted: function () {
     this.getUsers();
@@ -1284,6 +1285,7 @@ export default {
       if (this.callback === true) {
         data.callback = 1;
       }
+      data.signal = this.controller.signal;
 
       axios
         .post("/api/getLids3", data)
@@ -1392,6 +1394,8 @@ export default {
       this.filtertel = "";
       this.disableuser = 0;
       this.getLids3();
+      this.controller.abort();
+      this.loading = false;
     },
     getGroup() {
       return _.filter(this.users, function (o) {
