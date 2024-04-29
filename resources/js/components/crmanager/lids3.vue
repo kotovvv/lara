@@ -12,6 +12,9 @@
               <v-btn @click="clearFilter" small text>
                 <v-icon>close</v-icon>
               </v-btn>
+              <v-btn @click="clearuser" small text
+                ><v-icon>refresh</v-icon></v-btn
+              >
               <v-col>
                 <v-menu
                   v-model="dateFrom"
@@ -69,9 +72,6 @@
               >
               <v-checkbox v-model="savedates"></v-checkbox>
               <v-checkbox v-model="callback"></v-checkbox>
-              <v-btn @click="clearuser" small text
-                ><v-icon>refresh</v-icon></v-btn
-              >
             </v-row>
           </div>
         </div>
@@ -239,7 +239,7 @@
               })
             "
             @change="getPage(0)"
-            item-text="dial_code"
+            item-text="txt"
             item-value="code"
             outlined
             rounded
@@ -253,7 +253,7 @@
             <template v-slot:item="{ item }">
               <svg class="icon">
                 <use :xlink:href="'#' + item.code"></use></svg
-              >{{ item.name }} {{ item.code }} {{ item.dial_code }}
+              >{{ item.txt }}
             </template>
           </v-autocomplete>
         </div>
@@ -1336,8 +1336,8 @@ export default {
             }
           });
           self.loading = false;
-          self.filterLang = "";
-          self.filterGeo = "";
+          // self.filterLang = "";
+          //self.filterGeo = "";
           if (self.process > 1) {
             console.log("time");
             self.process = 0;
@@ -1387,6 +1387,8 @@ export default {
       this.datetimeTo = new Date().toISOString().substring(0, 10);
       this.filterStatus = [];
       this.filterProviders = [];
+      this.filterLang = "";
+      this.filterGeo = "";
       this.filtertel = "";
       this.disableuser = 0;
       this.getLids3();
