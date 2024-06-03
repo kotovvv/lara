@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use DB;
 
 class ImportCallc extends Command
 {
@@ -37,9 +38,34 @@ class ImportCallc extends Command
    */
   public function handle()
   {
-    $imports = DB::table('imports ')->where('callc', 1)->get();
+    $imports = DB::table('imports ')->where('callc', 1)->where('updated_at', '>', now()->subHours(3))->get();
     foreach ($imports as $import) {
+      $hmnew = $hmcb = $hmdp = $hm = $callc = 0;
+
+      DB::table('imports ')->where('id', $import->id)->update([
+        'hmnew'  => $hmnew,
+        'hmcb' => $hmcb,
+        'hmdp' => $hmdp,
+        'hm' => $hm,
+        'callc' => $callc,
+        'updated_at' => NOW()
+      ]);
     }
+
+    $imports_provider = DB::table('imports_provider ')->where('callc', 1)->where('updated_at', '>', now()->subHours(3))->get();
+    foreach ($imports_provider as $import) {
+      $hmnew = $hmcb = $hmdp = $hm = $callc = 0;
+
+      DB::table('imports_provider ')->where('id', $import->id)->update([
+        'hmnew'  => $hmnew,
+        'hmcb' => $hmcb,
+        'hmdp' => $hmdp,
+        'hm' => $hm,
+        'callc' => $callc,
+        'updated_at' => NOW()
+      ]);
+    }
+
     return 0;
   }
 }
