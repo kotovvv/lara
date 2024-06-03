@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Log;
+
 use App\Models\Lid;
 use App\Models\Log;
 use App\Models\Depozit;
@@ -305,33 +305,50 @@ class LidsController extends Controller
   {
     $res = [];
     $res['date_start'] = date('Y-m-d H:i:s');
-
     $data = $request->all();
     $office_id = User::where('id', (int) $data['user_id'])->value('office_id');
     //Debugbar::info($data['data']);
+    $load_mess = '';
+    if (isset($data['message'])) {
+      $load_mess = $data['message'];
+    }
 
     foreach ($data['data'] as $lid) {
       $n_lid = new Lid;
-      $n_lid->load_key = strtotime($res['date_start']);
+      $n_lid->dep_reg = $data['dep_reg'];
+
       if (isset($lid['name'])) {
-        $n_lid->name =  substr(trim($lid['name']), 0, 50);
+        $n_lid->name = mb_convert_encoding(substr(trim($lid['name']), 0, 50), 'UTF-8', 'UTF-8');
+      }
+      if (isset($lid['lastname'])) {
+        $n_lid->name = $n_lid->name . ' ' . mb_convert_encoding(substr(trim($lid['lastname']), 0, 50), 'UTF-8', 'UTF-8');
+        $n_lid->name = substr($n_lid->name, 0, 50);
       }
 
-      if (isset($lid['lastname'])) {
-        $n_lid->name =  $n_lid->name . ' ' . substr(trim($lid['lastname']), 0, 50);
-      }
 
       if (isset($lid['tel'])) {
         $n_lid->tel =  preg_replace('/[^0-9]/', '', $lid['tel']);
         $n_lid->client_geo = $this->getGeo($n_lid->tel);
+        if (strlen($n_lid->tel) < 6) {
+          continue;
+        }
       } else {
         continue;
       }
 
       if (isset($lid['email'])) {
         $n_lid->email = $lid['email'];
+      } else {
+        $n_lid->email = '';
       }
 
+      if (isset($lid['deposit'])) {
+        $n_lid->deposit = $lid['deposit'];
+      } else {
+        $n_lid->deposit = "";
+      }
+
+      $n_lid->load_mess = $load_mess;
 
       $n_lid->user_id = $data['user_id'];
       $n_lid->office_id = $office_id;
@@ -352,7 +369,11 @@ class LidsController extends Controller
       if ($n_lid->provider_id == '76') {
         $n_lid->status_id = 8;
       }
-      $n_lid->save();
+      try {
+        $n_lid->save();
+      } catch (\Throwable $th) {
+        $res['error'] = $th;
+      }
     }
     $res['date_end'] = date('Y-m-d H:i:s');
     return response($res, 200);
@@ -722,7 +743,7 @@ class LidsController extends Controller
     $getparams = $request->all();
 
 
-    $date = [$getparams['from_date'], $getparams['to_date']];
+    $date = [$getparams['from_date'] . ' 00:00:00', $getparams['to_date'] . ' 23:59:59'];
     // if ($getlid['api_key'] != env('API_KEY')) return response(['status'=>'Key incorect'], 403);
     $f_key =  DB::table('apikeys')->where('api_key', $getparams['api_key'])->first();
 
@@ -790,18 +811,74 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
   public function getlidsImportedProvider(Request $request)
   {
     $req = $request->all();
-    if (isset($req['provider_id']) && isset($req['start']) && isset($req['end'])) {
-      $lids =  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$req['start'], $req['end']])->get();
+    $users_ids = [];
+    $office_id = null;
+    $where_ids_off = '';
+
+    if (session()->has('user_id')) {
+      $user = User::where('id', (int) session()->get('user_id'))->first();
+      if ($user['group_id']) {
+        $res = User::select('id')->where('group_id', $user['group_id'])->get()->toArray();
+        foreach ($res as $item) {
+          $users_ids[] = $item['id'];
+        }
+        $where_ids_off = ' user_id IN (' . implode(',', $users_ids) . ') AND ';
+      }
+      $office_id = $user['office_id'];
+      if ($office_id > 0) {
+        $where_ids_off .= 'lids.office_id = ' . (int) $office_id . ' AND ';
+      }
+    }
+
+    $geo = isset($req['geo']) ? $req['geo'] : '';
+    if (isset($req['end']) && isset($req['message'])) {
+      $date_end = substr($req['end'], 0, 10);
+
+      return  Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
+        ->where('load_mess', $req['message'])
+        ->whereDate('lids.created_at', $date_end)
+        ->leftJoin('users', 'users.id', '=', 'user_id')
+        ->leftJoin('offices', 'offices.id', '=', 'lids.office_id')
+        ->when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('lids.office_id', $office_id);
+        })
+        ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
+          return $query->whereIn('user_id', $users_ids);
+        })
+        ->get();
+    } elseif (isset($req['provider_id']) && isset($req['start']) && isset($req['end'])) {
+      $lids = Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
+        ->leftJoin('users', 'users.id', '=', 'user_id')
+        ->leftJoin('offices', 'offices.id', '=', 'lids.office_id')
+        ->where('provider_id', (int) $req['provider_id'])
+        ->whereBetween('lids.created_at', [$req['start'], $req['end']])
+        ->when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('office_id', $office_id);
+        })
+        ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
+          return $query->whereIn('user_id', $users_ids);
+        })
+        ->get();
       if ($lids->count()) {
         return $lids;
+      } else {
+        $message = DB::table('imports')->where('start', $req['start'])->where('end', $req['end'])->where('provider_id', $req['provider_id'])->first()->message;
+
+        return  Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
+          ->where('load_mess', $message)
+          ->leftJoin('users', 'users.id', '=', 'user_id')
+          ->leftJoin('offices', 'offices.id', '=', 'lids.office_id')
+          ->when($office_id > 0, function ($query) use ($office_id) {
+            return $query->where('office_id', $office_id);
+          })
+          ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
+            return $query->whereIn('user_id', $users_ids);
+          })
+          ->get();
       }
-      //  else {
-      //   // $date_end = substr($req['end'],0,10);
-      //   // $date_start = date('Y-m-d H:i:s', strtotime('0', strtotime($req['end'])));
-      //   $date_start = $req['start'];
-      //   $date_end = date('Y-m-d H:i:s', strtotime('+2 hour +1 minutes', strtotime($req['end'])));
-      //   return  Lid::where('provider_id', (int) $req['provider_id'])->whereBetween('created_at', [$date_start, $date_end])->get();
-      // }
+    } else {
+      $sql = "SELECT l.`id`,`tel`,l.`name`,`email`,l.`created_at`,l.updated_at,afilyator,`status_id`,users.fio as user,offices.id as office_id,offices.name as office FROM `lids` l left join users on (users.id = l.user_id) left join offices on (offices.id = l.office_id) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE " . $where_ids_off . " `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "' AND geo = '" . $geo . "')";
+      return DB::select(DB::raw($sql));
     }
     return response('Some not good(', 404);
   }
@@ -901,6 +978,26 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     Log::whereIn('lid_id', $lids)->delete();
   }
 
+  public function deleteImportedLids(Request $request)
+  {
+    $imported = $request->all();
+    $request = new Request();
+    if ($imported['message'] == '') {
+      return response('Empty load_mess', 404);
+    } else {
+      Lid::where('load_mess', $imported['message'])->delete();
+      $lids = Lid::select('id')->where('provider_id', $imported['provider_id'])->whereBetween('created_at', [$imported['start'], $imported['end']])->get()->toArray();
+      if (count($lids) > 0) {
+        $this->deletelids($request->merge($lids));
+      }
+    }
+
+    DB::table('imports')->where('id', $imported['id'])->delete();
+    DB::table('historyimport')->where('imports_id', $imported['id'])->delete();
+
+    return response('Delete lids ' . count($lids), 200);
+  }
+
   public function clearLiads(Request $request)
   {
     $lids = $request->all();
@@ -924,10 +1021,11 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } else {
       $n_lid->name = time();
     }
-
+    $geo = '';
     if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
       $n_lid->tel =  preg_replace('/[^0-9]/', '', $req['umcfields']['phone']);
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
+      $geo = $n_lid->client_geo;
       $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
       if ($added_date != '') {
         $date = Carbon::now();
@@ -979,7 +1077,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $n_lid->save();
     $id = $n_lid->id;
-    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
+    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now(), 'geo' => $geo]);
+    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo], ['date' => date('Y-m-d')]);
 
     $res['status'] = 'OK';
     $res['id'] = $id;
@@ -1020,10 +1119,11 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     if ($fio) {
       $n_lid->name =  $fio;
     }
-
+    $geo = '';
     if ($phonestr) {
       $n_lid->tel = preg_replace('/[^0-9]/', '', $phonestr);
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
+      $geo = $n_lid->client_geo;
       $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
       if ($added_date != '') {
         $date = Carbon::now();
@@ -1081,7 +1181,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } */
     $n_lid->save();
     $id = $n_lid->id;
-    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
+    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now(), 'geo' => $geo]);
+    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo], ['date' => date('Y-m-d')]);
 
     $res['status'] = 'OK';
     $res['id'] = $id;
@@ -1105,10 +1206,11 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } else {
       $n_lid->name = time();
     }
-
+    $geo = "";
     if (isset($req['umcfields[phone]']) && strlen($req['umcfields[phone]']) > 1) {
       $n_lid->tel =  preg_replace('/[^0-9]/', '', $req['umcfields[phone]']);
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
+      $geo = $n_lid->client_geo;
       $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
       if ($added_date != '') {
         $date = Carbon::now();
@@ -1155,7 +1257,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $n_lid->save();
     $id = $n_lid->id;
-    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
+    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now(), 'geo' => $geo]);
+    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo], ['date' => date('Y-m-d')]);
 
     $res['status'] = 'OK';
     $res['id'] = $id;
@@ -1178,10 +1281,11 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } else {
       $n_lid->name = time();
     }
-
+    $geo = '';
     if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
       $n_lid->tel =  $req['umcfields']['phone'];
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
+      $geo = $n_lid->client_geo;
       $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
       if ($added_date != '') {
         $date = Carbon::now();
@@ -1233,7 +1337,8 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
 
     $n_lid->save();
     $id = $n_lid->id;
-    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now()]);
+    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now(), 'geo' => $geo]);
+    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo], ['date' => date('Y-m-d')]);
 
     $res['status'] = 'OK';
     $res['id'] = $id;
@@ -1473,6 +1578,29 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     $sql = "UPDATE lids SET qtytel = " . ++$qtytel . " WHERE id = " . (int)$req['lid_id'];
     DB::select(DB::raw($sql));
     return response($qtytel);
+  }
+
+  public function ImportedProvLids($from = 0, $to = 0)
+  {
+    $office_id = session()->get('office_id');
+    $where = '  ';
+    if ($from != 0) {
+      $where = ' WHERE `date` between \'' . $from . '\' and \'' . $to . '\'';
+      if ($office_id > 0) {
+        $where .= " AND JSON_SEARCH(office_ids, 'one'," . $office_id . ") IS NOT NULL ";
+      }
+    } elseif ($office_id > 0) {
+      $where = " WHERE JSON_SEARCH(office_ids, 'one'," . $office_id . ") IS NOT NULL ";
+    }
+
+
+    //DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
+    if (count(DB::table('imports_provider')->whereBetween('date', [$from, $to])->get())) {
+      //$sql = "SELECT ip.*,ip.date start, p.name provider, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) AND status_id = 8) hmnew, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) AND status_id = 9) hmcb, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) AND status_id = 10) hmdp, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) ) hm FROM `imports_provider` ip LEFT JOIN providers p ON p.`id` = ip.`provider_id` " . $where . " GROUP BY DATE, provider_id, geo  ORDER BY DATE DESC, provider_id ASC";
+      $sql = "SELECT ip.*,ip.date start, p.name provider, 0 hmnew, 0 hmcb, 0 hmdp, 0 hm FROM `imports_provider` ip LEFT JOIN providers p ON p.`id` = ip.`provider_id` " . $where . " GROUP BY DATE, provider_id, geo  ORDER BY DATE DESC, provider_id ASC";
+      return DB::select(DB::raw($sql));
+    }
+    return [];
   }
 
   /**

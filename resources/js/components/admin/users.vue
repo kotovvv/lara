@@ -114,6 +114,7 @@
                               item-value="id"
                               label="Группа"
                               :menu-props="{ maxHeight: '60vh' }"
+                              clearable
                             ></v-autocomplete>
                           </v-col>
 
@@ -341,6 +342,7 @@ export default {
       role_id: 0,
       password: "",
       group_id: "",
+      group: null,
       // sip_server: "",
       // sip_login: "",
       // sip_password: "",
@@ -363,6 +365,7 @@ export default {
       role_id: 0,
       password: "",
       group_id: "",
+      group: null,
       // sip_server: "",
       // sip_login: "",
       // sip_password: "",
@@ -567,6 +570,13 @@ export default {
         delete this.editedItem.role;
         this.saveUsers(this.editedItem);
         this.rolename(this.editedItem);
+        if (this.editedItem.group_id > 0) {
+          this.editedItem.group = this.users.find((u) => {
+            return u.id == this.editedItem.group_id;
+          }).fio;
+        } else {
+          this.editedItem.group = "";
+        }
         Object.assign(this.users[this.editedIndex], this.editedItem);
       } else {
         delete this.editedItem.role;

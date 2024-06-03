@@ -166,8 +166,12 @@ class UsersController extends Controller
       // $arr['sip_password'] = $data['sip_password'] ? $data['sip_password'] : '';
       // $arr['sip_prefix'] = $data['sip_prefix'] ? $data['sip_prefix'] : '';
       $arr['servers'] = $data['servers'] ? $data['servers'] : '';
-      $arr['user_serv'] = $data['user_serv'] ? $data['user_serv'] : '';
-      $arr['serv'] = $data['serv'] ? $data['serv'] : '';
+      if (isset($data['user_serv'])) {
+        $arr['user_serv'] = $data['user_serv'] ? $data['user_serv'] : '';
+      }
+      if (isset($data['serv'])) {
+        $arr['serv'] = $data['serv'] ? $data['serv'] : '';
+      }
 
       if (User::where('id', $data['id'])->value('office_id') != $data['office_id']) {
         Lid::where('user_id', $data['id'])->update(['office_id' => $data['office_id']]);
@@ -272,7 +276,18 @@ class UsersController extends Controller
 
     // $role_id = $user->role_id;
     $group_id = $user['group_id'];
-    return User::select(['users.*', DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 9) as cb '), DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 33) as inp ')])
+    return User::select([
+      'users.*',
+      DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '),
+      DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 8) as statnew '),
+      DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 9) as cb '),
+      DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 33) as inp '),
+      DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 12) as notint '),
+      DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 7) as noans '),
+      DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 24) as lang '),
+      DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id AND `status_id` = 11) as trash ')
+
+    ])
       //->where('users.role_id', '>', 1)
       ->where('users.active', 1)
       ->when($office_id > 0, function ($query) use ($office_id) {
@@ -288,12 +303,12 @@ class UsersController extends Controller
   public function getrelatedusers(Request $request)
   {
     $related_users = $request->All();
-    if (count($related_users) == 0) return false;
+    // if (count($related_users) == 0) return false;
 
     return User::select(['users.*', DB::raw('(SELECT COUNT(user_id) FROM lids WHERE lids.user_id = users.id) as hmlids ')])
       ->where('users.role_id', '>', 1)
       ->where('users.active', 1)
-      ->whereIn('id', $related_users)
+      // ->whereIn('id', $related_users)
       ->orderBy('users.role_id', 'asc')
       ->get();
   }

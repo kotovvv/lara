@@ -102,13 +102,17 @@ Route::post('putBTC', [ImportsController::class, 'putBTC']);
 Route::post('getBTCsOnDate', [ImportsController::class, 'getBTCsOnDate']);
 Route::post('getBTCotherOnDate', [ImportsController::class, 'getBTCotherOnDate']);
 Route::get('deleteLoad/{load_key}', [ImportsController::class, 'deleteLoad']);
+Route::post('redistribute', [ImportsController::class, 'redistribute']);
+Route::post('redistributeLids', [ImportsController::class, 'redistributeLids']);
+Route::post('getHistory', [ImportsController::class, 'getHistory']);
 Route::post('changeDateBTC', [LidsController::class, 'changeDateBTC']);
 Route::post('getAssignedBTC', [LidsController::class, 'getAssignedBTC']);
 Route::post('provider_importlid', [LidsController::class, 'provider_importlid']);
 Route::post('checkEmails', [LidsController::class, 'checkEmails']);
+Route::post('deleteImportedLids', [LidsController::class, 'deleteImportedLids']);
 Route::post('getlidsImportedProvider', [LidsController::class, 'getlidsImportedProvider']);
 Route::post('clearLiads', [LidsController::class, 'clearLiads']);
 Route::post('updateLiads', [LidsController::class, 'updateLiads']);
-
+Route::get('ImportedProvLids/{from}/{to}/', [LidsController::class, 'ImportedProvLids']);
 Route::get('onCdr', [LogsController::class, 'onCdr']);
 Route::post('getCalls', [LogsController::class, 'getCalls']);
