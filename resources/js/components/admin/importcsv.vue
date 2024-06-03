@@ -686,13 +686,6 @@
                 truncate-length="24"
                 @change="onFileChange"
               ></v-file-input>
-              <v-select
-                v-model="printfields"
-                :items="printfield"
-                label="Поля для отчёта"
-                multiple
-                outlined
-              ></v-select>
               <v-btn @click="checkEmails" v-if="list_email" class="primary"
                 >Проверить<v-progress-circular
                   v-if="loading"
@@ -701,15 +694,102 @@
                 ></v-progress-circular
               ></v-btn>
             </v-col>
-            <v-col cols="12" v-if="duplicate_leads.length">
-              <v-btn outlined rounded @click="exportXlsx" class="border">
-                <v-icon left> mdi-file-excel </v-icon>
-                Скачать таблицу
-              </v-btn>
+            <v-col cols="12" v-if="duplicate_leads.length || out_db.length">
+              <v-row>
+                <v-col>
+                  <v-select
+                    ref="filterStatus"
+                    label="Фильтр статус"
+                    color="red"
+                    v-model="filter_status"
+                    :items="d_statuses"
+                    item-text="name"
+                    item-value="id"
+                    outlined
+                    rounded
+                    :multiple="true"
+                  >
+                    <template v-slot:selection="{ item, index }">
+                      <span v-if="index === 0">{{ item.name }} </span>
+                      <span v-if="index === 1" class="grey--text text-caption">
+                        (+{{ filter_status.length - 1 }} )
+                      </span>
+                    </template>
+                    <template v-slot:item="{ item, attrs }">
+                      <v-badge
+                        :value="attrs['aria-selected'] == 'true'"
+                        color="#7620df"
+                        dot
+                        left
+                      >
+                        <i
+                          :style="{
+                            background: item.color,
+                            outline: '1px solid grey',
+                          }"
+                          class="sel_stat mr-4"
+                        ></i>
+                      </v-badge>
+                      {{ item.name }}
+                    </template>
+                  </v-select></v-col
+                >
+                <v-col>
+                  <v-autocomplete
+                    v-model="filter_provider"
+                    label="Фильтр поставщик"
+                    :items="d_providers"
+                    item-text="name"
+                    item-value="id"
+                    outlined
+                    rounded
+                    multiple
+                    :menu-props="{ maxHeight: '80vh' }"
+                    clearable="true"
+                  >
+                    <template v-slot:selection="{ item, index }">
+                      <span v-if="index === 0">{{ item.name }} </span>
+                      <span v-if="index === 1" class="grey--text text-caption">
+                        (+{{ filter_provider.length - 1 }} )
+                      </span>
+                    </template>
+                    <template v-slot:item="{ item, attrs }">
+                      <v-badge
+                        :value="attrs['aria-selected'] == 'true'"
+                        color="#7620df"
+                        dot
+                        left
+                      >
+                        {{ item.name }}
+                      </v-badge>
+                    </template>
+                  </v-autocomplete></v-col
+                >
+                <v-col>
+                  <v-select
+                    v-model="filter_office"
+                    :items="d_offices"
+                    item-text="name"
+                    item-value="id"
+                    label="Фильтр офис"
+                    outlined
+                    rounded
+                    multiple
+                  >
+                  </v-select
+                ></v-col>
+                <v-col>
+                  <v-btn outlined rounded @click="exportXlsx" class="border">
+                    <v-icon left> mdi-file-excel </v-icon>
+                    Скачать таблицу
+                  </v-btn></v-col
+                >
+              </v-row>
+
               <v-data-table
                 :headers="duplicate_leads_headers"
                 item-key="id"
-                :items="duplicate_leads"
+                :items="filtereduplicate_leads"
                 ref="duplicatetable"
               >
               </v-data-table>
@@ -1024,6 +1104,18 @@ export default {
         });
       }
     },
+    filtereduplicate_leads() {
+      return this.duplicate_leads.filter((i) => {
+        return (
+          (this.filter_status.length == 0 ||
+            this.filter_status.includes(i.status_id)) &&
+          (this.filter_provider.length == 0 ||
+            this.filter_provider.includes(i.provider_id)) &&
+          (this.filter_office.length == 0 ||
+            this.filter_office.includes(i.office_id))
+        );
+      });
+    },
   },
   methods: {
     closeAll() {
@@ -1285,26 +1377,84 @@ export default {
     },
     exportXlsx() {
       const self = this;
+      let unique = [];
       const obj = _.groupBy(self.filteredItems, "status");
       const lidsByStatus = Array.from(Object.keys(obj), (k) => [
         `${k}`,
         obj[k],
       ]);
-
       var wb = XLSX.utils.book_new(); // make Workbook of Excel
-      const newLeads = self.duplicate_leads.map((obj) => {
-        const newObj = {};
-        self.printfields.forEach((prop) => {
-          newObj[prop] = obj[prop];
+
+      if (self.email_tel === "tel") {
+        unique = self.out_db.map((i) => ({
+          id: "",
+          created: "",
+          updated: "",
+          status_id: "",
+          status_name: "",
+          name: "name" + i,
+          email: i + "@unique.com",
+          tel: i,
+        }));
+      } else {
+        unique = self.out_db.map((i) => ({ email: i }));
+      }
+      if (self.email_tel === "tel") {
+        let con = [];
+        const dup_not = self.filtereduplicate_leads.filter((dd) => {
+          return ![10, 11, 23].includes(dd.status_id);
         });
-        return newObj;
-      });
-      window["list"] = XLSX.utils.json_to_sheet(newLeads);
-      XLSX.utils.book_append_sheet(wb, window["list"], "duplicate_emailes");
-      const unique = self.out_db.map((i) => ({ email: i }));
+        const dup_call = self.filtereduplicate_leads.filter((dd) => {
+          return (
+            dd.status_id == 9 &&
+            (Date.now() - Date.parse(dd.updated)) / (60 * 60 * 24 * 1000) > 21
+          );
+        });
+        con = con.concat(unique, dup_not, dup_call);
+        window["con"] = XLSX.utils.json_to_sheet(con);
+        XLSX.utils.book_append_sheet(wb, window["con"], "CHECK_TO_UPLOAD");
+      }
+
       window["unique"] = XLSX.utils.json_to_sheet(unique);
       XLSX.utils.book_append_sheet(wb, window["unique"], "unique");
 
+      window["list"] = XLSX.utils.json_to_sheet(self.filtereduplicate_leads);
+      XLSX.utils.book_append_sheet(wb, window["list"], "duplicate");
+      if (self.email_tel === "tel") {
+        // - 3ая -  все дубли со статусом депозит
+        const dup_dep = self.filtereduplicate_leads.filter((dd) => {
+          return dd.status_id == 10;
+        });
+        window["dup_dep"] = XLSX.utils.json_to_sheet(dup_dep);
+        XLSX.utils.book_append_sheet(
+          wb,
+          window["dup_dep"],
+          "duplicate_doposit"
+        );
+        // - 4ая - все дубли со статусом колбек
+        const dup_cb = self.filtereduplicate_leads.filter((dd) => {
+          return dd.status_id == 9;
+        });
+        window["dup_cb"] = XLSX.utils.json_to_sheet(dup_cb);
+        XLSX.utils.book_append_sheet(
+          wb,
+          window["dup_cb"],
+          "duplicate_callback"
+        );
+        // - 5ая - все дубли которые имеют статус -  deposit, callback, trash, badphone моложе трех недель)
+        const dup_3week = self.filtereduplicate_leads.filter((dd) => {
+          return (
+            [9, 10, 11, 23].includes(dd.status_id) &&
+            (Date.now() - Date.parse(dd.created)) / (60 * 60 * 24 * 1000) < 21
+          );
+        });
+        window["dup_3week"] = XLSX.utils.json_to_sheet(dup_3week);
+        XLSX.utils.book_append_sheet(
+          wb,
+          window["dup_3week"],
+          "duplicate_3week"
+        );
+      }
       // export Excel file
       XLSX.writeFile(
         wb,
@@ -1343,6 +1493,30 @@ export default {
             vm.in_db.length;
           vm.snackbar = true;
           vm.duplicate_leads = res.data.leads;
+          let a_status = _.uniq(
+            _.map(vm.duplicate_leads, (el) => {
+              return el.status_id;
+            })
+          );
+          vm.d_statuses = vm.statuses.filter((i) => {
+            return a_status.includes(i.id);
+          });
+          let a_prov = _.uniq(
+            _.map(vm.duplicate_leads, (el) => {
+              return el.provider_id;
+            })
+          );
+          vm.d_providers = vm.providers.filter((i) => {
+            return a_prov.includes(i.id);
+          });
+          let a_offices = _.uniq(
+            _.map(vm.duplicate_leads, (el) => {
+              return el.office_id;
+            })
+          );
+          vm.d_offices = vm.offices.filter((i) => {
+            return a_offices.includes(i.id);
+          });
 
           vm.loading = false;
           vm.list_email = "";
@@ -1752,21 +1926,11 @@ export default {
         "text/comma-separated-values",
         "text/csv",
         "application/csv",
+        "application/excel",
+        "application/vnd.ms-excel",
+        "application/vnd.msexcel",
         "text/anytext",
         "text/plain",
-
-        "application/excel",
-        "application/xls",
-        "application/x-xls",
-        "application/vnd-xls",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "application/vnd.ms-excel",
-        "application/vnd.ms-excel",
-        "application/msexcel",
-        "application/x-msexcel",
-        "application/x-ms-excel",
-        "application/x-excel",
-        "application/x-dos_ms_excel",
       ];
       if (ftype.indexOf(f.type) >= 0) {
         this.createInput(f);
