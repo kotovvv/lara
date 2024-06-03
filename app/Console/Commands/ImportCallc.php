@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Console\Commands\stdClass;
 use DB;
 
 class ImportCallc extends Command
@@ -38,25 +39,28 @@ class ImportCallc extends Command
    */
   public function handle()
   {
-    $imports = DB::table('imports ')->where('callc', 1)->where('updated_at', '>', now()->subHours(3))->get();
+    $imports = DB::table('imports')->where('callc', 1)
+      ->whereNull('updated_at')
+      ->Orwhere('updated_at', '<', now()->subHours(3))
+      ->get();
+
+
     foreach ($imports as $import) {
       $hmnew = $hmcb = $hmdp = $hm = $callc = 0;
-
-      DB::table('imports ')->where('id', $import->id)->update([
-        'hmnew'  => $hmnew,
-        'hmcb' => $hmcb,
-        'hmdp' => $hmdp,
-        'hm' => $hm,
-        'callc' => $callc,
-        'updated_at' => NOW()
-      ]);
+      $a_hm = new stdClass();
+      if ($import->message != '') {
+        $a_hm = DB::selectOne('SELECT SUM(status_id = 8)hmnew,SUM(status_id = 9)hmcb,SUM(status_id = 10)hmdp,COUNT(*)hm FROM lids l WHERE l.`load_mess` = "' . $import->message . '"');
+      }
+      $a_hm->callc = 0;
+      $a_hm->updated_at = date('Y-m-d H:m:s');
+      DB::table('imports')->where('id', $import->id)->update((array)$a_hm);
     }
 
-    $imports_provider = DB::table('imports_provider ')->where('callc', 1)->where('updated_at', '>', now()->subHours(3))->get();
+    $imports_provider = DB::table('imports_provider')->where('callc', 1)->where('updated_at', '>', now()->subHours(3))->get();
     foreach ($imports_provider as $import) {
       $hmnew = $hmcb = $hmdp = $hm = $callc = 0;
 
-      DB::table('imports_provider ')->where('id', $import->id)->update([
+      DB::table('imports_provider')->where('id', $import->id)->update([
         'hmnew'  => $hmnew,
         'hmcb' => $hmcb,
         'hmdp' => $hmdp,
