@@ -745,7 +745,7 @@
                     rounded
                     multiple
                     :menu-props="{ maxHeight: '80vh' }"
-                    clearable="true"
+                    clearable="clearable"
                   >
                     <template v-slot:selection="{ item, index }">
                       <span v-if="index === 0">{{ item.name }} </span>
@@ -840,7 +840,7 @@
                   v-model="editedItem.baer"
                   :items="baers"
                   label="Баер"
-                  clearable
+                  clearable="clearable"
                 ></v-select>
               </v-col>
             </v-row>
@@ -973,6 +973,9 @@ export default {
     tab: 0,
     Statuses: [],
     filterStatus: [],
+    filter_status: [],
+    filter_provider: [],
+    filter_office: [],
     filterStatusTabl: [],
     filterOfficeTabl: [],
     resetStatus: [],
@@ -1059,9 +1062,8 @@ export default {
   },
 
   mounted() {
-    this.getImports();
-    //this.ImportedProvLids();
     this.getProviders();
+    //this.ImportedProvLids();
     this.getOffices();
     this.getStatuses();
   },
@@ -1761,6 +1763,7 @@ export default {
               baer,
             })
           );
+          self.getImports();
         })
         .catch((error) => console.log(error));
     },

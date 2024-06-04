@@ -24,7 +24,7 @@ class ImportsController extends Controller
     $office_id = session()->get('office_id');
 
     // return Import::select(['imports.*', DB::raw('(SELECT `name` FROM `providers` WHERE `id` = `provider_id`) AS provider'), DB::raw('(SELECT `name` FROM `users` WHERE `id` = `user_id`) AS user'), DB::raw('(SELECT `group_id` FROM `users` WHERE `id` = `user_id`) AS group_id'), DB::raw('(SELECT count(*) FROM lids WHERE `load_mess` = imports.`message` AND status_id =8) AS hmnew'), DB::raw('(SELECT count(*) FROM lids WHERE `load_mess` = imports.`message` ) AS hm'), DB::raw('(SELECT count(*) FROM lids WHERE `load_mess` = imports.`message` AND status_id = 9 ) AS hmcb'), DB::raw('(SELECT count(*) FROM lids WHERE `load_mess` = imports.`message` AND status_id = 10 ) AS hmdp')])
-    return Import::select(['imports.*', DB::raw('(SELECT `name` FROM `providers` WHERE `id` = `provider_id`) AS provider'), DB::raw('(SELECT `name` FROM `users` WHERE `id` = `user_id`) AS user'), DB::raw('(SELECT `group_id` FROM `users` WHERE `id` = `user_id`) AS group_id'), DB::raw('0 AS hmnew'), DB::raw('0 AS hm'), DB::raw('0 AS hmcb'), DB::raw('0 AS hmdp')])
+    $imports = Import::select(['imports.*', DB::raw('(SELECT `name` FROM `providers` WHERE `id` = `provider_id`) AS provider'), DB::raw('(SELECT `name` FROM `users` WHERE `id` = `user_id`) AS user'), DB::raw('(SELECT `group_id` FROM `users` WHERE `id` = `user_id`) AS group_id')])
       ->when($from != 0 && $to != 0, function ($query) use ($from, $to) {
         return $query->whereBetween('start', [$from . ' 00:00:00', $to . ' 23:59:59']);
       })
@@ -32,6 +32,11 @@ class ImportsController extends Controller
         return $query->whereNotNull(DB::raw("JSON_SEARCH(office_ids, 'one', $office_id) "));
       })
       ->orderByDesc('end')->get();
+    foreach ($imports as $import) {
+      Import::where('id', $import->id)->update(['callc' => 1]);
+    }
+
+    return $imports;
   }
 
   public function putBTC(Request $request)

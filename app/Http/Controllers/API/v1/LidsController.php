@@ -741,13 +741,11 @@ class LidsController extends Controller
   public function AllDeposits(Request $request)
   {
     $getparams = $request->all();
-
-
-    $date = [$getparams['from_date'] . ' 00:00:00', $getparams['to_date'] . ' 23:59:59'];
-    // if ($getlid['api_key'] != env('API_KEY')) return response(['status'=>'Key incorect'], 403);
     $f_key =  DB::table('apikeys')->where('api_key', $getparams['api_key'])->first();
 
     if (!$f_key) return response(['status' => 'Key incorect'], 403);
+    $datefrom = date('Y-m-d', strtotime($getparams['from_date']));
+    $dateto = date('Y-m-d', strtotime($getparams['to_date']));
     $sql = "SELECT
     d.`lid_id` AS `order_lead_id`
     , d.`created_at` AS `ftd_date`
@@ -757,8 +755,7 @@ FROM
     `depozits` d
     INNER JOIN `lids` l
         ON (d.`lid_id` = l.`id`)
-WHERE (l.`provider_id` = '" . $f_key->id . "'
-    AND d.`created_at` BETWEEN '" . $date[0] . "' AND  '" . $date[1] . "')";
+WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '" . $datefrom .  "' AND '" . $dateto . "'";
 
     $leads =  DB::select(DB::raw($sql));
     $response = [];
@@ -1592,12 +1589,16 @@ WHERE (l.`provider_id` = '" . $f_key->id . "'
     } elseif ($office_id > 0) {
       $where = " WHERE JSON_SEARCH(office_ids, 'one'," . $office_id . ") IS NOT NULL ";
     }
-
+    $ips = DB::table('imports_provider')->whereBetween('date', [$from, $to])->get();
+    // for update hm* on schedule
+    foreach ($ips as $ip) {
+      DB::table('imports_provider')->where('id', $ip->id)->update(['callc' => 1]);
+    }
 
     //DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
-    if (count(DB::table('imports_provider')->whereBetween('date', [$from, $to])->get())) {
+    if (count($ips)) {
       //$sql = "SELECT ip.*,ip.date start, p.name provider, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) AND status_id = 8) hmnew, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) AND status_id = 9) hmcb, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) AND status_id = 10) hmdp, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) ) hm FROM `imports_provider` ip LEFT JOIN providers p ON p.`id` = ip.`provider_id` " . $where . " GROUP BY DATE, provider_id, geo  ORDER BY DATE DESC, provider_id ASC";
-      $sql = "SELECT ip.*,ip.date start, p.name provider, 0 hmnew, 0 hmcb, 0 hmdp, 0 hm FROM `imports_provider` ip LEFT JOIN providers p ON p.`id` = ip.`provider_id` " . $where . " GROUP BY DATE, provider_id, geo  ORDER BY DATE DESC, provider_id ASC";
+      $sql = "SELECT ip.*,ip.date start, p.name provider,  sum(hmnew),  sum(hmcb),  sum(hmdp),  sum(hm) FROM `imports_provider` ip LEFT JOIN providers p ON p.`id` = ip.`provider_id` " . $where . " GROUP BY DATE, provider_id, geo  ORDER BY DATE DESC, provider_id ASC";
       return DB::select(DB::raw($sql));
     }
     return [];
