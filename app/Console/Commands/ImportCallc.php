@@ -39,9 +39,14 @@ class ImportCallc extends Command
   public function handle()
   {
     $imports = DB::table('imports')->where('callc', 1)
-      ->whereNull('updated_at')
-      ->Orwhere('updated_at', '<', now()->subHours(1))
-      ->get();
+      ->when('updated_at' == null, function ($query) {
+        return $query->where('lids.updated_at', null);
+      })
+      ->when('updated_at' != null, function ($query) {
+        return $query->where('updated_at', '>', now()->subHours(1));
+      })->get();
+
+    // dd(vsprintf(str_replace(array('?'), array('\'%s\''), $imports->toSql()), $imports->getBindings()));
 
     foreach ($imports as $import) {
       $a_hm = (object) [];
@@ -54,7 +59,7 @@ class ImportCallc extends Command
       DB::table('imports')->where('id', $import->id)->update((array)$a_hm);
     }
 
-    $imports_provider = DB::table('imports_provider')->where('callc', 1)->where('updated_at', '<', now()->subHours(1))->get();
+    $imports_provider = DB::table('imports_provider')->where('callc', 1)->where('updated_at', '>', now()->subHours(1))->get();
     foreach ($imports_provider as $import) {
       $a_hm = (object) [];
       $lid_ids = DB::table('imported_leads')->where('api_key_id', $import->provider_id)->whereDate('upload_time', $import->date)->where('geo', $import->geo)->pluck('lead_id')->toArray();

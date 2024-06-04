@@ -809,8 +809,8 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
   {
     $req = $request->all();
     $users_ids = [];
-    $office_id = null;
     $where_ids_off = '';
+    $office_id = 0;
 
     if (session()->has('user_id')) {
       $user = User::where('id', (int) session()->get('user_id'))->first();
@@ -821,9 +821,10 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         }
         $where_ids_off = ' user_id IN (' . implode(',', $users_ids) . ') AND ';
       }
-      $office_id = $user['office_id'];
-      if ($office_id > 0) {
-        $where_ids_off .= 'lids.office_id = ' . (int) $office_id . ' AND ';
+
+      if ($user['office_id'] > 0) {
+        $office_id = $user['office_id'];
+        $where_ids_off .= 'l.office_id = ' . $user['office_id'] . ' AND ';
       }
     }
 
@@ -874,7 +875,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           ->get();
       }
     } else {
-      $sql = "SELECT l.`id`,`tel`,l.`name`,`email`,l.`created_at`,l.updated_at,afilyator,`status_id`,users.fio as user,offices.id as office_id,offices.name as office FROM `lids` l left join users on (users.id = l.user_id) left join offices on (offices.id = l.office_id) WHERE l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE " . $where_ids_off . " `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "' AND geo = '" . $geo . "')";
+      $sql = "SELECT l.`id`,`tel`,l.`name`,`email`,l.`created_at`,l.updated_at,afilyator,`status_id`,users.fio as user,offices.id as office_id,offices.name as office FROM `lids` l left join users on (users.id = l.user_id) left join offices on (offices.id = l.office_id) WHERE  " . $where_ids_off . " l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "' AND geo = '" . $geo . "') ";
       return DB::select(DB::raw($sql));
     }
     return response('Some not good(', 404);
