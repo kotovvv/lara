@@ -412,7 +412,9 @@ class ImportsController extends Controller
       }
     }
     $hm = ceil(count($alliads) / count($usersIds));
-
+    if (!$alliads) {
+      return response('No alliads', 403);
+    }
     foreach (array_chunk($alliads, $hm) as $n_user => $lid_ids) {
       $office_id = User::where('id', (int) $usersIds[$n_user])->value('office_id');
 
