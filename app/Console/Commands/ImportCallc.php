@@ -57,14 +57,15 @@ class ImportCallc extends Command
     $imports_provider = DB::table('imports_provider')->where('callc', 1)->where('updated_at', '<', now()->subHours(1))->get();
     foreach ($imports_provider as $import) {
       $a_hm = (object) [];
-      $lid_ids = DB::table('imported_leads')->where('api_key_id', $import->provider_id)->whereDate('upload_time', $import->date)->where('geo', $import->geo)->pluck('lead_id');
+      $lid_ids = DB::table('imported_leads')->where('api_key_id', $import->provider_id)->whereDate('upload_time', $import->date)->where('geo', $import->geo)->pluck('lead_id')->toArray();
 
-      $a_hm = DB::selectOne('SELECT SUM(status_id = 8)hmnew,SUM(status_id = 9)hmcb,SUM(status_id = 10)hmdp,COUNT(*)hm FROM lids l WHERE l.`id` IN (' . implode(',', $lid_ids->toArray()) . ')');
+      $a_hm = DB::selectOne('SELECT SUM(status_id = 8)hmnew,SUM(status_id = 9)hmcb,SUM(status_id = 10)hmdp,COUNT(*)hm FROM lids l WHERE l.`id` IN (' . implode(',', $lid_ids) . ')');
+      if ($a_hm) {
+        $a_hm->callc = 0;
+        $a_hm->updated_at = date('Y-m-d H:m:s');
 
-      $a_hm->callc = 0;
-      $a_hm->updated_at = date('Y-m-d H:m:s');
-
-      DB::table('imports_provider')->where('id', $import->id)->update((array)$a_hm);
+        DB::table('imports_provider')->where('id', $import->id)->update((array)$a_hm);
+      }
     }
 
     return 0;
