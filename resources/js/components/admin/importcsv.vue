@@ -343,6 +343,17 @@
             </v-data-table>
           </v-col>
           <v-col cols="6" style="margin-top: 3.5rem">
+            <v-expansion-panels accordion>
+              <v-expansion-panel v-for="(item, i) in 5" :key="i">
+                <v-expansion-panel-header>Item</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                  laboris nisi ut aliquip ex ea commodo consequat.
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
             <v-data-table
               :headers="import_provider_headers"
               item-key="id"
@@ -936,7 +947,7 @@ export default {
       { text: "", value: "id", sortable: false },
     ],
     import_provider_headers: [
-      { text: "Дата", value: "start", sortable: false, groupable: false },
+      { text: "Дата", value: "start", groupable: false },
       {
         text: "Поставщик",
         value: "provider",
@@ -1263,6 +1274,11 @@ export default {
               ip.group = ip.date + " " + ip.provider;
               return ip;
             });
+            self.importsProvLeads = _.orderBy(
+              self.importsProvLeads,
+              "date",
+              "desc"
+            );
             let a_prov = _.uniq(
               _.map(self.importsProvLeads, (el) => {
                 return el.provider_id;

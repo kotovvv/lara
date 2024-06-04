@@ -405,16 +405,17 @@ class ImportsController extends Controller
         $historyimp['lids'] = implode(',', $setLiads);
         $historyimp['imports_id'] = $import_['id'];
         $historyimp['created_at'] = Now();
-        //- insert to history
-        DB::table('historyimport')->insert($historyimp);
         //- collect $alliads
         $alliads = array_merge($alliads, $setLiads);
+        if (!$alliads) {
+          return response('No alliads', 403);
+        }
+        //- insert to history
+        DB::table('historyimport')->insert($historyimp);
       }
     }
     $hm = ceil(count($alliads) / count($usersIds));
-    if (!$alliads) {
-      return response('No alliads', 403);
-    }
+
     foreach (array_chunk($alliads, $hm) as $n_user => $lid_ids) {
       $office_id = User::where('id', (int) $usersIds[$n_user])->value('office_id');
 
