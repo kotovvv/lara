@@ -1596,9 +1596,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
       DB::table('imports_provider')->where('id', $ip->id)->update(['callc' => 1]);
     }
 
-    //DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
     if (count($ips)) {
-      //$sql = "SELECT ip.*,ip.date start, p.name provider, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) AND status_id = 8) hmnew, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) AND status_id = 9) hmcb, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) AND status_id = 10) hmdp, (SELECT COUNT(*) FROM lids WHERE id IN (SELECT lead_id FROM `imported_leads` WHERE `api_key_id` = ip.provider_id AND DATE(`upload_time`) = ip.date AND geo = IF(ip.`geo` != '', ip.geo, '')) ) hm FROM `imports_provider` ip LEFT JOIN providers p ON p.`id` = ip.`provider_id` " . $where . " GROUP BY DATE, provider_id, geo  ORDER BY DATE DESC, provider_id ASC";
       $sql = "SELECT ip.*,ip.date start, p.name provider,  sum(hmnew),  sum(hmcb),  sum(hmdp),  sum(hm) FROM `imports_provider` ip LEFT JOIN providers p ON p.`id` = ip.`provider_id` " . $where . " GROUP BY DATE, provider_id, geo  ORDER BY DATE DESC, provider_id ASC";
       return DB::select(DB::raw($sql));
     }

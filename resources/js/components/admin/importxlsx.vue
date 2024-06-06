@@ -412,47 +412,6 @@ export default {
             });
         }
       });
-
-      //
-      // axios
-      //   .post("api/Lid/newlids", send)
-      //   .then(function (response) {
-      //     // self.getUsers();
-      //     json = {};
-      //     send = {};
-      //     self.header = [];
-      //     self.files = null;
-      //     self.table = [];
-      //     // save to imports db
-      //     //======================
-      //     let info = {};
-
-      //     info.start = response.data.date_start
-      //       .substring(0, 19)
-      //       .replace("T", " ");
-      //     info.end = response.data.date_end.substring(0, 19).replace("T", " ");
-      //     info.provider_id = self.selectedProvider;
-      //     info.user_id = self.user.id;
-      //     info.sum = self.sum;
-      //     info.cp = self.cp;
-      //     info.message = self.load_mess;
-      //     // console.log(info);
-      //     return info;
-      //   })
-      //   .then((res) => {
-      //     axios
-      //       .post("api/imports/0/0", res)
-      //       .then(function (response) {
-      //         self.selectedProvider = null;
-      //         self.loading = false;
-      //       })
-      //       .catch(function (error) {
-      //         console.log(error);
-      //       });
-      //   })
-      //   .catch(function (error) {
-      //     console.log(error);
-      //   });
     },
     getProviders() {
       let self = this;

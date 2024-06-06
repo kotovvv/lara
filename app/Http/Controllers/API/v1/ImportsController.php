@@ -23,7 +23,6 @@ class ImportsController extends Controller
   {
     $office_id = session()->get('office_id');
 
-    // return Import::select(['imports.*', DB::raw('(SELECT `name` FROM `providers` WHERE `id` = `provider_id`) AS provider'), DB::raw('(SELECT `name` FROM `users` WHERE `id` = `user_id`) AS user'), DB::raw('(SELECT `group_id` FROM `users` WHERE `id` = `user_id`) AS group_id'), DB::raw('(SELECT count(*) FROM lids WHERE `load_mess` = imports.`message` AND status_id =8) AS hmnew'), DB::raw('(SELECT count(*) FROM lids WHERE `load_mess` = imports.`message` ) AS hm'), DB::raw('(SELECT count(*) FROM lids WHERE `load_mess` = imports.`message` AND status_id = 9 ) AS hmcb'), DB::raw('(SELECT count(*) FROM lids WHERE `load_mess` = imports.`message` AND status_id = 10 ) AS hmdp')])
     $imports = Import::select(['imports.*', DB::raw('(SELECT `name` FROM `providers` WHERE `id` = `provider_id`) AS provider'), DB::raw('(SELECT `name` FROM `users` WHERE `id` = `user_id`) AS user'), DB::raw('(SELECT `group_id` FROM `users` WHERE `id` = `user_id`) AS group_id')])
       ->when($from != 0 && $to != 0, function ($query) use ($from, $to) {
         return $query->whereBetween('start', [$from . ' 00:00:00', $to . ' 23:59:59']);
@@ -193,6 +192,11 @@ class ImportsController extends Controller
   public function store(Request $request, $from = 0, $to = 0)
   {
     $a_import = $request->all();
+    $office_ids = Lid::where('load_mess', $a_import['message'])->groupBy('office_id')->pluck('office_id')->toArray();
+    if (count($office_ids) > 0 && !in_array(0, $office_ids)) {
+      $a_import['office_ids'] = json_encode($office_ids);
+    }
+
     DB::table('imports')->insert($a_import);
   }
 
@@ -414,6 +418,7 @@ class ImportsController extends Controller
         DB::table('historyimport')->insert($historyimp);
       }
     }
+
     $hm = ceil(count($alliads) / count($usersIds));
 
     foreach (array_chunk($alliads, $hm) as $n_user => $lid_ids) {
