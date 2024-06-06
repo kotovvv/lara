@@ -1075,8 +1075,10 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
 
     $n_lid->save();
     $id = $n_lid->id;
-    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now(), 'geo' => $geo]);
-    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo], ['date' => date('Y-m-d')]);
+    $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => $n_lid->created_at, 'geo' => $geo]);
+    $lids = DB::table('imported_leads')->select('lead_id')->where('api_key_id', $f_key->id)->where('upload_time', $n_lid->created_at)->where('geo', $geo);
+    $a_office_ids = json_encode(Lid::whereIn('id', $lids)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
+    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo, 'office_ids' => $a_office_ids], ['date' => date('Y-m-d'), 'office_ids' => $a_office_ids]);
 
     $res['status'] = 'OK';
     $res['id'] = $id;

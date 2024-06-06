@@ -342,68 +342,39 @@
               </template>
             </v-data-table>
           </v-col>
-          <v-col cols="6" style="margin-top: 3.5rem">
+          <v-col
+            cols="6"
+            style="margin-top: 3.5rem; max-height: 86vh; overflow-y: auto"
+          >
             <v-expansion-panels accordion>
-              <v-expansion-panel v-for="(item, i) in 5" :key="i">
-                <v-expansion-panel-header>Item</v-expansion-panel-header>
+              <v-expansion-panel
+                v-for="apigr in Object.keys(apigroup)"
+                :key="apigr"
+              >
+                <v-expansion-panel-header>{{ apigr }}</v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
+                  <v-data-table
+                    :headers="import_provider_headers"
+                    item-key="id"
+                    :items="apigroup[apigr]"
+                    show-select
+                    v-model="importSelected"
+                    @click:row="clickrow"
+                    :footer-props="{
+                      'items-per-page-options': [],
+                      'items-per-page-text': '',
+                    }"
+                  >
+                    <template v-slot:item.sum="{ item }">
+                      {{ item.sum }}
+                      <v-icon small class="mr-2" @click.stop="editItem(item)">
+                        mdi-pencil
+                      </v-icon>
+                    </template>
+                  </v-data-table>
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
-            <v-data-table
-              :headers="import_provider_headers"
-              item-key="id"
-              group-by="group"
-              show-group-by
-              :expanded.sync="expanded"
-              :items="filter_importsProvLeads"
-              ref="importprovtable"
-              show-select
-              v-model="importSelected"
-              @click:row="clickrow"
-              :footer-props="{
-                'items-per-page-options': [],
-                'items-per-page-text': '',
-              }"
-            >
-              <template
-                v-slot:group.header="{ group, headers, toggle, isOpen }"
-              >
-                <td :colspan="headers.length">
-                  <v-btn
-                    @click="toggle"
-                    small
-                    icon
-                    :ref="group"
-                    :data-open="isOpen"
-                  >
-                    <v-icon v-if="isOpen">mdi-chevron-up</v-icon>
-                    <v-icon v-else>mdi-chevron-down</v-icon>
-                  </v-btn>
-                  {{ group }}
-                </td>
-              </template>
-              <template v-slot:expanded-item="{ headers, item }">
-                <td :colspan="headers.length">
-                  <div class="row">
-                    <div class="col">
-                      <h6>Details</h6>
-                      ... {{ item.name }}
-                    </div>
-                  </div>
-                </td>
-              </template>
-              <template v-slot:item.sum="{ item }">
-                {{ item.sum }}
-                <v-icon small class="mr-2" @click.stop="editItem(item)">
-                  mdi-pencil
-                </v-icon>
-              </template>
-            </v-data-table>
           </v-col>
           <v-col cols="3"></v-col>
           <v-col cols="12" id="info_prov">
@@ -947,21 +918,19 @@ export default {
       { text: "", value: "id", sortable: false },
     ],
     import_provider_headers: [
-      { text: "Дата", value: "start", groupable: false },
+      { text: "Дата", value: "start" },
       {
         text: "Поставщик",
         value: "provider",
         sortable: false,
-        groupable: false,
       },
-      { text: "Сумма", value: "sum", sortable: false, groupable: false },
-      { text: "L/A", value: "cp", sortable: false, groupable: false },
-      { text: "NEW", value: "hmnew", sortable: false, groupable: false },
-      { text: "CallBack", value: "hmcb", sortable: false, groupable: false },
-      { text: "Deposit", value: "hmdp", sortable: false, groupable: false },
-      { text: "Кол-во", value: "hm", sortable: false, groupable: false },
-      { text: "GEO", value: "geo", sortable: false, groupable: false },
-      { text: "group", value: "group", sortable: false },
+      { text: "Сумма", value: "sum", sortable: false },
+      { text: "L/A", value: "cp", sortable: false },
+      { text: "NEW", value: "hmnew", sortable: false },
+      { text: "CallBack", value: "hmcb", sortable: false },
+      { text: "Deposit", value: "hmdp", sortable: false },
+      { text: "Кол-во", value: "hm", sortable: false },
+      { text: "GEO", value: "geo", sortable: false },
       // { text: "", value: "id" },
     ],
     duplicate_leads_headers: [
@@ -1055,7 +1024,7 @@ export default {
     lidsByOffice: [],
     offices: [],
     redistributeOffice: null,
-    expanded: [],
+    apigroup: [],
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -1105,10 +1074,6 @@ export default {
     },
     filter_importsProvLeads() {
       if (this.importsProvLeads.length) {
-        setTimeout(() => {
-          // wait and then close all groups
-          this.closeAll();
-        }, 800);
         return this.importsProvLeads.filter((i) => {
           return (
             this.filter_import_provider.length == 0 ||
@@ -1279,6 +1244,7 @@ export default {
               "date",
               "desc"
             );
+            self.apigroup = _.groupBy(self.filter_importsProvLeads, "group");
             let a_prov = _.uniq(
               _.map(self.importsProvLeads, (el) => {
                 return el.provider_id;
