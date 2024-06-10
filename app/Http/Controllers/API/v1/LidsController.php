@@ -844,9 +844,9 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           return $query->whereIn('user_id', $users_ids);
         })
         ->get();
-      if (isset($req['id']) && isset($lids[0]['tel'])) {
-        DB::table('imports')->where('id', $req['id'])->update(['geo' => $this->getGeo($lids[0]['tel'])]);
-      }
+      // if (isset($req['id']) && isset($lids[0]['tel'])) {
+      //   DB::table('imports')->where('id', $req['id'])->update(['geo' => $this->getGeo($lids[0]['tel'])]);
+      // }
       return $lids;
     } elseif (isset($req['provider_id']) && isset($req['start']) && isset($req['end'])) {
       $lids = Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
