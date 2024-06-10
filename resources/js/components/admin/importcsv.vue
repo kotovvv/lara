@@ -1685,6 +1685,7 @@ export default {
       self.item.name = self.providers.find(
         (s) => s.id == item.provider_id
       ).name;
+      data.id = item.id;
       data.provider_id = item.provider_id;
       data.message = item.message;
       data.start = item.start;

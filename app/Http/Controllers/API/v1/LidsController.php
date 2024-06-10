@@ -832,7 +832,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     if (isset($req['end']) && isset($req['message'])) {
       $date_end = substr($req['end'], 0, 10);
 
-      return  Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
+      $lids =   Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
         ->where('load_mess', $req['message'])
         ->whereDate('lids.created_at', $date_end)
         ->leftJoin('users', 'users.id', '=', 'user_id')
@@ -844,6 +844,10 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           return $query->whereIn('user_id', $users_ids);
         })
         ->get();
+      if (isset($req['id']) && isset($lids[0]['tel'])) {
+        DB::table('imports')->where('id', $req['id'])->update(['geo' => $this->getGeo($lids[0]['tel'])]);
+      }
+      return $lids;
     } elseif (isset($req['provider_id']) && isset($req['start']) && isset($req['end'])) {
       $lids = Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
         ->leftJoin('users', 'users.id', '=', 'user_id')
@@ -876,7 +880,18 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
       }
     } else {
       $sql = "SELECT l.`id`,`tel`,l.`name`,`email`,l.`created_at`,l.updated_at,afilyator,`status_id`,users.fio as user,offices.id as office_id,offices.name as office FROM `lids` l left join users on (users.id = l.user_id) left join offices on (offices.id = l.office_id) WHERE  " . $where_ids_off . " l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "' AND geo = '" . $geo . "') ";
-      return DB::select(DB::raw($sql));
+      $lids = DB::select(DB::raw($sql));
+      $office_ids = [];
+      foreach ($lids as $key => $lid) {
+        $office_ids[] = $lid->office_id;
+      }
+      $office_ids = array_values(array_unique($office_ids));
+
+      if (count($office_ids)) {
+        DB::table('imports_provider')->where('id', $req['id'])->update(['office_ids' => json_encode($office_ids)]);
+      }
+
+      return $lids;
     }
     return response('Some not good(', 404);
   }
