@@ -395,7 +395,7 @@ class LidsController extends Controller
       $group_email_tel = " GROUP BY `email`";
     }
     if (isset($data['check'])) {
-      $sql = "SELECT l.`id`, l.`tel`,l.`name`,l.`text`,l.`created_at` created, l.`updated_at` updated, l.`office_id`, l.`provider_id`,l.`status_id`, s.`name` status_name, l.`email`, u.`name` user_name, p.`name` provider_name, l.`afilyator`, o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel . " ORDER BY l.created_at ASC";
+      $sql = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel . " ORDER BY l.created_at ASC";
       $results['leads'] =  DB::select(DB::raw($sql));
     }
 
@@ -879,7 +879,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           ->get();
       }
     } else {
-      $sql = "SELECT l.`id`,`tel`,l.`name`,`email`,l.`created_at`,l.updated_at,afilyator,`status_id`,users.fio as user,offices.id as office_id,offices.name as office FROM `lids` l left join users on (users.id = l.user_id) left join offices on (offices.id = l.office_id) WHERE  " . $where_ids_off . " l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "' AND geo = '" . $geo . "') ";
+      $sql = "SELECT l.*,users.fio as user,offices.name as office FROM `lids` l left join users on (users.id = l.user_id) left join offices on (offices.id = l.office_id) WHERE  " . $where_ids_off . " l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "' AND geo = '" . $geo . "') ";
       $lids = DB::select(DB::raw($sql));
       $office_ids = [];
       foreach ($lids as $key => $lid) {

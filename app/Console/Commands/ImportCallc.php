@@ -51,7 +51,7 @@ class ImportCallc extends Command
     foreach ($imports as $import) {
       $a_hm = (object) [];
       if ($import->message != '') {
-        $a_hm = DB::selectOne('SELECT SUM(status_id = 8)hmnew,SUM(status_id = 9)hmcb,SUM(status_id = 10)hmdp,COUNT(*)hm FROM lids l WHERE l.`load_mess` = "' . $import->message . '"');
+        $a_hm = DB::selectOne('SELECT SUM(status_id = 8)hmnew,SUM(status_id = 9)hmcb,SUM(status_id = 10)hmdp, SUM(pending) hmpnd, COUNT(*)hm FROM lids l WHERE l.`load_mess` = "' . $import->message . '"');
       }
 
       $a_hm->callc = 0;
@@ -64,7 +64,7 @@ class ImportCallc extends Command
       $a_hm = (object) [];
       $lid_ids = DB::table('imported_leads')->where('api_key_id', $import->provider_id)->whereDate('upload_time', $import->date)->where('geo', $import->geo)->pluck('lead_id')->toArray();
 
-      $a_hm = DB::selectOne('SELECT SUM(status_id = 8)hmnew,SUM(status_id = 9)hmcb,SUM(status_id = 10)hmdp,COUNT(*)hm FROM lids l WHERE l.`id` IN (' . implode(',', $lid_ids) . ')');
+      $a_hm = DB::selectOne('SELECT SUM(status_id = 8)hmnew,SUM(status_id = 9)hmcb,SUM(status_id = 10)hmdp,SUM(pending) hmpnd, COUNT(*)hm FROM lids l WHERE l.`id` IN (' . implode(',', $lid_ids) . ')');
       if ($a_hm) {
         $a_hm->callc = 0;
         $a_hm->updated_at = date('Y-m-d H:m:s');

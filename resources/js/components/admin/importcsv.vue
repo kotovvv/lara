@@ -388,9 +388,10 @@
           <v-col cols="12" v-for="office in lidsByOffice" :key="office.name">
             <div class="d-flex align-center">
               <v-checkbox
+                style="font-size: 1.2rem; font-weight: bold"
                 v-model="redistributeOffice"
                 hide-details
-                :label="office.name + ' - ' + office.lids.length"
+                :label="office.name + ' - Total ' + office.lids.length"
                 :value="office.name"
               ></v-checkbox>
             </div>
@@ -438,15 +439,17 @@
             <p>Переназначенные</p>
             <div id="wrp_stat" class="wrp__statuses">
               <template v-for="i in historyStatus">
-                <div class="status_wrp" :key="i.id">
-                  <b
-                    :style="{
-                      background: i.color,
-                      outline: '1px solid' + i.color,
-                    }"
-                    >{{ i.hm }}</b
-                  >
-                  <span>{{ i.name }}</span>
+                <div :key="i.id">
+                  <div class="status_wrp">
+                    <b
+                      :style="{
+                        background: i.color,
+                        outline: '1px solid' + i.color,
+                      }"
+                      >{{ i.hm }}</b
+                    >
+                    <span>{{ i.name }}</span>
+                  </div>
                 </div>
               </template>
               <!-- </div> -->
@@ -456,10 +459,10 @@
             <div class="mt-3">
               <div
                 class="wrp__statuses"
-                v-for="u in history"
+                v-for="(u, ix) in history"
                 :key="u.created_at"
               >
-                {{ u.created_at }}
+                <h5>Start{{ history.length - ix }} {{ u.created_at }}</h5>
                 <template v-for="i in JSON.parse(u.statuses)">
                   <div class="status_wrp" :key="i.id">
                     <b
@@ -773,7 +776,15 @@
                 item-key="id"
                 :items="filtereduplicate_leads"
                 ref="duplicatetable"
+                @click:row="clickrowd"
+                show-expand
+                :expanded.sync="expanded"
               >
+                <template v-slot:expanded-item="{ headers, item }">
+                  <td :colspan="headers.length" class="blackborder">
+                    <logtel :lid_id="item.id" :key="item.id" />
+                  </td>
+                </template>
               </v-data-table>
             </v-col>
           </v-row>
@@ -890,11 +901,20 @@ export default {
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
-      // { text: "Афилятор", value: "afilyator" },
-      // { text: "Поставщик", value: "provider" },
+      { text: "Название базы", value: "load_mess" },
+      { text: "Афилятор", value: "afilyator" },
+      { text: "Провайдер", value: "provider" },
+      { text: "Оффис", value: "office" },
       { text: "Менеджер", value: "user" },
-      // { text: "Создан", value: "date_created" },
+      { text: "Создан", value: "date_created" },
+      { text: "Изменён", value: "date_updated" },
       { text: "Статус", value: "status" },
+      { text: "Pending", value: "pending" },
+      { text: "Депозит", value: "deposit" },
+      { text: "Депозит", value: "depozit" },
+      { text: "Сообщение", value: "text" },
+      { text: "Звонков", value: "qtytel" },
+      { text: "ПЕРЕЗВОН", value: "ontime" },
     ],
     headers: [
       { text: "Имя", value: "name" },
@@ -914,6 +934,7 @@ export default {
       { text: "NEW", value: "hmnew", sortable: false },
       { text: "CallBack", value: "hmcb", sortable: false },
       { text: "Deposit", value: "hmdp", sortable: false },
+      { text: "Pending", value: "hmpnd", sortable: false },
       { text: "Кол-во", value: "hm", sortable: false },
       { text: "", value: "id", sortable: false },
     ],
@@ -929,20 +950,29 @@ export default {
       { text: "NEW", value: "hmnew", sortable: false },
       { text: "CallBack", value: "hmcb", sortable: false },
       { text: "Deposit", value: "hmdp", sortable: false },
+      { text: "Pending", value: "hmpnd", sortable: false },
       { text: "Кол-во", value: "hm", sortable: false },
       { text: "GEO", value: "geo", sortable: false },
       // { text: "", value: "id" },
     ],
     duplicate_leads_headers: [
-      { text: "Афилятор", value: "afilyator" },
-      { text: "Емаил", value: "email" },
       { text: "Имя", value: "name" },
-      { text: "Оффис", value: "office_name" },
+      { text: "Email", value: "email" },
+      { text: "Название базы", value: "load_mess" },
+      { text: "Телефон.", align: "start", value: "tel" },
+      { text: "Афилятор", value: "afilyator" },
       { text: "Провайдер", value: "provider_name" },
+      { text: "Оффис", value: "office_name" },
+      { text: "Менеджер", value: "user_name" },
+      { text: "Создан", value: "date_created" },
+      { text: "Изменён", value: "date_updated" },
       { text: "Статус", value: "status_name" },
-      { text: "Тел", value: "tel" },
-      { text: "Оператор", value: "user_name" },
-      { text: "Создан", value: "created" },
+      { text: "Pending", value: "pending" },
+      { text: "Депозит", value: "deposit" },
+      { text: "Депозит", value: "depozit" },
+      { text: "Сообщение", value: "text" },
+      { text: "Звонков", value: "qtytel" },
+      { text: "ПЕРЕЗВОН", value: "ontime" },
     ],
     importsProvLeads: [],
     duplicate_leads: [],
@@ -1025,6 +1055,7 @@ export default {
     offices: [],
     redistributeOffice: null,
     apigroup: [],
+    expanded: [],
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -1096,6 +1127,13 @@ export default {
     },
   },
   methods: {
+    clickrowd(item, row) {
+      if (!row.isExpanded) {
+        this.expanded = [item];
+      } else {
+        this.expanded = [];
+      }
+    },
     closeAll() {
       Object.keys(this.$refs).forEach((k) => {
         //console.log(this.$refs[k]);
@@ -1699,13 +1737,26 @@ export default {
         .then(function (response) {
           self.leads = response.data;
           self.leads.map(function (e) {
-            e.date_created = e.created_at.substring(0, 10);
-            if (e.status_id)
-              e.status = self.statuses.find((s) => s.id == e.status_id).name;
-            if (e.provider_id)
+            if (e.updated_at) {
+              e.date_updated = e.updated_at.substring(0, 10);
+            }
+            if (e.created_at) {
+              e.date_created = e.created_at.substring(0, 10);
+            }
+            try {
+              e.status =
+                self.statuses.find((s) => s.id == e.status_id).name || "";
+            } catch (error) {
+              e.status = "";
+            }
+
+            try {
               e.provider = self.providers.find(
-                (s) => s.id == e.provider_id
+                (p) => p.id == e.provider_id
               ).name;
+            } catch (error) {
+              e.provider = "";
+            }
           });
           self.filterStatuses();
           self.loading = false;
@@ -1780,6 +1831,7 @@ export default {
               hm,
               hmcb,
               hmdp,
+              hmpnd,
             }) => ({
               id,
               start,
@@ -1797,6 +1849,7 @@ export default {
               hm,
               hmcb,
               hmdp,
+              hmpnd,
             })
           );
           let a_prov = _.uniq(
