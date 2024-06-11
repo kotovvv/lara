@@ -68,7 +68,7 @@
           <v-row class="csv">
             <v-col cols="8">
               <v-card>
-                <v-container>
+                <v-container fluid>
                   <v-row>
                     <v-col cols="4">
                       <v-card-title>
@@ -646,7 +646,7 @@
         <importBTC></importBTC>
       </v-tab-item>
       <v-tab-item>
-        <v-container>
+        <v-container fluid>
           <v-row>
             <v-col>
               <v-radio-group v-model="email_tel" row>
@@ -901,20 +901,20 @@ export default {
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
-      { text: "Название базы", value: "load_mess" },
+      { text: "Поставщик", value: "provider" },
       { text: "Афилятор", value: "afilyator" },
-      { text: "Провайдер", value: "provider" },
       { text: "Оффис", value: "office" },
       { text: "Менеджер", value: "user" },
       { text: "Создан", value: "date_created" },
-      { text: "Изменён", value: "date_updated" },
       { text: "Статус", value: "status" },
-      { text: "Pending", value: "pending" },
+      { text: "Изменён", value: "date_updated" },
+      { text: "Название базы", value: "load_mess" },
       { text: "Депозит", value: "deposit" },
-      { text: "Депозит", value: "depozit" },
       { text: "Сообщение", value: "text" },
       { text: "Звонков", value: "qtytel" },
       { text: "ПЕРЕЗВОН", value: "ontime" },
+      { text: "Pending", value: "pending" },
+      { text: "Депозит", value: "depozit" },
     ],
     headers: [
       { text: "Имя", value: "name" },
@@ -931,10 +931,34 @@ export default {
       { text: "Сумма", value: "sum", sortable: false },
       { text: "L/A", value: "cp", sortable: false },
       { text: "Коментар", value: "message", sortable: false },
-      { text: "NEW", value: "hmnew", sortable: false },
-      { text: "CallBack", value: "hmcb", sortable: false },
-      { text: "Deposit", value: "hmdp", sortable: false },
-      { text: "Pending", value: "hmpnd", sortable: false },
+      {
+        text: "NEW",
+        value: "hmnew",
+        sortable: false,
+        class: "new",
+        cellClass: "new",
+      },
+      {
+        text: "CallBack",
+        value: "hmcb",
+        sortable: false,
+        class: "callback",
+        cellClass: "callback",
+      },
+      {
+        text: "Deposit",
+        value: "hmdp",
+        sortable: false,
+        class: "deposit",
+        cellClass: "deposit",
+      },
+      {
+        text: "Pending",
+        value: "hmpnd",
+        sortable: false,
+        class: "pending",
+        cellClass: "pending",
+      },
       { text: "Кол-во", value: "hm", sortable: false },
       { text: "", value: "id", sortable: false },
     ],
@@ -947,10 +971,34 @@ export default {
       },
       { text: "Сумма", value: "sum", sortable: false },
       { text: "L/A", value: "cp", sortable: false },
-      { text: "NEW", value: "hmnew", sortable: false },
-      { text: "CallBack", value: "hmcb", sortable: false },
-      { text: "Deposit", value: "hmdp", sortable: false },
-      { text: "Pending", value: "hmpnd", sortable: false },
+      {
+        text: "NEW",
+        value: "hmnew",
+        sortable: false,
+        class: "new",
+        cellClass: "new",
+      },
+      {
+        text: "CallBack",
+        value: "hmcb",
+        sortable: false,
+        class: "callback",
+        cellClass: "callback",
+      },
+      {
+        text: "Deposit",
+        value: "hmdp",
+        sortable: false,
+        class: "deposit",
+        cellClass: "deposit",
+      },
+      {
+        text: "Pending",
+        value: "hmpnd",
+        sortable: false,
+        class: "pending",
+        cellClass: "pending",
+      },
       { text: "Кол-во", value: "hm", sortable: false },
       { text: "GEO", value: "geo", sortable: false },
       // { text: "", value: "id" },
@@ -958,21 +1006,21 @@ export default {
     duplicate_leads_headers: [
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
-      { text: "Название базы", value: "load_mess" },
       { text: "Телефон.", align: "start", value: "tel" },
+      { text: "Поставщик", value: "provider_name" },
       { text: "Афилятор", value: "afilyator" },
-      { text: "Провайдер", value: "provider_name" },
       { text: "Оффис", value: "office_name" },
       { text: "Менеджер", value: "user_name" },
       { text: "Создан", value: "date_created" },
-      { text: "Изменён", value: "date_updated" },
       { text: "Статус", value: "status_name" },
-      { text: "Pending", value: "pending" },
+      { text: "Изменён", value: "date_updated" },
+      { text: "Название базы", value: "load_mess" },
       { text: "Депозит", value: "deposit" },
-      { text: "Депозит", value: "depozit" },
       { text: "Сообщение", value: "text" },
       { text: "Звонков", value: "qtytel" },
       { text: "ПЕРЕЗВОН", value: "ontime" },
+      { text: "Pending", value: "pending" },
+      { text: "Депозит", value: "depozit" },
     ],
     importsProvLeads: [],
     duplicate_leads: [],
@@ -1056,6 +1104,9 @@ export default {
     redistributeOffice: null,
     apigroup: [],
     expanded: [],
+    d_statuses: [],
+    d_providers: [],
+    d_offices: [],
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -1515,6 +1566,11 @@ export default {
             vm.in_db.length;
           vm.snackbar = true;
           vm.duplicate_leads = res.data.leads;
+          vm.duplicate_leads = vm.duplicate_leads.map((dl) => {
+            dl.date_created = dl.created_at.substring(0, 10);
+            dl.date_updated = dl.updated_at.substring(0, 10);
+            return dl;
+          });
           let a_status = _.uniq(
             _.map(vm.duplicate_leads, (el) => {
               return el.status_id;
@@ -2078,5 +2134,25 @@ export default {
 }
 .csv .v-data-footer {
   justify-content: end;
+}
+.new {
+  background: #dde4e4ff;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.callback {
+  background: #1d92f09f;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.deposit {
+  background: #21cb7bff;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.pending {
+  background: #a3adb7ff;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 </style>
