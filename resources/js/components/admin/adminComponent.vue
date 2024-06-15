@@ -106,7 +106,7 @@ export default {
       { text: "Отчёты", name: "reportPie", icon: "mdi-timetable" },
       { text: "Отчёт по BTC", name: "reportBTC", icon: "mdi-cash" },
     ],
-    adminMenu: "",
+    adminMenu: "importcsv",
   }),
   computed: {
     adminComponent() {
