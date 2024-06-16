@@ -246,6 +246,7 @@
             clearable
             label="GEO код"
             style="width: 12rem"
+            multiple
           >
             <template v-slot:selection="{ item }">
               {{ item.code }}
@@ -984,6 +985,9 @@ export default {
         .split(",")
         .map((el) => parseInt(el));
     }
+    if (localStorage.filterGeo) {
+      this.filterGeo = localStorage.filterGeo.split(",");
+    }
     if (localStorage.savedates) {
       this.savedates = localStorage.savedates == "true" ? true : false;
     }
@@ -1035,6 +1039,9 @@ export default {
     filterStatus(newName) {
       localStorage.filterStatus = newName.toString();
       this.selectRow();
+    },
+    filterGeo(newName) {
+      localStorage.filterGeo = newName;
     },
     filterOffices(newName) {
       if (newName[0] == 0 && newName.length > 1) {
