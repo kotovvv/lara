@@ -1309,8 +1309,14 @@ export default {
                 return a_l.includes(l.id);
               });
             }
-
             self.geo = res.data.geo;
+            if (localStorage.filterGeo) {
+              const a_geo = localStorage.filterGeo.split(",");
+              if (a_geo.length > 0) {
+                self.geo = self.geo.concat(a_geo);
+                self.geo = [...new Set(self.geo)];
+              }
+            }
           }
 
           self.lids = res.data.lids;

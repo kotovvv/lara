@@ -551,8 +551,8 @@ class LidsController extends Controller
       ->when($filterLang != '', function ($query) use ($filterLang) {
         return $query->where('lids.client_lang', $filterLang);
       })
-      ->when($filterGeo != '', function ($query) use ($filterGeo) {
-        return $query->where('lids.client_geo', $filterGeo);
+      ->when(count($filterGeo) > 0, function ($query) use ($filterGeo) {
+        return $query->whereIn('lids.client_geo', $filterGeo);
       })
       ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {
         return $query->where(DB::Raw('(SELECT count(*) cnt FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9)'), '>', 0);
@@ -625,8 +625,8 @@ class LidsController extends Controller
         ->when($filterLang != '', function ($query) use ($filterLang) {
           return $query->where('lids.client_lang', $filterLang);
         })
-        ->when($filterGeo != '', function ($query) use ($filterGeo) {
-          return $query->where('lids.client_geo', $filterGeo);
+        ->when(count($filterGeo) > 0, function ($query) use ($filterGeo) {
+          return $query->whereIn('lids.client_geo', $filterGeo);
         })
         ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {
           return $query->where(DB::Raw('(SELECT count(*) cnt FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9)'), '>', 0);
