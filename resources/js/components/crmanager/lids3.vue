@@ -963,7 +963,7 @@ export default {
     sortDesc: true,
     options: {},
     filterLang: "",
-    filterGeo: "",
+    filterGeo: [],
     languges: [],
     geo: [],
     GeoTel,
