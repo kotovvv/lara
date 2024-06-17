@@ -233,11 +233,7 @@
           <p></p>
           <v-autocomplete
             v-model="filterGeo"
-            :items="
-              GeoTel.filter((g) => {
-                return this.geo.includes(g.code);
-              })
-            "
+            :items="GeoTel"
             @change="getPage(0)"
             item-text="txt"
             item-value="code"
@@ -965,7 +961,7 @@ export default {
     filterLang: "",
     filterGeo: [],
     languges: [],
-    geo: [],
+    //geo: [],
     GeoTel,
     process: 0,
     controller: new AbortController(),
@@ -1309,14 +1305,14 @@ export default {
                 return a_l.includes(l.id);
               });
             }
-            self.geo = res.data.geo;
-            if (localStorage.filterGeo) {
-              const a_geo = localStorage.filterGeo.split(",");
-              if (a_geo.length > 0) {
-                self.geo = self.geo.concat(a_geo);
-                self.geo = [...new Set(self.geo)];
-              }
-            }
+            // self.geo = res.data.geo;
+            // if (localStorage.filterGeo) {
+            //   const a_geo = localStorage.filterGeo.split(",");
+            //   if (a_geo.length > 0) {
+            //     self.geo = self.geo.concat(a_geo);
+            //     self.geo = [...new Set(self.geo)];
+            //   }
+            // }
           }
 
           self.lids = res.data.lids;
@@ -1402,7 +1398,7 @@ export default {
       this.filterStatus = [];
       this.filterProviders = [];
       this.filterLang = "";
-      this.filterGeo = "";
+      this.filterGeo = [];
       this.filtertel = "";
       this.disableuser = 0;
       this.getLids3();
