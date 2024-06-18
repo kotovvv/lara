@@ -56,7 +56,7 @@
                     <v-col cols="6">
                       <v-switch
                         v-model="editedItem.dup"
-                        label="Разрешить дупликаты:"
+                        label="Запретить дупликаты:"
                       ></v-switch>
                     </v-col>
                     <v-col cols="6">
