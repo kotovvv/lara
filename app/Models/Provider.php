@@ -10,21 +10,22 @@ use HasApiTokens;
 
 class Provider extends Authenticatable
 {
-    use HasFactory,Notifiable;
+  use HasFactory, Notifiable;
 
-    protected $guard = 'provs';
+  protected $guard = 'provs';
 
-    protected $fillable = [
-      'name',
-      'tel',
-      'active',
-      'related_users_id',
-      'office_id',
-      'user_id'
+  protected $fillable = [
+    'name',
+    'tel',
+    'active',
+    'related_users_id',
+    'office_id',
+    'user_id',
+    'dup'
   ];
 
-    protected $hidden = [
-      'password',
-      'remember_token'
+  protected $hidden = [
+    'password',
+    'remember_token'
   ];
 }
