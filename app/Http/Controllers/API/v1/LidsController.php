@@ -1050,6 +1050,10 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
             return response('you have to wait ');
           }
         }
+      } else {
+        if (Lid::where('tel', '=', '' . $n_lid->tel)->get()) {
+          return response('Duplicate ');
+        }
       }
     } else {
       return response('No tel');
@@ -1153,6 +1157,10 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
             return response('you have to wait ');
           }
         }
+      } else {
+        if (Lid::where('tel', '=', '' . $n_lid->tel)->get()) {
+          return response('Duplicate ');
+        }
       }
     } else {
       return response('No tel');
@@ -1243,6 +1251,10 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
             return response('you have to wait ');
           }
         }
+      } else {
+        if (Lid::where('tel', '=', '' . $n_lid->tel)->get()) {
+          return response('Duplicate ');
+        }
       }
     } else {
       return response('No tel');
@@ -1320,6 +1332,10 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           if ($date->diffInDays($added_date) < 14) {
             return response('you have to wait ');
           }
+        }
+      } else {
+        if (Lid::where('tel', '=', '' . $n_lid->tel)->get()) {
+          return response('Duplicate ');
         }
       }
     } else {
