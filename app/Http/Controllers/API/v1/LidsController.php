@@ -1051,7 +1051,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           }
         }
       } else {
-        if (Lid::where('tel', '=', '' . $n_lid->tel)->get()) {
+        if (!(Lid::where('tel', '=', '' . $n_lid->tel)->get())->isEmpty()) {
           return response('Duplicate ');
         }
       }
@@ -1158,7 +1158,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           }
         }
       } else {
-        if (Lid::where('tel', '=', '' . $n_lid->tel)->get()) {
+        if (!(Lid::where('tel', '=', '' . $n_lid->tel)->get())->isEmpty()) {
           return response('Duplicate ');
         }
       }
@@ -1252,7 +1252,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           }
         }
       } else {
-        if (Lid::where('tel', '=', '' . $n_lid->tel)->get()) {
+        if (!(Lid::where('tel', '=', '' . $n_lid->tel)->get())->isEmpty()) {
           return response('Duplicate ');
         }
       }
@@ -1334,7 +1334,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           }
         }
       } else {
-        if (Lid::where('tel', '=', '' . $n_lid->tel)->get()) {
+        if (!(Lid::where('tel', '=', '' . $n_lid->tel)->get())->isEmpty()) {
           return response('Duplicate ');
         }
       }
