@@ -141,10 +141,8 @@
                 :items-per-page="100"
                 hide-default-footer
               >
-                <template
-                  v-slot:item.tel="{ item }"
-                  v-if="$props.user.sip == 0"
-                >
+                <!-- v-if="$props.user.sip == 0" -->
+                <template v-slot:item.tel="{ item }">
                   <a
                     class="tel"
                     :href="'sip:' + item.tel"
@@ -165,7 +163,7 @@
                     <v-icon small> mdi-headset </v-icon>
                   </span>
                 </template>
-                <template v-slot:item.tel="{ item }" v-else>
+                <!-- <template v-slot:item.tel="{ item }" v-else>
                   <span
                     class="tel"
                     @click.prevent.stop="
@@ -186,7 +184,7 @@
                       <v-icon small> mdi-headset </v-icon>
                     </a>
                   </span>
-                </template>
+                </template> -->
                 <template v-slot:item.status="{ item }">
                   <div class="status_wrp" @click.stop="openDialog(item)">
                     <b
@@ -654,7 +652,7 @@ export default {
     },
     wp_call(item) {
       this.copyTo(item.tel);
-      if (this.webphone && !this.webphone.closed) {
+      /*      if (this.webphone && !this.webphone.closed) {
         const tel = this.selectedServer.prefix.toString() + item.tel;
         this.webphone.webphone_api.call(tel);
         this.webphone.focus();
@@ -670,7 +668,7 @@ export default {
           "softphone",
           "width=400,height=540"
         );
-      }
+      }*/
     },
     paste(e) {
       if (e.type === "paste") {
