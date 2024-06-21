@@ -91,6 +91,15 @@
       </v-col>
     </v-row>
     <v-row>
+      <v-col cols="12">
+        <v-progress-linear
+          :active="loading"
+          indeterminate
+          color="purple"
+        ></v-progress-linear>
+      </v-col>
+    </v-row>
+    <v-row>
       <v-col>
         <div class="my-3">Поиск пользователей</div>
         <v-autocomplete
@@ -104,6 +113,7 @@
           outlined
           rounded
           @click:append="clearuser()"
+          @change="changeUser()"
         ></v-autocomplete>
         <v-expansion-panels v-model="akkvalue">
           <v-expansion-panel v-for="(item, i) in test" :key="i">
@@ -177,12 +187,18 @@ export default {
   mounted: function () {
     this.getOffices();
   },
-  watch: {
-    selectedUser(user) {
-      this.akkvalue = _.findIndex(this.test, (el) => el[0] == user.grp);
-    },
-  },
+  watch: {},
   methods: {
+    changeUser() {
+      if (this.selectedUser == null) {
+        this.selectedUser = {};
+      } else {
+        this.akkvalue = _.findIndex(
+          this.test,
+          (el) => el[0] == this.selectedUser.grp
+        );
+      }
+    },
     clearuser() {
       this.selectedUser = {};
     },
