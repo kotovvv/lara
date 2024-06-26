@@ -132,6 +132,11 @@ export default {
         .map((i) => i.name)
         .indexOf(localStorage.adminMenu);
     }
+    if (this.$props.user.group_id > 0 || this.$props.user.office_id > 0) {
+      this.items = this.items.filter((i) => {
+        return i.name != "providers";
+      });
+    }
   },
   watch: {
     adminMenu(newName) {

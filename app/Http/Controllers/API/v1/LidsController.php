@@ -363,7 +363,12 @@ class LidsController extends Controller
       if (isset($data['status_id']))  $n_lid->status_id = $data['status_id'];
       $f_lid =  Lid::where('tel', '=', "" . $lid['tel'])->get();
 
+
       if (!$f_lid->isEmpty()) {
+        $dup = Provider::where('id', $data['provider_id'])->value('dup');
+        if ($dup == 1) {
+          continue;
+        }
         $n_lid->status_id = 22;
       }
       if ($n_lid->provider_id == '76') {
@@ -1153,7 +1158,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         if ($added_date != '') {
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
-          if ($date->diffInDays($added_date) < 14) {
+          if ($date->diffInDays($added_date) < 150) {
             return response('you have to wait ');
           }
         }
@@ -1247,7 +1252,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         if ($added_date != '') {
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
-          if ($date->diffInDays($added_date) < 14) {
+          if ($date->diffInDays($added_date) < 150) {
             return response('you have to wait ');
           }
         }
@@ -1329,7 +1334,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         if ($added_date != '') {
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
-          if ($date->diffInDays($added_date) < 14) {
+          if ($date->diffInDays($added_date) < 150) {
             return response('you have to wait ');
           }
         }
