@@ -1046,7 +1046,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         if ($added_date != '') {
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
-          if ($date->diffInDays($added_date) < 14) {
+          if ($date->diffInDays($added_date) < 150) {
             return response('you have to wait ');
           }
         }
