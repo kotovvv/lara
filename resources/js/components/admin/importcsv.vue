@@ -1474,8 +1474,14 @@ export default {
       }
       if (self.email_tel === "tel") {
         let con = [];
+        let a_bad_tel = [];
+        self.filtereduplicate_leads.map((t) => {
+          if ([9, 10, 11, 20, 21, 22, 23].includes(t.status_id))
+            a_bad_tel.push(t.tel);
+        });
+        console.log(a_bad_tel);
         const dup_not = self.filtereduplicate_leads.filter((dd) => {
-          return ![9, 10, 11, 20, 21, 23].includes(dd.status_id);
+          return !a_bad_tel.includes(dd.tel);
         });
         const dup_call = self.filtereduplicate_leads.filter((dd) => {
           return (
