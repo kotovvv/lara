@@ -1475,7 +1475,7 @@ export default {
       if (self.email_tel === "tel") {
         let con = [];
         const dup_not = self.filtereduplicate_leads.filter((dd) => {
-          return ![10, 11, 23].includes(dd.status_id);
+          return ![9, 10, 11, 20, 21, 23].includes(dd.status_id);
         });
         const dup_call = self.filtereduplicate_leads.filter((dd) => {
           return (
@@ -1483,7 +1483,7 @@ export default {
             (Date.now() - Date.parse(dd.updated)) / (60 * 60 * 24 * 1000) > 21
           );
         });
-        con = con.concat(unique, dup_not, dup_call);
+        con = con.concat(unique, dup_not); //, dup_call
         window["con"] = XLSX.utils.json_to_sheet(con);
         XLSX.utils.book_append_sheet(wb, window["con"], "CHECK_TO_UPLOAD");
       }
