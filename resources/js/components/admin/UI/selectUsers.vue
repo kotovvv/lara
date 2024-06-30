@@ -8,6 +8,7 @@
       color="purple"
     ></v-progress-linear>
     <v-list>
+      <v-btn class="btn ma-3" @click="setUserIds">Назначить</v-btn>
       <div v-for="office in offices" :key="office.id">
         <p class="title" v-if="office.id > 0">{{ office.name }}</p>
         <v-expansion-panels v-model="akkvalue[office.id]">
@@ -51,8 +52,6 @@
           </v-expansion-panel>
         </v-expansion-panels>
       </div>
-
-      <v-btn class="btn ma-3" @click="setUserIds">Назначить</v-btn>
     </v-list>
   </v-card>
 </template>

@@ -144,266 +144,292 @@
             </v-col>
           </v-row>
         </v-main>
-        <v-row v-else>
-          <v-col cols="12">
-            <v-row class="align-center pt-10">
-              <v-col cols="1">
-                <v-menu
-                  v-model="dateFrom"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
+        <div v-else>
+          <v-row>
+            <v-col cols="12">
+              <v-row class="align-center pt-10">
+                <v-col cols="1">
+                  <v-menu
+                    v-model="dateFrom"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="datetimeFrom"
+                        label="С даты"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      locale="ru-ru"
                       v-model="datetimeFrom"
-                      label="С даты"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    locale="ru-ru"
-                    v-model="datetimeFrom"
-                    @input="
-                      dateFrom = false;
-                      takedates ? getImports() : '';
-                    "
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="1">
-                <v-menu
-                  v-model="dateTo"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
+                      @input="
+                        dateFrom = false;
+                        takedates ? getImports() : '';
+                      "
+                    ></v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="1">
+                  <v-menu
+                    v-model="dateTo"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="datetimeTo"
+                        label="По дату"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      locale="ru-ru"
                       v-model="datetimeTo"
-                      label="По дату"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    locale="ru-ru"
-                    v-model="datetimeTo"
-                    @input="
-                      dateTo = false;
-                      takedates ? getImports() : '';
-                    "
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-checkbox v-model="takedates" @change="getImports"></v-checkbox>
+                      @input="
+                        dateTo = false;
+                        takedates ? getImports() : '';
+                      "
+                    ></v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-checkbox
+                  v-model="takedates"
+                  @change="getImports"
+                ></v-checkbox>
 
-              <v-col cols="2">
-                <v-autocomplete
-                  v-model="filter_import_provider"
-                  :items="i_providers"
-                  label="Фильтр провайдер"
-                  item-text="name"
-                  item-value="id"
-                  outlined
-                  rounded
-                  multiple
-                  clearable="clearable"
-                >
-                  <template v-slot:selection="{ item, index }">
-                    <span v-if="index === 0">{{ item.name }} </span>
-                    <span v-if="index === 1" class="grey--text text-caption">
-                      (+{{ filterProviders.length - 1 }} )
-                    </span>
-                  </template>
-                  <template v-slot:item="{ item, attrs }">
-                    <v-badge
-                      :value="attrs['aria-selected'] == 'true'"
-                      color="#7620df"
-                      dot
-                      left
-                    >
+                <v-col cols="2">
+                  <v-autocomplete
+                    v-model="filter_import_provider"
+                    :items="i_providers"
+                    label="Фильтр провайдер"
+                    item-text="name"
+                    item-value="id"
+                    outlined
+                    rounded
+                    multiple
+                    clearable="clearable"
+                  >
+                    <template v-slot:selection="{ item, index }">
+                      <span v-if="index === 0">{{ item.name }} </span>
+                      <span v-if="index === 1" class="grey--text text-caption">
+                        (+{{ filterProviders.length - 1 }} )
+                      </span>
+                    </template>
+                    <template v-slot:item="{ item, attrs }">
+                      <v-badge
+                        :value="attrs['aria-selected'] == 'true'"
+                        color="#7620df"
+                        dot
+                        left
+                      >
+                        {{ item.name }}
+                      </v-badge>
+                    </template>
+                  </v-autocomplete>
+                </v-col>
+                <v-col cols="2">
+                  <v-select
+                    ref="resetStatus"
+                    label="Переназначить статусы"
+                    v-model="resetStatus"
+                    :items="statuses"
+                    item-text="name"
+                    item-value="id"
+                    outlined
+                    rounded
+                    :multiple="true"
+                  >
+                    <template v-slot:selection="{ item, index }">
+                      <span v-if="index === 0">{{ item.name }} </span>
+                      <span v-if="index === 1" class="grey--text text-caption">
+                        (+{{ resetStatus.length - 1 }} )
+                      </span>
+                    </template>
+                    <template v-slot:item="{ item, attrs }">
+                      <v-badge
+                        :value="attrs['aria-selected'] == 'true'"
+                        color="#7620df"
+                        dot
+                        left
+                      >
+                        <i
+                          :style="{
+                            background: item.color,
+                            outline: '1px solid grey',
+                          }"
+                          class="sel_stat mr-4"
+                        ></i>
+                      </v-badge>
                       {{ item.name }}
-                    </v-badge>
-                  </template>
-                </v-autocomplete>
-              </v-col>
-              <v-col cols="2">
-                <v-select
-                  ref="resetStatus"
-                  label="Переназначить статусы"
-                  v-model="resetStatus"
-                  :items="statuses"
-                  item-text="name"
-                  item-value="id"
-                  outlined
-                  rounded
-                  :multiple="true"
+                    </template>
+                  </v-select>
+                </v-col>
+                <v-btn
+                  class="btn"
+                  v-if="importSelected.length || redistributeOffice"
+                  @click.stop="drawer = !drawer"
+                  >Назначить на менеджеров</v-btn
                 >
-                  <template v-slot:selection="{ item, index }">
-                    <span v-if="index === 0">{{ item.name }} </span>
-                    <span v-if="index === 1" class="grey--text text-caption">
-                      (+{{ resetStatus.length - 1 }} )
-                    </span>
-                  </template>
-                  <template v-slot:item="{ item, attrs }">
-                    <v-badge
-                      :value="attrs['aria-selected'] == 'true'"
-                      color="#7620df"
-                      dot
-                      left
-                    >
-                      <i
-                        :style="{
-                          background: item.color,
-                          outline: '1px solid grey',
-                        }"
-                        class="sel_stat mr-4"
-                      ></i>
-                    </v-badge>
-                    {{ item.name }}
-                  </template>
-                </v-select>
-              </v-col>
-              <v-btn
-                class="btn"
-                v-if="importSelected.length || redistributeOffice"
-                @click.stop="drawer = !drawer"
-                >Назначить на менеджеров</v-btn
+                <v-spacer></v-spacer>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row style="height: 80vh; overflow-y: auto">
+            <v-col cols="6">
+              <v-data-table
+                :headers="import_headers"
+                item-key="id"
+                :items="filter_imports"
+                ref="importtable"
+                show-select
+                :search="search"
+                v-model="importSelected"
+                @click:row="clickrow"
+                :footer-props="{
+                  'items-per-page-options': [],
+                  'items-per-page-text': '',
+                }"
               >
-              <v-spacer></v-spacer>
-            </v-row>
-          </v-col>
-          <v-col cols="6">
-            <v-data-table
-              :headers="import_headers"
-              item-key="id"
-              :items="filter_imports"
-              ref="importtable"
-              show-select
-              :search="search"
-              v-model="importSelected"
-              @click:row="clickrow"
-              :footer-props="{
-                'items-per-page-options': [],
-                'items-per-page-text': '',
-              }"
-            >
-              <template v-slot:top="{ pagination, options, updateOptions }">
-                <v-row>
-                  <v-col
-                    ><v-autocomplete
-                      v-model="search"
-                      :items="imports"
-                      item-text="message"
-                      item-value="message"
-                      append-icon="mdi-magnify"
-                      label="Поиск"
-                      hide-details
-                      outlined
-                    ></v-autocomplete
-                  ></v-col>
-                  <v-col>
-                    <!-- <v-data-footer
+                <template v-slot:top="{ pagination, options, updateOptions }">
+                  <v-row>
+                    <v-col
+                      ><v-autocomplete
+                        v-model="search"
+                        :items="imports"
+                        item-text="message"
+                        item-value="message"
+                        append-icon="mdi-magnify"
+                        label="Поиск"
+                        hide-details
+                        outlined
+                      ></v-autocomplete
+                    ></v-col>
+                    <v-col>
+                      <!-- <v-data-footer
                       :pagination="pagination"
                       :options="options"
                       @update:options="updateOptions"
                       items-per-page-text=""
                   /> -->
-                  </v-col>
-                </v-row>
-              </template>
+                    </v-col>
+                  </v-row>
+                </template>
 
-              <template v-slot:item.start="{ item }">
-                <div>{{ item.start.substring(0, 10) }}</div>
-                <div>{{ item.start.substring(11) }}</div>
-              </template>
-              <template v-slot:item.provider="{ item }">
-                <div>{{ item.provider }}</div>
-                <div>{{ item.baer }}</div>
-              </template>
-              <template v-slot:item.message="{ item }">
-                {{ item.message }}
-                <v-icon small class="mr-2" @click.stop="editItem(item)">
-                  mdi-pencil
-                </v-icon>
-              </template>
-              <template v-slot:item.id="{ item }">
-                <v-btn @click.stop="deleteImport(item)" plain
-                  ><v-icon>mdi-delete</v-icon></v-btn
-                >
-              </template>
-            </v-data-table>
-          </v-col>
-          <v-col
-            cols="6"
-            style="margin-top: 3.5rem; max-height: 86vh; overflow-y: auto"
-          >
-            <v-expansion-panels accordion>
-              <v-expansion-panel
-                v-for="apigr in Object.keys(apigroup)"
-                :key="apigr"
-              >
-                <v-expansion-panel-header>{{ apigr }}</v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <v-data-table
-                    :headers="import_provider_headers"
-                    item-key="id"
-                    :items="apigroup[apigr]"
-                    show-select
-                    v-model="importSelected"
-                    @click:row="clickrow"
-                    :footer-props="{
-                      'items-per-page-options': [],
-                      'items-per-page-text': '',
-                    }"
+                <template v-slot:item.start="{ item }">
+                  <div>{{ item.start.substring(0, 10) }}</div>
+                  <div>{{ item.start.substring(11) }}</div>
+                </template>
+                <template v-slot:item.provider="{ item }">
+                  <div>{{ item.provider }}</div>
+                  <div>{{ item.baer }}</div>
+                </template>
+                <template v-slot:item.message="{ item }">
+                  {{ item.message }}
+                  <v-icon small class="mr-2" @click.stop="editItem(item)">
+                    mdi-pencil
+                  </v-icon>
+                </template>
+                <template v-slot:item.id="{ item }">
+                  <v-btn @click.stop="deleteImport(item)" plain
+                    ><v-icon>mdi-delete</v-icon></v-btn
                   >
-                    <template v-slot:item.sum="{ item }">
-                      {{ item.sum }}
-                      <v-icon small class="mr-2" @click.stop="editItem(item)">
-                        mdi-pencil
-                      </v-icon>
-                    </template>
-                  </v-data-table>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-col>
-          <v-col cols="3"></v-col>
-          <v-col cols="12" id="info_prov">
-            {{ item.name }} {{ item.start }}
-            <v-btn class="btn mx-1" @click="getHistory">История</v-btn>
-            <span v-if="item.name">Пользователи: </span>
-            <span v-for="usr in holdLidsUsers" :key="usr[0]">
-              {{ usr[0] }}.
-            </span>
-          </v-col>
-          <v-col cols="12" v-for="office in lidsByOffice" :key="office.name">
-            <div class="d-flex align-center">
-              <v-checkbox
-                style="font-size: 1.2rem; font-weight: bold"
-                v-model="redistributeOffice"
-                hide-details
-                :label="office.name + ' - Total ' + office.lids.length"
-                :value="office.name"
-              ></v-checkbox>
-            </div>
-            <v-col cols="12" v-if="office.statuses">
-              <div id="wrp_stat" class="wrp__statuses">
-                <!-- <div
+                </template>
+              </v-data-table>
+            </v-col>
+            <v-col
+              cols="6"
+              style="margin-top: 3.5rem; max-height: 66vh; overflow-y: auto"
+            >
+              <v-expansion-panels accordion>
+                <v-expansion-panel
+                  v-for="apigr in Object.keys(apigroup)"
+                  :key="apigr"
+                >
+                  <v-expansion-panel-header>{{
+                    apigr
+                  }}</v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-data-table
+                      :headers="import_provider_headers"
+                      item-key="id"
+                      :items="apigroup[apigr]"
+                      show-select
+                      v-model="importSelected"
+                      @click:row="clickrow"
+                      :footer-props="{
+                        'items-per-page-options': [],
+                        'items-per-page-text': '',
+                      }"
+                    >
+                      <template v-slot:item.sum="{ item }">
+                        {{ item.sum }}
+                        <v-icon small class="mr-2" @click.stop="editItem(item)">
+                          mdi-pencil
+                        </v-icon>
+                      </template>
+                    </v-data-table>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-col>
+            <v-col cols="3"></v-col>
+            <v-col cols="12" id="info_prov">
+              {{ item.name }} {{ item.start }}
+              <v-btn class="btn mx-1" @click="getHistory">История</v-btn>
+              <span v-if="item.name">Пользователи: </span>
+              <span v-for="usr in holdLidsUsers" :key="usr[0]">
+                {{ usr[0] }}.
+              </span>
+            </v-col>
+            <v-col cols="12" v-for="office in lidsByOffice" :key="office.name">
+              <div class="d-flex align-center">
+                <v-checkbox
+                  style="font-size: 1.2rem; font-weight: bold"
+                  v-model="redistributeOffice"
+                  hide-details
+                  :label="office.name + ' - Total ' + office.lids.length"
+                  :value="office.name"
+                ></v-checkbox>
+              </div>
+              <v-col cols="12" v-if="office.statuses">
+                <div id="wrp_stat" class="wrp__statuses">
+                  <!-- <div
 
                 v-for="u in usersStatuses"
                 :key="u.user_id"
               >
                 {{ u.user }} -->
-                <template v-for="i in office.statuses">
+                  <template v-for="i in office.statuses">
+                    <div class="status_wrp" :key="i.id">
+                      <b
+                        :style="{
+                          background: i.color,
+                          outline: '1px solid' + i.color,
+                        }"
+                        >{{ i.hm }}</b
+                      >
+                      <span>{{ i.name }}</span>
+                    </div>
+                  </template>
+                  <!-- </div> -->
+                </div>
+              </v-col>
+            </v-col>
+            <v-col cols="12" v-if="Statuses">
+              <div id="wrp_stat" class="wrp__statuses">
+                <template v-for="i in Statuses">
                   <div class="status_wrp" :key="i.id">
                     <b
                       :style="{
@@ -413,161 +439,105 @@
                       >{{ i.hm }}</b
                     >
                     <span>{{ i.name }}</span>
+                  </div>
+                </template>
+              </div>
+            </v-col>
+            <v-col cols="12" v-if="historyStatus.length">
+              <p>Переназначенные</p>
+              <div id="wrp_stat" class="wrp__statuses">
+                <template v-for="i in historyStatus">
+                  <div :key="i.id">
+                    <div class="status_wrp">
+                      <b
+                        :style="{
+                          background: i.color,
+                          outline: '1px solid' + i.color,
+                        }"
+                        >{{ i.hm }}</b
+                      >
+                      <span>{{ i.name }}</span>
+                    </div>
                   </div>
                 </template>
                 <!-- </div> -->
               </div>
             </v-col>
-          </v-col>
-          <v-col cols="12" v-if="Statuses">
-            <div id="wrp_stat" class="wrp__statuses">
-              <template v-for="i in Statuses">
-                <div class="status_wrp" :key="i.id">
-                  <b
-                    :style="{
-                      background: i.color,
-                      outline: '1px solid' + i.color,
-                    }"
-                    >{{ i.hm }}</b
-                  >
-                  <span>{{ i.name }}</span>
+            <v-col cols="12">
+              <div class="mt-3">
+                <div
+                  class="wrp__statuses"
+                  v-for="(u, ix) in history"
+                  :key="u.created_at"
+                >
+                  <h5>Start{{ history.length - ix }} {{ u.created_at }}</h5>
+                  <template v-for="i in JSON.parse(u.statuses)">
+                    <div class="status_wrp" :key="i.id">
+                      <b
+                        :style="{
+                          background: i.color,
+                          outline: '1px solid' + i.color,
+                        }"
+                        >{{ i.hm }}</b
+                      >
+                      <span>{{ i.name }}</span>
+                    </div>
+                  </template>
                 </div>
-              </template>
-            </div>
-          </v-col>
-          <v-col cols="12" v-if="historyStatus.length">
-            <p>Переназначенные</p>
-            <div id="wrp_stat" class="wrp__statuses">
-              <template v-for="i in historyStatus">
-                <div :key="i.id">
-                  <div class="status_wrp">
-                    <b
-                      :style="{
-                        background: i.color,
-                        outline: '1px solid' + i.color,
-                      }"
-                      >{{ i.hm }}</b
-                    >
-                    <span>{{ i.name }}</span>
-                  </div>
-                </div>
-              </template>
-              <!-- </div> -->
-            </div>
-          </v-col>
-          <v-col cols="12">
-            <div class="mt-3">
-              <div
-                class="wrp__statuses"
-                v-for="(u, ix) in history"
-                :key="u.created_at"
-              >
-                <h5>Start{{ history.length - ix }} {{ u.created_at }}</h5>
-                <template v-for="i in JSON.parse(u.statuses)">
-                  <div class="status_wrp" :key="i.id">
-                    <b
-                      :style="{
-                        background: i.color,
-                        outline: '1px solid' + i.color,
-                      }"
-                      >{{ i.hm }}</b
-                    >
-                    <span>{{ i.name }}</span>
-                  </div>
-                </template>
               </div>
-            </div>
-          </v-col>
+            </v-col>
 
-          <v-col cols="12" v-if="leads.length">
-            <div class="border pa-4">
-              <v-data-table
-                id="tabimplids"
-                :headers="headers_leads"
-                item-key="id"
-                :items="filteredLeads"
-                :footer-props="{
-                  'items-per-page-options': [],
-                  'items-per-page-text': '',
-                }"
-                :disable-items-per-page="true"
-                :loading="loading"
-                loading-text="Загружаю... Ожидайте"
-                ref="datatablelids"
-                @click:row="getLog"
-                :single-expand="true"
-              >
-                <template v-slot:expanded-item="{ headers, item }">
-                  <td :colspan="headers.length" class="blackborder">
-                    <v-row>
-                      <v-col cols="12">
-                        <logtel :lid_id="item.id" :key="item.id" />
-                      </v-col>
-                    </v-row>
-                  </td>
-                </template>
-                <template
-                  v-slot:top="{ pagination, options, updateOptions }"
+            <v-col cols="12" v-if="leads.length">
+              <div class="border pa-4">
+                <v-data-table
+                  id="tabimplids"
+                  :headers="headers_leads"
+                  item-key="id"
+                  :items="filteredLeads"
                   :footer-props="{
-                    'items-per-page-options': [50, 10, 100, 250, 500, -1],
+                    'items-per-page-options': [],
                     'items-per-page-text': '',
                   }"
+                  :disable-items-per-page="true"
+                  :loading="loading"
+                  loading-text="Загружаю... Ожидайте"
+                  ref="datatablelids"
+                  @click:row="getLog"
+                  :single-expand="true"
                 >
-                  <v-row>
-                    <!-- <v-spacer></v-spacer> -->
-                    <v-col cols="3" class="mt-3">
-                      <v-data-footer
-                        :pagination="pagination"
-                        :options="options"
-                        @update:options="updateOptions"
-                        :items-per-page-options="[50, 10, 100, 250, 500, -1]"
-                        :items-per-page-text="''"
-                      />
-                    </v-col>
-                    <v-col cols="3">
-                      <v-select
-                        label="Cтатус в файл"
-                        ref="filterStatus"
-                        color="red"
-                        v-model="filterStatus"
-                        :items="Statuses"
-                        item-text="name"
-                        item-value="id"
-                        outlined
-                        rounded
-                        :multiple="true"
-                      >
-                        <template v-slot:selection="{ item, index }">
-                          <span v-if="index === 0">{{ item.name }} </span>
-                          <span
-                            v-if="index === 1"
-                            class="grey--text text-caption"
-                          >
-                            (+{{ filterStatus.length - 1 }} )
-                          </span>
-                        </template>
-                        <template v-slot:item="{ item, attrs }">
-                          <v-badge
-                            :value="attrs['aria-selected'] == 'true'"
-                            color="#7620df"
-                            dot
-                            left
-                          >
-                            <i
-                              :style="{
-                                background: item.color,
-                                outline: '1px solid grey',
-                              }"
-                              class="sel_stat mr-4"
-                            ></i>
-                          </v-badge>
-                          {{ item.name }}
-                        </template>
-                      </v-select>
-                      <div class="d-flex">
+                  <template v-slot:expanded-item="{ headers, item }">
+                    <td :colspan="headers.length" class="blackborder">
+                      <v-row>
+                        <v-col cols="12">
+                          <logtel :lid_id="item.id" :key="item.id" />
+                        </v-col>
+                      </v-row>
+                    </td>
+                  </template>
+                  <template
+                    v-slot:top="{ pagination, options, updateOptions }"
+                    :footer-props="{
+                      'items-per-page-options': [50, 10, 100, 250, 500, -1],
+                      'items-per-page-text': '',
+                    }"
+                  >
+                    <v-row>
+                      <!-- <v-spacer></v-spacer> -->
+                      <v-col cols="3" class="mt-3">
+                        <v-data-footer
+                          :pagination="pagination"
+                          :options="options"
+                          @update:options="updateOptions"
+                          :items-per-page-options="[50, 10, 100, 250, 500, -1]"
+                          :items-per-page-text="''"
+                        />
+                      </v-col>
+                      <v-col cols="3">
                         <v-select
-                          label="Фильтр статус"
-                          v-model="filterStatusTabl"
+                          label="Cтатус в файл"
+                          ref="filterStatus"
+                          color="red"
+                          v-model="filterStatus"
                           :items="Statuses"
                           item-text="name"
                           item-value="id"
@@ -581,7 +551,7 @@
                               v-if="index === 1"
                               class="grey--text text-caption"
                             >
-                              (+{{ filterStatusTabl.length - 1 }} )
+                              (+{{ filterStatus.length - 1 }} )
                             </span>
                           </template>
                           <template v-slot:item="{ item, attrs }">
@@ -602,44 +572,83 @@
                             {{ item.name }}
                           </template>
                         </v-select>
+                        <div class="d-flex">
+                          <v-select
+                            label="Фильтр статус"
+                            v-model="filterStatusTabl"
+                            :items="Statuses"
+                            item-text="name"
+                            item-value="id"
+                            outlined
+                            rounded
+                            :multiple="true"
+                          >
+                            <template v-slot:selection="{ item, index }">
+                              <span v-if="index === 0">{{ item.name }} </span>
+                              <span
+                                v-if="index === 1"
+                                class="grey--text text-caption"
+                              >
+                                (+{{ filterStatusTabl.length - 1 }} )
+                              </span>
+                            </template>
+                            <template v-slot:item="{ item, attrs }">
+                              <v-badge
+                                :value="attrs['aria-selected'] == 'true'"
+                                color="#7620df"
+                                dot
+                                left
+                              >
+                                <i
+                                  :style="{
+                                    background: item.color,
+                                    outline: '1px solid grey',
+                                  }"
+                                  class="sel_stat mr-4"
+                                ></i>
+                              </v-badge>
+                              {{ item.name }}
+                            </template>
+                          </v-select>
+                          <v-select
+                            label="Фильтр office"
+                            v-model="filterOfficeTabl"
+                            :items="lidsByOffice"
+                            item-text="name"
+                            item-value="name"
+                            outlined
+                            rounded
+                            :multiple="true"
+                          ></v-select>
+                        </div>
+                      </v-col>
+                      <v-col cols="3">
                         <v-select
-                          label="Фильтр office"
-                          v-model="filterOfficeTabl"
-                          :items="lidsByOffice"
-                          item-text="name"
-                          item-value="name"
+                          v-model="exportfields"
+                          :items="exportfield"
+                          label="Поля для експорта"
+                          multiple
+                          outlined
+                        ></v-select
+                      ></v-col>
+                      <v-col cols="3">
+                        <v-btn
                           outlined
                           rounded
-                          :multiple="true"
-                        ></v-select>
-                      </div>
-                    </v-col>
-                    <v-col cols="3">
-                      <v-select
-                        v-model="exportfields"
-                        :items="exportfield"
-                        label="Поля для експорта"
-                        multiple
-                        outlined
-                      ></v-select
-                    ></v-col>
-                    <v-col cols="3">
-                      <v-btn
-                        outlined
-                        rounded
-                        @click="exportImportedXlsx"
-                        class="border"
-                      >
-                        <v-icon left> mdi-file-excel </v-icon>
-                        Скачать таблицу
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </template>
-              </v-data-table>
-            </div>
-          </v-col>
-        </v-row>
+                          @click="exportImportedXlsx"
+                          class="border"
+                        >
+                          <v-icon left> mdi-file-excel </v-icon>
+                          Скачать таблицу
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </template>
+                </v-data-table>
+              </div>
+            </v-col>
+          </v-row>
+        </div>
       </v-tab-item>
 
       <v-tab-item v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
