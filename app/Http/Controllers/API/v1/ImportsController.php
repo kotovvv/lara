@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+
 use App\Models\Import;
 use App\Models\Lid;
 use App\Models\Log;
@@ -441,5 +443,11 @@ class ImportsController extends Controller
     }
     Log::whereIn('lid_id', $alliads)->delete();
     return response('All done', 200);
+  }
+
+  public function importCallc()
+  {
+    Artisan::call('import:callc');
+    return response('Await', 200);
   }
 }

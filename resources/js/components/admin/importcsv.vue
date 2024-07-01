@@ -208,7 +208,7 @@
                   v-model="takedates"
                   @change="getImports"
                 ></v-checkbox>
-
+                <v-icon @click="importCallc">mdi-refresh</v-icon>
                 <v-col cols="2">
                   <v-autocomplete
                     v-model="filter_import_provider"
@@ -1188,6 +1188,14 @@ export default {
     },
   },
   methods: {
+    importCallc() {
+      axios
+        .get("api/importCallc")
+        .then(function (response) {})
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     filterAPI() {
       this.apigroup = _.groupBy(this.filter_importsProvLeads, "group");
     },
