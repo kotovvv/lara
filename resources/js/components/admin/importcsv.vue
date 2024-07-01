@@ -220,6 +220,7 @@
                     rounded
                     multiple
                     clearable="clearable"
+                    @change="filterAPI"
                   >
                     <template v-slot:selection="{ item, index }">
                       <span v-if="index === 0">{{ item.name }} </span>
@@ -1187,6 +1188,9 @@ export default {
     },
   },
   methods: {
+    filterAPI() {
+      this.apigroup = _.groupBy(this.filter_importsProvLeads, "group");
+    },
     clickrowd(item, row) {
       if (!row.isExpanded) {
         this.expanded = [item];
