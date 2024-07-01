@@ -20,14 +20,16 @@
     <v-container fluid>
       <v-row>
         <v-col cols="2">
-          <v-select
+          <v-autocomplete
             v-model="selectedProvider"
             :items="providers"
             label="Провайдер"
             item-text="name"
             item-value="id"
             @change="userids = []"
-          ></v-select>
+          >
+          </v-autocomplete>
+
           <v-select
             v-if="baers.length"
             v-model="selectedBaer"
