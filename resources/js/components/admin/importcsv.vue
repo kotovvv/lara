@@ -1189,9 +1189,13 @@ export default {
   },
   methods: {
     importCallc() {
+      const vm = this;
       axios
         .get("api/importCallc")
-        .then(function (response) {})
+        .then(function (response) {
+          vm.getImports();
+          vm.ImportedProvLids();
+        })
         .catch(function (error) {
           console.log(error);
         });
