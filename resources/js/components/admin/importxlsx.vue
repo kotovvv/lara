@@ -27,6 +27,7 @@
             item-text="name"
             item-value="id"
             @change="userids = []"
+            :menu-props="{ maxHeight: '80vh' }"
           >
           </v-autocomplete>
 

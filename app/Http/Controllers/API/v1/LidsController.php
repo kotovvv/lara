@@ -1052,12 +1052,18 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
           if ($date->diffInDays($added_date) < 150) {
-            return response('you have to wait ');
+            $res['status'] = 'error';
+            $res['message'] = 'Duplicate ';
+
+            return response($res);
           }
         }
       } else {
         if (!(Lid::where('tel', '=', '' . $n_lid->tel)->get())->isEmpty()) {
-          return response('Duplicate ');
+          $res['status'] = 'error';
+          $res['message'] = 'Duplicate ';
+
+          return response($res);
         }
       }
     } else {
@@ -1159,12 +1165,18 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
           if ($date->diffInDays($added_date) < 150) {
-            return response('you have to wait ');
+            $res['status'] = 'error';
+            $res['message'] = 'Duplicate ';
+
+            return response($res);
           }
         }
       } else {
         if (!(Lid::where('tel', '=', '' . $n_lid->tel)->get())->isEmpty()) {
-          return response('Duplicate ');
+          $res['status'] = 'error';
+          $res['message'] = 'Duplicate ';
+
+          return response($res);
         }
       }
     } else {
@@ -1253,12 +1265,18 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
           if ($date->diffInDays($added_date) < 150) {
-            return response('you have to wait ');
+            $res['status'] = 'error';
+            $res['message'] = 'Duplicate ';
+
+            return response($res);
           }
         }
       } else {
         if (!(Lid::where('tel', '=', '' . $n_lid->tel)->get())->isEmpty()) {
-          return response('Duplicate ');
+          $res['status'] = 'error';
+          $res['message'] = 'Duplicate ';
+
+          return response($res);
         }
       }
     } else {
@@ -1302,7 +1320,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now(), 'geo' => $geo]);
     DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo], ['date' => date('Y-m-d')]);
 
-    $res['status'] = 'OK';
+    $res['status'] = 'error';
     $res['id'] = $id;
     $res['insert'] = $insert;
 
@@ -1335,12 +1353,18 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
           if ($date->diffInDays($added_date) < 150) {
-            return response('you have to wait ');
+            $res['status'] = 'error';
+            $res['message'] = 'Duplicate ';
+
+            return response($res);
           }
         }
       } else {
         if (!(Lid::where('tel', '=', '' . $n_lid->tel)->get())->isEmpty()) {
-          return response('Duplicate ');
+          $res['status'] = 'error';
+          $res['message'] = 'Duplicate ';
+
+          return response($res);
         }
       }
     } else {
