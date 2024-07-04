@@ -121,7 +121,8 @@
           </v-simple-table>
         </v-col>
         <v-col cols="3">
-          <v-card height="100%" class="pa-5">
+          <v-btn class="btn ma-3" @click="putSelectedLidsDB">Назначить</v-btn>
+          <v-card height="60vh" class="pa-5 overflow-x-auto">
             Укажите пользователя для лидов
             <v-list>
               <div v-for="office in offices" :key="office.id">
@@ -169,10 +170,6 @@
                   </v-expansion-panel>
                 </v-expansion-panels>
               </div>
-
-              <v-btn class="btn ma-3" @click="putSelectedLidsDB"
-                >Назначить</v-btn
-              >
             </v-list>
           </v-card>
         </v-col>

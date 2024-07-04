@@ -9,48 +9,50 @@
     ></v-progress-linear>
     <v-list>
       <v-btn class="btn ma-3" @click="setUserIds">Назначить</v-btn>
-      <div v-for="office in offices" :key="office.id">
-        <p class="title" v-if="office.id > 0">{{ office.name }}</p>
-        <v-expansion-panels v-model="akkvalue[office.id]">
-          <v-expansion-panel
-            v-for="item in groups.filter((g) => g.office_id == office.id)"
-            :key="item.group_id"
-          >
-            <v-expansion-panel-header>
-              {{ item.fio }}
-              <div></div>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-col
-                v-for="user in users.filter(function (i) {
-                  return i.group_id == item.group_id;
-                })"
-                :key="user.id"
-              >
-                <input
-                  type="checkbox"
-                  :id="user.id"
-                  :value="user.id"
-                  v-model="userids"
-                />
-                <label :for="user.id"
-                  >{{ user.fio }}
-                  <v-badge
-                    :content="user.hmlids"
-                    :value="user.hmlids"
-                    :color="usercolor(user)"
-                    overlap
-                  >
-                    <!-- <v-icon large v-if="user.role_id === 2">
+      <div style="height: 70vh" class="overflow-x-auto">
+        <div v-for="office in offices" :key="office.id">
+          <p class="title" v-if="office.id > 0">{{ office.name }}</p>
+          <v-expansion-panels v-model="akkvalue[office.id]">
+            <v-expansion-panel
+              v-for="item in groups.filter((g) => g.office_id == office.id)"
+              :key="item.group_id"
+            >
+              <v-expansion-panel-header>
+                {{ item.fio }}
+                <div></div>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-col
+                  v-for="user in users.filter(function (i) {
+                    return i.group_id == item.group_id;
+                  })"
+                  :key="user.id"
+                >
+                  <input
+                    type="checkbox"
+                    :id="user.id"
+                    :value="user.id"
+                    v-model="userids"
+                  />
+                  <label :for="user.id"
+                    >{{ user.fio }}
+                    <v-badge
+                      :content="user.hmlids"
+                      :value="user.hmlids"
+                      :color="usercolor(user)"
+                      overlap
+                    >
+                      <!-- <v-icon large v-if="user.role_id === 2">
                               mdi-account-group-outline
                             </v-icon>
                             <v-icon large v-else> mdi-account-outline </v-icon> -->
-                  </v-badge></label
-                >
-              </v-col>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
+                    </v-badge></label
+                  >
+                </v-col>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </div>
       </div>
     </v-list>
   </v-card>
