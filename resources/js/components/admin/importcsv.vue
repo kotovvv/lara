@@ -1074,6 +1074,7 @@ export default {
       "provider",
       "afilyator",
       "office",
+      "text",
     ],
     exportfields: [
       "name",
@@ -1086,6 +1087,7 @@ export default {
       "provider",
       "afilyator",
       "office",
+      "text",
     ],
     item: {},
     dialog: false,
@@ -1413,6 +1415,7 @@ export default {
             provider,
             afilyator,
             office,
+            text,
           }) => ({
             name,
             email,
@@ -1424,6 +1427,7 @@ export default {
             provider,
             afilyator,
             office,
+            text,
           })
         );
       } else {
@@ -1439,6 +1443,7 @@ export default {
             provider,
             afilyator,
             office,
+            text,
           }) => ({
             name,
             email,
@@ -1450,6 +1455,7 @@ export default {
             provider,
             afilyator,
             office,
+            text,
           })
         );
       }

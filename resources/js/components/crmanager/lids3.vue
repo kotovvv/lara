@@ -733,6 +733,7 @@ export default {
       { text: "Язык", value: "client_lang" },
       { text: "Афилятор", value: "afilyator" },
       { text: "Поставщик", value: "provider" },
+      { text: "Офис", value: "office_name" },
       { text: "Менеджер", value: "user" },
       { text: "Создан", value: "date_created" },
       { text: "Изменён", value: "date_updated" },
@@ -1330,6 +1331,12 @@ export default {
                 self.statuses.find((s) => s.id == e.status_id).name || "";
             } catch (error) {
               e.status = "";
+            }
+            try {
+              e.office_name =
+                self.offices.find((s) => s.id == e.office_id).name || "";
+            } catch (error) {
+              e.office_name = "";
             }
 
             try {
