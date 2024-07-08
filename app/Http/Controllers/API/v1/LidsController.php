@@ -760,7 +760,7 @@ FROM
     `depozits` d
     INNER JOIN `lids` l
         ON (d.`lid_id` = l.`id`)
-WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '" . $datefrom .  "' AND '" . $dateto . "'";
+WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '" . $datefrom .  "' AND '" . $dateto . "' GROUP BY l.`id` ORDER BY l.`created_at` ASC";
 
     $leads =  DB::select(DB::raw($sql));
     $response = [];
