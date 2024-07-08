@@ -467,12 +467,13 @@
             <v-col cols="3">
               <v-select
                 v-model="selectedStatus"
-                :items="[{ name: 'Default', id: 0 }, ...filterstatuses]"
+                :items="filterstatuses"
                 item-text="name"
                 item-value="id"
                 outlined
                 rounded
                 label="Назначение статусов"
+                clearable
               >
                 <template v-slot:selection="{ item }">
                   <i
