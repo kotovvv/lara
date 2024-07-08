@@ -1479,14 +1479,28 @@ export default {
           self.lids = Object.entries(res.data.lids).map((e) => e[1]);
 
           self.lids.map(function (e) {
-            e.user = self.users.find((u) => u.id == e.user_id).fio || "";
+            try {
+              e.user = self.users.find((u) => u.id == e.user_id).fio;
+            } catch (error) {
+              e.user = "";
+            }
+            try {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            } catch (error) {
+              e.provider = "";
+            }
+            try {
+              e.status =
+                self.statuses.find((s) => s.id == e.status_id).name || "";
+            } catch (error) {
+              e.status = "";
+            }
             e.date_created = e.created_at.substring(0, 10);
             if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
             }
-            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
-            if (e.status_id)
-              e.status = self.statuses.find((s) => s.id == e.status_id).name;
           });
           self.loading = false;
           self.disableuser = 0;
