@@ -464,7 +464,10 @@
                 block
                 height="100%"
                 :disabled="
-                  selectedStatus == 10 && depozit_val < 1 && text_message == ''
+                  (selectedStatus == 10 &&
+                    depozit_val < 1 &&
+                    text_message == '') ||
+                  selectedStatus == 32
                 "
                 @click="
                   writeText();
