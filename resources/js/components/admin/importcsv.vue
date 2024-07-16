@@ -969,6 +969,13 @@ export default {
         class: "pending",
         cellClass: "pending",
       },
+      {
+        text: "Potential",
+        value: "hmpot",
+        sortable: false,
+        class: "potential",
+        cellClass: "potential",
+      },
       { text: "Кол-во", value: "hm", sortable: false },
       { text: "", value: "id", sortable: false },
     ],
@@ -1008,6 +1015,13 @@ export default {
         sortable: false,
         class: "pending",
         cellClass: "pending",
+      },
+      {
+        text: "Potential",
+        value: "hmpot",
+        sortable: false,
+        class: "potential",
+        cellClass: "potential",
       },
       { text: "Кол-во", value: "hm", sortable: false },
       { text: "GEO", value: "geo", sortable: false },
@@ -1925,6 +1939,7 @@ export default {
               hmcb,
               hmdp,
               hmpnd,
+              hmpot,
             }) => ({
               id,
               start,
@@ -1943,6 +1958,7 @@ export default {
               hmcb,
               hmdp,
               hmpnd,
+              hmpot,
             })
           );
           let a_prov = _.uniq(
@@ -2189,6 +2205,11 @@ export default {
 }
 .pending {
   background: #a3adb7ff;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.potential {
+  background: #7fd74e;
   font-size: 1.2rem;
   font-weight: bold;
 }
