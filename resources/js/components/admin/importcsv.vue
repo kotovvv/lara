@@ -342,7 +342,10 @@
                     mdi-pencil
                   </v-icon>
                 </template>
-                <template v-slot:item.id="{ item }">
+                <template
+                  v-slot:item.id="{ item }"
+                  v-if="$attrs.user.office_id == 0 && $attrs.user.group_id == 0"
+                >
                   <v-btn @click.stop="deleteImport(item)" plain
                     ><v-icon>mdi-delete</v-icon></v-btn
                   >
