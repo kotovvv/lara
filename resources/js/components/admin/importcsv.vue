@@ -383,6 +383,36 @@
                           mdi-pencil
                         </v-icon>
                       </template>
+                      <template slot="body.prepend">
+                        <tr class="pink--text">
+                          <th></th>
+                          <th></th>
+                          <th></th>
+                          <th class="title">
+                            {{ sumField("sum", apigroup[apigr]) }}
+                          </th>
+                          <th></th>
+                          <th class="title new">
+                            {{ sumField("hmnew", apigroup[apigr]) }}
+                          </th>
+                          <th class="title callback">
+                            {{ sumField("hmcb", apigroup[apigr]) }}
+                          </th>
+                          <th class="title deposit">
+                            {{ sumField("hmdp", apigroup[apigr]) }}
+                          </th>
+                          <th class="title pending">
+                            {{ sumField("hmpnd", apigroup[apigr]) }}
+                          </th>
+                          <th class="title potential">
+                            {{ sumField("hmpot", apigroup[apigr]) }}
+                          </th>
+                          <th class="title">
+                            {{ sumField("hm", apigroup[apigr]) }}
+                          </th>
+                          <th></th>
+                        </tr>
+                      </template>
                     </v-data-table>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
@@ -1207,6 +1237,9 @@ export default {
     },
   },
   methods: {
+    sumField(item, tab) {
+      return tab.reduce((a, b) => a + (b[item] || 0), 0);
+    },
     importCallc() {
       const vm = this;
       axios
