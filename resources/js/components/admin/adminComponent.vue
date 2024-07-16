@@ -91,11 +91,7 @@ export default {
         name: "statusLid",
         icon: "mdi-format-list-checks",
       },
-      {
-        text: "Поставщики",
-        name: "providers",
-        icon: "mdi-library",
-      },
+      { text: "Поставщики", name: "providers", icon: "mdi-library" },
       // { text: "Рабочие места", name: "workPlaces", icon: "mdi-sitemap" },
       { text: "Распределение", name: "lids", icon: "mdi-account-arrow-left" },
       //{ text: "Распределение2", name: "lidsplus", icon: "mdi-filter-outline" },
@@ -134,7 +130,7 @@ export default {
     }
     if (this.$props.user.group_id > 0 || this.$props.user.office_id > 0) {
       this.items = this.items.filter((i) => {
-        return i.name != "providers";
+        return !["statusLid", "providers", "lids"].includes(i.name);
       });
     }
   },
