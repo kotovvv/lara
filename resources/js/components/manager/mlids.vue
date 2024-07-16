@@ -467,7 +467,7 @@
                   (selectedStatus == 10 &&
                     depozit_val < 1 &&
                     text_message == '') ||
-                  selectedStatus == 32
+                  (selected.length && selected[0].status_id == 32)
                 "
                 @click="
                   writeText();
