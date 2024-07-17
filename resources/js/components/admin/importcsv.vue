@@ -371,23 +371,23 @@
                             sum<br />{{ sumField("sum", apigroup[apigr]) }}
                           </td>
                           <td></td>
-                          <td class="new text-center">
+                          <td class="text new text-center">
                             new<br />{{ sumField("hmnew", apigroup[apigr]) }}
                           </td>
-                          <td class="callback text-center">
+                          <td class="text callback text-center">
                             callback<br />{{
                               sumField("hmcb", apigroup[apigr])
                             }}
                           </td>
-                          <td class="deposit text-center">
+                          <td class="text deposit text-center">
                             deposit<br />{{ sumField("hmdp", apigroup[apigr]) }}
                           </td>
-                          <td class="pending text-center">
+                          <td class="text pending text-center">
                             pending<br />{{
                               sumField("hmpnd", apigroup[apigr])
                             }}
                           </td>
-                          <td class="potential text-center">
+                          <td class="text potential text-center">
                             potential<br />{{
                               sumField("hmpot", apigroup[apigr])
                             }}
@@ -2254,5 +2254,9 @@ export default {
   background: #7fd74e;
   font-size: 1.2rem;
   font-weight: bold;
+}
+.text {
+  font-size: unset;
+  font-weight: initial;
 }
 </style>
