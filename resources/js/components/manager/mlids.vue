@@ -771,7 +771,7 @@ export default {
         }
       }
       if (this.selected.length && this.selected[0].status_id == 32) {
-        if (id != 32) {
+        if (id != 32 && id != 10) {
           return true;
         }
       }
