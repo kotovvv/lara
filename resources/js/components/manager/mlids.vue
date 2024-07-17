@@ -467,7 +467,9 @@
                   (selectedStatus == 10 &&
                     depozit_val < 1 &&
                     text_message == '') ||
-                  (selected.length && selected[0].status_id == 32)
+                  (selected.length &&
+                    selected[0].status_id == 32 &&
+                    text_message == '')
                 "
                 @click="
                   writeText();
@@ -765,6 +767,11 @@ export default {
       // show only deposit
       if (this.selected.length && this.selected[0].status_id == 10) {
         if (id != 10) {
+          return true;
+        }
+      }
+      if (this.selected.length && this.selected[0].status_id == 32) {
+        if (id != 32) {
           return true;
         }
       }

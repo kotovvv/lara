@@ -365,11 +365,11 @@
                     <table>
                       <tbody>
                         <tr>
-                          <td colspan="3">{{ apigr }}</td>
-
+                          <td width="180" class="overflow-auto">{{ apigr }}</td>
+                          <!--
                           <td class="text-center">
                             sum<br />{{ sumField("sum", apigroup[apigr]) }}
-                          </td>
+                          </td> -->
                           <td></td>
                           <td class="text new text-center">
                             new<br />{{ sumField("hmnew", apigroup[apigr]) }}

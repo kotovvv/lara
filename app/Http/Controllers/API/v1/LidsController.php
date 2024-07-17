@@ -1020,7 +1020,8 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
   {
     $lids = $request->all();
     Lid::whereIn('id', $lids)->where('status_id', '!=', 32)->update(['status_id' => 8, 'text' => '', 'qtytel' => 0]);
-    Log::whereIn('lid_id', $lids)->where('status_id', '!=', 32)->delete();
+    $del = Lid::select('id')->whereIn('id', $lids)->where('status_id', '!=', 32)->get();
+    Log::whereIn('lid_id', $del)->delete();
   }
 
   // /api/set_zaliv?api_key=rdfgsdfgsdfgsghethsdghdsf&user_id=383&umcfields[name]=name&umcfields[phone]=phone&umcfields[email]=email&text=text&umcfields[affiliate_user]=affiliate_user&client_lang=client_lang&client_geo=client_geo&client_funnel=client_funnel&client_answers=client_answers&company_name=company_name
