@@ -361,9 +361,45 @@
                   v-for="apigr in Object.keys(apigroup)"
                   :key="apigr"
                 >
-                  <v-expansion-panel-header>{{
-                    apigr
-                  }}</v-expansion-panel-header>
+                  <v-expansion-panel-header>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td colspan="3">{{ apigr }}</td>
+
+                          <td class="text-center">
+                            sum<br />{{ sumField("sum", apigroup[apigr]) }}
+                          </td>
+                          <td></td>
+                          <td class="new text-center">
+                            new<br />{{ sumField("hmnew", apigroup[apigr]) }}
+                          </td>
+                          <td class="callback text-center">
+                            callback<br />{{
+                              sumField("hmcb", apigroup[apigr])
+                            }}
+                          </td>
+                          <td class="deposit text-center">
+                            deposit<br />{{ sumField("hmdp", apigroup[apigr]) }}
+                          </td>
+                          <td class="pending text-center">
+                            pending<br />{{
+                              sumField("hmpnd", apigroup[apigr])
+                            }}
+                          </td>
+                          <td class="potential text-center">
+                            potential<br />{{
+                              sumField("hmpot", apigroup[apigr])
+                            }}
+                          </td>
+                          <td class="text-center">
+                            quantity<br />{{ sumField("hm", apigroup[apigr]) }}
+                          </td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </v-expansion-panel-header>
                   <v-expansion-panel-content>
                     <v-data-table
                       :headers="import_provider_headers"
@@ -382,36 +418,6 @@
                         <v-icon small class="mr-2" @click.stop="editItem(item)">
                           mdi-pencil
                         </v-icon>
-                      </template>
-                      <template slot="body.prepend">
-                        <tr class="pink--text">
-                          <th></th>
-                          <th></th>
-                          <th></th>
-                          <th class="title">
-                            {{ sumField("sum", apigroup[apigr]) }}
-                          </th>
-                          <th></th>
-                          <th class="title new">
-                            {{ sumField("hmnew", apigroup[apigr]) }}
-                          </th>
-                          <th class="title callback">
-                            {{ sumField("hmcb", apigroup[apigr]) }}
-                          </th>
-                          <th class="title deposit">
-                            {{ sumField("hmdp", apigroup[apigr]) }}
-                          </th>
-                          <th class="title pending">
-                            {{ sumField("hmpnd", apigroup[apigr]) }}
-                          </th>
-                          <th class="title potential">
-                            {{ sumField("hmpot", apigroup[apigr]) }}
-                          </th>
-                          <th class="title">
-                            {{ sumField("hm", apigroup[apigr]) }}
-                          </th>
-                          <th></th>
-                        </tr>
                       </template>
                     </v-data-table>
                   </v-expansion-panel-content>
