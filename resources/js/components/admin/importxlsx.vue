@@ -340,7 +340,8 @@ export default {
 
         return false;
       }
-      let json = {};
+      let json = [];
+      /*
       //make json from header and body
       json = this.table.map((_, row) =>
         this.header.reduce(
@@ -358,6 +359,22 @@ export default {
             Object.entries(e[1]).filter((el) => el[0])
           ))
       );
+      */
+
+      let obj = {};
+      this.table.map((row) => {
+        obj = {};
+        this.header.forEach(function (key, index) {
+          if (key != "") {
+            if (!obj[key]) {
+              obj[key] = row[index];
+            } else {
+              obj[key] += `_${row[index]}`;
+            }
+          }
+        });
+        json.push(obj);
+      });
 
       self.loading = true;
       let send = {};
