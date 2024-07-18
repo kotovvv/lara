@@ -465,8 +465,7 @@
                 height="100%"
                 :disabled="
                   (selectedStatus == 10 &&
-                    depozit_val < 1 &&
-                    text_message == '') ||
+                    depozit_val < 1 ) ||
                   (selected.length &&
                     selected[0].status_id == 32 &&
                     text_message == '')
