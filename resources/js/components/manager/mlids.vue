@@ -466,6 +466,7 @@
                 :disabled="
                   (selectedStatus == 10 &&
                     depozit_val < 1 &&
+                    $refs.datetime &&
                     $refs.datetime.date == '') ||
                   (selected.length &&
                     selected[0].status_id == 32 &&
