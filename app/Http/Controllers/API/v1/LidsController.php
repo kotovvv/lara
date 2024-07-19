@@ -348,6 +348,12 @@ class LidsController extends Controller
         $n_lid->deposit = "";
       }
 
+      if (isset($lid['text'])) {
+        $n_lid->text = $lid['text'];
+      } else {
+        $n_lid->text = "";
+      }
+
       $n_lid->load_mess = $load_mess;
 
       $n_lid->user_id = $data['user_id'];
