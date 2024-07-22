@@ -365,35 +365,41 @@
                     <table>
                       <tbody>
                         <tr>
-                          <td width="180" class="overflow-auto">{{ apigr }}</td>
+                          <td width="400" class="overflow-auto">{{ apigr }}</td>
                           <!--
                           <td class="text-center">
                             sum<br />{{ sumField("sum", apigroup[apigr]) }}
                           </td> -->
                           <td></td>
                           <td class="text new text-center">
-                            new<br />{{ sumField("hmnew", apigroup[apigr]) }}
+                            NEW<br /><span class="fz17">{{
+                              sumField("hmnew", apigroup[apigr])
+                            }}</span>
                           </td>
                           <td class="text callback text-center">
-                            callback<br />{{
+                            Callback<br /><span class="fz17">{{
                               sumField("hmcb", apigroup[apigr])
-                            }}
+                            }}</span>
                           </td>
                           <td class="text deposit text-center">
-                            deposit<br />{{ sumField("hmdp", apigroup[apigr]) }}
+                            Deposit<br /><span class="fz17">{{
+                              sumField("hmdp", apigroup[apigr])
+                            }}</span>
                           </td>
                           <td class="text pending text-center">
-                            pending<br />{{
+                            Pending<br /><span class="fz17">{{
                               sumField("hmpnd", apigroup[apigr])
-                            }}
+                            }}</span>
                           </td>
                           <td class="text potential text-center">
-                            potential<br />{{
+                            Potential<br /><span class="fz17">{{
                               sumField("hmpot", apigroup[apigr])
-                            }}
+                            }}</span>
                           </td>
-                          <td class="text-center">
-                            quantity<br />{{ sumField("hm", apigroup[apigr]) }}
+                          <td class="text-center text" width="90px">
+                            <br /><span class="fz17">{{
+                              sumField("hm", apigroup[apigr])
+                            }}</span>
                           </td>
                           <td></td>
                         </tr>
@@ -985,84 +991,101 @@ export default {
         value: "hmnew",
         sortable: false,
         class: "new",
-        cellClass: "new",
+        cellClass: "new fz17",
+        align: "center",
       },
       {
         text: "CallBack",
         value: "hmcb",
         sortable: false,
         class: "callback",
-        cellClass: "callback",
+        cellClass: "callback fz17",
+        align: "center",
       },
       {
         text: "Deposit",
         value: "hmdp",
         sortable: false,
         class: "deposit",
-        cellClass: "deposit",
+        cellClass: "deposit fz17",
+        align: "center",
       },
       {
         text: "Pending",
         value: "hmpnd",
         sortable: false,
         class: "pending",
-        cellClass: "pending",
+        cellClass: "pending fz17",
+        align: "center",
       },
       {
         text: "Potential",
         value: "hmpot",
         sortable: false,
         class: "potential",
-        cellClass: "potential",
+        cellClass: "potential fz17",
+        align: "center",
       },
       { text: "Кол-во", value: "hm", sortable: false },
       { text: "", value: "id", sortable: false },
     ],
     import_provider_headers: [
-      { text: "Дата", value: "start" },
+      { text: "Дата", value: "start", width: "75px" },
       {
         text: "Поставщик",
         value: "provider",
         sortable: false,
+        width: "100",
       },
-      { text: "Сумма", value: "sum", sortable: false },
-      { text: "L/A", value: "cp", sortable: false },
+      { text: "Сумма", value: "sum", sortable: false, width: 70 },
+      { text: "L/A", value: "cp", sortable: false, width: 10 },
       {
         text: "NEW",
         value: "hmnew",
         sortable: false,
         class: "new",
-        cellClass: "new",
+        cellClass: "new fz17",
+        align: "center",
       },
       {
         text: "CallBack",
         value: "hmcb",
         sortable: false,
         class: "callback",
-        cellClass: "callback",
+        cellClass: "callback fz17",
+        align: "center",
       },
       {
         text: "Deposit",
         value: "hmdp",
         sortable: false,
         class: "deposit",
-        cellClass: "deposit",
+        cellClass: "deposit fz17",
+        align: "center",
       },
       {
         text: "Pending",
         value: "hmpnd",
         sortable: false,
         class: "pending",
-        cellClass: "pending",
+        cellClass: "pending fz17",
+        align: "center",
       },
       {
         text: "Potential",
         value: "hmpot",
         sortable: false,
         class: "potential",
-        cellClass: "potential",
+        cellClass: "potential fz17",
+        align: "center",
       },
-      { text: "Кол-во", value: "hm", sortable: false },
+      {
+        text: "Кол-во",
+        value: "hm",
+        sortable: false,
+        align: "center",
+        width: "90px",
+      },
       { text: "GEO", value: "geo", sortable: false },
       // { text: "", value: "id" },
     ],
@@ -2258,5 +2281,11 @@ export default {
 .text {
   font-size: unset;
   font-weight: initial;
+  padding: 1rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+.fz17 {
+  font-size: 17px !important;
 }
 </style>
