@@ -471,7 +471,9 @@
                   (selected.length &&
                     selected[0].status_id == 32 &&
                     text_message == '' &&
-                    selectedStatus != 10)
+                    selectedStatus != 10 &&
+                    $refs.datetime &&
+                    $refs.datetime.date == '')
                 "
                 @click="
                   writeText();
