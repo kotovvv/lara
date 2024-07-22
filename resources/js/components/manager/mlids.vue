@@ -371,7 +371,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <v-dialog v-model="dial" persistent max-width="600px">
+    <v-dialog v-model="dial" persistent max-width="700px">
       <v-card rounded class="rounded-xl pa-4">
         <v-card-title class="text-h5">
           <!-- @change="putSelectedLidsDB" -->
@@ -621,6 +621,14 @@ export default {
   },
   created() {},
   watch: {
+    selectedStatus: function (newval, oldval) {
+      if (newval == 32) {
+        this.text_message =
+          "Bank:         ,Money:      ,Age:      ,Remote:      ,Pass:    ,ConversionProblem:     ,";
+      } else {
+        this.text_message = "";
+      }
+    },
     datetime: function (newval, oldval) {
       if ((newval == null || newval != oldval) && this.lid_id != "") {
         this.setTime();
