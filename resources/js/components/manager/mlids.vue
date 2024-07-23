@@ -1090,10 +1090,20 @@ export default {
               t.date = new Date(t.ontime).toLocaleTimeString().substring(0, 5);
             }
             t.date_created = t.created_at.substring(0, 10);
-            if (self.providers.find((p) => p.id == t.provider_id)) {
+            t.status = "";
+            try {
+              t.status =
+                self.statuses.find((s) => s.id == t.status_id).name || "";
+            } catch (error) {
+              console.log(error);
+            }
+            t.provider = "";
+            try {
               t.provider = self.providers.find(
                 (p) => p.id == t.provider_id
               ).name;
+            } catch (error) {
+              console.log(error);
             }
           });
 
