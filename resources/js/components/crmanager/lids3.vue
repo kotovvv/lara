@@ -1501,6 +1501,12 @@ export default {
             if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
             }
+            try {
+              e.office_name =
+                self.offices.find((s) => s.id == e.office_id).name || "";
+            } catch (error) {
+              e.office_name = "";
+            }
           });
           self.loading = false;
           self.disableuser = 0;
