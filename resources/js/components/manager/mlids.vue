@@ -625,7 +625,7 @@ export default {
       if (newval == 32) {
         this.text_message =
           "Bank:         ,Money:      ,Age:      ,Remote:      ,Pass:    ,ConversionProblem:     ,";
-      } else {
+      } else if (oldval == 32) {
         this.text_message = "";
       }
     },
