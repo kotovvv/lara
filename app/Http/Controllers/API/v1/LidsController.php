@@ -10,7 +10,7 @@ use App\Models\Log;
 use App\Models\Depozit;
 use App\Models\User;
 use App\Models\Provider;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Debugbar;
 use Carbon\Carbon;
 
@@ -1472,7 +1472,13 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
       $res['rows'] = 0;
       foreach ($lids as $lid) {
         $ftd = $lid->status_id == 10 ? 1 : 0;
-        $a1 = [
+        $a_date_ftd = [];
+        if ($ftd) {
+          $date_ftd = DB::select(DB::raw("SELECT GROUP_CONCAT(created_at) as date FROM depozits WHERE `lid_id` = " . $lid->id));
+          $a_date_ftd = ['ftd_date' => $date_ftd[0]->date];
+        }
+
+        $a1 = array_merge([
           'afilateName' => $lid->afilyator,
           'name' => $lid->name,
           'email' => $lid->email,
@@ -1480,7 +1486,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           'status' => $lid->statusName,
           'lead_id' => $lid->id,
           'ftd' => $ftd
-        ];
+        ], $a_date_ftd);
         if (isset($req['date'])) {
           $a1['datestart'] = $lid->created_at;
           $a1['dateupdate'] = $lid->updated_at;
