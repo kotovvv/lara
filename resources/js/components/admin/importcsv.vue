@@ -578,6 +578,7 @@
                           :items-per-page-text="''"
                         />
                       </v-col>
+
                       <v-col cols="3">
                         <v-select
                           label="Cтатус в файл"
@@ -734,9 +735,32 @@
                 ></v-progress-circular
               ></v-btn>
             </v-col>
+            <v-col cols="12">
+              <div class="wrp__statuses">
+                <template v-for="(i, x) in d_statuses">
+                  <div
+                    class="status_wrp"
+                    :key="x"
+                    @click="changeFilterStatus(i.id)"
+                  >
+                    <b
+                      :style="{
+                        background: i.color,
+                        outline: '1px solid' + i.color,
+                      }"
+                      >{{ i.hm }}</b
+                    >
+                    <span>{{ i.name }}</span>
+                    <v-btn v-if="filter_status.includes(i.id)" icon x-small>
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </div>
+                </template>
+              </div>
+            </v-col>
             <v-col cols="12" v-if="duplicate_leads.length || out_db.length">
               <v-row>
-                <v-col>
+                <!-- <v-col>
                   <v-select
                     ref="filterStatus"
                     label="Фильтр статус"
@@ -773,7 +797,7 @@
                       {{ item.name }}
                     </template>
                   </v-select></v-col
-                >
+                > -->
                 <v-col>
                   <v-autocomplete
                     v-model="filter_provider"
@@ -1266,6 +1290,15 @@ export default {
     },
   },
   methods: {
+    changeFilterStatus(status_id) {
+      if (this.filter_status.includes(status_id)) {
+        const index = this.filter_status.indexOf(2);
+
+        this.filter_status.splice(index, 1);
+      } else {
+        this.filter_status.push(status_id);
+      }
+    },
     sumField(item, tab) {
       return tab.reduce((a, b) => a + (b[item] || 0), 0);
     },
