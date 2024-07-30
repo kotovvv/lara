@@ -1474,7 +1474,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         $ftd = $lid->status_id == 10 ? 1 : 0;
         $a_date_ftd = [];
         if ($ftd) {
-          $date_ftd = DB::select(DB::raw("SELECT GROUP_CONCAT(created_at) as date FROM depozits WHERE `lid_id` = " . $lid->id));
+          $date_ftd = DB::select(DB::raw("SELECT created_at as date FROM depozits WHERE `lid_id` = " . $lid->id . " ORDER by created_at ASC LIMIT 1"));
           $a_date_ftd = ['ftd_date' => $date_ftd[0]->date];
         }
 

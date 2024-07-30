@@ -1292,8 +1292,7 @@ export default {
   methods: {
     changeFilterStatus(status_id) {
       if (this.filter_status.includes(status_id)) {
-        const index = this.filter_status.indexOf(2);
-
+        const index = this.filter_status.indexOf(status_id);
         this.filter_status.splice(index, 1);
       } else {
         this.filter_status.push(status_id);
@@ -1728,6 +1727,11 @@ export default {
           vm.d_statuses = vm.statuses.filter((i) => {
             return a_status.includes(i.id);
           });
+          let a_hm = _.groupBy(vm.duplicate_leads, "status_id");
+          vm.d_statuses.map((el) => {
+            el.hm = a_hm[el.id].length;
+          });
+
           let a_prov = _.uniq(
             _.map(vm.duplicate_leads, (el) => {
               return el.provider_id;
