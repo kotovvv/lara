@@ -60,6 +60,13 @@
                       ></v-switch>
                     </v-col>
                     <v-col cols="6">
+                      <v-text-field
+                        v-model="editedItem.weekdup"
+                        label="Запрет дупликат на недель:"
+                        @keypress="imputfilter()"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
                       <v-select
                         multiple
                         :items="offices"
@@ -103,7 +110,7 @@
                         </template>
                       </v-autocomplete>
                     </v-col>
-                    <v-col cols="12">
+                    <v-col cols="6">
                       <v-select
                         :items="users"
                         v-model="editedItem.user_id"
@@ -112,7 +119,7 @@
                         label="Пользователь для импорта"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12">
+                    <v-col cols="6">
                       <v-text-field
                         v-model="editedItem.tel"
                         label="ApiKey"
@@ -229,6 +236,16 @@ export default {
   },
 
   methods: {
+    imputfilter: function (evt) {
+      evt = evt ? evt : window.event;
+      let expect = evt.target.value.toString() + evt.key.toString();
+
+      if (!/^[-+]?[0-9]*\.?[0-9]*$/.test(expect)) {
+        evt.preventDefault();
+      } else {
+        return true;
+      }
+    },
     getOffices() {
       let self = this;
       axios

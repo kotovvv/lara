@@ -1052,13 +1052,13 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
       $geo = $n_lid->client_geo;
       $dup = Provider::where('id', $f_key->id)->value('dup');
-
+      $weekdup = Provider::where('id', $f_key->id)->value('weekdup');
       if ($dup == 0) {
         $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
         if ($added_date != '') {
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
-          if ($date->diffInDays($added_date) < 150) {
+          if ($date->diffInDays($added_date) < $weekdup * 7) {
             $res['status'] = 'error';
             $res['message'] = 'Duplicate ';
 
@@ -1166,12 +1166,13 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
       $geo = $n_lid->client_geo;
       $dup = Provider::where('id', $f_key->id)->value('dup');
+      $weekdup = Provider::where('id', $f_key->id)->value('weekdup');
       if ($dup == 0) {
         $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
         if ($added_date != '') {
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
-          if ($date->diffInDays($added_date) < 150) {
+          if ($date->diffInDays($added_date) < $weekdup * 7) {
             $res['status'] = 'error';
             $res['message'] = 'Duplicate ';
 
@@ -1266,12 +1267,13 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
       $geo = $n_lid->client_geo;
       $dup = Provider::where('id', $f_key->id)->value('dup');
+      $weekdup = Provider::where('id', $f_key->id)->value('weekdup');
       if ($dup == 0) {
         $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
         if ($added_date != '') {
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
-          if ($date->diffInDays($added_date) < 150) {
+          if ($date->diffInDays($added_date) < $weekdup * 7) {
             $res['status'] = 'error';
             $res['message'] = 'Duplicate ';
 
@@ -1354,12 +1356,13 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
       $geo = $n_lid->client_geo;
       $dup = Provider::where('id', $f_key->id)->value('dup');
+      $weekdup = Provider::where('id', $f_key->id)->value('weekdup');
       if ($dup == 0) {
         $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
         if ($added_date != '') {
           $date = Carbon::now();
           $added_date = Carbon::parse($added_date);
-          if ($date->diffInDays($added_date) < 150) {
+          if ($date->diffInDays($added_date) < $weekdup * 7) {
             $res['status'] = 'error';
             $res['message'] = 'Duplicate ';
 
