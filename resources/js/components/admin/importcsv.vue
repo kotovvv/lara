@@ -2317,12 +2317,13 @@ export default {
 }
 .text {
   font-size: unset;
-  font-weight: initial;
+
   padding: 1rem;
   font-size: 0.75rem;
   font-weight: bold;
 }
 .fz17 {
   font-size: 17px !important;
+  font-weight: bold;
 }
 </style>
