@@ -365,7 +365,12 @@
                     <table>
                       <tbody>
                         <tr>
-                          <td width="400" class="overflow-auto">{{ apigr }}</td>
+                          <td width="890" class="overflow-auto">
+                            {{ apigr }} -
+                            <span class="fz17">{{
+                              sumField("hm", apigroup[apigr])
+                            }}</span>
+                          </td>
                           <!--
                           <td class="text-center">
                             sum<br />{{ sumField("sum", apigroup[apigr]) }}
@@ -396,12 +401,7 @@
                               sumField("hmpot", apigroup[apigr])
                             }}</span>
                           </td>
-                          <td class="text-center text" width="90px">
-                            <br /><span class="fz17">{{
-                              sumField("hm", apigroup[apigr])
-                            }}</span>
-                          </td>
-                          <td></td>
+                          <td width="130"></td>
                         </tr>
                       </tbody>
                     </table>
