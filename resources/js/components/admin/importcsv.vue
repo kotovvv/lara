@@ -18,47 +18,12 @@
       <v-tab>CHECK DUBLIKATE MAIL</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
+      <!-- XLSX -->
       <v-tab-item>
         <importxlsx :user="$attrs.user"></importxlsx>
       </v-tab-item>
+      <!-- CSV -->
       <v-tab-item>
-        <!--   <v-row>
-          <v-col cols="2">
-            <v-select
-              v-model="selectedProvider"
-              :items="providers"
-              label="Провайдер"
-              item-text="name"
-              item-value="id"
-            ></v-select>
-          </v-col>
-          <v-col cols="3" v-if="selectedProvider">
-            <v-file-input
-              v-model="files"
-              ref="fileupload"
-              label="загрузить CSV"
-              show-size
-              truncate-length="24"
-              @change="onFileChange"
-            ></v-file-input>
-          </v-col>
-          <v-col cols="3" v-if="parse_csv.length">
-            <v-select
-              v-model="selectedStatus"
-              :items="statuses"
-              label="Статус"
-              item-text="name"
-              item-value="id"
-            ></v-select>
-          </v-col>
-          <v-col cols="4" v-if="parse_csv.length">
-            <v-textarea
-              v-model="message"
-              label="Сообщение"
-              rows="1"
-            ></v-textarea>
-          </v-col>
-        </v-row> -->
         <v-progress-linear
           :active="loading"
           indeterminate
@@ -291,6 +256,7 @@
             <v-col cols="6">
               <v-data-table
                 :headers="import_headers"
+                fixed-header
                 item-key="id"
                 :items="filter_imports"
                 ref="importtable"
@@ -354,8 +320,34 @@
             </v-col>
             <v-col
               cols="6"
-              style="margin-top: 3.5rem; max-height: 66vh; overflow-y: auto"
+              style="margin-top: 3.5rem; max-height: 70vh; overflow-y: auto"
             >
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td class="text-center" width="120">&nbsp;&nbsp;&nbsp;</td>
+                    <td class="text-center" width="140">Дата</td>
+                    <td class="text-center" width="150">Поставщик</td>
+                    <td class="text-center" width="100">Сумма</td>
+                    <td class="text-center" width="53">L/A</td>
+                    <td class="text new text-center" width="150">NEW</td>
+                    <td class="text callback text-center" width="150">
+                      Callback
+                    </td>
+                    <td class="text deposit text-center" width="150">
+                      Deposit
+                    </td>
+                    <td class="text pending text-center" width="150">
+                      Pending
+                    </td>
+                    <td class="text potential text-center" width="150">
+                      Potential
+                    </td>
+                    <td class="text-center" width="150">Кол-во</td>
+                    <td class="text-center">GEO</td>
+                  </tr>
+                </tbody>
+              </table>
               <v-expansion-panels accordion>
                 <v-expansion-panel
                   v-for="apigr in Object.keys(apigroup)"
@@ -365,7 +357,7 @@
                     <table>
                       <tbody>
                         <tr>
-                          <td width="890" class="overflow-auto">
+                          <td width="550" class="overflow-auto">
                             {{ apigr }} -
                             <span class="fz17">{{
                               sumField("hm", apigroup[apigr])
@@ -375,29 +367,29 @@
                           <td class="text-center">
                             sum<br />{{ sumField("sum", apigroup[apigr]) }}
                           </td> -->
-                          <td></td>
-                          <td class="text new text-center">
-                            NEW<br /><span class="fz17">{{
+
+                          <td class="text new text-center" width="150">
+                            <span class="fz17">{{
                               sumField("hmnew", apigroup[apigr])
                             }}</span>
                           </td>
-                          <td class="text callback text-center">
-                            Callback<br /><span class="fz17">{{
+                          <td class="text callback text-center" width="150">
+                            <span class="fz17">{{
                               sumField("hmcb", apigroup[apigr])
                             }}</span>
                           </td>
-                          <td class="text deposit text-center">
-                            Deposit<br /><span class="fz17">{{
+                          <td class="text deposit text-center" width="150">
+                            <span class="fz17">{{
                               sumField("hmdp", apigroup[apigr])
                             }}</span>
                           </td>
-                          <td class="text pending text-center">
-                            Pending<br /><span class="fz17">{{
+                          <td class="text pending text-center" width="150">
+                            <span class="fz17">{{
                               sumField("hmpnd", apigroup[apigr])
                             }}</span>
                           </td>
-                          <td class="text potential text-center">
-                            Potential<br /><span class="fz17">{{
+                          <td class="text potential text-center" width="150">
+                            <span class="fz17">{{
                               sumField("hmpot", apigroup[apigr])
                             }}</span>
                           </td>
@@ -409,6 +401,7 @@
                   <v-expansion-panel-content>
                     <v-data-table
                       :headers="import_provider_headers"
+                      hide-default-header
                       item-key="id"
                       :items="apigroup[apigr]"
                       show-select
@@ -697,10 +690,11 @@
           </v-row>
         </div>
       </v-tab-item>
-
+      <!-- ВТС -->
       <v-tab-item v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
         <importBTC></importBTC>
       </v-tab-item>
+      <!-- CHECK DUBLIKATE MAIL -->
       <v-tab-item>
         <v-container fluid>
           <v-row>
@@ -1054,15 +1048,15 @@ export default {
       { text: "", value: "id", sortable: false },
     ],
     import_provider_headers: [
-      { text: "Дата", value: "start", width: "75px" },
+      { text: "Дата", value: "start", cellClass: "t1" },
       {
         text: "Поставщик",
         value: "provider",
         sortable: false,
-        width: "100",
+        width: "150px",
       },
-      { text: "Сумма", value: "sum", sortable: false, width: 70 },
-      { text: "L/A", value: "cp", sortable: false, width: 10 },
+      { text: "Сумма", value: "sum", sortable: false, width: 100 },
+      { text: "L/A", value: "cp", sortable: false, width: "53px" },
       {
         text: "NEW",
         value: "hmnew",
@@ -1070,6 +1064,7 @@ export default {
         class: "new",
         cellClass: "new fz17",
         align: "center",
+        width: "150px",
       },
       {
         text: "CallBack",
@@ -1078,6 +1073,7 @@ export default {
         class: "callback",
         cellClass: "callback fz17",
         align: "center",
+        width: "150px",
       },
       {
         text: "Deposit",
@@ -1086,6 +1082,7 @@ export default {
         class: "deposit",
         cellClass: "deposit fz17",
         align: "center",
+        width: "150px",
       },
       {
         text: "Pending",
@@ -1094,6 +1091,7 @@ export default {
         class: "pending",
         cellClass: "pending fz17",
         align: "center",
+        width: "150px",
       },
       {
         text: "Potential",
@@ -1102,13 +1100,14 @@ export default {
         class: "potential",
         cellClass: "potential fz17",
         align: "center",
+        width: "150px",
       },
       {
         text: "Кол-во",
         value: "hm",
         sortable: false,
         align: "center",
-        width: "90px",
+        width: "150px",
       },
       { text: "GEO", value: "geo", sortable: false },
       // { text: "", value: "id" },
@@ -2290,34 +2289,31 @@ export default {
 .csv .v-data-footer {
   justify-content: end;
 }
-.new {
-  background: #dde4e4ff;
+.new,
+.callback,
+.deposit,
+.pending,
+.potential {
   font-size: 1.2rem;
   font-weight: bold;
+}
+.new {
+  background: #dde4e4ff;
 }
 .callback {
   background: #1d92f09f;
-  font-size: 1.2rem;
-  font-weight: bold;
 }
 .deposit {
   background: #21cb7bff;
-  font-size: 1.2rem;
-  font-weight: bold;
 }
 .pending {
   background: #a3adb7ff;
-  font-size: 1.2rem;
-  font-weight: bold;
 }
 .potential {
   background: #7fd74e;
-  font-size: 1.2rem;
-  font-weight: bold;
 }
 .text {
   font-size: unset;
-
   padding: 1rem;
   font-size: 0.75rem;
   font-weight: bold;
@@ -2325,5 +2321,12 @@ export default {
 .fz17 {
   font-size: 17px !important;
   font-weight: bold;
+  width: 182px;
+}
+.table td {
+  font-size: 0.75rem;
+}
+.t1 {
+  width: 140px;
 }
 </style>
