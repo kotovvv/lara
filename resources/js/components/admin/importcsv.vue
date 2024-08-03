@@ -322,8 +322,8 @@
                 <tbody>
                   <tr>
                     <td class="text-center" width="110">&nbsp;&nbsp;&nbsp;</td>
-                    <td class="text-center" width="140">Дата</td>
-                    <td class="text-center" width="150">Поставщик</td>
+                    <td width="140">Дата</td>
+                    <td width="150">Поставщик</td>
                     <td class="text-center" width="150">Сумма</td>
                     <td class="text-center" width="53">L/A</td>
                     <td class="text new text-center" width="150">NEW</td>
@@ -354,16 +354,17 @@
                       <table>
                         <tbody>
                           <tr>
-                            <td width="600" class="overflow-auto">
-                              {{ apigr }} -
-                              <span class="fz17">{{
-                                sumField("hm", apigroup[apigr])
-                              }}</span>
+                            <td class="text-center" width="100">
+                              &nbsp;&nbsp;&nbsp;
                             </td>
-                            <!--
-                          <td class="text-center">
-                            sum<br />{{ sumField("sum", apigroup[apigr]) }}
-                          </td> -->
+                            <td width="140">
+                              {{ apigr.substring(0, 10) }}
+                            </td>
+                            <td class="overflow-hidden" width="150">
+                              {{ apigr.substring(10) }}
+                            </td>
+                            <td width="125">&nbsp;&nbsp;&nbsp;</td>
+                            <td width="53">&nbsp;</td>
 
                             <td class="text new text-center" width="150">
                               <span class="fz17">{{
@@ -390,7 +391,11 @@
                                 sumField("hmpot", apigroup[apigr])
                               }}</span>
                             </td>
-                            <td width="130"></td>
+                            <td class="text text-center" width="110">
+                              <span class="fz17">{{
+                                sumField("hm", apigroup[apigr])
+                              }}</span>
+                            </td>
                           </tr>
                         </tbody>
                       </table>
@@ -410,12 +415,12 @@
                         }"
                       >
                         <template v-slot:item.start="{ item }">
-                          <td class="text-center" width="150">
+                          <td width="150">
                             {{ item.start }}
                           </td>
                         </template>
                         <template v-slot:item.provider="{ item }">
-                          <td class="text-center" width="150">
+                          <td width="150">
                             {{ item.provider }}
                           </td>
                         </template>
@@ -457,7 +462,7 @@
                           </td>
                         </template>
                         <template v-slot:item.hm="{ item }">
-                          <td class="text-center" width="90">
+                          <td class="text-center" width="80">
                             {{ item.hm }}
                           </td>
                         </template>
