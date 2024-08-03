@@ -256,7 +256,6 @@
             <v-col cols="6">
               <v-data-table
                 :headers="import_headers"
-                fixed-header
                 item-key="id"
                 :items="filter_imports"
                 ref="importtable"
@@ -318,17 +317,14 @@
                 </template>
               </v-data-table>
             </v-col>
-            <v-col
-              cols="6"
-              style="margin-top: 3.5rem; max-height: 70vh; overflow-y: auto"
-            >
+            <v-col cols="6" style="margin-top: 3.5rem">
               <table class="table">
                 <tbody>
                   <tr>
-                    <td class="text-center" width="120">&nbsp;&nbsp;&nbsp;</td>
+                    <td class="text-center" width="110">&nbsp;&nbsp;&nbsp;</td>
                     <td class="text-center" width="140">Дата</td>
                     <td class="text-center" width="150">Поставщик</td>
-                    <td class="text-center" width="100">Сумма</td>
+                    <td class="text-center" width="150">Сумма</td>
                     <td class="text-center" width="53">L/A</td>
                     <td class="text new text-center" width="150">NEW</td>
                     <td class="text callback text-center" width="150">
@@ -348,80 +344,128 @@
                   </tr>
                 </tbody>
               </table>
-              <v-expansion-panels accordion>
-                <v-expansion-panel
-                  v-for="apigr in Object.keys(apigroup)"
-                  :key="apigr"
-                >
-                  <v-expansion-panel-header>
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td width="550" class="overflow-auto">
-                            {{ apigr }} -
-                            <span class="fz17">{{
-                              sumField("hm", apigroup[apigr])
-                            }}</span>
-                          </td>
-                          <!--
+              <div style="max-height: 70vh; overflow-y: auto">
+                <v-expansion-panels accordion>
+                  <v-expansion-panel
+                    v-for="apigr in Object.keys(apigroup)"
+                    :key="apigr"
+                  >
+                    <v-expansion-panel-header>
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td width="600" class="overflow-auto">
+                              {{ apigr }} -
+                              <span class="fz17">{{
+                                sumField("hm", apigroup[apigr])
+                              }}</span>
+                            </td>
+                            <!--
                           <td class="text-center">
                             sum<br />{{ sumField("sum", apigroup[apigr]) }}
                           </td> -->
 
-                          <td class="text new text-center" width="150">
-                            <span class="fz17">{{
-                              sumField("hmnew", apigroup[apigr])
-                            }}</span>
+                            <td class="text new text-center" width="150">
+                              <span class="fz17">{{
+                                sumField("hmnew", apigroup[apigr])
+                              }}</span>
+                            </td>
+                            <td class="text callback text-center" width="150">
+                              <span class="fz17">{{
+                                sumField("hmcb", apigroup[apigr])
+                              }}</span>
+                            </td>
+                            <td class="text deposit text-center" width="150">
+                              <span class="fz17">{{
+                                sumField("hmdp", apigroup[apigr])
+                              }}</span>
+                            </td>
+                            <td class="text pending text-center" width="150">
+                              <span class="fz17">{{
+                                sumField("hmpnd", apigroup[apigr])
+                              }}</span>
+                            </td>
+                            <td class="text potential text-center" width="150">
+                              <span class="fz17">{{
+                                sumField("hmpot", apigroup[apigr])
+                              }}</span>
+                            </td>
+                            <td width="130"></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <v-data-table
+                        :headers="import_provider_headers"
+                        hide-default-header
+                        item-key="id"
+                        :items="apigroup[apigr]"
+                        show-select
+                        v-model="importSelected"
+                        @click:row="clickrow"
+                        :footer-props="{
+                          'items-per-page-options': [],
+                          'items-per-page-text': '',
+                        }"
+                      >
+                        <template v-slot:item.start="{ item }">
+                          <td class="text-center" width="150">
+                            {{ item.start }}
                           </td>
-                          <td class="text callback text-center" width="150">
-                            <span class="fz17">{{
-                              sumField("hmcb", apigroup[apigr])
-                            }}</span>
+                        </template>
+                        <template v-slot:item.provider="{ item }">
+                          <td class="text-center" width="150">
+                            {{ item.provider }}
                           </td>
-                          <td class="text deposit text-center" width="150">
-                            <span class="fz17">{{
-                              sumField("hmdp", apigroup[apigr])
-                            }}</span>
+                        </template>
+                        <template v-slot:item.sum="{ item }">
+                          <td class="text-center" width="150">
+                            {{ item.sum
+                            }}<v-icon
+                              small
+                              class="mr-2"
+                              @click.stop="editItem(item)"
+                            >
+                              mdi-pencil
+                            </v-icon>
                           </td>
-                          <td class="text pending text-center" width="150">
-                            <span class="fz17">{{
-                              sumField("hmpnd", apigroup[apigr])
-                            }}</span>
+                        </template>
+                        <template v-slot:item.cp="{ item }">
+                          <td class="text-center" width="53">
+                            {{ item.cp }}
                           </td>
-                          <td class="text potential text-center" width="150">
-                            <span class="fz17">{{
-                              sumField("hmpot", apigroup[apigr])
-                            }}</span>
+                        </template>
+                        <template v-slot:item.hmnew="{ item }">
+                          <td class="text-center new fz17" width="150">
+                            {{ item.hmnew }}
                           </td>
-                          <td width="130"></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
-                    <v-data-table
-                      :headers="import_provider_headers"
-                      hide-default-header
-                      item-key="id"
-                      :items="apigroup[apigr]"
-                      show-select
-                      v-model="importSelected"
-                      @click:row="clickrow"
-                      :footer-props="{
-                        'items-per-page-options': [],
-                        'items-per-page-text': '',
-                      }"
-                    >
-                      <template v-slot:item.sum="{ item }">
-                        {{ item.sum }}
-                        <v-icon small class="mr-2" @click.stop="editItem(item)">
-                          mdi-pencil
-                        </v-icon>
-                      </template>
-                    </v-data-table>
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels>
+                        </template>
+                        <template v-slot:item.callback="{ item }">
+                          <td class="text-center callback fz17" width="150">
+                            {{ item.callback }}
+                          </td>
+                        </template>
+                        <template v-slot:item.deposit="{ item }">
+                          <td class="text-center deposit fz17" width="150">
+                            {{ item.deposit }}
+                          </td>
+                        </template>
+                        <template v-slot:item.potential="{ item }">
+                          <td class="text-center potential fz17" width="150">
+                            {{ item.potential }}
+                          </td>
+                        </template>
+                        <template v-slot:item.hm="{ item }">
+                          <td class="text-center" width="90">
+                            {{ item.hm }}
+                          </td>
+                        </template>
+                      </v-data-table>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </div>
             </v-col>
             <v-col cols="3"></v-col>
             <v-col cols="12" id="info_prov">
@@ -2326,7 +2370,8 @@ export default {
 .table td {
   font-size: 0.75rem;
 }
-.t1 {
-  width: 140px;
+
+.v-expansion-panel-header {
+  padding: 7px 24px !important;
 }
 </style>
