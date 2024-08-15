@@ -1813,9 +1813,15 @@ export default {
       self.lidsByOffice = [];
       groupByOffice = Object.entries(_.groupBy(this.leads, "office_id"));
       groupByOffice.forEach((a_office) => {
-        const nameoffice = self.offices.find((o) => {
-          return o.id == a_office[0];
-        }).name;
+        let nameoffice = "";
+        try {
+          nameoffice = self.offices.find((o) => {
+            return o.id == a_office[0];
+          }).name;
+        } catch (error) {
+          console.log(error);
+        }
+
         const lids = Object.entries(_.groupBy(a_office[1], "status"));
         let statuses = [];
         lids.map(function (i) {
