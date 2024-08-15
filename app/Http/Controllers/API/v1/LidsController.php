@@ -21,9 +21,7 @@ class LidsController extends Controller
    *
    * @return \Illuminate\Http\Response
    */
-  public function index()
-  {
-  }
+  public function index() {}
 
   public function provider_importlid(Request $request)
   {
@@ -382,6 +380,16 @@ class LidsController extends Controller
       }
       try {
         $n_lid->save();
+        //save new lid to log
+        $log = [
+          'tel' => $n_lid->tel,
+          'status_id' => $n_lid->status_id,
+          'user_id' => $n_lid->user_id,
+          'text' => $n_lid->text,
+          'created_at' => Now(),
+          'lid_id' => $n_lid->id
+        ];
+        Log::insert($log);
       } catch (\Throwable $th) {
         $res['error'] = $th;
       }
