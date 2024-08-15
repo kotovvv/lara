@@ -69,7 +69,8 @@
                   :items="filteredItems"
                   ref="datatable"
                   :loading="loading"
-                ></v-data-table>
+                >
+                </v-data-table>
               </v-card>
             </v-col>
             <v-col cols="4">
@@ -783,6 +784,7 @@
                 <template v-for="(i, x) in d_statuses">
                   <div
                     class="status_wrp"
+                    :class="{ borderactive: filter_status.includes(i.id) }"
                     :key="x"
                     @click="changeFilterStatus(i.id)"
                   >
@@ -802,97 +804,6 @@
               </div>
             </v-col>
             <v-col cols="12" v-if="duplicate_leads.length || out_db.length">
-              <v-row>
-                <!-- <v-col>
-                  <v-select
-                    ref="filterStatus"
-                    label="Фильтр статус"
-                    color="red"
-                    v-model="filter_status"
-                    :items="d_statuses"
-                    item-text="name"
-                    item-value="id"
-                    outlined
-                    rounded
-                    :multiple="true"
-                  >
-                    <template v-slot:selection="{ item, index }">
-                      <span v-if="index === 0">{{ item.name }} </span>
-                      <span v-if="index === 1" class="grey--text text-caption">
-                        (+{{ filter_status.length - 1 }} )
-                      </span>
-                    </template>
-                    <template v-slot:item="{ item, attrs }">
-                      <v-badge
-                        :value="attrs['aria-selected'] == 'true'"
-                        color="#7620df"
-                        dot
-                        left
-                      >
-                        <i
-                          :style="{
-                            background: item.color,
-                            outline: '1px solid grey',
-                          }"
-                          class="sel_stat mr-4"
-                        ></i>
-                      </v-badge>
-                      {{ item.name }}
-                    </template>
-                  </v-select></v-col
-                > -->
-                <v-col>
-                  <v-autocomplete
-                    v-model="filter_provider"
-                    label="Фильтр поставщик"
-                    :items="d_providers"
-                    item-text="name"
-                    item-value="id"
-                    outlined
-                    rounded
-                    multiple
-                    :menu-props="{ maxHeight: '80vh' }"
-                    clearable="clearable"
-                  >
-                    <template v-slot:selection="{ item, index }">
-                      <span v-if="index === 0">{{ item.name }} </span>
-                      <span v-if="index === 1" class="grey--text text-caption">
-                        (+{{ filter_provider.length - 1 }} )
-                      </span>
-                    </template>
-                    <template v-slot:item="{ item, attrs }">
-                      <v-badge
-                        :value="attrs['aria-selected'] == 'true'"
-                        color="#7620df"
-                        dot
-                        left
-                      >
-                        {{ item.name }}
-                      </v-badge>
-                    </template>
-                  </v-autocomplete></v-col
-                >
-                <v-col>
-                  <v-select
-                    v-model="filter_office"
-                    :items="d_offices"
-                    item-text="name"
-                    item-value="id"
-                    label="Фильтр офис"
-                    outlined
-                    rounded
-                    multiple
-                  >
-                  </v-select
-                ></v-col>
-                <v-col>
-                  <v-btn outlined rounded @click="exportXlsx" class="border">
-                    <v-icon left> mdi-file-excel </v-icon>
-                    Скачать таблицу
-                  </v-btn></v-col
-                >
-              </v-row>
-
               <v-data-table
                 :headers="duplicate_leads_headers"
                 item-key="id"
@@ -901,11 +812,86 @@
                 @click:row="clickrowd"
                 show-expand
                 :expanded.sync="expanded"
+                :footer-props="{
+                  'items-per-page-options': [100, 200, 500, -1],
+                  'items-per-page-text': '',
+                }"
               >
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">
                     <logtel :lid_id="item.id" :key="item.id" />
                   </td>
+                </template>
+                <template v-slot:top="{ pagination, options, updateOptions }">
+                  <v-row>
+                    <v-col>
+                      <v-autocomplete
+                        v-model="filter_provider"
+                        label="Фильтр поставщик"
+                        :items="d_providers"
+                        item-text="name"
+                        item-value="id"
+                        outlined
+                        rounded
+                        multiple
+                        :menu-props="{ maxHeight: '80vh' }"
+                        clearable="clearable"
+                      >
+                        <template v-slot:selection="{ item, index }">
+                          <span v-if="index === 0">{{ item.name }} </span>
+                          <span
+                            v-if="index === 1"
+                            class="grey--text text-caption"
+                          >
+                            (+{{ filter_provider.length - 1 }} )
+                          </span>
+                        </template>
+                        <template v-slot:item="{ item, attrs }">
+                          <v-badge
+                            :value="attrs['aria-selected'] == 'true'"
+                            color="#7620df"
+                            dot
+                            left
+                          >
+                            {{ item.name }}
+                          </v-badge>
+                        </template>
+                      </v-autocomplete></v-col
+                    >
+                    <v-col>
+                      <v-select
+                        v-model="filter_office"
+                        :items="d_offices"
+                        item-text="name"
+                        item-value="id"
+                        label="Фильтр офис"
+                        outlined
+                        rounded
+                        multiple
+                      >
+                      </v-select
+                    ></v-col>
+                    <v-col>
+                      <v-btn
+                        outlined
+                        rounded
+                        @click="exportXlsx"
+                        class="border"
+                      >
+                        <v-icon left> mdi-file-excel </v-icon>
+                        Скачать таблицу
+                      </v-btn></v-col
+                    >
+                    <v-col>
+                      <v-data-footer
+                        :pagination="pagination"
+                        :options="options"
+                        @update:options="updateOptions"
+                        :items-per-page-options="pages"
+                        items-per-page-text=""
+                      />
+                    </v-col>
+                  </v-row>
                 </template>
               </v-data-table>
             </v-col>
@@ -986,6 +972,7 @@ import _ from "lodash";
 export default {
   name: "ImportCSV",
   data: () => ({
+    pages: [100, 200, 500, -1],
     search: "",
     user_ids: [],
     clearable: true,
@@ -1641,11 +1628,11 @@ export default {
     exportXlsx() {
       const self = this;
       let unique = [];
-      const obj = _.groupBy(self.filteredItems, "status");
-      const lidsByStatus = Array.from(Object.keys(obj), (k) => [
-        `${k}`,
-        obj[k],
-      ]);
+      // const obj = _.groupBy(self.filteredItems, "status");
+      // const lidsByStatus = Array.from(Object.keys(obj), (k) => [
+      //   `${k}`,
+      //   obj[k],
+      // ]);
       var wb = XLSX.utils.book_new(); // make Workbook of Excel
 
       if (self.email_tel === "tel") {
@@ -1662,72 +1649,68 @@ export default {
       } else {
         unique = self.out_db.map((i) => ({ email: i }));
       }
-      if (self.email_tel === "tel") {
-        let con = [];
-        let a_bad_tel = [];
-        self.filtereduplicate_leads.map((t) => {
-          if ([9, 10, 11, 20, 21, 22, 23].includes(t.status_id))
-            a_bad_tel.push(t.tel);
-        });
-        console.log(a_bad_tel);
-        const dup_not = self.filtereduplicate_leads.filter((dd) => {
-          return !a_bad_tel.includes(dd.tel);
-        });
-        const dup_call = self.filtereduplicate_leads.filter((dd) => {
-          return (
-            dd.status_id == 9 &&
-            (Date.now() - Date.parse(dd.updated)) / (60 * 60 * 24 * 1000) > 21
-          );
-        });
-        con = con.concat(unique, dup_not); //, dup_call
-        window["con"] = XLSX.utils.json_to_sheet(con);
-        XLSX.utils.book_append_sheet(wb, window["con"], "CHECK_TO_UPLOAD");
-      }
+      //if (self.email_tel === "tel") {
+      let con = [];
+      let a_bad_tel = [];
+      self.filtereduplicate_leads.map((t) => {
+        if ([9, 10, 11, 20, 21, 22, 23].includes(t.status_id))
+          a_bad_tel.push(t["tel"]);
+      });
+      //console.log(a_bad_tel);
+      const dup_not = self.filtereduplicate_leads.filter((dd) => {
+        return !a_bad_tel.includes(dd["tel"]);
+      });
+      const dup_call = self.filtereduplicate_leads.filter((dd) => {
+        return (
+          dd.status_id == 9 &&
+          (Date.now() - Date.parse(dd.updated)) / (60 * 60 * 24 * 1000) > 21
+        );
+      });
+      con = con.concat(unique, dup_not); //, dup_call
+      window["con"] = XLSX.utils.json_to_sheet(con);
+      XLSX.utils.book_append_sheet(wb, window["con"], "CHECK_TO_UPLOAD");
+      //}
 
       window["unique"] = XLSX.utils.json_to_sheet(unique);
       XLSX.utils.book_append_sheet(wb, window["unique"], "unique");
 
       window["list"] = XLSX.utils.json_to_sheet(self.filtereduplicate_leads);
       XLSX.utils.book_append_sheet(wb, window["list"], "duplicate");
-      if (self.email_tel === "tel") {
-        // - 3ая -  все дубли со статусом депозит
-        const dup_dep = self.filtereduplicate_leads.filter((dd) => {
-          return dd.status_id == 10;
-        });
-        window["dup_dep"] = XLSX.utils.json_to_sheet(dup_dep);
-        XLSX.utils.book_append_sheet(
-          wb,
-          window["dup_dep"],
-          "duplicate_doposit"
+
+      //if (self.email_tel === "tel") {
+      // - 3ая -  все дубли со статусом депозит
+      const dup_dep = self.filtereduplicate_leads.filter((dd) => {
+        return dd.status_id == 10;
+      });
+      window["dup_dep"] = XLSX.utils.json_to_sheet(dup_dep);
+      XLSX.utils.book_append_sheet(wb, window["dup_dep"], "duplicate_doposit");
+      // - 4ая - все дубли со статусом колбек
+      const dup_cb = self.filtereduplicate_leads.filter((dd) => {
+        return dd.status_id == 9;
+      });
+      window["dup_cb"] = XLSX.utils.json_to_sheet(dup_cb);
+      XLSX.utils.book_append_sheet(wb, window["dup_cb"], "duplicate_callback");
+      // - 5ая - все дубли которые имеют статус -  deposit, callback, trash, badphone моложе трех недель)
+      const dup_3week = self.filtereduplicate_leads.filter((dd) => {
+        return (
+          [9, 10, 11, 23].includes(dd.status_id) &&
+          (Date.now() - Date.parse(dd.created)) / (60 * 60 * 24 * 1000) < 21
         );
-        // - 4ая - все дубли со статусом колбек
-        const dup_cb = self.filtereduplicate_leads.filter((dd) => {
-          return dd.status_id == 9;
-        });
-        window["dup_cb"] = XLSX.utils.json_to_sheet(dup_cb);
-        XLSX.utils.book_append_sheet(
-          wb,
-          window["dup_cb"],
-          "duplicate_callback"
-        );
-        // - 5ая - все дубли которые имеют статус -  deposit, callback, trash, badphone моложе трех недель)
-        const dup_3week = self.filtereduplicate_leads.filter((dd) => {
-          return (
-            [9, 10, 11, 23].includes(dd.status_id) &&
-            (Date.now() - Date.parse(dd.created)) / (60 * 60 * 24 * 1000) < 21
-          );
-        });
-        window["dup_3week"] = XLSX.utils.json_to_sheet(dup_3week);
-        XLSX.utils.book_append_sheet(
-          wb,
-          window["dup_3week"],
-          "duplicate_3week"
-        );
-      }
+      });
+      window["dup_3week"] = XLSX.utils.json_to_sheet(dup_3week);
+      XLSX.utils.book_append_sheet(wb, window["dup_3week"], "duplicate_3week");
+      //}
+
       // export Excel file
       XLSX.writeFile(
         wb,
-        "dupl_" + self.email_tel + new Date().toDateString() + ".xlsx"
+        unique.length +
+          "-un_" +
+          self.filtereduplicate_leads.length +
+          "-dup" +
+          "_" +
+          new Date().toDateString() +
+          ".xlsx"
       ); // name of the file is 'book.xlsx'
     },
     checkEmails() {
@@ -2384,5 +2367,8 @@ export default {
 
 .v-expansion-panel-header {
   padding: 7px 24px !important;
+}
+.borderactive {
+  border: 2px solid green;
 }
 </style>
