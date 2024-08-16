@@ -401,27 +401,40 @@ class LidsController extends Controller
   public function checkEmails(Request $request)
   {
     $data = $request->all();
+    $hmmonth = Carbon::now()->subMonths(6);
+    if (isset($data['hmmonth'])) {
+
+      $hmmonth = Carbon::now()->subMonths((int)$data['hmmonth']);
+    }
     $results = $a_tel = [];
     $where_email_tel = $group_email_tel = '';
     if (isset($data['email_tel']) && $data['email_tel'] == 'tel') {
       foreach (array_filter($data['emails']) as $tel) {
         $a_tel[] = preg_replace('/[^0-9]/', '', $tel);
       }
-      $where_email_tel = " WHERE l.`tel` IN (\"" . implode('","', array_filter($a_tel)) . "\")";
+      $where_email_tel = " WHERE l.created_at > '" . $hmmonth . "' AND l.`tel` IN (\"" . implode('","', array_filter($a_tel)) . "\")";
+      $where_email_tel_next = " WHERE l.created_at < '" . $hmmonth . "' AND l.status_id IN (9,10,20,21) AND l.`tel` IN (\"" . implode('","', array_filter($a_tel)) . "\")";
       $group_email_tel = " GROUP BY `tel`";
     } else {
-      $where_email_tel = " WHERE `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\")";
+      $where_email_tel = " WHERE  l.created_at > '" . $hmmonth . "' AND `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\")";
+      $where_email_tel_next = " WHERE  l.created_at < '" . $hmmonth . "' AND l.status_id IN (9,10,20,21) AND `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\")";
       $group_email_tel = " GROUP BY `email`";
     }
     if (isset($data['check'])) {
       $sql = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel . " ORDER BY l.created_at ASC";
-      $results['leads'] =  DB::select(DB::raw($sql));
+      // . " ORDER BY l.created_at ASC"
+      $sql_next = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel_next . " ORDER BY l.created_at ASC";
+
+      $results['leads'] = DB::table(DB::raw("($sql) as first_query"))
+        ->union(DB::table(DB::raw("($sql_next) as second_query")))
+        ->get();
     }
 
     DB::select(DB::raw("SET SQL_MODE = '';"));
     // $sql = "SELECT l.`tel`,l.`name`,8 AS status_id, l.`email`, 252 AS user_id, 75 AS provider_id, p.`name` AS afilyator,NOW() as created_at,3 AS office_id FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) " . $where_email_tel . $group_email_tel;
     $sql = "SELECT l.`tel`, LOWER(l.`email`) email FROM `lids` l " . $where_email_tel . $group_email_tel;
     $leads =  DB::select(DB::raw($sql));
+
     $leads = array_map(function ($item) {
       return (array) $item;
     }, $leads);

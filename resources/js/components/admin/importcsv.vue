@@ -748,11 +748,19 @@
       <v-tab-item>
         <v-container fluid>
           <v-row>
-            <v-col>
+            <v-col class="d-flex">
               <v-radio-group v-model="email_tel" row>
                 <v-radio label="email" value="email"></v-radio>
                 <v-radio label="телефон" value="tel"></v-radio>
               </v-radio-group>
+              <v-text-field
+                style="max-width: 4rem"
+                class="inline-block"
+                label="месяц"
+                @keypress="filter()"
+                v-model.number="hmmonth"
+                hide-details="auto"
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row>
@@ -972,6 +980,7 @@ import _ from "lodash";
 export default {
   name: "ImportCSV",
   data: () => ({
+    hmmonth: 6,
     pages: [100, 200, 500, -1],
     search: "",
     user_ids: [],
@@ -1325,6 +1334,16 @@ export default {
     },
   },
   methods: {
+    filter: function (evt) {
+      evt = evt ? evt : window.event;
+      let expect = evt.target.value.toString() + evt.key.toString();
+
+      if (!/^[-+]?[0-9]*\.?[0-9]*$/.test(expect)) {
+        evt.preventDefault();
+      } else {
+        return true;
+      }
+    },
     changeFilterStatus(status_id) {
       if (this.filter_status.includes(status_id)) {
         const index = this.filter_status.indexOf(status_id);
@@ -1728,6 +1747,7 @@ export default {
         .split("\n");
       data.check = 1;
       data.email_tel = vm.email_tel;
+      data.hmmonth = vm.hmmonth;
       axios
         .post("api/checkEmails", data)
         .then(function (res) {
