@@ -748,19 +748,20 @@
       <v-tab-item>
         <v-container fluid>
           <v-row>
-            <v-col class="d-flex">
+            <v-col class="d-flex align-center radiolabel">
               <v-radio-group v-model="email_tel" row>
                 <v-radio label="email" value="email"></v-radio>
                 <v-radio label="телефон" value="tel"></v-radio>
               </v-radio-group>
+              <span class="label">Выгрузка дублей за </span>
               <v-text-field
-                style="max-width: 4rem"
-                class="inline-block"
-                label="месяц"
+                style="max-width: 3rem; padding-top: 0"
+                class="inline-block center"
                 @keypress="filter()"
                 v-model.number="hmmonth"
                 hide-details="auto"
               ></v-text-field>
+              <span class="label"> месяц(ев)</span>
             </v-col>
           </v-row>
           <v-row>
@@ -792,7 +793,10 @@
                 <template v-for="(i, x) in d_statuses">
                   <div
                     class="status_wrp"
-                    :class="{ borderactive: filter_status.includes(i.id) }"
+                    :class="{
+                      borderactive: filter_status.includes(i.id),
+                      bordernot: !filter_status.includes(i.id),
+                    }"
                     :key="x"
                     @click="changeFilterStatus(i.id)"
                   >
@@ -2389,6 +2393,19 @@ export default {
   padding: 7px 24px !important;
 }
 .borderactive {
-  border: 2px solid green;
+  border: 4px solid #47cf0b;
+}
+.bordernot {
+  border: 4px solid transparent;
+}
+.center input {
+  text-align: center;
+}
+.label {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.6);
+}
+.radiolabel label {
+  margin-bottom: 0;
 }
 </style>
