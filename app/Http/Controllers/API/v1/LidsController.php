@@ -143,7 +143,7 @@ class LidsController extends Controller
       $q_leads = Lid::select('*')
         ->whereIn('user_id', $a_user_ids)
         ->when($office_id > 0, function ($query) use ($office_id) {
-          return $query->where('office_id', $office_id);
+          return $query->where('lids.office_id', $office_id);
         })
         ->when(strpos($search, '@') != false, function ($query) use ($search) {
           return $query->where('email', $search);
