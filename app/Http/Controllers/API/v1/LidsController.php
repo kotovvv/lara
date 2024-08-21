@@ -254,11 +254,7 @@ class LidsController extends Controller
   public function updatelids(Request $request)
   {
     $data = $request->all();
-    Debugbar::info($data['duplstat_id']);
-
     foreach ($data['data'] as $lid) {
-
-
       $a_lid = [
         'status_id' => $lid['status_id'],
         'user_id' => $lid['user_id'],
@@ -268,10 +264,11 @@ class LidsController extends Controller
       if (isset($lid['text']) && strlen(trim($lid['text'])) > 0) {
         $a_lid['text'] = $lid['text'];
       }
-
-      if (in_array($lid['id'], $data['duplstat_id'])) {
+      //only for lids3
+      if (isset($data['duplstat_id']) && in_array($lid['id'], $data['duplstat_id'])) {
         //count rows withs status id in not(22,8)
         $other_status = Log::select('status_id')->where('lid_id', $lid['id'])->whereNotIn('status_id', [22, 8])->count();
+
         if (!$other_status) {
           //if not another status delete log for only duplicate
           Log::where('lid_id', $lid['id'])->delete();

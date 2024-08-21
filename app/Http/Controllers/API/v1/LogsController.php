@@ -135,7 +135,7 @@ WHERE $office $where_user_group AND INSTR(u.`servers`,';') order by grp ASC ,nam
     $logs =  DB::table('logs')
       ->select('users.fio', 'statuses.name', 'statuses.color', 'logs.text', 'logs.created_at') //,'logs.tel'
       ->leftJoin('statuses', 'logs.status_id', '=', 'statuses.id')
-      ->join('users', 'logs.user_id', '=', 'users.id')
+      ->leftJoin('users', 'logs.user_id', '=', 'users.id')
       ->where('logs.lid_id', $request->lid_id)
       ->reorder('logs.created_at', 'desc')
       ->get();
