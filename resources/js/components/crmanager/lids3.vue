@@ -1775,11 +1775,16 @@ export default {
     changeStatus() {
       const self = this;
       let send = {};
+      let duplstat_id = [];
       if (this.selected.length && this.selectedStatus) {
         this.selected.map(function (e) {
+          if (e.status_id == 22) {
+            duplstat_id.push(e.id);
+          }
           e.status_id = self.selectedStatus;
           e.status = self.statuses.find((s) => s.id == e.status_id).name;
         });
+        send.duplstat_id = duplstat_id;
         send.data = this.selected.map((e) => e);
         this.changeLids(send);
       }
