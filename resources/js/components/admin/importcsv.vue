@@ -1672,6 +1672,11 @@ export default {
       } else {
         unique = self.out_db.map((i) => ({ email: i }));
       }
+      //
+      // 9-callback,10-deposit,20-pending
+      unique = unique.filter((el) => {
+        return ![9, 10, 20].includes(el["status_id"]);
+      });
       //if (self.email_tel === "tel") {
       let con = [];
       let a_bad_tel = [];
@@ -1679,16 +1684,16 @@ export default {
         if ([9, 10, 11, 20, 21, 22, 23].includes(t.status_id))
           a_bad_tel.push(t["tel"]);
       });
-      //console.log(a_bad_tel);
+
       const dup_not = self.filtereduplicate_leads.filter((dd) => {
         return !a_bad_tel.includes(dd["tel"]);
       });
-      const dup_call = self.filtereduplicate_leads.filter((dd) => {
-        return (
-          dd.status_id == 9 &&
-          (Date.now() - Date.parse(dd.updated)) / (60 * 60 * 24 * 1000) > 21
-        );
-      });
+      // const dup_call = self.filtereduplicate_leads.filter((dd) => {
+      //   return (
+      //     dd.status_id == 9 &&
+      //     (Date.now() - Date.parse(dd.updated)) / (60 * 60 * 24 * 1000) > 21
+      //   );
+      // });
       con = con.concat(unique, dup_not); //, dup_call
       window["con"] = XLSX.utils.json_to_sheet(con);
       XLSX.utils.book_append_sheet(wb, window["con"], "CHECK_TO_UPLOAD");
