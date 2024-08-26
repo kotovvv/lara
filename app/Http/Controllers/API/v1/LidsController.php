@@ -270,6 +270,7 @@ class LidsController extends Controller
         $other_status = Log::select('status_id')->where('lid_id', $lid['id'])->whereNotIn('status_id', [22, 8])->count();
 
         if (!$other_status) {
+          $a_lid['text'] = Log::where('lid_id', $lid['id'])->where('status_id', 22)->orderBy('created_at', 'desc')->value('text');
           //if not another status delete log for only duplicate
           Log::where('lid_id', $lid['id'])->delete();
         }
