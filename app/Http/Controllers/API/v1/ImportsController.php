@@ -25,7 +25,12 @@ class ImportsController extends Controller
   {
     $office_id = session()->get('office_id');
 
-    $imports = Import::select(['imports.*', DB::raw('(SELECT `name` FROM `providers` WHERE `id` = `provider_id`) AS provider'), DB::raw('(SELECT `name` FROM `users` WHERE `id` = `user_id`) AS user'), DB::raw('(SELECT `group_id` FROM `users` WHERE `id` = `user_id`) AS group_id')])
+    $imports = Import::select([
+      'imports.*',
+      DB::raw('(SELECT `name` FROM `providers` WHERE `id` = `provider_id`) AS provider'),
+      DB::raw('(SELECT `name` FROM `users` WHERE `id` = `user_id`) AS user'),
+      DB::raw('(SELECT `group_id` FROM `users` WHERE `id` = `user_id`) AS group_id')
+    ])
       ->when($from != 0 && $to != 0, function ($query) use ($from, $to) {
         return $query->whereBetween('start', [$from . ' 00:00:00', $to . ' 23:59:59']);
       })
@@ -339,6 +344,10 @@ class ImportsController extends Controller
       Lid::whereIn('id', $lid_ids)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => 8, 'text' => '', 'qtytel' => 0]);
     }
     if ($message) {
+      $a_group_ids = json_encode(
+        Lid::where('load_mess', $message)->leftJoin('users', 'users.id', '=', 'lids.user_id')->whereDate('lids.created_at', date('Y-m-d', strtotime($start)))->groupBy('users.group_id')->pluck('users.group_id')->toArray()
+      );
+
       // get offices users
       $a_office_ids = json_encode(Lid::where('load_mess', $message)
         ->whereDate('lids.created_at', date('Y-m-d', strtotime($start)))->where('office_id', '!=', 0)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
@@ -346,7 +355,7 @@ class ImportsController extends Controller
     } else {
       // get offices users
       $a_office_ids = json_encode(Lid::whereIn('lids.id', $lidsId)->where('office_id', '!=', 0)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
-      DB::table('imports_provider')->where('id', $id)->update(['office_ids' => $a_office_ids]);
+      DB::table('imports_provider')->where('id', $id)->update(['office_ids' => $a_office_ids, 'group_ids' => $a_group_ids]);
     }
     Log::whereIn('lid_id', $lid_ids)->delete();
     return response('All done', 200);
