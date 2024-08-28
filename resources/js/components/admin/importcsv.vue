@@ -1734,7 +1734,7 @@ export default {
         wb,
         unique.length +
           "-un_" +
-          self.filtereduplicate_leads.length +
+          self.in_db.length +
           "-dup" +
           "_" +
           new Date().toDateString() +
@@ -2139,9 +2139,9 @@ export default {
           });
 
           if (self.$attrs.user.group_id > 0) {
-            self.imports = self.imports.filter(
-              (i) => i.group_id == self.$attrs.user.group_id
-            );
+            //self.imports = self.imports.filter(
+            //  (i) => i.group_id == self.$attrs.user.group_id
+            //);
           }
           self.ImportedProvLids();
           self.loading = false;
