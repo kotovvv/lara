@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="importXLS">
     <v-snackbar v-model="snackbar" top right timeout="-1">
       <v-card-text v-html="message"></v-card-text>
       <template v-slot:action="{ attrs }">
@@ -64,10 +64,11 @@
             label="Статус"
             item-text="name"
             item-value="id"
+            hide-details
           ></v-select>
         </v-col>
         <v-col cols="2">
-          <v-text-field v-model="sum" label="Сумма"></v-text-field>
+          <v-text-field v-model="sum" label="Сумма" hide-details></v-text-field>
           <v-radio-group v-model="cp" row>
             <v-radio label="CPL" value="L"></v-radio>
             <v-radio label="CPA" value="A"></v-radio>
@@ -76,9 +77,11 @@
         <v-col cols="2">
           <v-textarea
             v-model="load_mess"
-            label="Сообщение"
-            :rules="[(v) => v.length <= 190 || 'Max 190 characters']"
+            label="Название в базе"
+            :rules="[validateName]"
             rows="1"
+            @input="checkName"
+            :error-messages="errorMessages.length ? errorMessages : []"
           ></v-textarea>
         </v-col>
       </v-row>
@@ -121,7 +124,12 @@
           </v-simple-table>
         </v-col>
         <v-col cols="3">
-          <v-btn class="btn ma-3" @click="putSelectedLidsDB">Назначить</v-btn>
+          <v-btn
+            class="btn ma-3"
+            :disabled="nameExists"
+            @click="putSelectedLidsDB"
+            >Назначить</v-btn
+          >
           <v-card height="60vh" class="pa-5 overflow-x-auto">
             Укажите пользователя для лидов
             <v-list>
@@ -187,6 +195,8 @@ export default {
   data: () => ({
     loading: false,
     load_mess: "",
+    nameExists: false,
+    errorMessages: [],
     message: "",
     snackbar: false,
     providers: [],
@@ -231,6 +241,28 @@ export default {
     },
   },
   methods: {
+    async checkName() {
+      try {
+        const response = await axios.post("/api/checkLoadMess", {
+          load_mess: this.load_mess,
+        });
+        this.nameExists = response.data.exists;
+
+        if (this.nameExists) {
+          this.errorMessages = ["Такое наименование уже существует!"];
+        } else {
+          this.errorMessages = [];
+        }
+      } catch (error) {
+        console.error("Ошибка при проверке наименования:", error);
+        this.errorMessages = [
+          "Ошибка при проверке наименования. Попробуйте позже.",
+        ];
+      }
+    },
+    validateName() {
+      return this.errorMessages.length ? this.errorMessages[0] : true;
+    },
     getOffices() {
       let self = this;
       self.filterOffices = self.$props.user.office_id;
@@ -515,3 +547,8 @@ export default {
   },
 };
 </script>
+<style >
+#inspire #importXLS .v-text-field__details {
+  display: initial;
+}
+</style>

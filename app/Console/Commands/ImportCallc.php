@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Models\Lid;
 
 class ImportCallc extends Command
 {
@@ -47,6 +48,14 @@ class ImportCallc extends Command
       $a_hm = (object) [];
       if ($import->message != '') {
         $a_hm = DB::selectOne('SELECT SUM(status_id = 8)hmnew,SUM(status_id = 9)hmcb,SUM(status_id = 10)hmdp, SUM(status_id = 20) hmpnd, SUM(status_id = 32) hmpot, COUNT(*)hm FROM lids l WHERE l.`load_mess` = "' . $import->message . '"');
+        $a_group_ids = json_encode(
+          Lid::where('load_mess',  $import->message)->leftJoin('users', 'users.id', '=', 'lids.user_id')->whereDate('lids.created_at', date('Y-m-d', strtotime($import->start)))->groupBy('users.group_id')->pluck('users.group_id')->toArray()
+        );
+
+        // get offices users
+        $a_office_ids = json_encode(Lid::where('load_mess',  $import->message)
+          ->whereDate('lids.created_at', date('Y-m-d', strtotime($import->start)))->where('office_id', '!=', 0)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
+        DB::table('imports')->where('id', $import->id)->update(['office_ids' => $a_office_ids, 'group_ids' => $a_group_ids]);
       }
 
       $a_hm->callc = 0;

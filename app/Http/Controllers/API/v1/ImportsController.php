@@ -11,7 +11,7 @@ use App\Models\Lid;
 use App\Models\Log;
 use App\Models\User;
 use Storage;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Debugbar;
 
 class ImportsController extends Controller
@@ -400,6 +400,15 @@ class ImportsController extends Controller
         DB::table('historyimport')->insert($historyimp);
         //- collect $alliads
         $alliads = array_merge($alliads, $setLiads);
+
+        $a_group_ids = json_encode(
+          Lid::where('load_mess',  $import_['message'])->leftJoin('users', 'users.id', '=', 'lids.user_id')->whereDate('lids.created_at', date('Y-m-d', strtotime($import_['start'])))->groupBy('users.group_id')->pluck('users.group_id')->toArray()
+        );
+
+        // get offices users
+        $a_office_ids = json_encode(Lid::where('load_mess',  $import_['message'])
+          ->whereDate('lids.created_at', date('Y-m-d', strtotime($import_['start'])))->where('office_id', '!=', 0)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
+        DB::table('imports')->where('id', $import_['id'])->update(['office_ids' => $a_office_ids, 'group_ids' => $a_group_ids]);
       } else {
         //- get id lids from imported_lids on provider_id and date
         $lidsId = DB::table('imported_leads')->where('api_key_id', $import_['provider_id'])->whereDate('upload_time', $import_['start'])->where('geo', $import_['geo'])->pluck('lead_id')->toArray();
@@ -458,5 +467,13 @@ class ImportsController extends Controller
   {
     Artisan::call('import:callc');
     return response('Await', 200);
+  }
+
+  public  function checkLoadMess(Request $request)
+  {
+    $load_mess = $request->get('load_mess');
+    $exists = DB::table('imports')->where('message', $load_mess)->exists();
+
+    return response()->json(['exists' => $exists]);
   }
 }

@@ -2139,9 +2139,12 @@ export default {
           });
 
           if (self.$attrs.user.group_id > 0) {
-            //self.imports = self.imports.filter(
-            //  (i) => i.group_id == self.$attrs.user.group_id
-            //);
+            self.imports = self.imports.filter((i) => {
+              return (
+                i.group_ids == null ||
+                JSON.parse(i.group_ids).includes(self.$attrs.user.group_id)
+              );
+            });
           }
           self.ImportedProvLids();
           self.loading = false;
