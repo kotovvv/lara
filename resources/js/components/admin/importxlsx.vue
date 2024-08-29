@@ -367,7 +367,7 @@ export default {
     putSelectedLidsDB() {
       let self = this;
       if (self.load_mess == "") {
-        self.message = 'Обязательно заполните поле "Сообщение"';
+        self.message = 'Обязательно заполните поле "Название в базе"';
         self.snackbar = true;
 
         return false;
