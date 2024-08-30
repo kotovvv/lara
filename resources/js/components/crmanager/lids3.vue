@@ -595,7 +595,7 @@
                           <v-btn data="new" v-if="user.statnew" label small>
                             {{ user.statnew }}
                           </v-btn>
-                          <v-btn data="rnew" v-if="user.inp" label small>
+                          <v-btn data="renew" v-if="user.inp" label small>
                             {{ user.inp }}
                           </v-btn>
                           <v-btn data="cb" v-if="user.cb" label small>
@@ -1963,10 +1963,10 @@ export default {
 .v-btn[data="new"]::after {
   color: #aaa;
 }
-#usersradiogroup .v-btn[data="inp"] {
+#usersradiogroup .v-btn[data="renew"] {
   background: #b5d7898c;
 }
-.v-btn[data="inp"]::after {
+.v-btn[data="renew"]::after {
   color: #4aaf5b;
 }
 #usersradiogroup .v-btn[data="cb"] {
