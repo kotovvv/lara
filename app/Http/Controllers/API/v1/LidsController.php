@@ -853,13 +853,13 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
 
     if (session()->has('user_id')) {
       $user = User::where('id', (int) session()->get('user_id'))->first();
-      if ($user['group_id']) {
-        $res = User::select('id')->where('group_id', $user['group_id'])->get()->toArray();
-        foreach ($res as $item) {
-          $users_ids[] = $item['id'];
-        }
-        $where_ids_off = ' user_id IN (' . implode(',', $users_ids) . ') AND ';
-      }
+      // if ( $user['group_id']) {
+      //   $res = User::select('id')->where('group_id', $user['group_id'])->get()->toArray();
+      //   foreach ($res as $item) {
+      //     $users_ids[] = $item['id'];
+      //   }
+      //   $where_ids_off = ' user_id IN (' . implode(',', $users_ids) . ') AND ';
+      // }
 
       if ($user['office_id'] > 0) {
         $office_id = $user['office_id'];
