@@ -595,7 +595,7 @@
                           <v-btn data="new" v-if="user.statnew" label small>
                             {{ user.statnew }}
                           </v-btn>
-                          <v-btn data="inp" v-if="user.inp" label small>
+                          <v-btn data="rnew" v-if="user.inp" label small>
                             {{ user.inp }}
                           </v-btn>
                           <v-btn data="cb" v-if="user.cb" label small>
