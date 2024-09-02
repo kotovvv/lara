@@ -912,7 +912,7 @@
       </v-tab-item>
     </v-tabs-items>
     <ConfirmDlg ref="confirm" />
-    <v-dialog v-model="dialog" max-width="600px" id="dialog">
+    <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <v-card-title>
           <span class="headline">Редактировать сообщение</span>
@@ -929,6 +929,7 @@
                   rows="1"
                   @input="checkName"
                   :error-messages="errorMessages.length ? errorMessages : []"
+                  :disabled="editedItem.message == undefined"
                 ></v-text-field>
               </v-col>
               <v-col cols="6">
@@ -2445,7 +2446,7 @@ export default {
 .radiolabel label {
   margin-bottom: 0;
 }
-#inspire #dialog .v-text-field__details {
+#inspire .v-dialog .v-text-field__details {
   display: initial;
 }
 </style>
