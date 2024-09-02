@@ -2204,6 +2204,7 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
+      this.errorMessages = [];
     },
     save() {
       if (this.errorMessages.length) return;
@@ -2236,6 +2237,7 @@ export default {
       try {
         const response = await axios.post("/api/checkLoadMess", {
           load_mess: this.editedItem.message,
+          id: this.editedItem.id,
         });
         this.nameExists = response.data.exists;
 

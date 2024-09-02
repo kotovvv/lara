@@ -258,6 +258,29 @@ class ImportsController extends Controller
     //
   }
 
+
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+
+   * @return \Illuminate\Http\Response
+   */
+  public function importUpdate(Request $request)
+  {
+    $data = $request->all();
+    if (isset($data['message'])) {
+      $import = DB::table('imports')->where('id', $data['id'])->first();
+      $date = date('Y-m-d', strtotime($import->start));
+      DB::table('lids')->where('load_mess', $import->message)->whereDate('created_at', $date)->update(['load_mess' => $data['message']]);
+      if ($import->provider_id != $data['provider_id']) {
+        Lid::where('load_mess', $import->message)->update(['provider_id' => $data['provider_id']]);
+      }
+      DB::table('imports')->where('id', $data['id'])->update(['message' => $data['message'], 'sum' => $data['sum'], 'cp' => $data['cp'], 'provider_id' => $data['provider_id'], 'baer' => $data['baer'] == 'null' ? '' : $data['baer']]);
+    } else {
+      DB::table('imports_provider')->where('id', $data['id'])->update(['sum' => $data['sum'], 'cp' => $data['cp']]);
+    }
+  }
   public function getHistory(Request $request)
   {
     $data = $request->all();
@@ -471,8 +494,11 @@ class ImportsController extends Controller
 
   public  function checkLoadMess(Request $request)
   {
+    $id = $request->get('id') !== null ? (int) $request->get('id') : 0;
     $load_mess = $request->get('load_mess');
-    $exists = DB::table('imports')->where('message', $load_mess)->exists();
+    $exists = DB::table('imports')->where('message', $load_mess)->when($id, function ($query) use ($id) {
+      return $query->where('id', '!=', $id);
+    })->exists();
 
     return response()->json(['exists' => $exists]);
   }
