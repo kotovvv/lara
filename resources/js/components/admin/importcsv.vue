@@ -912,7 +912,7 @@
       </v-tab-item>
     </v-tabs-items>
     <ConfirmDlg ref="confirm" />
-    <v-dialog v-model="dialog" max-width="600px">
+    <v-dialog v-model="dialog" max-width="600px" id="dialog">
       <v-card>
         <v-card-title>
           <span class="headline">Редактировать сообщение</span>
@@ -921,10 +921,14 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12" v-if="editedItem.message">
+              <v-col cols="12">
                 <v-text-field
                   v-model="editedItem.message"
-                  label="Сообщение"
+                  label="Название в базе"
+                  :rules="[validateName]"
+                  rows="1"
+                  @input="checkName"
+                  :error-messages="errorMessages.length ? errorMessages : []"
                 ></v-text-field>
               </v-col>
               <v-col cols="6">
@@ -984,6 +988,8 @@ import _ from "lodash";
 export default {
   name: "ImportCSV",
   data: () => ({
+    nameExists: false,
+    errorMessages: [],
     hmmonth: 6,
     pages: [100, 200, 500, -1],
     search: "",
@@ -2199,6 +2205,7 @@ export default {
       });
     },
     save() {
+      if (this.errorMessages.length) return;
       if (this.editedIndex > -1) {
         if (this.editedItem.message != undefined) {
           this.saveLoads(this.editedItem);
@@ -2223,6 +2230,28 @@ export default {
         .post("/api/importUpdate", form_data)
         .then((res) => {})
         .catch((error) => console.log(error));
+    },
+    async checkName() {
+      try {
+        const response = await axios.post("/api/checkLoadMess", {
+          load_mess: this.editedItem.message,
+        });
+        this.nameExists = response.data.exists;
+
+        if (this.nameExists) {
+          this.errorMessages = ["Такое наименование уже существует!"];
+        } else {
+          this.errorMessages = [];
+        }
+      } catch (error) {
+        console.error("Ошибка при проверке наименования:", error);
+        this.errorMessages = [
+          "Ошибка при проверке наименования. Попробуйте позже.",
+        ];
+      }
+    },
+    validateName() {
+      return this.errorMessages.length ? this.errorMessages[0] : true;
     },
     getStatuses() {
       let self = this;
@@ -2415,5 +2444,8 @@ export default {
 }
 .radiolabel label {
   margin-bottom: 0;
+}
+#inspire #dialog .v-text-field__details {
+  display: initial;
 }
 </style>
