@@ -649,9 +649,9 @@ class LidsController extends Controller
         ->when(count($providers) > 0, function ($query) use ($providers) {
           return $query->whereIn('lids.provider_id', $providers);
         })
-        ->when(count($status_id) > 0, function ($query) use ($status_id) {
-          return $query->whereIn('lids.status_id', $status_id);
-        })
+        // ->when(count($status_id) > 0, function ($query) use ($status_id) {
+        //   return $query->whereIn('lids.status_id', $status_id);
+        // })
         ->when($tel != '', function ($query) use ($tel) {
           return $query->where('lids.tel', 'like', $tel . '%');
         })

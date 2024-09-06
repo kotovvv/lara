@@ -266,21 +266,21 @@
       <v-col>
         <div class="wrp__statuses">
           <template v-for="(i, x) in Statuses">
-            <div class="status_wrp" :key="x">
+            <div
+              class="status_wrp"
+              :class="{ active: filterStatus.includes(i.id) }"
+              :key="x"
+              @click.stop="changeFilterStatus(i.id)"
+            >
               <b
                 :style="{
                   background: i.color,
-                  outline: '1px solid' + i.color,
+                  outline: '1px solid ' + i.color,
                 }"
                 >{{ i.hm }}</b
               >
               <span>{{ i.name }}</span>
-              <v-btn
-                v-if="filterStatus.length > 0"
-                icon
-                x-small
-                @click="changeFilterStatus(i.id)"
-              >
+              <v-btn v-if="filterStatus.includes(i.id)" icon x-small>
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </div>
@@ -1217,7 +1217,11 @@ export default {
       this.getPage(0);
     },
     changeFilterStatus(el_id) {
-      this.filterStatus = this.filterStatus.filter((i) => i != el_id);
+      if (this.filterStatus.includes(el_id)) {
+        this.filterStatus = this.filterStatus.filter((i) => i != el_id);
+      } else {
+        this.filterStatus.push(el_id);
+      }
       this.getPage(0);
     },
     clearuser() {
@@ -2003,5 +2007,8 @@ svg.icon.small {
 }
 .lngtxt {
   font-variant-caps: all-small-caps;
+}
+.status_wrp.active {
+  box-shadow: 0px 0px 9.5px 0.5px rgb(118, 32, 223);
 }
 </style>
