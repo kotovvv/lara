@@ -372,16 +372,24 @@ class LidsController extends Controller
       }
       if (isset($data['provider_id'])) $n_lid->provider_id = $data['provider_id'];
       if (isset($data['status_id']))  $n_lid->status_id = $data['status_id'];
-      $f_lid =  Lid::where('tel', '=', "" . $lid['tel'])->get();
 
-
-      if (!$f_lid->isEmpty()) {
-        $dup = Provider::where('id', $data['provider_id'])->value('dup');
-        if ($dup == 1) {
-          continue;
+      $dup = Provider::where('id', $data['provider_id'])->value('dup');
+      $weekdup = Provider::where('id', $data['provider_id'])->value('weekdup');
+      if ($dup == 0) {
+        $added_date =  Lid::where('tel', '=', '' . $n_lid->tel)->orderBy('created_at', 'desc')->value('created_at');
+        if ($added_date != '') {
+          $date = Carbon::now();
+          $added_date = Carbon::parse($added_date);
+          if ($date->diffInDays($added_date) < $weekdup * 7) {
+            continue;
+          }
         }
-        $n_lid->status_id = 22;
+      } else {
+        if (!(Lid::where('tel', '=', '' . $n_lid->tel)->get())->isEmpty()) {
+          $n_lid->status_id = 22;
+        }
       }
+
       if ($n_lid->provider_id == '76') {
         $n_lid->status_id = 8;
       }
