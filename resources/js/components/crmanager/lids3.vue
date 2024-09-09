@@ -2009,6 +2009,6 @@ svg.icon.small {
   font-variant-caps: all-small-caps;
 }
 .status_wrp.active {
-  box-shadow: 0px 0px 9.5px 0.5px rgb(118, 32, 223);
+  box-shadow: 0px 0px 9.5px 5px rgb(0, 255, 98);
 }
 </style>
