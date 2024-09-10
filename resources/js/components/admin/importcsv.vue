@@ -505,11 +505,11 @@
                       class="status_wrp"
                       :class="{
                         active:
-                          filterOfficeTabl.includes(office.id) &&
+                          filterOfficeTabl.includes(office.name) &&
                           filterStatusTabl.includes(i.id),
                       }"
                       :key="i.id"
-                      @click.stop="filterOfficeStatus(office.id, i.id)"
+                      @click="filterOfficeStatus(office.name, i.id)"
                     >
                       <b
                         :style="{
@@ -521,7 +521,7 @@
                       <span>{{ i.name }}</span>
                       <v-btn
                         v-if="
-                          filterOfficeTabl.includes(office.id) &&
+                          filterOfficeTabl.includes(office.name) &&
                           filterStatusTabl.includes(i.id)
                         "
                         icon
@@ -542,11 +542,11 @@
                     class="status_wrp"
                     :class="{
                       active:
-                        filterOfficeTabl == [] &&
+                        filterOfficeTabl.length == 0 &&
                         filterStatusTabl.includes(i.id),
                     }"
                     :key="i.id"
-                    @click.stop="filterOfficeStatus(0, i.id)"
+                    @click="filterOfficeStatus(0, i.id)"
                   >
                     <b
                       :style="{
@@ -558,7 +558,7 @@
                     <span>{{ i.name }}</span>
                     <v-btn
                       v-if="
-                        filterOfficeTabl == [] &&
+                        filterOfficeTabl.length == 0 &&
                         filterStatusTabl.includes(i.id)
                       "
                       icon
@@ -1391,13 +1391,20 @@ export default {
         this.filterOfficeTabl = [];
         this.filterOfficeTabl.push(office);
       }
-      if (this.filterStatusTabl.includes(status)) {
+      if (
+        this.filterStatusTabl.includes(status) &&
+        this.filterOfficeTabl.includes(office)
+      ) {
         this.filterStatusTabl = this.filterStatusTabl.filter((s) => {
           return s != status;
         });
-      } else {
+        if (this.filterStatusTabl.length == 0) {
+          this.filterOfficeTabl = [];
+        }
+      } else if (this.filterOfficeTabl.includes(office)) {
         this.filterStatusTabl.push(status);
       }
+
       console.log(office, status);
     },
     filter: function (evt) {
