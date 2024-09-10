@@ -501,7 +501,16 @@
               >
                 {{ u.user }} -->
                   <template v-for="i in office.statuses">
-                    <div class="status_wrp" :key="i.id">
+                    <div
+                      class="status_wrp"
+                      :class="{
+                        active:
+                          filterOfficeTabl.includes(office.id) &&
+                          filterStatusTabl.includes(i.id),
+                      }"
+                      :key="i.id"
+                      @click.stop="filterOfficeStatus(office.id, i.id)"
+                    >
                       <b
                         :style="{
                           background: i.color,
@@ -510,6 +519,16 @@
                         >{{ i.hm }}</b
                       >
                       <span>{{ i.name }}</span>
+                      <v-btn
+                        v-if="
+                          filterOfficeTabl.includes(office.id) &&
+                          filterStatusTabl.includes(i.id)
+                        "
+                        icon
+                        x-small
+                      >
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
                     </div>
                   </template>
                   <!-- </div> -->
@@ -519,7 +538,16 @@
             <v-col cols="12" v-if="Statuses">
               <div id="wrp_stat" class="wrp__statuses">
                 <template v-for="i in Statuses">
-                  <div class="status_wrp" :key="i.id">
+                  <div
+                    class="status_wrp"
+                    :class="{
+                      active:
+                        filterOfficeTabl == [] &&
+                        filterStatusTabl.includes(i.id),
+                    }"
+                    :key="i.id"
+                    @click.stop="filterOfficeStatus(0, i.id)"
+                  >
                     <b
                       :style="{
                         background: i.color,
@@ -528,6 +556,16 @@
                       >{{ i.hm }}</b
                     >
                     <span>{{ i.name }}</span>
+                    <v-btn
+                      v-if="
+                        filterOfficeTabl == [] &&
+                        filterStatusTabl.includes(i.id)
+                      "
+                      icon
+                      x-small
+                    >
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
                   </div>
                 </template>
               </div>
@@ -1026,6 +1064,7 @@ export default {
     files: [],
     search: "",
     filtertel: "",
+
     headers_leads: [
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
@@ -1345,6 +1384,22 @@ export default {
     },
   },
   methods: {
+    filterOfficeStatus(office, status) {
+      if (office == 0) {
+        this.filterOfficeTabl = [];
+      } else {
+        this.filterOfficeTabl = [];
+        this.filterOfficeTabl.push(office);
+      }
+      if (this.filterStatusTabl.includes(status)) {
+        this.filterStatusTabl = this.filterStatusTabl.filter((s) => {
+          return s != status;
+        });
+      } else {
+        this.filterStatusTabl.push(status);
+      }
+      console.log(office, status);
+    },
     filter: function (evt) {
       evt = evt ? evt : window.event;
       let expect = evt.target.value.toString() + evt.key.toString();
@@ -2450,5 +2505,8 @@ export default {
 }
 #inspire .v-dialog .v-text-field__details {
   display: initial;
+}
+.status_wrp.active {
+  box-shadow: 0px 0px 9.5px 5px rgb(0, 255, 98);
 }
 </style>
