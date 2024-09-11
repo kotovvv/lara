@@ -416,6 +416,9 @@ class LidsController extends Controller
   public function checkEmails(Request $request)
   {
     $data = $request->all();
+    $data['emails'] = array_values(array_filter($data['emails']));
+    // dd($data['emails']);
+
     $hmmonth = Carbon::now()->subMonths(6);
     if (isset($data['hmmonth'])) {
 
@@ -431,8 +434,9 @@ class LidsController extends Controller
       $where_email_tel_next = " WHERE l.created_at < '" . $hmmonth . "' AND l.status_id IN (9,10,20,21) AND l.`tel` IN (\"" . implode('","', array_filter($a_tel)) . "\")";
       $group_email_tel = " GROUP BY `tel`";
     } else {
-      $where_email_tel = " WHERE  l.created_at > '" . $hmmonth . "' AND `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\")";
-      $where_email_tel_next = " WHERE  l.created_at < '" . $hmmonth . "' AND l.status_id IN (9,10,20,21) AND `email` IN (\"" . implode('","', array_filter($data['emails'])) . "\")";
+      $where_email_tel = " WHERE  l.created_at > '" . $hmmonth . "' AND `email` IN (\"" . implode('","', $data['emails']) . "\")";
+
+      $where_email_tel_next = " WHERE  l.created_at < '" . $hmmonth . "' AND l.status_id IN (9,10,20,21) AND `email` IN (\"" . implode('","', $data['emails']) . "\")";
       $group_email_tel = " GROUP BY `email`";
     }
     if (isset($data['check'])) {

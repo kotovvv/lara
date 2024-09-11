@@ -1386,25 +1386,29 @@ export default {
   methods: {
     filterOfficeStatus(office, status) {
       if (office == 0) {
-        this.filterOfficeTabl = [];
+        if (this.filterOfficeTabl.length > 0) {
+          this.filterStatusTabl = [];
+          this.filterOfficeTabl = [];
+        }
       } else {
-        this.filterOfficeTabl = [];
-        this.filterOfficeTabl.push(office);
+        if (this.filterOfficeTabl.length == 0) {
+          this.filterStatusTabl = [];
+          this.filterOfficeTabl = [];
+        }
+        if (!this.filterOfficeTabl.includes(office)) {
+          this.filterOfficeTabl.push(office);
+        }
       }
-      if (
-        this.filterStatusTabl.includes(status) &&
-        this.filterOfficeTabl.includes(office)
-      ) {
+      if (this.filterStatusTabl.includes(status)) {
         this.filterStatusTabl = this.filterStatusTabl.filter((s) => {
           return s != status;
         });
-        if (this.filterStatusTabl.length == 0) {
-          this.filterOfficeTabl = [];
-        }
-      } else if (this.filterOfficeTabl.includes(office)) {
+      } else {
         this.filterStatusTabl.push(status);
       }
-
+      if (this.filterStatusTabl.length == 0) {
+        this.filterOfficeTabl = [];
+      }
       console.log(office, status);
     },
     filter: function (evt) {
@@ -1819,10 +1823,12 @@ export default {
       vm.in_db = [];
       vm.out_db = [];
       let data = {};
+
       data.emails = vm.list_email
         .replace(/[\r]/gm, "")
         .replaceAll(" ", "")
         .split("\n");
+
       data.check = 1;
       data.email_tel = vm.email_tel;
       data.hmmonth = vm.hmmonth;
@@ -1836,6 +1842,7 @@ export default {
               data.emails.filter((i) => !vm.in_db.includes(i.toLowerCase()))
             ),
           ];
+          vm.out_db = vm.out_db.filter((e) => e != "");
           vm.message =
             "Уникальных: " +
             vm.out_db.length +
