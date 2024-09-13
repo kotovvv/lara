@@ -779,7 +779,7 @@
         </div>
       </v-tab-item>
       <!-- ВТС -->
-      <v-tab-item v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
+      <v-tab-item v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0">
         <importBTC></importBTC>
       </v-tab-item>
       <!-- CHECK DUBLIKATE MAIL -->
