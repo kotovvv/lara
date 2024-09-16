@@ -12,7 +12,7 @@
       <v-tab> XLSX </v-tab>
       <v-tab> CSV </v-tab>
 
-      <v-tab v-if="$attrs.user.role_id == 1 && $attrs.user.group_id == 0">
+      <v-tab v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0">
         ВТС
       </v-tab>
       <v-tab>CHECK DUBLIKATE MAIL</v-tab>
@@ -1396,6 +1396,8 @@ export default {
           this.filterOfficeTabl = [];
         }
         if (!this.filterOfficeTabl.includes(office)) {
+          this.filterStatusTabl = [];
+          this.filterOfficeTabl = [];
           this.filterOfficeTabl.push(office);
         }
       }
