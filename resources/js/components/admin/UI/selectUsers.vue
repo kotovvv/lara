@@ -143,6 +143,7 @@ export default {
               group_id,
               office_id,
               level,
+              active,
             }) => ({
               name,
               id,
@@ -152,9 +153,13 @@ export default {
               group_id,
               office_id,
               level,
+              active,
             })
           );
           self.loading = false;
+          self.users = self.users.filter((el) => {
+            return el.active == 1;
+          });
           self.groups = _.filter(self.users, function (o) {
             return o.group_id == o.id;
           });
