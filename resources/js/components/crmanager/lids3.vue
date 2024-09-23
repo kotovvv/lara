@@ -389,7 +389,7 @@
                     <v-pagination
                       v-model="page"
                       class="my--4"
-                      :length="parseInt(hm / limit) + 1"
+                      :length="parseInt(hm / (limit != 'all' ? limit : hm)) + 1"
                       @input="getPage()"
                       total-visible="10"
                     ></v-pagination>
@@ -441,7 +441,7 @@
           </v-data-table>
           <v-row class="align-center mt-2">
             <v-col cols="2" v-if="$props.user.role_id == 1">
-              <v-btn outlined rounded @click="exportXlsx" class="border">
+              <v-btn outlined rounded @click="getAllLidsForXls" class="border">
                 <v-icon left> mdi-file-excel </v-icon>
                 Скачать таблицу
               </v-btn>
@@ -723,6 +723,8 @@ export default {
     filterGroups: [],
     selected: [],
     lids: [],
+    lidsXls: [],
+    forXls: false,
     search: "",
     searchAll: "",
     filtertel: "",
@@ -956,6 +958,7 @@ export default {
     message: "",
     page: 0,
     limit: 100,
+    old_limit: 100,
     archSelected: [],
     sortBy: "",
     sortDesc: true,
@@ -1247,7 +1250,12 @@ export default {
       if (self.process > 1) {
         return;
       }
+      self.old_limit = self.limit;
+      if (self.forXls) {
+        self.limit = "all";
+      }
       self.loading = true;
+
       if (sortBy.length === 1) {
         data.sortBy = sortBy[0];
         data.sortDesc = sortDesc[0];
@@ -1321,9 +1329,9 @@ export default {
             // }
           }
 
-          self.lids = res.data.lids;
+          let d_lids = res.data.lids;
 
-          self.lids.map(function (e) {
+          d_lids.map(function (e) {
             if (e.updated_at) {
               e.date_updated = e.updated_at.substring(0, 10);
             }
@@ -1357,10 +1365,18 @@ export default {
               e.provider = "";
             }
           });
+          if (self.forXls) {
+            self.lidsXls = d_lids;
+            self.exportXlsx(self.old_limit);
+            self.limit = self.old_limit;
+            self.forXls = false;
+          } else {
+            self.lids = d_lids;
+          }
           self.loading = false;
           // self.filterLang = "";
           //self.filterGeo = "";
-          if (self.process > 1) {
+          if (self.process > 1 && !self.forXls) {
             console.log("time");
             self.process = 0;
             setTimeout(() => {
@@ -1423,9 +1439,17 @@ export default {
       });
     },
 
+    async getAllLidsForXls() {
+      const self = this;
+      self.forXls = true;
+
+      await self.getLids3();
+    },
+
     exportXlsx() {
       const self = this;
-      const obj = _.groupBy(self.lids, "status");
+
+      const obj = _.groupBy(self.lidsXls, "status");
       const lidsByStatus = Array.from(Object.keys(obj), (k) => [
         `${k}`,
         obj[k],
@@ -1444,6 +1468,8 @@ export default {
           lidsByStatus[i][0]
         ); // sheetAName is name of Worksheet
       }
+      self.lidsXls = [];
+
       // export Excel file
       XLSX.writeFile(wb, "book.xlsx"); // name of the file is 'book.xlsx'
     },
