@@ -199,7 +199,8 @@ class UsersController extends Controller
       $user->password = $password;
       $user->order = $data['order'];
       $user->save();
-      return response('User added', 200);
+
+      return response()->json(['message' => 'User added', 'user_id' => $user->id], 200);
     }
   }
 

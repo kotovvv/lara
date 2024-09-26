@@ -499,7 +499,9 @@ export default {
       }
       axios
         .post("/api/user/update", form_data)
-        .then((res) => {})
+        .then((res) => {
+          u.id = res.data.user_id;
+        })
         .catch((error) => console.log(error));
     },
     saveOffice(u) {
