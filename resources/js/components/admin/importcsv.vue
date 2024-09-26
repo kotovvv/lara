@@ -1595,6 +1595,31 @@ export default {
           self.importsProvLeads = response.data;
 
           if (self.importsProvLeads) {
+            if (self.$attrs.user.office_id > 0) {
+              let office_id = self.$attrs.user.office_id;
+              self.importsProvLeads = self.importsProvLeads.map((i) => {
+                let hm_json = JSON.parse(i.hm_json);
+                i.hmnew = hm_json.filter((f) => {
+                  return f.office_id == office_id;
+                })[0].hmnew;
+                i.hm = hm_json.filter((f) => {
+                  return f.office_id == office_id;
+                })[0].hm;
+                i.hmcb = hm_json.filter((f) => {
+                  return f.office_id == office_id;
+                })[0].hmcb;
+                i.hmdp = hm_json.filter((f) => {
+                  return f.office_id == office_id;
+                })[0].hmdp;
+                i.hmpnd = hm_json.filter((f) => {
+                  return f.office_id == office_id;
+                })[0].hmpnd;
+                i.hmpot = hm_json.filter((f) => {
+                  return f.office_id == office_id;
+                })[0].hmpot;
+                return i;
+              });
+            }
             self.importsProvLeads = self.importsProvLeads.map((ip) => {
               ip.group = ip.date + " " + ip.provider;
               return ip;
@@ -2186,6 +2211,7 @@ export default {
               hmdp,
               hmpnd,
               hmpot,
+              hm_json,
             }) => ({
               id,
               start,
@@ -2205,8 +2231,35 @@ export default {
               hmdp,
               hmpnd,
               hmpot,
+              hm_json,
             })
           );
+          if (self.$attrs.user.office_id > 0) {
+            let office_id = self.$attrs.user.office_id;
+            self.imports = self.imports.map((i) => {
+              let hm_json = JSON.parse(i.hm_json);
+              i.hmnew = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmnew;
+              i.hm = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hm;
+              i.hmcb = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmcb;
+              i.hmdp = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmdp;
+              i.hmpnd = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmpnd;
+              i.hmpot = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmpot;
+              return i;
+            });
+          }
+
           let a_prov = _.uniq(
             _.map(self.imports, (el) => {
               return el.provider_id;
