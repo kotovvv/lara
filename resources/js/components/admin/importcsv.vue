@@ -1598,25 +1598,27 @@ export default {
             if (self.$attrs.user.office_id > 0) {
               let office_id = self.$attrs.user.office_id;
               self.importsProvLeads = self.importsProvLeads.map((i) => {
-                let hm_json = JSON.parse(i.hm_json);
-                i.hmnew = hm_json.filter((f) => {
-                  return f.office_id == office_id;
-                })[0].hmnew;
-                i.hm = hm_json.filter((f) => {
-                  return f.office_id == office_id;
-                })[0].hm;
-                i.hmcb = hm_json.filter((f) => {
-                  return f.office_id == office_id;
-                })[0].hmcb;
-                i.hmdp = hm_json.filter((f) => {
-                  return f.office_id == office_id;
-                })[0].hmdp;
-                i.hmpnd = hm_json.filter((f) => {
-                  return f.office_id == office_id;
-                })[0].hmpnd;
-                i.hmpot = hm_json.filter((f) => {
-                  return f.office_id == office_id;
-                })[0].hmpot;
+                if (i.hm_json.length > 0) {
+                  let hm_json = JSON.parse(i.hm_json);
+                  i.hmnew = hm_json.filter((f) => {
+                    return f.office_id == office_id;
+                  })[0].hmnew;
+                  i.hm = hm_json.filter((f) => {
+                    return f.office_id == office_id;
+                  })[0].hm;
+                  i.hmcb = hm_json.filter((f) => {
+                    return f.office_id == office_id;
+                  })[0].hmcb;
+                  i.hmdp = hm_json.filter((f) => {
+                    return f.office_id == office_id;
+                  })[0].hmdp;
+                  i.hmpnd = hm_json.filter((f) => {
+                    return f.office_id == office_id;
+                  })[0].hmpnd;
+                  i.hmpot = hm_json.filter((f) => {
+                    return f.office_id == office_id;
+                  })[0].hmpot;
+                }
                 return i;
               });
             }
