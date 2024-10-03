@@ -1432,7 +1432,7 @@ export default {
       }
     },
     sumField(item, tab) {
-      return tab.reduce((a, b) => a + (b[item] || 0), 0);
+      return tab.reduce((a, b) => parseInt(a) + parseInt(b[item] || 0), 0);
     },
     importCallc() {
       const vm = this;
@@ -1597,9 +1597,13 @@ export default {
           if (self.importsProvLeads) {
             if (self.$attrs.user.office_id > 0) {
               let office_id = self.$attrs.user.office_id;
-              self.importsProvLeads = self.importsProvLeads.map((i) => {
-                if (i.hm_json.length > 0) {
-                  let hm_json = JSON.parse(i.hm_json);
+              self.importsProvLeads.map((i) => {
+                let hm_json = JSON.parse(i.hm_json);
+                if (
+                  hm_json.find((fi) => {
+                    return fi.office_id == office_id;
+                  })
+                ) {
                   i.hmnew = hm_json.filter((f) => {
                     return f.office_id == office_id;
                   })[0].hmnew;
@@ -1619,7 +1623,7 @@ export default {
                     return f.office_id == office_id;
                   })[0].hmpot;
                 }
-                return i;
+                // return i;
               });
             }
             self.importsProvLeads = self.importsProvLeads.map((ip) => {
