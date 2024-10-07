@@ -106,9 +106,15 @@ class ProvidersController extends Controller
     if (isset($data['password'])) {
       $data['password'] = Hash::make($data['password']);
     }
+    if (isset($data['id']) && isset($data['top']) && $data['top'] == 'true') {
+      if ($data['top'] == 'true') {
+        Lid::where('provider_id', $data['id'])->update(['top' => 1]);
+      } else {
+        Lid::where('provider_id', $data['id'])->update(['top' => 0]);
+      }
+    }
 
     if (isset($data['id']) && $data['id'] > 0) {
-
       unset($data['created_at']);
       $data['updated_at'] = Now();
       if (Provider::where('id', $data['id'])->update($data)) {

@@ -275,6 +275,9 @@ class LidsController extends Controller
           Log::where('lid_id', $lid['id'])->delete();
         }
       }
+      if ($lid['top'] == 1) {
+        $a_lid['top'] = 0;
+      }
       $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
 
 
@@ -284,6 +287,7 @@ class LidsController extends Controller
       $a_lid['text'] = isset($lid['text']) ? $lid['text'] : '';
       $a_lid['created_at'] = Now();
       unset($a_lid['office_id']);
+      unset($a_lid['top']);
 
       DB::table('logs')->insert($a_lid);
     }
@@ -507,7 +511,7 @@ class LidsController extends Controller
       });
     $response['hm'] = $q_leads->count();
 
-    $response['lids'] = $q_leads->orderBy('lids.created_at', 'desc')
+    $response['lids'] = $q_leads->orderBy('lids.top', 'desc')->orderBy('lids.created_at', 'desc')
       ->when($limit != 'all' && $page * $limit > $limit, function ($query) use ($limit, $page) {
         return $query->offset($limit * ($page - 1));
       })

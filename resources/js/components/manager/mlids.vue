@@ -920,6 +920,7 @@ export default {
       send.id = eli.id;
       send_el.id = eli.id;
       send_el.tel = eli.tel;
+      send_el.top = eli.top;
       send_el.text = self.text_message;
       send_el.status_id = self.selectedStatus;
       send_el.user_id = eli.user_id;

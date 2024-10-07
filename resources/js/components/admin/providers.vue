@@ -125,6 +125,9 @@
                         label="ApiKey"
                       ></v-text-field>
                     </v-col>
+                    <v-col cols="6">
+                      <v-switch v-model="editedItem.top" label="Top"></v-switch>
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -198,6 +201,7 @@ export default {
       office_id: [],
       user_id: 0,
       dup: 0,
+      top: 0,
     },
     defaultItem: {
       name: "",
@@ -207,6 +211,7 @@ export default {
       office_id: [],
       user_id: 0,
       dup: 0,
+      top: 0,
     },
     offices: [],
   }),
