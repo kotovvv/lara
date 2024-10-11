@@ -298,37 +298,37 @@
                 </template>
 
                 <template v-slot:item.hmrenew="{ item }">
-                  <div class="btn" @click.stop="changeFilterStatusClick(33)">
+                  <div class="btn" @click="changeFilterStatusClick(33)">
                     {{ item.hmrenew }}
                   </div>
                 </template>
                 <template v-slot:item.hmnew="{ item }">
-                  <div class="btn" @click.stop="changeFilterStatusClick(8)">
+                  <div class="btn" @click="changeFilterStatusClick(8)">
                     {{ item.hmnew }}
                   </div>
                 </template>
                 <template v-slot:item.hmcb="{ item }">
-                  <div class="btn" @click.stop="changeFilterStatusClick(9)">
+                  <div class="btn" @click="changeFilterStatusClick(9)">
                     {{ item.hmcb }}
                   </div>
                 </template>
                 <template v-slot:item.hmdp="{ item }">
-                  <div class="btn" @click.stop="changeFilterStatusClick(10)">
+                  <div class="btn" @click="changeFilterStatusClick(10)">
                     {{ item.hmdp }}
                   </div>
                 </template>
                 <template v-slot:item.hmpnd="{ item }">
-                  <div class="btn" @click.stop="changeFilterStatusClick(20)">
+                  <div class="btn" @click="changeFilterStatusClick(20)">
                     {{ item.hmpnd }}
                   </div>
                 </template>
                 <template v-slot:item.hmnoans="{ item }">
-                  <div class="btn" @click.stop="changeFilterStatusClick(7)">
+                  <div class="btn" @click="changeFilterStatusClick(7)">
                     {{ item.hmnoans }}
                   </div>
                 </template>
                 <template v-slot:item.hmnointerest="{ item }">
-                  <div class="btn" @click.stop="changeFilterStatusClick(12)">
+                  <div class="btn" @click="changeFilterStatusClick(12)">
                     {{ item.hmnointerest }}
                   </div>
                 </template>
