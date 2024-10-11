@@ -253,10 +253,13 @@
               </v-row>
             </v-col>
           </v-row>
-          <v-row style="height: 80vh; overflow-y: auto">
+          <!-- style="height: 80vh; overflow-y: auto" -->
+          <v-row>
             <v-col cols="6">
               <v-data-table
+                height="80vh"
                 :headers="import_headers"
+                :fixed-header="1"
                 item-key="id"
                 :items="filter_imports"
                 ref="importtable"
@@ -294,6 +297,41 @@
                   </v-row>
                 </template>
 
+                <template v-slot:item.hmrenew="{ item }">
+                  <div class="btn" @click.stop="changeFilterStatusClick(33)">
+                    {{ item.hmrenew }}
+                  </div>
+                </template>
+                <template v-slot:item.hmnew="{ item }">
+                  <div class="btn" @click.stop="changeFilterStatusClick(8)">
+                    {{ item.hmnew }}
+                  </div>
+                </template>
+                <template v-slot:item.hmcb="{ item }">
+                  <div class="btn" @click.stop="changeFilterStatusClick(9)">
+                    {{ item.hmcb }}
+                  </div>
+                </template>
+                <template v-slot:item.hmdp="{ item }">
+                  <div class="btn" @click.stop="changeFilterStatusClick(10)">
+                    {{ item.hmdp }}
+                  </div>
+                </template>
+                <template v-slot:item.hmpnd="{ item }">
+                  <div class="btn" @click.stop="changeFilterStatusClick(20)">
+                    {{ item.hmpnd }}
+                  </div>
+                </template>
+                <template v-slot:item.hmnoans="{ item }">
+                  <div class="btn" @click.stop="changeFilterStatusClick(7)">
+                    {{ item.hmnoans }}
+                  </div>
+                </template>
+                <template v-slot:item.hmnointerest="{ item }">
+                  <div class="btn" @click.stop="changeFilterStatusClick(12)">
+                    {{ item.hmnointerest }}
+                  </div>
+                </template>
                 <template v-slot:item.start="{ item }">
                   <div>{{ item.start.substring(0, 10) }}</div>
                   <div>{{ item.start.substring(11) }}</div>
@@ -1091,26 +1129,30 @@ export default {
       { text: "Афилятор", value: "afilyator" },
     ],
     import_headers: [
-      { text: "Дата час початку", value: "start", sortable: false },
-      // { text: "Дата час закінчення", value: "end" },
-      { text: "Поставщик", value: "provider", sortable: false },
-      // { text: "Баер", value: "baer" },
-      // { text: "Хто імпортував", value: "user" },
-      { text: "Сумма", value: "sum", sortable: false },
+      { text: "Дата", value: "start", sortable: false },
+      { text: "Сумма", value: "sum" },
       { text: "L/A", value: "cp", sortable: false },
-      { text: "Коментар", value: "message", sortable: false },
+      { text: "Коментарий", value: "message", sortable: false },
+      { text: "Total", value: "hm" },
+      { text: "ГЕО", value: "geo" },
+
       {
         text: "NEW",
         value: "hmnew",
-        sortable: false,
         class: "new",
         cellClass: "new fz17",
         align: "center",
       },
       {
+        text: "ReNew",
+        value: "hmrenew",
+        class: "renew",
+        cellClass: "renew fz17",
+        align: "center",
+      },
+      {
         text: "CallBack",
         value: "hmcb",
-        sortable: false,
         class: "callback",
         cellClass: "callback fz17",
         align: "center",
@@ -1118,7 +1160,6 @@ export default {
       {
         text: "Deposit",
         value: "hmdp",
-        sortable: false,
         class: "deposit",
         cellClass: "deposit fz17",
         align: "center",
@@ -1126,20 +1167,24 @@ export default {
       {
         text: "Pending",
         value: "hmpnd",
-        sortable: false,
         class: "pending",
         cellClass: "pending fz17",
         align: "center",
       },
       {
-        text: "Potential",
-        value: "hmpot",
-        sortable: false,
-        class: "potential",
-        cellClass: "potential fz17",
+        text: "NoAnswer",
+        value: "hmnoans",
+        class: "noans",
+        cellClass: "noans fz17",
         align: "center",
       },
-      { text: "Кол-во", value: "hm", sortable: false },
+      {
+        text: "NotInterest",
+        value: "hmnointerest",
+        class: "nointerest",
+        cellClass: "nointerest fz17",
+        align: "center",
+      },
       { text: "", value: "id", sortable: false },
     ],
     import_provider_headers: [
@@ -1422,6 +1467,10 @@ export default {
       } else {
         return true;
       }
+    },
+    changeFilterStatusClick(status_id) {
+      this.filter_status = [];
+      this.filter_status.push(status_id);
     },
     changeFilterStatus(status_id) {
       if (this.filter_status.includes(status_id)) {
@@ -2247,6 +2296,9 @@ export default {
               i.hmnew = hm_json.filter((f) => {
                 return f.office_id == office_id;
               })[0].hmnew;
+              i.hmrenew = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmrenew;
               i.hm = hm_json.filter((f) => {
                 return f.office_id == office_id;
               })[0].hm;
@@ -2262,6 +2314,12 @@ export default {
               i.hmpot = hm_json.filter((f) => {
                 return f.office_id == office_id;
               })[0].hmpot;
+              i.hmnoans = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmnoans;
+              i.hmnointerest = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmnointerest;
               return i;
             });
           }
@@ -2532,6 +2590,9 @@ export default {
 .new {
   background: #dde4e4ff;
 }
+.renew {
+  background: #c3f3ff;
+}
 .callback {
   background: #1d92f09f;
 }
@@ -2543,6 +2604,12 @@ export default {
 }
 .potential {
   background: #7fd74e;
+}
+.nointerest {
+  background: #a544d2b2;
+}
+.noans {
+  background: #efa0238c;
 }
 .text {
   font-size: unset;
