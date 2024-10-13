@@ -350,6 +350,7 @@ export default {
             .substring(0, 19)
             .replace("T", " ");
           info.end = response.data.date_end.substring(0, 19).replace("T", " ");
+          info.geo = response.data.geo;
         })
 
         .catch(function (error) {
@@ -430,6 +431,7 @@ export default {
         send.data = arr;
         ans_info = await self.newlids(send);
 
+        info.geo = ans_info.geo;
         if (info.start == "") {
           info.start = ans_info.start;
           info.end = ans_info.end;

@@ -259,7 +259,7 @@
               <v-data-table
                 height="80vh"
                 :headers="import_headers"
-                :fixed-header="1"
+                :fixed-header="true"
                 item-key="id"
                 :items="filter_imports"
                 ref="importtable"
@@ -1065,6 +1065,7 @@ import _ from "lodash";
 export default {
   name: "ImportCSV",
   data: () => ({
+    true: true,
     nameExists: false,
     errorMessages: [],
     hmmonth: 6,
@@ -1469,8 +1470,8 @@ export default {
       }
     },
     changeFilterStatusClick(status_id) {
-      this.filter_status = [];
-      this.filter_status.push(status_id);
+      this.filterStatusTabl = [];
+      this.filterStatusTabl.push(status_id);
     },
     changeFilterStatus(status_id) {
       if (this.filter_status.includes(status_id)) {
@@ -2070,6 +2071,7 @@ export default {
             info.end = response.data.date_end
               .substring(0, 19)
               .replace("T", " ");
+            info.geo = response.data.geo;
             info.provider_id = self.selectedProvider;
             info.user_id = self.$attrs.user.id;
             info.message = self.message;
@@ -2112,6 +2114,7 @@ export default {
             info.end = response.data.date_end
               .substring(0, 19)
               .replace("T", " ");
+            info.geo = response.data.geo;
             info.provider_id = self.selectedProvider;
             info.user_id = self.$attrs.user.id;
             info.message = self.message;
@@ -2267,6 +2270,7 @@ export default {
               hmpnd,
               hmpot,
               hm_json,
+              geo,
             }) => ({
               id,
               start,
@@ -2287,6 +2291,7 @@ export default {
               hmpnd,
               hmpot,
               hm_json,
+              geo,
             })
           );
           if (self.$attrs.user.office_id > 0) {

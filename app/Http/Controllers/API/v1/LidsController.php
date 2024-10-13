@@ -316,6 +316,7 @@ class LidsController extends Controller
     $res['date_start'] = date('Y-m-d H:i:s');
     $data = $request->all();
     $office_id = User::where('id', (int) $data['user_id'])->value('office_id');
+    $geo = '';
     //Debugbar::info($data['data']);
     $load_mess = '';
     if (isset($data['message'])) {
@@ -338,6 +339,7 @@ class LidsController extends Controller
       if (isset($lid['tel'])) {
         $n_lid->tel =  preg_replace('/[^0-9]/', '', $lid['tel']);
         $n_lid->client_geo = $this->getGeo($n_lid->tel);
+        $geo = $n_lid->client_geo;
         if (strlen($n_lid->tel) < 6) {
           continue;
         }
@@ -414,6 +416,7 @@ class LidsController extends Controller
       }
     }
     $res['date_end'] = date('Y-m-d H:i:s');
+    $res['geo'] = $geo;
     return response($res, 200);
   }
 
