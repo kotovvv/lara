@@ -206,6 +206,31 @@
                     </template>
                   </v-autocomplete>
                 </v-col>
+                <v-col cols="1">
+                  <v-autocomplete
+                    v-model="filter_geo"
+                    :items="i_geos"
+                    label="GEO"
+                    outlined
+                    rounded
+                    clearable="clearable"
+                  >
+                  </v-autocomplete>
+                </v-col>
+                <v-col cols="2">
+                  <v-col
+                    ><v-autocomplete
+                      v-model="search"
+                      :items="imports"
+                      item-text="message"
+                      item-value="message"
+                      append-icon="mdi-magnify"
+                      label="Поиск"
+                      outlined
+                      rounded
+                    ></v-autocomplete
+                  ></v-col>
+                </v-col>
                 <v-col cols="2">
                   <v-select
                     ref="resetStatus"
@@ -255,263 +280,262 @@
           </v-row>
           <!-- style="height: 80vh; overflow-y: auto" -->
           <v-row>
-            <v-col cols="6">
-              <v-data-table
-                height="80vh"
-                :headers="import_headers"
-                :fixed-header="true"
-                item-key="id"
-                :items="filter_imports"
-                ref="importtable"
-                show-select
-                :search="search"
-                v-model="importSelected"
-                @click:row="clickrow"
-                :footer-props="{
-                  'items-per-page-options': [],
-                  'items-per-page-text': '',
-                }"
-              >
-                <template v-slot:top="{ pagination, options, updateOptions }">
-                  <v-row>
-                    <v-col
-                      ><v-autocomplete
-                        v-model="search"
-                        :items="imports"
-                        item-text="message"
-                        item-value="message"
-                        append-icon="mdi-magnify"
-                        label="Поиск"
-                        hide-details
-                        outlined
-                      ></v-autocomplete
-                    ></v-col>
-                    <v-col>
-                      <!-- <v-data-footer
-                      :pagination="pagination"
-                      :options="options"
-                      @update:options="updateOptions"
-                      items-per-page-text=""
-                  /> -->
-                    </v-col>
-                  </v-row>
-                </template>
-
-                <template v-slot:item.hmrenew="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(33)">
-                    {{ item.hmrenew }}
-                  </div>
-                </template>
-                <template v-slot:item.hmnew="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(8)">
-                    {{ item.hmnew }}
-                  </div>
-                </template>
-                <template v-slot:item.hmcb="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(9)">
-                    {{ item.hmcb }}
-                  </div>
-                </template>
-                <template v-slot:item.hmdp="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(10)">
-                    {{ item.hmdp }}
-                  </div>
-                </template>
-                <template v-slot:item.hmpnd="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(20)">
-                    {{ item.hmpnd }}
-                  </div>
-                </template>
-                <template v-slot:item.hmnoans="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(7)">
-                    {{ item.hmnoans }}
-                  </div>
-                </template>
-                <template v-slot:item.hmnointerest="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(12)">
-                    {{ item.hmnointerest }}
-                  </div>
-                </template>
-                <template v-slot:item.start="{ item }">
-                  <div>{{ item.start.substring(0, 10) }}</div>
-                  <div>{{ item.start.substring(11) }}</div>
-                </template>
-                <template v-slot:item.provider="{ item }">
-                  <div>{{ item.provider }}</div>
-                  <div>{{ item.baer }}</div>
-                </template>
-                <template v-slot:item.message="{ item }">
-                  {{ item.message }}
-                  <v-icon small class="mr-2" @click.stop="editItem(item)">
-                    mdi-pencil
-                  </v-icon>
-                </template>
-                <template
-                  v-slot:item.id="{ item }"
-                  v-if="$attrs.user.office_id == 0"
-                >
-                  <v-btn @click.stop="deleteImport(item)" plain
-                    ><v-icon>mdi-delete</v-icon></v-btn
+            <v-tabs v-model="tabimport">
+              <v-tab value="files">Files</v-tab>
+              <v-tab value="api">API</v-tab>
+            </v-tabs>
+            <v-tabs-items v-model="tabimport">
+              <v-tab-item :key="files">
+                <v-col cols="12">
+                  <v-data-table
+                    height="80vh"
+                    :headers="import_headers"
+                    :fixed-header="true"
+                    item-key="id"
+                    :items="filter_imports"
+                    ref="importtable"
+                    show-select
+                    :search="search"
+                    v-model="importSelected"
+                    @click:row="clickrow"
+                    disable-pagination="true"
                   >
-                </template>
-              </v-data-table>
-            </v-col>
-            <v-col cols="6" style="margin-top: 3.5rem">
-              <table class="table">
-                <tbody>
-                  <tr>
-                    <td class="text-center" width="110">&nbsp;&nbsp;&nbsp;</td>
-                    <td width="140">Дата</td>
-                    <td width="150">Поставщик</td>
-                    <td class="text-center" width="150">Сумма</td>
-                    <td class="text-center" width="53">L/A</td>
-                    <td class="text new text-center" width="150">NEW</td>
-                    <td class="text callback text-center" width="150">
-                      Callback
-                    </td>
-                    <td class="text deposit text-center" width="150">
-                      Deposit
-                    </td>
-                    <td class="text pending text-center" width="150">
-                      Pending
-                    </td>
-                    <td class="text potential text-center" width="150">
-                      Potential
-                    </td>
-                    <td class="text-center" width="150">Кол-во</td>
-                    <td class="text-center">GEO</td>
-                  </tr>
-                </tbody>
-              </table>
-              <div style="max-height: 70vh; overflow-y: auto">
-                <v-expansion-panels accordion>
-                  <v-expansion-panel
-                    v-for="apigr in Object.keys(apigroup)"
-                    :key="apigr"
-                  >
-                    <v-expansion-panel-header>
-                      <table>
-                        <tbody>
-                          <tr>
-                            <td class="text-center" width="100">
-                              &nbsp;&nbsp;&nbsp;
-                            </td>
-                            <td width="140">
-                              {{ apigr.substring(0, 10) }}
-                            </td>
-                            <td class="overflow-hidden" width="150">
-                              {{ apigr.substring(10) }}
-                            </td>
-                            <td width="125">&nbsp;&nbsp;&nbsp;</td>
-                            <td width="53">&nbsp;</td>
-
-                            <td class="text new text-center" width="150">
-                              <span class="fz17">{{
-                                sumField("hmnew", apigroup[apigr])
-                              }}</span>
-                            </td>
-                            <td class="text callback text-center" width="150">
-                              <span class="fz17">{{
-                                sumField("hmcb", apigroup[apigr])
-                              }}</span>
-                            </td>
-                            <td class="text deposit text-center" width="150">
-                              <span class="fz17">{{
-                                sumField("hmdp", apigroup[apigr])
-                              }}</span>
-                            </td>
-                            <td class="text pending text-center" width="150">
-                              <span class="fz17">{{
-                                sumField("hmpnd", apigroup[apigr])
-                              }}</span>
-                            </td>
-                            <td class="text potential text-center" width="150">
-                              <span class="fz17">{{
-                                sumField("hmpot", apigroup[apigr])
-                              }}</span>
-                            </td>
-                            <td class="text text-center" width="110">
-                              <span class="fz17">{{
-                                sumField("hm", apigroup[apigr])
-                              }}</span>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <v-data-table
-                        :headers="import_provider_headers"
-                        hide-default-header
-                        item-key="id"
-                        :items="apigroup[apigr]"
-                        show-select
-                        v-model="importSelected"
-                        @click:row="clickrow"
-                        :footer-props="{
-                          'items-per-page-options': [],
-                          'items-per-page-text': '',
-                        }"
+                    <template v-slot:item.hmrenew="{ item }">
+                      <div class="btn" @click="changeFilterStatusClick(33)">
+                        {{ item.hmrenew }}
+                      </div>
+                    </template>
+                    <template v-slot:item.hmnew="{ item }">
+                      <div class="btn" @click="changeFilterStatusClick(8)">
+                        {{ item.hmnew }}
+                      </div>
+                    </template>
+                    <template v-slot:item.hmcb="{ item }">
+                      <div class="btn" @click="changeFilterStatusClick(9)">
+                        {{ item.hmcb }}
+                      </div>
+                    </template>
+                    <template v-slot:item.hmdp="{ item }">
+                      <div class="btn" @click="changeFilterStatusClick(10)">
+                        {{ item.hmdp }}
+                      </div>
+                    </template>
+                    <template v-slot:item.hmpnd="{ item }">
+                      <div class="btn" @click="changeFilterStatusClick(20)">
+                        {{ item.hmpnd }}
+                      </div>
+                    </template>
+                    <template v-slot:item.hmnoans="{ item }">
+                      <div class="btn" @click="changeFilterStatusClick(7)">
+                        {{ item.hmnoans }}
+                      </div>
+                    </template>
+                    <template v-slot:item.hmnointerest="{ item }">
+                      <div class="btn" @click="changeFilterStatusClick(12)">
+                        {{ item.hmnointerest }}
+                      </div>
+                    </template>
+                    <template v-slot:item.start="{ item }">
+                      <div>{{ item.start.substring(0, 10) }}</div>
+                      <div>{{ item.start.substring(11) }}</div>
+                    </template>
+                    <template v-slot:item.provider="{ item }">
+                      <div>{{ item.provider }}</div>
+                      <div>{{ item.baer }}</div>
+                    </template>
+                    <template v-slot:item.message="{ item }">
+                      {{ item.message }}
+                      <v-icon small class="mr-2" @click.stop="editItem(item)">
+                        mdi-pencil
+                      </v-icon>
+                    </template>
+                    <template
+                      v-slot:item.id="{ item }"
+                      v-if="$attrs.user.office_id == 0"
+                    >
+                      <v-btn @click.stop="deleteImport(item)" plain
+                        ><v-icon>mdi-delete</v-icon></v-btn
                       >
-                        <template v-slot:item.start="{ item }">
-                          <td width="150">
-                            {{ item.start }}
-                          </td>
-                        </template>
-                        <template v-slot:item.provider="{ item }">
-                          <td width="150">
-                            {{ item.provider }}
-                          </td>
-                        </template>
-                        <template v-slot:item.sum="{ item }">
-                          <td class="text-center" width="150">
-                            {{ item.sum
-                            }}<v-icon
-                              small
-                              class="mr-2"
-                              @click.stop="editItem(item)"
-                            >
-                              mdi-pencil
-                            </v-icon>
-                          </td>
-                        </template>
-                        <template v-slot:item.cp="{ item }">
-                          <td class="text-center" width="53">
-                            {{ item.cp }}
-                          </td>
-                        </template>
-                        <template v-slot:item.hmnew="{ item }">
-                          <td class="text-center new fz17" width="150">
-                            {{ item.hmnew }}
-                          </td>
-                        </template>
-                        <template v-slot:item.callback="{ item }">
-                          <td class="text-center callback fz17" width="150">
-                            {{ item.callback }}
-                          </td>
-                        </template>
-                        <template v-slot:item.deposit="{ item }">
-                          <td class="text-center deposit fz17" width="150">
-                            {{ item.deposit }}
-                          </td>
-                        </template>
-                        <template v-slot:item.potential="{ item }">
-                          <td class="text-center potential fz17" width="150">
-                            {{ item.potential }}
-                          </td>
-                        </template>
-                        <template v-slot:item.hm="{ item }">
-                          <td class="text-center" width="80">
-                            {{ item.hm }}
-                          </td>
-                        </template>
-                      </v-data-table>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-              </div>
-            </v-col>
-            <v-col cols="3"></v-col>
+                    </template>
+                  </v-data-table>
+                </v-col>
+              </v-tab-item>
+              <v-tab-item :key="api">
+                <v-col cols="12" style="margin-top: 3.5rem">
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <td class="text-center" width="110">
+                          &nbsp;&nbsp;&nbsp;
+                        </td>
+                        <td width="140">Дата</td>
+                        <td width="150">Поставщик</td>
+                        <td class="text-center" width="150">Сумма</td>
+                        <td class="text-center" width="53">L/A</td>
+                        <td class="text new text-center" width="150">NEW</td>
+                        <td class="text callback text-center" width="150">
+                          Callback
+                        </td>
+                        <td class="text deposit text-center" width="150">
+                          Deposit
+                        </td>
+                        <td class="text pending text-center" width="150">
+                          Pending
+                        </td>
+                        <td class="text potential text-center" width="150">
+                          Potential
+                        </td>
+                        <td class="text-center" width="150">Кол-во</td>
+                        <td class="text-center">GEO</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div style="max-height: 70vh; overflow-y: auto">
+                    <v-expansion-panels accordion>
+                      <v-expansion-panel
+                        v-for="apigr in Object.keys(apigroup)"
+                        :key="apigr"
+                      >
+                        <v-expansion-panel-header>
+                          <table>
+                            <tbody>
+                              <tr>
+                                <td class="text-center" width="100">
+                                  &nbsp;&nbsp;&nbsp;
+                                </td>
+                                <td width="140">
+                                  {{ apigr.substring(0, 10) }}
+                                </td>
+                                <td class="overflow-hidden" width="150">
+                                  {{ apigr.substring(10) }}
+                                </td>
+                                <td width="125">&nbsp;&nbsp;&nbsp;</td>
+                                <td width="53">&nbsp;</td>
+
+                                <td class="text new text-center" width="150">
+                                  <span class="fz17">{{
+                                    sumField("hmnew", apigroup[apigr])
+                                  }}</span>
+                                </td>
+                                <td
+                                  class="text callback text-center"
+                                  width="150"
+                                >
+                                  <span class="fz17">{{
+                                    sumField("hmcb", apigroup[apigr])
+                                  }}</span>
+                                </td>
+                                <td
+                                  class="text deposit text-center"
+                                  width="150"
+                                >
+                                  <span class="fz17">{{
+                                    sumField("hmdp", apigroup[apigr])
+                                  }}</span>
+                                </td>
+                                <td
+                                  class="text pending text-center"
+                                  width="150"
+                                >
+                                  <span class="fz17">{{
+                                    sumField("hmpnd", apigroup[apigr])
+                                  }}</span>
+                                </td>
+                                <td
+                                  class="text potential text-center"
+                                  width="150"
+                                >
+                                  <span class="fz17">{{
+                                    sumField("hmpot", apigroup[apigr])
+                                  }}</span>
+                                </td>
+                                <td class="text text-center" width="110">
+                                  <span class="fz17">{{
+                                    sumField("hm", apigroup[apigr])
+                                  }}</span>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </v-expansion-panel-header>
+                        <v-expansion-panel-content>
+                          <v-data-table
+                            :headers="import_provider_headers"
+                            hide-default-header
+                            item-key="id"
+                            :items="apigroup[apigr]"
+                            show-select
+                            v-model="importSelected"
+                            @click:row="clickrow"
+                            :footer-props="{
+                              'items-per-page-options': [],
+                              'items-per-page-text': '',
+                            }"
+                          >
+                            <template v-slot:item.start="{ item }">
+                              <td width="150">
+                                {{ item.start }}
+                              </td>
+                            </template>
+                            <template v-slot:item.provider="{ item }">
+                              <td width="150">
+                                {{ item.provider }}
+                              </td>
+                            </template>
+                            <template v-slot:item.sum="{ item }">
+                              <td class="text-center" width="150">
+                                {{ item.sum
+                                }}<v-icon
+                                  small
+                                  class="mr-2"
+                                  @click.stop="editItem(item)"
+                                >
+                                  mdi-pencil
+                                </v-icon>
+                              </td>
+                            </template>
+                            <template v-slot:item.cp="{ item }">
+                              <td class="text-center" width="53">
+                                {{ item.cp }}
+                              </td>
+                            </template>
+                            <template v-slot:item.hmnew="{ item }">
+                              <td class="text-center new fz17" width="150">
+                                {{ item.hmnew }}
+                              </td>
+                            </template>
+                            <template v-slot:item.callback="{ item }">
+                              <td class="text-center callback fz17" width="150">
+                                {{ item.callback }}
+                              </td>
+                            </template>
+                            <template v-slot:item.deposit="{ item }">
+                              <td class="text-center deposit fz17" width="150">
+                                {{ item.deposit }}
+                              </td>
+                            </template>
+                            <template v-slot:item.potential="{ item }">
+                              <td
+                                class="text-center potential fz17"
+                                width="150"
+                              >
+                                {{ item.potential }}
+                              </td>
+                            </template>
+                            <template v-slot:item.hm="{ item }">
+                              <td class="text-center" width="80">
+                                {{ item.hm }}
+                              </td>
+                            </template>
+                          </v-data-table>
+                        </v-expansion-panel-content>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                  </div>
+                </v-col>
+              </v-tab-item>
+            </v-tabs-items>
+
             <v-col cols="12" id="info_prov">
               {{ item.name }} {{ item.start }}
               <v-btn class="btn mx-1" @click="getHistory">История</v-btn>
@@ -1065,6 +1089,7 @@ import _ from "lodash";
 export default {
   name: "ImportCSV",
   data: () => ({
+    tabimport: "files",
     true: true,
     nameExists: false,
     errorMessages: [],
@@ -1286,6 +1311,7 @@ export default {
     filter_office: [],
     filterStatusTabl: [],
     filterOfficeTabl: [],
+    filter_geo: [],
     resetStatus: [],
     leads: [],
     email_tel: "email",
@@ -1401,8 +1427,9 @@ export default {
     filter_imports() {
       return this.imports.filter((i) => {
         return (
-          this.filter_import_provider.length == 0 ||
-          this.filter_import_provider.includes(i.provider_id)
+          (this.filter_import_provider.length == 0 ||
+            this.filter_import_provider.includes(i.provider_id)) &&
+          (!this.filter_geo.length || this.filter_geo.includes(i.geo))
         );
       });
     },
@@ -2167,7 +2194,38 @@ export default {
       if (item.end != undefined) {
         data.end = item.end;
       }
+      axios
+        .post("api/getlidsImportedProvider", data)
+        .then(function (response) {
+          self.leads = response.data;
+          self.leads.map(function (e) {
+            if (e.updated_at) {
+              e.date_updated = e.updated_at.substring(0, 10);
+            }
+            if (e.created_at) {
+              e.date_created = e.created_at.substring(0, 10);
+            }
+            try {
+              e.status =
+                self.statuses.find((s) => s.id == e.status_id).name || "";
+            } catch (error) {
+              e.status = "";
+            }
 
+            try {
+              e.provider = self.providers.find(
+                (p) => p.id == e.provider_id
+              ).name;
+            } catch (error) {
+              e.provider = "";
+            }
+          });
+          self.filterStatuses();
+          // self.loading = false;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
       axios
         .post("api/getlidsImportedProvider", data)
         .then(function (response) {
@@ -2200,6 +2258,12 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+      this.$nextTick(() => {
+        const element = document.getElementById("info_prov");
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      });
     },
     getOffices() {
       let self = this;
@@ -2292,6 +2356,11 @@ export default {
               hmpot,
               hm_json,
               geo,
+            })
+          );
+          self.i_geos = _.uniq(
+            _.map(self.imports, (el) => {
+              return el.geo;
             })
           );
           if (self.$attrs.user.office_id > 0) {
@@ -2592,29 +2661,37 @@ export default {
   font-size: 1.2rem;
   font-weight: bold;
 }
-.new {
-  background: #dde4e4ff;
+.new,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.new {
+  background: #dde4e4ff !important;
 }
-.renew {
-  background: #c3f3ff;
+.renew,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.renew {
+  background: #c3f3ff !important;
 }
-.callback {
-  background: #1d92f09f;
+.callback,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.callback {
+  background: #1d91f0 !important;
 }
-.deposit {
-  background: #21cb7bff;
+.deposit,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.deposit {
+  background: #21cb7bff !important;
 }
-.pending {
-  background: #a3adb7ff;
+.pending,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.pending {
+  background: #a3adb7ff !important;
 }
-.potential {
-  background: #7fd74e;
+.potential,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.potential {
+  background: #7fd74e !important;
 }
-.nointerest {
-  background: #a544d2b2;
+.nointerest,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.nointerest {
+  background: #a544d2 !important;
 }
-.noans {
-  background: #efa0238c;
+.noans,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.noans {
+  background: #efa123 !important;
 }
 .text {
   font-size: unset;
@@ -2625,10 +2702,17 @@ export default {
 .fz17 {
   font-size: 17px !important;
   font-weight: bold;
-  width: 182px;
+  /* width: 182px; */
 }
 .table td {
-  font-size: 0.75rem;
+  /* font-size: 0.75rem; */
+  font-size: 17px !important;
+}
+.v-data-table > .v-data-table__wrapper {
+  padding: 0 !important;
+}
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
+  font-size: 17px !important;
 }
 
 .v-expansion-panel-header {
