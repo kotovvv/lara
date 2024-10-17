@@ -2,15 +2,19 @@
   <v-container>
     <!-- Первый уровень: Provider -->
     <!-- :expanded.sync="expanded"
-    single-expand-->
-    show-expand
+    single-expand
+      @click:row="toggleExpand"
+    -->
+
     <v-data-table
-      :headers="eventHeaders"
-      :items="eventSummaries"
-      item-value="event"
+      :headers="providerHeaders"
+      :items="providerSummaries"
+      item-value="provider"
       id="eventTable"
+      show-expand
+      single-expand
+      :expanded.sync="expanded"
       class="elevation-1 common-table"
-      @click:row="expandRow"
     >
       <template v-slot:expanded-item="{ item }">
         <!-- Второй уровень: Даты -->
@@ -70,10 +74,10 @@
 export default {
   data() {
     return {
-      true: true,
+      expanded: [],
       // Заголовки для событий, дат и языков
-      eventHeaders: [
-        { text: "Event", value: "event", width: "150px" },
+      providerHeaders: [
+        { text: "Event", value: "provider", width: "150px" },
         { text: "NEW", value: "p1", width: "100px" },
         { text: "DEPOSIT", value: "p2", width: "100px" },
         { text: "PENDING", value: "p3", width: "100px" },
@@ -115,15 +119,15 @@ export default {
           align: "center",
         },
       ],
-      eventSummaries: [],
+      providerSummaries: [],
     };
   },
   methods: {
-    getEventSummaries() {
+    getproviderSummaries() {
       // Пример данных
       const data = [
         {
-          event: "Provider1",
+          provider: "Provider1",
           date: "05.10.24",
           lang: "PL",
           p1: 144,
@@ -132,7 +136,7 @@ export default {
           p4: 0,
         },
         {
-          event: "Provider1",
+          provider: "Provider1",
           date: "06.10.24",
           lang: "CZ",
           p1: 15,
@@ -141,7 +145,7 @@ export default {
           p4: 1,
         },
         {
-          event: "Provider1",
+          provider: "Provider1",
           date: "06.10.24",
           lang: "PL",
           p1: 0,
@@ -150,7 +154,7 @@ export default {
           p4: 128899,
         },
         {
-          event: "Provider 22",
+          provider: "Provider 22",
           date: "06.10.24",
           lang: "PL",
           p1: 5,
@@ -159,7 +163,7 @@ export default {
           p4: 0,
         },
         {
-          event: "Provider 22",
+          provider: "Provider 22",
           date: "06.10.24",
           lang: "CZ",
           p1: 50,
@@ -168,7 +172,7 @@ export default {
           p4: 9,
         },
         {
-          event: "Provider 22",
+          provider: "Provider 22",
           date: "07.10.24",
           lang: "CZ",
           p1: 51,
@@ -177,7 +181,16 @@ export default {
           p4: 10,
         },
         {
-          event: "Provider 22",
+          provider: "Provider 22",
+          date: "08.10.24",
+          lang: "CZ",
+          p1: 52,
+          p2: 6,
+          p3: 3,
+          p4: 11,
+        },
+        {
+          provider: "Provider 33",
           date: "08.10.24",
           lang: "CZ",
           p1: 52,
@@ -187,12 +200,12 @@ export default {
         },
       ];
 
-      const events = {};
+      const providers = {};
 
       data.forEach((row) => {
-        if (!events[row.event]) {
-          events[row.event] = {
-            event: row.event,
+        if (!providers[row.provider]) {
+          providers[row.provider] = {
+            provider: row.provider,
             p1: 0,
             p2: 0,
             p3: 0,
@@ -202,14 +215,14 @@ export default {
         }
 
         // Суммируем параметры для событий
-        events[row.event].p1 += row.p1;
-        events[row.event].p2 += row.p2;
-        events[row.event].p3 += row.p3;
-        events[row.event].p4 += row.p4;
+        providers[row.provider].p1 += row.p1;
+        providers[row.provider].p2 += row.p2;
+        providers[row.provider].p3 += row.p3;
+        providers[row.provider].p4 += row.p4;
 
         // Суммируем параметры для дат внутри события
-        if (!events[row.event].dates[row.date]) {
-          events[row.event].dates[row.date] = {
+        if (!providers[row.provider].dates[row.date]) {
+          providers[row.provider].dates[row.date] = {
             date: row.date,
             p1: 0,
             p2: 0,
@@ -218,13 +231,13 @@ export default {
             languages: [],
           };
         }
-        events[row.event].dates[row.date].p1 += row.p1;
-        events[row.event].dates[row.date].p2 += row.p2;
-        events[row.event].dates[row.date].p3 += row.p3;
-        events[row.event].dates[row.date].p4 += row.p4;
+        providers[row.provider].dates[row.date].p1 += row.p1;
+        providers[row.provider].dates[row.date].p2 += row.p2;
+        providers[row.provider].dates[row.date].p3 += row.p3;
+        providers[row.provider].dates[row.date].p4 += row.p4;
 
         // Добавляем языки с параметрами для каждой даты
-        events[row.event].dates[row.date].languages.push({
+        providers[row.provider].dates[row.date].languages.push({
           lang: row.lang,
           p1: row.p1,
           p2: row.p2,
@@ -234,30 +247,32 @@ export default {
       });
 
       // Преобразуем объект событий в массив
-      this.eventSummaries = Object.values(events).map((event) => {
-        event.dates = Object.values(event.dates);
-        return event;
+      this.providerSummaries = Object.values(providers).map((provider) => {
+        provider.dates = Object.values(provider.dates);
+        return provider;
       });
     },
-  },
-  toggleExpand(item) {
-    const index = this.expanded.indexOf(item);
-    if (index > -1) {
-      this.expanded.splice(index, 1);
-    } else {
-      this.expanded = [item];
-    }
-  },
-  expandRow(item, event) {
-    if (event.isExpanded) {
-      var index = this.expanded.findIndex((i) => i === item);
-      this.expanded.splice(index, 1);
-    } else {
-      this.expanded.push(item);
-    }
+    toggleExpand(item) {
+      const index = this.expanded.indexOf(item);
+      console.log(item, index);
+      if (index > -1) {
+        this.expanded.splice(index, 1);
+      } else {
+        this.expanded = [item];
+      }
+    },
+    expandRow(item, event) {
+      console.log(item, event);
+      if (event.isExpanded) {
+        var index = this.expanded.findIndex((i) => i === item);
+        this.expanded.splice(index, 1);
+      } else {
+        this.expanded.push(item);
+      }
+    },
   },
   created() {
-    this.getEventSummaries();
+    this.getproviderSummaries();
   },
 };
 </script>
