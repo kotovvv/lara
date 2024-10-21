@@ -1,62 +1,98 @@
 <template>
   <v-container>
-    <!-- Первый уровень: Provider -->
-    <!-- :expanded.sync="expanded"
-    single-expand
-      @click:row="toggleExpand"
-    -->
-
     <v-data-table
       :headers="providerHeaders"
       :items="providerSummaries"
-      item-value="provider"
-      id="eventTable"
+      item-value="id"
+      id="provTable"
       show-expand
       single-expand
-      :expanded.sync="expanded"
       class="elevation-1 common-table"
+      :expanded.sync="expanded"
+      @click:row="toggleExpand"
+      fixed-header
+      height="80vh"
     >
       <template v-slot:expanded-item="{ item }">
-        <!-- Второй уровень: Даты -->
-        <td colspan="6">
+        <td :colspan="providerHeaders.length + 1">
           <v-data-table
             :headers="dateHeaders"
             :items="item.dates"
             item-value="date"
             id="dateTable"
             show-expand
-            single-expand
+            hide-default-header
             hide-default-footer
-            class="common-table"
+            class="common-table date-table"
           >
             <template v-slot:expanded-item="{ item: dateItem }">
-              <!-- Третий уровень: Языки -->
-              <td colspan="6">
+              <td :colspan="providerHeaders.length + 1">
                 <v-data-table
-                  :headers="langHeaders"
-                  :items="dateItem.languages"
-                  item-value="lang"
-                  id="langTable"
+                  :headers="geoHeaders"
+                  :items="dateItem.geo"
+                  item-value="geo"
+                  id="geoTable"
+                  hide-default-header
                   hide-default-footer
                   class="common-table"
+                  v-model.lazy.trim="selected"
+                  show-select
                 >
-                  <template v-slot:item="{ item: langItem }">
+                  <template v-slot:item="{ item: geoItem }">
                     <tr>
-                      <td></td>
-                      <td class="text-start common-column">
-                        {{ langItem.lang }}
+                      <td>
+                        <v-checkbox v-model="selected"></v-checkbox>
                       </td>
-                      <td class="text-start common-column">
-                        {{ langItem.p1 }}
+                      <td class="text-start common-column" width="150px">
+                        {{ geoItem.geo }}
                       </td>
-                      <td class="text-start common-column">
-                        {{ langItem.p2 }}
+                      <td class="text-start common-column" width="100px">
+                        {{ geoItem.sp }}
                       </td>
-                      <td class="text-start common-column">
-                        {{ langItem.p3 }}
+                      <td class="text-center common-column" width="100px">
+                        {{ geoItem.sum }}
                       </td>
-                      <td class="text-center common-column green">
-                        {{ langItem.p4 }}
+                      <td class="text-center common-column new" width="100px">
+                        {{ geoItem.hmnew }}
+                      </td>
+                      <td class="text-center common-column renew" width="100px">
+                        {{ geoItem.hmrenew }}
+                      </td>
+                      <td
+                        class="text-center common-column callback"
+                        width="100px"
+                      >
+                        {{ geoItem.hmcb }}
+                      </td>
+                      <td
+                        class="text-center common-column deposit"
+                        width="100px"
+                      >
+                        {{ geoItem.hmdp }}
+                      </td>
+                      <td
+                        class="text-center common-column pending"
+                        width="100px"
+                      >
+                        {{ geoItem.hmpnd }}
+                      </td>
+                      <td
+                        class="text-center common-column potential"
+                        width="100px"
+                      >
+                        {{ geoItem.hmpot }}
+                      </td>
+                      <td class="text-center common-column noans" width="100px">
+                        {{ geoItem.hmnoans }}
+                      </td>
+                      <td
+                        class="text-center common-column nointerest"
+                        width="100px"
+                      >
+                        {{ geoItem.hmnointerest }}
+                      </td>
+                      <td class="text-center common-column" width="100px">
+                        {{ geoItem.hm }}
                       </td>
                     </tr>
                   </template>
@@ -71,51 +107,246 @@
 </template>
 
 <script>
+import { sum } from "lodash";
+import jsonData from "./Untitled-2.json";
+
 export default {
   data() {
     return {
+      search: "",
+      importProvSelected: [],
+      office_id: 1,
       expanded: [],
-      // Заголовки для событий, дат и языков
+      selected: [],
       providerHeaders: [
-        { text: "Event", value: "provider", width: "150px" },
-        { text: "NEW", value: "p1", width: "100px" },
-        { text: "DEPOSIT", value: "p2", width: "100px" },
-        { text: "PENDING", value: "p3", width: "100px" },
+        { text: "Provider", value: "provider", width: "100px" },
+        { text: "L|A", value: "", width: "100px", align: "center" },
+        { text: "Sum", value: "sum", width: "100px", align: "center" },
         {
-          text: "RENEW",
-          value: "p4",
+          text: "NEW",
+          value: "hmnew",
           width: "100px",
-          class: "green",
-          cellClass: "green",
+          class: "new",
+          cellClass: "new fz17",
+          align: "center",
+        },
+        {
+          text: "ReNEW",
+          value: "hmrenew",
+          width: "100px",
+          class: "renew",
+          cellClass: "renew fz17",
+          align: "center",
+        },
+        {
+          text: "CallBAck",
+          value: "hmcb",
+          width: "100px",
+          class: "callback",
+          cellClass: "callback fz17",
+          align: "center",
+        },
+        {
+          text: "Deposit",
+          value: "hmdp",
+          width: "100px",
+          class: "deposit",
+          cellClass: "deposit fz17",
+          align: "center",
+        },
+        {
+          text: "Pending",
+          value: "hmpnd",
+          width: "100px",
+          class: "pending",
+          cellClass: "pending fz17",
+          align: "center",
+        },
+        {
+          text: "Potential",
+          value: "hmpot",
+          width: "100px",
+          class: "potential",
+          cellClass: "potential fz17",
+          align: "center",
+        },
+        {
+          text: "NoAnswer",
+          value: "hmnoans",
+          width: "100px",
+          class: "noans",
+          cellClass: "noans fz17",
+          align: "center",
+        },
+        {
+          text: "NotInterest",
+          value: "hmnointerest",
+          width: "100px",
+          class: "nointerest",
+          cellClass: "nointerest fz17",
+          align: "center",
+        },
+        {
+          text: "Кол-во",
+          value: "hm",
+          width: "100px",
           align: "center",
         },
       ],
       dateHeaders: [
-        { text: "Date", value: "date", width: "150px" },
-        { text: "NEW", value: "p1", width: "100px" },
-        { text: "DEPOSIT", value: "p2", width: "100px" },
-        { text: "PENDING", value: "p3", width: "100px" },
         {
-          text: "RENEW",
-          value: "p4",
+          text: "Date",
+          value: "date",
           width: "100px",
-          class: "green",
-          cellClass: "green",
+        },
+        { text: "L|A", value: "", width: "100px", align: "center" },
+        { text: "Sum", value: "sum", width: "100px", align: "center" },
+        {
+          text: "NEW",
+          value: "hmnew",
+          width: "100px",
+          class: "new",
+          cellClass: "new fz17",
+          align: "center",
+        },
+        {
+          text: "ReNEW",
+          value: "hmrenew",
+          width: "100px",
+          class: "renew",
+          cellClass: "renew fz17",
+          align: "center",
+        },
+        {
+          text: "CB",
+          value: "hmcb",
+          width: "100px",
+          class: "callback",
+          cellClass: "callback fz17",
+          align: "center",
+        },
+        {
+          text: "DP",
+          value: "hmdp",
+          width: "100px",
+          class: "deposit",
+          cellClass: "deposit fz17",
+          align: "center",
+        },
+        {
+          text: "PND",
+          value: "hmpnd",
+          width: "100px",
+          class: "pending",
+          cellClass: "pending fz17",
+          align: "center",
+        },
+        {
+          text: "POT",
+          value: "hmpot",
+          width: "100px",
+          class: "potential",
+          cellClass: "potential fz17",
+          align: "center",
+        },
+        {
+          text: "NoAnswer",
+          value: "hmnoans",
+          width: "100px",
+          class: "noans",
+          cellClass: "noans fz17",
+          align: "center",
+        },
+        {
+          text: "NotInterest",
+          value: "hmnointerest",
+          width: "100px",
+          class: "nointerest",
+          cellClass: "nointerest fz17",
+          align: "center",
+        },
+        {
+          text: "HM",
+          value: "hm",
+          width: "100px",
+
           align: "center",
         },
       ],
-      langHeaders: [
-        { text: "", value: "lang" },
-        { text: "Lang", value: "lang", width: "150px" },
-        { text: "NEW", value: "p1", width: "100px" },
-        { text: "DEPOSIT", value: "p2", width: "100px" },
-        { text: "PENDING", value: "p3", width: "100px" },
+      geoHeaders: [
+        { text: "", value: "", width: "1px" },
+        { text: "GEO", value: "geo", width: "100px" },
+        { text: "Sum", value: "sum", width: "100px", align: "center" },
+        { text: "L|A", value: "cp", width: "100px", align: "center" },
         {
-          text: "RENEW",
-          value: "p4",
+          text: "NEW",
+          value: "hmnew",
           width: "100px",
-          class: "green",
-          cellClass: "green",
+          class: "new",
+          cellClass: "new fz17",
+          align: "center",
+        },
+        {
+          text: "ReNEW",
+          value: "hmrenew",
+          width: "100px",
+          class: "renew",
+          cellClass: "renew fz17",
+          align: "center",
+        },
+        {
+          text: "CB",
+          value: "hmcb",
+          width: "100px",
+          class: "callback",
+          cellClass: "callback fz17",
+          align: "center",
+        },
+        {
+          text: "DP",
+          value: "hmdp",
+          width: "100px",
+          class: "deposit",
+          cellClass: "deposit fz17",
+          align: "center",
+        },
+        {
+          text: "PND",
+          value: "hmpnd",
+          width: "100px",
+          class: "pending",
+          cellClass: "pending fz17",
+          align: "center",
+        },
+        {
+          text: "POT",
+          value: "hmpot",
+          width: "100px",
+          class: "potential",
+          cellClass: "potential fz17",
+          align: "center",
+        },
+        {
+          text: "NoAnswer",
+          value: "hmnoans",
+          width: "100px",
+          class: "noans",
+          cellClass: "noans fz17",
+          align: "center",
+        },
+        {
+          text: "NotInterest",
+          value: "hmnointerest",
+          width: "100px",
+          class: "nointerest",
+          cellClass: "nointerest fz17",
+          align: "center",
+        },
+        {
+          text: "HM",
+          value: "hm",
+          width: "100px",
+
           align: "center",
         },
       ],
@@ -124,151 +355,88 @@ export default {
   },
   methods: {
     getproviderSummaries() {
-      // Пример данных
-      const data = [
-        {
-          provider: "Provider1",
-          date: "05.10.24",
-          lang: "PL",
-          p1: 144,
-          p2: 21,
-          p3: 5,
-          p4: 0,
-        },
-        {
-          provider: "Provider1",
-          date: "06.10.24",
-          lang: "CZ",
-          p1: 15,
-          p2: 22234,
-          p3: 6,
-          p4: 1,
-        },
-        {
-          provider: "Provider1",
-          date: "06.10.24",
-          lang: "PL",
-          p1: 0,
-          p2: 2,
-          p3: 4,
-          p4: 128899,
-        },
-        {
-          provider: "Provider 22",
-          date: "06.10.24",
-          lang: "PL",
-          p1: 5,
-          p2: 3,
-          p3: 0,
-          p4: 0,
-        },
-        {
-          provider: "Provider 22",
-          date: "06.10.24",
-          lang: "CZ",
-          p1: 50,
-          p2: 4,
-          p3: 1,
-          p4: 9,
-        },
-        {
-          provider: "Provider 22",
-          date: "07.10.24",
-          lang: "CZ",
-          p1: 51,
-          p2: 5,
-          p3: 2,
-          p4: 10,
-        },
-        {
-          provider: "Provider 22",
-          date: "08.10.24",
-          lang: "CZ",
-          p1: 52,
-          p2: 6,
-          p3: 3,
-          p4: 11,
-        },
-        {
-          provider: "Provider 33",
-          date: "08.10.24",
-          lang: "CZ",
-          p1: 52,
-          p2: 6,
-          p3: 3,
-          p4: 11,
-        },
-      ];
-
+      const data = jsonData;
       const providers = {};
 
       data.forEach((row) => {
+        const hmData = JSON.parse(row.hm_json).find(
+          (hm) => hm.office_id === this.office_id
+        );
+        if (!hmData) return;
+
         if (!providers[row.provider]) {
           providers[row.provider] = {
+            id: row.provider_id, // Add a unique identifier
             provider: row.provider,
-            p1: 0,
-            p2: 0,
-            p3: 0,
-            p4: 0,
+            hmnew: 0,
+            hmcb: 0,
+            hmdp: 0,
+            hmpnd: 0,
+            hmpot: 0,
+            hm: 0,
+            sum: 0,
             dates: {},
           };
         }
 
-        // Суммируем параметры для событий
-        providers[row.provider].p1 += row.p1;
-        providers[row.provider].p2 += row.p2;
-        providers[row.provider].p3 += row.p3;
-        providers[row.provider].p4 += row.p4;
+        providers[row.provider].hmnew += parseInt(hmData.hmnew);
+        providers[row.provider].hmcb += parseInt(hmData.hmcb);
+        providers[row.provider].hmdp += parseInt(hmData.hmdp);
+        providers[row.provider].hmpnd += parseInt(hmData.hmpnd);
+        providers[row.provider].hmpot += parseInt(hmData.hmpot);
+        providers[row.provider].hm += parseInt(hmData.hm);
+        providers[row.provider].sum += parseInt(row.sum);
 
-        // Суммируем параметры для дат внутри события
         if (!providers[row.provider].dates[row.date]) {
           providers[row.provider].dates[row.date] = {
             date: row.date,
-            p1: 0,
-            p2: 0,
-            p3: 0,
-            p4: 0,
-            languages: [],
+            hmnew: 0,
+            hmcb: 0,
+            hmdp: 0,
+            hmpnd: 0,
+            hmpot: 0,
+            hm: 0,
+            sum: 0,
+            geo: [],
           };
         }
-        providers[row.provider].dates[row.date].p1 += row.p1;
-        providers[row.provider].dates[row.date].p2 += row.p2;
-        providers[row.provider].dates[row.date].p3 += row.p3;
-        providers[row.provider].dates[row.date].p4 += row.p4;
 
-        // Добавляем языки с параметрами для каждой даты
-        providers[row.provider].dates[row.date].languages.push({
-          lang: row.lang,
-          p1: row.p1,
-          p2: row.p2,
-          p3: row.p3,
-          p4: row.p4,
+        providers[row.provider].dates[row.date].hmnew += parseInt(hmData.hmnew);
+        providers[row.provider].dates[row.date].hmcb += parseInt(hmData.hmcb);
+        providers[row.provider].dates[row.date].hmdp += parseInt(hmData.hmdp);
+        providers[row.provider].dates[row.date].hmpnd += parseInt(hmData.hmpnd);
+        providers[row.provider].dates[row.date].hmpot += parseInt(hmData.hmpot);
+        providers[row.provider].dates[row.date].hm += parseInt(hmData.hm);
+        providers[row.provider].dates[row.date].sum += parseInt(row.sum);
+
+        providers[row.provider].dates[row.date].geo.push({
+          geo: row.geo,
+          cp: row.cp,
+          hmnew: parseInt(hmData.hmnew),
+          hmcb: parseInt(hmData.hmcb),
+          hmdp: parseInt(hmData.hmdp),
+          hmpnd: parseInt(hmData.hmpnd),
+          hmpot: parseInt(hmData.hmpot),
+          hm: parseInt(hmData.hm),
+          sum: parseInt(row.sum),
+          id: row.id,
         });
       });
 
-      // Преобразуем объект событий в массив
       this.providerSummaries = Object.values(providers).map((provider) => {
         provider.dates = Object.values(provider.dates);
         return provider;
       });
     },
     toggleExpand(item) {
-      const index = this.expanded.indexOf(item);
-      console.log(item, index);
-      if (index > -1) {
-        this.expanded.splice(index, 1);
+      console.log("Toggling expand for item:", item);
+      const itemId = item.id; // Use the unique identifier
+      if (this.expanded.includes(itemId)) {
+        this.expanded = this.expanded.filter((id) => id !== itemId);
       } else {
-        this.expanded = [item];
+        this.expanded = [itemId];
       }
-    },
-    expandRow(item, event) {
-      console.log(item, event);
-      if (event.isExpanded) {
-        var index = this.expanded.findIndex((i) => i === item);
-        this.expanded.splice(index, 1);
-      } else {
-        this.expanded.push(item);
-      }
+      console.log("Expanded state:", this.expanded);
     },
   },
   created() {
@@ -283,17 +451,17 @@ export default {
 }
 
 .common-column {
-  width: 100px; /* Фиксированная ширина */
+  width: 100px;
   text-align: center;
 }
 
 .v-data-table__wrapper {
-  overflow-x: hidden; /* Отключить горизонтальную прокрутку */
+  overflow-x: hidden;
 }
 
 .common-table .v-data-table-header th,
 .common-table td {
-  width: 100px; /* Устанавливаем одинаковую ширину для всех таблиц */
+  width: 100px;
   max-width: 100px;
 }
 
@@ -303,7 +471,69 @@ export default {
 .v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
   padding: 0;
 }
-.common-table .v-data-table-header {
-  display: none;
+/*.common-table .v-data-table-header {
+   display: none;
+}
+#provTable.common-table
+  > .v-data-table__wrapper
+  > table
+  > .v-data-table-header {
+  display: contents;
+}*/
+.new,
+.renew,
+.callback,
+.deposit,
+.pending,
+.potential .nointerest,
+.noans {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.new,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.new {
+  background: #dde4e4ff !important;
+}
+.renew,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.renew {
+  background: #c3f3ff !important;
+}
+.callback,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.callback {
+  background: #1d91f0 !important;
+}
+.deposit,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.deposit {
+  background: #21cb7bff !important;
+}
+.pending,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.pending {
+  background: #a3adb7ff !important;
+}
+.potential,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.potential {
+  background: #7fd74e !important;
+}
+.nointerest,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.nointerest {
+  background: #a544d2 !important;
+}
+.noans,
+.theme--light.v-data-table.v-data-table--fixed-header thead th.noans {
+  background: #efa123 !important;
+}
+.text {
+  font-size: unset;
+  padding: 1rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+.fz17 {
+  font-size: 17px !important;
+  font-weight: bold;
+  /* width: 182px; */
+}
+.v-data-table__expanded tr > td:nth-child(1) {
+  background: linear-gradient(to left, rgb(194, 194, 194) 5%, transparent 0);
 }
 </style>
