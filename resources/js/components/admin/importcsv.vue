@@ -10,7 +10,7 @@
     </v-snackbar>
     <v-tabs v-model="tab" background-color="primary" dark>
       <v-tab> XLSX </v-tab>
-      <v-tab> CSV </v-tab>
+      <v-tab> Imports </v-tab>
 
       <v-tab v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0">
         ВТС
@@ -213,7 +213,8 @@
                     label="GEO"
                     outlined
                     rounded
-                    clearable="clearable"
+                    :clearable="clearable"
+                    @change="filter_geo = filter_geo || []"
                   >
                   </v-autocomplete>
                 </v-col>
@@ -285,7 +286,7 @@
             <v-tab value="api">API</v-tab>
           </v-tabs>
           <v-tabs-items v-model="tabimport">
-            <v-tab-item :key="files">
+            <v-tab-item :key="'files'">
               <v-row>
                 <v-col cols="6">
                   <v-data-table
@@ -299,7 +300,7 @@
                     :search="search"
                     v-model="importSelected"
                     @click:row="clickrow"
-                    disable-pagination="true"
+                    disable-pagination
                   >
                     <template v-slot:item.hmrenew="{ item }">
                       <div class="btn" @click="changeFilterStatusClick(33)">
@@ -366,182 +367,149 @@
                   </v-data-table>
                 </v-col>
                 <v-col cols="6">
-                  <table class="table">
-                    <tbody>
-                      <tr>
-                        <td class="text-center" width="110">
-                          &nbsp;&nbsp;&nbsp;
-                        </td>
-                        <td width="140">Дата</td>
-                        <td width="150">Поставщик</td>
-                        <td class="text-center" width="150">Сумма</td>
-                        <td class="text-center" width="53">L/A</td>
-                        <td class="text new text-center" width="150">NEW</td>
-                        <td class="text callback text-center" width="150">
-                          Callback
-                        </td>
-                        <td class="text deposit text-center" width="150">
-                          Deposit
-                        </td>
-                        <td class="text pending text-center" width="150">
-                          Pending
-                        </td>
-                        <td class="text potential text-center" width="150">
-                          Potential
-                        </td>
-                        <td class="text-center" width="150">Кол-во</td>
-                        <td class="text-center">GEO</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div style="max-height: 70vh; overflow-y: auto">
-                    <v-expansion-panels accordion>
-                      <v-expansion-panel
-                        v-for="apigr in Object.keys(apigroup)"
-                        :key="apigr"
-                      >
-                        <v-expansion-panel-header>
-                          <table>
-                            <tbody>
-                              <tr>
-                                <td class="text-center" width="100">
-                                  &nbsp;&nbsp;&nbsp;
-                                </td>
-                                <td width="140">
-                                  {{ apigr.substring(0, 10) }}
-                                </td>
-                                <td class="overflow-hidden" width="150">
-                                  {{ apigr.substring(10) }}
-                                </td>
-                                <td width="125">&nbsp;&nbsp;&nbsp;</td>
-                                <td width="53">&nbsp;</td>
-
-                                <td class="text new text-center" width="150">
-                                  <span class="fz17">{{
-                                    sumField("hmnew", apigroup[apigr])
-                                  }}</span>
-                                </td>
-                                <td
-                                  class="text callback text-center"
-                                  width="150"
-                                >
-                                  <span class="fz17">{{
-                                    sumField("hmcb", apigroup[apigr])
-                                  }}</span>
-                                </td>
-                                <td
-                                  class="text deposit text-center"
-                                  width="150"
-                                >
-                                  <span class="fz17">{{
-                                    sumField("hmdp", apigroup[apigr])
-                                  }}</span>
-                                </td>
-                                <td
-                                  class="text pending text-center"
-                                  width="150"
-                                >
-                                  <span class="fz17">{{
-                                    sumField("hmpnd", apigroup[apigr])
-                                  }}</span>
-                                </td>
-                                <td
-                                  class="text potential text-center"
-                                  width="150"
-                                >
-                                  <span class="fz17">{{
-                                    sumField("hmpot", apigroup[apigr])
-                                  }}</span>
-                                </td>
-                                <td class="text text-center" width="110">
-                                  <span class="fz17">{{
-                                    sumField("hm", apigroup[apigr])
-                                  }}</span>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </v-expansion-panel-header>
-                        <v-expansion-panel-content>
-                          <v-data-table
-                            :headers="import_provider_headers"
-                            hide-default-header
-                            item-key="id"
-                            :items="apigroup[apigr]"
-                            show-select
-                            v-model="importSelected"
-                            @click:row="clickrow"
-                            :footer-props="{
-                              'items-per-page-options': [],
-                              'items-per-page-text': '',
-                            }"
-                          >
-                            <template v-slot:item.start="{ item }">
-                              <td width="150">
-                                {{ item.start }}
-                              </td>
-                            </template>
-                            <template v-slot:item.provider="{ item }">
-                              <td width="150">
-                                {{ item.provider }}
-                              </td>
-                            </template>
-                            <template v-slot:item.sum="{ item }">
-                              <td class="text-center" width="150">
-                                {{ item.sum
-                                }}<v-icon
-                                  small
-                                  class="mr-2"
-                                  @click.stop="editItem(item)"
-                                >
-                                  mdi-pencil
-                                </v-icon>
-                              </td>
-                            </template>
-                            <template v-slot:item.cp="{ item }">
-                              <td class="text-center" width="53">
-                                {{ item.cp }}
-                              </td>
-                            </template>
-                            <template v-slot:item.hmnew="{ item }">
-                              <td class="text-center new fz17" width="150">
-                                {{ item.hmnew }}
-                              </td>
-                            </template>
-                            <template v-slot:item.callback="{ item }">
-                              <td class="text-center callback fz17" width="150">
-                                {{ item.callback }}
-                              </td>
-                            </template>
-                            <template v-slot:item.deposit="{ item }">
-                              <td class="text-center deposit fz17" width="150">
-                                {{ item.deposit }}
-                              </td>
-                            </template>
-                            <template v-slot:item.potential="{ item }">
-                              <td
-                                class="text-center potential fz17"
-                                width="150"
+                  <v-data-table
+                    :headers="providerHeaders"
+                    :items="filteredProviderSummaries"
+                    item-value="id"
+                    id="provTable"
+                    show-expand
+                    single-expand
+                    class="elevation-1 common-table"
+                    :expanded.sync="expanded"
+                    @click:row="clickrowd"
+                    fixed-header
+                    height="80vh"
+                  >
+                    <template v-slot:expanded-item="{ item }">
+                      <td :colspan="providerHeaders.length + 1">
+                        <v-data-table
+                          :headers="dateHeaders"
+                          :items="item.dates"
+                          item-value="id"
+                          id="dateTable"
+                          show-expand
+                          single-expand
+                          :expanded.sync="expandedate"
+                          @click:row="toggleExpandDate"
+                          hide-default-header
+                          hide-default-footer
+                          class="common-table date-table"
+                        >
+                          <template v-slot:expanded-item="{ item: dateItem }">
+                            <td :colspan="providerHeaders.length + 1">
+                              <v-data-table
+                                :headers="geoHeaders"
+                                :items="dateItem.geo"
+                                item-value="id"
+                                item-key="id"
+                                id="geoTable"
+                                hide-default-header
+                                hide-default-footer
+                                class="common-table"
                               >
-                                {{ item.potential }}
-                              </td>
-                            </template>
-                            <template v-slot:item.hm="{ item }">
-                              <td class="text-center" width="80">
-                                {{ item.hm }}
-                              </td>
-                            </template>
-                          </v-data-table>
-                        </v-expansion-panel-content>
-                      </v-expansion-panel>
-                    </v-expansion-panels>
-                  </div>
+                                <template v-slot:item="{ item: geoItem }">
+                                  <tr>
+                                    <td>
+                                      <v-checkbox
+                                        :input-value="isSelected(geoItem)"
+                                        @change="clickGeo(geoItem)"
+                                      ></v-checkbox>
+                                    </td>
+                                    <td
+                                      class="text-start common-column"
+                                      width="100px"
+                                      @click="clickrow(geoItem)"
+                                    >
+                                      {{ geoItem.geo }}
+                                    </td>
+                                    <td
+                                      class="text-start common-column"
+                                      width="100px"
+                                    >
+                                      {{ geoItem.sp }}
+                                    </td>
+                                    <td
+                                      class="text-center common-column"
+                                      width="100px"
+                                    >
+                                      {{ geoItem.sum
+                                      }}<v-icon
+                                        small
+                                        class="mr-2"
+                                        @click.stop="editItem(geoItem)"
+                                      >
+                                        mdi-pencil
+                                      </v-icon>
+                                    </td>
+                                    <td
+                                      class="text-center common-column"
+                                      width="100px"
+                                    >
+                                      {{ geoItem.hm }}
+                                    </td>
+                                    <td
+                                      class="text-center common-column new"
+                                      width="100px"
+                                    >
+                                      {{ geoItem.hmnew }}
+                                    </td>
+                                    <td
+                                      class="text-center common-column renew"
+                                      width="100px"
+                                    >
+                                      {{ geoItem.hmrenew }}
+                                    </td>
+                                    <td
+                                      class="text-center common-column callback"
+                                      width="100px"
+                                    >
+                                      {{ geoItem.hmcb }}
+                                    </td>
+                                    <td
+                                      class="text-center common-column deposit"
+                                      width="100px"
+                                    >
+                                      {{ geoItem.hmdp }}
+                                    </td>
+                                    <td
+                                      class="text-center common-column pending"
+                                      width="100px"
+                                    >
+                                      {{ geoItem.hmpnd }}
+                                    </td>
+                                    <td
+                                      class="text-center common-column potential"
+                                      width="100px"
+                                    >
+                                      {{ geoItem.hmpot }}
+                                    </td>
+                                    <td
+                                      class="text-center common-column noans"
+                                      width="100px"
+                                    >
+                                      {{ geoItem.hmnoans }}
+                                    </td>
+                                    <td
+                                      class="text-center common-column nointerest"
+                                      width="100px"
+                                    >
+                                      {{ geoItem.hmnointerest }}
+                                    </td>
+                                  </tr>
+                                </template>
+                              </v-data-table>
+                            </td>
+                          </template>
+                        </v-data-table>
+                      </td>
+                    </template>
+                  </v-data-table>
                 </v-col>
               </v-row>
             </v-tab-item>
-            <v-tab-item :key="api">
+            <v-tab-item :key="'api'">
               <v-col cols="12">
-                <table class="table">
+                <!-- <table class="table">
                   <tbody>
                     <tr>
                       <td class="text-center" width="110">
@@ -698,7 +666,7 @@
                       </v-expansion-panel-content>
                     </v-expansion-panel>
                   </v-expansion-panels>
-                </div>
+                </div> -->
               </v-col>
             </v-tab-item>
           </v-tabs-items>
@@ -1255,6 +1223,8 @@ import _ from "lodash";
 export default {
   name: "ImportCSV",
   data: () => ({
+    true: true,
+    i_geos: [],
     tabimport: "files",
     true: true,
     nameExists: false,
@@ -1281,6 +1251,7 @@ export default {
     message: "",
     snackbar: false,
     loading: false,
+    activeRequests: 0,
     userid: null,
     users: [],
     providers: [],
@@ -1387,6 +1358,240 @@ export default {
       },
       { text: "", value: "id", sortable: false },
     ],
+    providerHeaders: [
+      { text: "Provider", value: "provider", width: "100px" },
+      { text: "L|A", value: "", width: "100px", align: "center" },
+      { text: "Sum", value: "sum", width: "100px", align: "center" },
+      {
+        text: "Total",
+        value: "hm",
+        width: "100px",
+        align: "center",
+      },
+      {
+        text: "NEW",
+        value: "hmnew",
+        width: "100px",
+        class: "new",
+        cellClass: "new fz17",
+        align: "center",
+      },
+      {
+        text: "ReNEW",
+        value: "hmrenew",
+        width: "100px",
+        class: "renew",
+        cellClass: "renew fz17",
+        align: "center",
+      },
+      {
+        text: "CallBAck",
+        value: "hmcb",
+        width: "100px",
+        class: "callback",
+        cellClass: "callback fz17",
+        align: "center",
+      },
+      {
+        text: "Deposit",
+        value: "hmdp",
+        width: "100px",
+        class: "deposit",
+        cellClass: "deposit fz17",
+        align: "center",
+      },
+      {
+        text: "Pending",
+        value: "hmpnd",
+        width: "100px",
+        class: "pending",
+        cellClass: "pending fz17",
+        align: "center",
+      },
+      {
+        text: "Potential",
+        value: "hmpot",
+        width: "100px",
+        class: "potential",
+        cellClass: "potential fz17",
+        align: "center",
+      },
+      {
+        text: "NoAnswer",
+        value: "hmnoans",
+        width: "100px",
+        class: "noans",
+        cellClass: "noans fz17",
+        align: "center",
+      },
+      {
+        text: "NotInterest",
+        value: "hmnointerest",
+        width: "100px",
+        class: "nointerest",
+        cellClass: "nointerest fz17",
+        align: "center",
+      },
+    ],
+    dateHeaders: [
+      {
+        text: "Date",
+        value: "date",
+        width: "100px",
+      },
+      { text: "L|A", value: "", width: "100px", align: "center" },
+      { text: "Sum", value: "sum", width: "100px", align: "center" },
+      {
+        text: "Total",
+        value: "hm",
+        width: "100px",
+
+        align: "center",
+      },
+      {
+        text: "NEW",
+        value: "hmnew",
+        width: "100px",
+        class: "new",
+        cellClass: "new fz17",
+        align: "center",
+      },
+      {
+        text: "ReNEW",
+        value: "hmrenew",
+        width: "100px",
+        class: "renew",
+        cellClass: "renew fz17",
+        align: "center",
+      },
+      {
+        text: "CB",
+        value: "hmcb",
+        width: "100px",
+        class: "callback",
+        cellClass: "callback fz17",
+        align: "center",
+      },
+      {
+        text: "DP",
+        value: "hmdp",
+        width: "100px",
+        class: "deposit",
+        cellClass: "deposit fz17",
+        align: "center",
+      },
+      {
+        text: "PND",
+        value: "hmpnd",
+        width: "100px",
+        class: "pending",
+        cellClass: "pending fz17",
+        align: "center",
+      },
+      {
+        text: "POT",
+        value: "hmpot",
+        width: "100px",
+        class: "potential",
+        cellClass: "potential fz17",
+        align: "center",
+      },
+      {
+        text: "NoAnswer",
+        value: "hmnoans",
+        width: "100px",
+        class: "noans",
+        cellClass: "noans fz17",
+        align: "center",
+      },
+      {
+        text: "NotInterest",
+        value: "hmnointerest",
+        width: "100px",
+        class: "nointerest",
+        cellClass: "nointerest fz17",
+        align: "center",
+      },
+    ],
+    geoHeaders: [
+      { text: "", value: "", width: "1px" },
+      { text: "GEO", value: "geo", width: "100px" },
+      { text: "Sum", value: "sum", width: "100px", align: "center" },
+      { text: "L|A", value: "cp", width: "100px", align: "center" },
+      {
+        text: "NEW",
+        value: "hmnew",
+        width: "100px",
+        class: "new",
+        cellClass: "new fz17",
+        align: "center",
+      },
+      {
+        text: "ReNEW",
+        value: "hmrenew",
+        width: "100px",
+        class: "renew",
+        cellClass: "renew fz17",
+        align: "center",
+      },
+      {
+        text: "CB",
+        value: "hmcb",
+        width: "100px",
+        class: "callback",
+        cellClass: "callback fz17",
+        align: "center",
+      },
+      {
+        text: "DP",
+        value: "hmdp",
+        width: "100px",
+        class: "deposit",
+        cellClass: "deposit fz17",
+        align: "center",
+      },
+      {
+        text: "PND",
+        value: "hmpnd",
+        width: "100px",
+        class: "pending",
+        cellClass: "pending fz17",
+        align: "center",
+      },
+      {
+        text: "POT",
+        value: "hmpot",
+        width: "100px",
+        class: "potential",
+        cellClass: "potential fz17",
+        align: "center",
+      },
+      {
+        text: "NoAnswer",
+        value: "hmnoans",
+        width: "100px",
+        class: "noans",
+        cellClass: "noans fz17",
+        align: "center",
+      },
+      {
+        text: "NotInterest",
+        value: "hmnointerest",
+        width: "100px",
+        class: "nointerest",
+        cellClass: "nointerest fz17",
+        align: "center",
+      },
+      {
+        text: "HM",
+        value: "hm",
+        width: "100px",
+
+        align: "center",
+      },
+    ],
+    providerSummaries: [],
+    // need del
     import_provider_headers: [
       { text: "Дата", value: "start", cellClass: "t1" },
       {
@@ -1443,7 +1648,7 @@ export default {
         width: "150px",
       },
       {
-        text: "Кол-во",
+        text: "Total",
         value: "hm",
         sortable: false,
         align: "center",
@@ -1545,6 +1750,7 @@ export default {
       sum: 0,
       cp: "L",
     },
+    editedIndex: -1,
     usersStatuses: [],
     drawer: false,
     history: [],
@@ -1556,6 +1762,7 @@ export default {
     redistributeOffice: null,
     apigroup: [],
     expanded: [],
+    expandedate: [],
     d_statuses: [],
     d_providers: [],
     d_offices: [],
@@ -1582,14 +1789,20 @@ export default {
     this.getStatuses();
   },
   computed: {
-    filteredLeads() {
-      return this.leads.filter((i) => {
-        return (
-          (!this.filterStatusTabl.length ||
-            this.filterStatusTabl.includes(i.status_id)) &&
-          (!this.filterOfficeTabl.length ||
-            this.filterOfficeTabl.includes(i.office))
-        );
+    filteredProviderSummaries() {
+      return this.providerSummaries.filter((provider) => {
+        // Check if the provider matches the selected providers
+        const providerMatch =
+          this.filter_import_provider.length === 0 ||
+          this.filter_import_provider.includes(provider.id);
+
+        // Check if any of the dates' geos match the selected geos
+        const geoMatch =
+          this.filter_geo.length === 0 ||
+          provider.dates.some((date) =>
+            date.geo.some((geo) => this.filter_geo.includes(geo.geo))
+          );
+        return providerMatch && geoMatch;
       });
     },
     filteredItems() {
@@ -1727,23 +1940,30 @@ export default {
     getHistory() {
       const self = this;
       self.loading = true;
+      this.activeRequests++;
       let data = {};
       data.id = self.item.id;
       data.message = self.item.message;
       axios
         .post("api/getHistory", data)
         .then(function (response) {
-          self.loading = false;
           self.history = response.data.history;
           self.historyStatus = response.data.statuses;
         })
         .catch(function (error) {
           console.log(error);
+        })
+        .finally(() => {
+          this.activeRequests--;
+          if (this.activeRequests === 0) {
+            this.loading = false;
+          }
         });
     },
     redistributeLids() {
       const self = this;
       let data = {};
+      self.activeRequests++;
       self.loading = true;
       data.lid_ids = this.lidsByOffice
         .find((f) => {
@@ -1769,7 +1989,7 @@ export default {
         .post("api/redistributeLids", data)
         .then(function (response) {
           self.message = `Переназначение успешно выполнено<br>Для Офиса: ${self.redistributeOffice}`;
-          self.loading = false;
+
           self.importSelected = [];
           self.lidsByOffice = [];
 
@@ -1778,6 +1998,12 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+        })
+        .finally(() => {
+          this.activeRequests--;
+          if (this.activeRequests === 0) {
+            this.loading = false;
+          }
         });
     },
     p_user_ids(user_ids) {
@@ -1791,6 +2017,7 @@ export default {
         this.redistributeLids();
         return;
       }
+      this.activeRequests++;
       self.loading = true;
 
       let data = {};
@@ -1819,7 +2046,7 @@ export default {
             .toString()}<br>Файлы: ${self.importSelected.map(({ message }) => {
             return message;
           })}`;
-          self.loading = false;
+
           self.importSelected = [];
 
           self.lidsByOffice = [];
@@ -1829,10 +2056,18 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+        })
+        .finally(() => {
+          this.activeRequests--;
+          if (this.activeRequests === 0) {
+            this.loading = false;
+          }
         });
     },
     ImportedProvLids() {
       const self = this;
+      self.activeRequests++;
+      self.loading = true;
       let datefrom = self.datetimeFrom,
         dateto = self.datetimeTo;
       if (self.takedates == 0) {
@@ -1846,41 +2081,16 @@ export default {
           self.importsProvLeads = response.data;
 
           if (self.importsProvLeads) {
-            if (self.$attrs.user.office_id > 0) {
-              let office_id = self.$attrs.user.office_id;
-              self.importsProvLeads.map((i) => {
-                let hm_json = JSON.parse(i.hm_json);
-                if (
-                  hm_json.find((fi) => {
-                    return fi.office_id == office_id;
-                  })
-                ) {
-                  i.hmnew = hm_json.filter((f) => {
-                    return f.office_id == office_id;
-                  })[0].hmnew;
-                  i.hm = hm_json.filter((f) => {
-                    return f.office_id == office_id;
-                  })[0].hm;
-                  i.hmcb = hm_json.filter((f) => {
-                    return f.office_id == office_id;
-                  })[0].hmcb;
-                  i.hmdp = hm_json.filter((f) => {
-                    return f.office_id == office_id;
-                  })[0].hmdp;
-                  i.hmpnd = hm_json.filter((f) => {
-                    return f.office_id == office_id;
-                  })[0].hmpnd;
-                  i.hmpot = hm_json.filter((f) => {
-                    return f.office_id == office_id;
-                  })[0].hmpot;
-                }
-                // return i;
-              });
-            }
-            self.importsProvLeads = self.importsProvLeads.map((ip) => {
-              ip.group = ip.date + " " + ip.provider;
-              return ip;
+            self.importsProvLeads.map((i) => {
+              if (!self.i_geos.includes(i.geo)) {
+                self.i_geos.push(i.geo);
+              }
             });
+            self.i_geos.sort();
+            // self.importsProvLeads = self.importsProvLeads.map((ip) => {
+            //   ip.group = ip.date + " " + ip.provider;
+            //   return ip;
+            // });
             self.importsProvLeads = _.orderBy(
               self.importsProvLeads,
               "date",
@@ -1898,10 +2108,104 @@ export default {
                 return a_prov.includes(i.id);
               })
             );
+
+            const providers = {};
+            const office_id = self.$attrs.user.office_id;
+
+            self.importsProvLeads.map((row) => {
+              const hmData = JSON.parse(row.hm_json).find(
+                (hm) => hm.office_id === office_id
+              );
+              if (!hmData) return;
+
+              if (!providers[row.provider]) {
+                providers[row.provider] = {
+                  id: row.provider_id, // Add a unique identifier
+                  provider: row.provider,
+                  hmnew: 0,
+                  hmcb: 0,
+                  hmdp: 0,
+                  hmpnd: 0,
+                  hmpot: 0,
+                  hm: 0,
+                  sum: 0,
+                  dates: {},
+                };
+              }
+
+              providers[row.provider].hmnew += parseInt(hmData.hmnew);
+              providers[row.provider].hmcb += parseInt(hmData.hmcb);
+              providers[row.provider].hmdp += parseInt(hmData.hmdp);
+              providers[row.provider].hmpnd += parseInt(hmData.hmpnd);
+              providers[row.provider].hmpot += parseInt(hmData.hmpot);
+              providers[row.provider].hm += parseInt(hmData.hm);
+              providers[row.provider].sum += parseInt(row.sum);
+
+              if (!providers[row.provider].dates[row.date]) {
+                providers[row.provider].dates[row.date] = {
+                  date: row.date,
+                  id: row.provider_id + row.date,
+                  hmnew: 0,
+                  hmcb: 0,
+                  hmdp: 0,
+                  hmpnd: 0,
+                  hmpot: 0,
+                  hm: 0,
+                  sum: 0,
+                  geo: [],
+                };
+              }
+
+              providers[row.provider].dates[row.date].hmnew += parseInt(
+                hmData.hmnew
+              );
+              providers[row.provider].dates[row.date].hmcb += parseInt(
+                hmData.hmcb
+              );
+              providers[row.provider].dates[row.date].hmdp += parseInt(
+                hmData.hmdp
+              );
+              providers[row.provider].dates[row.date].hmpnd += parseInt(
+                hmData.hmpnd
+              );
+              providers[row.provider].dates[row.date].hmpot += parseInt(
+                hmData.hmpot
+              );
+              providers[row.provider].dates[row.date].hm += parseInt(hmData.hm);
+              providers[row.provider].dates[row.date].sum += parseInt(row.sum);
+
+              providers[row.provider].dates[row.date].geo.push({
+                geo: row.geo,
+                cp: row.cp,
+                start: row.date,
+                provider_id: row.provider_id,
+                hmnew: parseInt(hmData.hmnew),
+                hmcb: parseInt(hmData.hmcb),
+                hmdp: parseInt(hmData.hmdp),
+                hmpnd: parseInt(hmData.hmpnd),
+                hmpot: parseInt(hmData.hmpot),
+                hm: parseInt(hmData.hm),
+                sum: parseInt(row.sum),
+                id: row.id,
+              });
+            });
+
+            self.providerSummaries = Object.values(providers).map(
+              (provider) => {
+                provider.dates = Object.values(provider.dates);
+                return provider;
+              }
+            );
           }
         })
         .catch(function (error) {
           console.log(error);
+        })
+        .finally(() => {
+          this.activeRequests--;
+          if (this.activeRequests === 0) {
+            this.loading = false;
+          }
         });
     },
     async deleteImport(item) {
@@ -2100,6 +2404,7 @@ export default {
     },
     checkEmails() {
       let vm = this;
+      vm.activeRequests++;
       vm.loading = true;
       vm.snackbar = false;
       vm.message = "";
@@ -2169,12 +2474,17 @@ export default {
             return a_offices.includes(i.id);
           });
 
-          vm.loading = false;
           vm.list_email = "";
           vm.files = [];
         })
         .catch(function (error) {
           console.log(error);
+        })
+        .finally(() => {
+          this.activeRequests--;
+          if (this.activeRequests === 0) {
+            this.loading = false;
+          }
         });
     },
     filterStatuses() {
@@ -2236,6 +2546,7 @@ export default {
     },
     putSelectedLidsDB() {
       let self = this;
+      self.activeRequests++;
       self.loading = true;
       let send = {};
       send.user_id = this.userid;
@@ -2260,7 +2571,7 @@ export default {
             }
             self.selected = [];
             self.getUsers();
-            self.loading = false;
+
             self.files = [];
             // save to imports db
             //======================
@@ -2286,6 +2597,12 @@ export default {
           })
           .catch(function (error) {
             console.log(error);
+          })
+          .finally(() => {
+            this.activeRequests--;
+            if (this.activeRequests === 0) {
+              this.loading = false;
+            }
           });
       } else if (
         (this.search !== "" || this.filtertel !== "") &&
@@ -2304,7 +2621,7 @@ export default {
             // self.getUsers();
             self.search = "";
             self.filtertel = "";
-            self.loading = false;
+
             // save to imports db
             //======================
             let info = {};
@@ -2331,6 +2648,12 @@ export default {
           })
           .catch(function (error) {
             console.log(error);
+          })
+          .finally(() => {
+            this.activeRequests--;
+            if (this.activeRequests === 0) {
+              this.loading = false;
+            }
           });
       }
       if (this.parse_csv.length == 0) {
@@ -2347,6 +2670,49 @@ export default {
 
       row.expand(!row.isExpanded);
     },
+    toggleExpandDate(item) {
+      const itemId = item.id; // Use the unique identifier
+      const expandedItem = this.expandedate.find(
+        (expandedItem) => expandedItem.id === itemId
+      );
+      if (expandedItem) {
+        this.expandedate = this.expandedate.filter(
+          (expandedItem) => expandedItem.id !== itemId
+        );
+      } else {
+        this.expandedate = [item];
+      }
+    },
+    toggleExpand(item) {
+      const itemId = item.id; // Use the unique identifier
+      const expandedItem = this.expanded.find(
+        (expandedItem) => expandedItem.id === itemId
+      );
+      if (expandedItem) {
+        this.expanded = this.expanded.filter(
+          (expandedItem) => expandedItem.id !== itemId
+        );
+      } else {
+        this.expanded = [item];
+      }
+    },
+    clickGeo(geoItem) {
+      const itemId = geoItem.id; // Use the unique identifier
+      const selectedItem = this.importSelected.find(
+        (item) => item.id === itemId
+      );
+      if (selectedItem) {
+        this.importSelected = this.importSelected.filter(
+          (item) => item.id !== itemId
+        );
+      } else {
+        this.importSelected.push(geoItem);
+      }
+    },
+    isSelected(geoItem) {
+      return this.importSelected.some((item) => item.id === geoItem.id);
+    },
+
     clickrow(item) {
       let self = this;
       let data = {};
@@ -2355,6 +2721,7 @@ export default {
       self.historyStatus = [];
       self.usersStatuses = [];
       self.history = [];
+      self.activeRequests++;
       self.loading = true;
       self.item = item;
       self.item.name = self.providers.find(
@@ -2399,7 +2766,15 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
+        })
+        .finally(() => {
+          this.activeRequests--;
+          if (this.activeRequests === 0) {
+            this.loading = false;
+          }
         });
+      this.activeRequests++;
+      this.loading = true;
       axios
         .post("api/getlidsImportedProvider", data)
         .then(function (response) {
@@ -2427,10 +2802,15 @@ export default {
             }
           });
           self.filterStatuses();
-          self.loading = false;
         })
         .catch(function (error) {
           console.log(error);
+        })
+        .finally(() => {
+          this.activeRequests--;
+          if (this.activeRequests === 0) {
+            this.loading = false;
+          }
         });
       this.$nextTick(() => {
         const element = document.getElementById("info_prov");
@@ -2477,6 +2857,7 @@ export default {
     },
     getImports() {
       let self = this;
+      self.activeRequests++;
       self.loading = true;
       let datefrom = self.datetimeFrom,
         dateto = self.datetimeTo;
@@ -2590,9 +2971,14 @@ export default {
           //   });
           // }
           self.ImportedProvLids();
-          self.loading = false;
         })
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(error))
+        .finally(() => {
+          this.activeRequests--;
+          if (this.activeRequests === 0) {
+            this.loading = false;
+          }
+        });
     },
     getUsers() {
       let self = this;
@@ -2625,19 +3011,26 @@ export default {
         .catch((error) => console.log(error));
     },
     editItem(item) {
+      console.log(item);
       this.editedItem = Object.assign({}, item);
       if (item.message != undefined) {
         this.editedIndex = this.imports.indexOf(item);
         this.setBaer();
       } else {
-        this.editedIndex = this.importsProvLeads.indexOf(item);
+        this.editedIndex = this.providerSummaries.findIndex((provider) =>
+          provider.dates.some((date) =>
+            date.geo.some((geo) => geo.id === item.id)
+          )
+        );
+
+        //this.editedIndex = this.importsProvLeads.indexOf(item);
       }
       this.dialog = true;
     },
     close() {
       this.dialog = false;
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedItem = {};
         this.editedIndex = -1;
       });
       this.errorMessages = [];
@@ -2649,11 +3042,24 @@ export default {
           this.saveLoads(this.editedItem);
           Object.assign(this.imports[this.editedIndex], this.editedItem);
         } else {
-          this.saveLoads(this.editedItem);
+          const provider = this.providerSummaries[this.editedIndex];
+          const dateIndex = provider.dates.findIndex((date) =>
+            date.geo.some((geo) => geo.id === this.editedItem.id)
+          );
+          const geoIndex = provider.dates[dateIndex].geo.findIndex(
+            (geo) => geo.id === this.editedItem.id
+          );
           Object.assign(
-            this.importsProvLeads[this.editedIndex],
+            this.providerSummaries[this.editedIndex].dates[dateIndex].geo[
+              geoIndex
+            ],
             this.editedItem
           );
+          this.saveLoads(this.editedItem);
+          // Object.assign(
+          //   this.importsProvLeads[this.editedIndex],
+          //   this.editedItem
+          // );
         }
       }
       this.close();
@@ -2828,10 +3234,13 @@ export default {
   justify-content: end;
 }
 .new,
+.renew,
 .callback,
 .deposit,
 .pending,
-.potential {
+.potential,
+.nointerest,
+.noans {
   font-size: 1.2rem;
   font-weight: bold;
 }
@@ -2913,5 +3322,34 @@ export default {
 }
 .status_wrp.active {
   box-shadow: 0px 0px 9.5px 5px rgb(0, 255, 98);
+}
+.common-table .v-data-table-header {
+  background-color: white;
+}
+
+.common-column {
+  width: 100px;
+  text-align: center;
+}
+
+.v-data-table__wrapper {
+  overflow-x: hidden;
+}
+
+.common-table .v-data-table-header th,
+.common-table td {
+  width: 100px;
+  max-width: 100px;
+}
+
+.common-table td {
+  white-space: nowrap;
+}
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
+  padding: 0;
+}
+.v-data-table__expanded tr > td:nth-child(1) {
+  background: linear-gradient(to left, rgb(194, 194, 194) 5%, transparent 0);
+  /* width: min-content; */
 }
 </style>
