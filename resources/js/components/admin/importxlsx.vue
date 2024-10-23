@@ -35,13 +35,16 @@
                   hide-default-header
                   hide-default-footer
                   class="common-table"
-                  v-model.lazy.trim="selected"
+                  v-model.lazy.trim="importSelected"
                   show-select
                 >
                   <template v-slot:item="{ item: geoItem }">
                     <tr>
                       <td>
-                        <v-checkbox v-model="selected"></v-checkbox>
+                        <v-checkbox
+                          v-model="importSelected"
+                          :value="geoItem"
+                        ></v-checkbox>
                       </td>
                       <td class="text-start common-column" width="150px">
                         {{ geoItem.geo }}
@@ -114,7 +117,7 @@ export default {
   data() {
     return {
       search: "",
-      importProvSelected: [],
+      importSelected: [],
       office_id: 1,
       expanded: [],
       selected: [],
@@ -412,6 +415,7 @@ export default {
         providers[row.provider].dates[row.date].geo.push({
           geo: row.geo,
           cp: row.cp,
+          provider_id: row.provider_id,
           hmnew: parseInt(hmData.hmnew),
           hmcb: parseInt(hmData.hmcb),
           hmdp: parseInt(hmData.hmdp),
@@ -535,5 +539,6 @@ export default {
 }
 .v-data-table__expanded tr > td:nth-child(1) {
   background: linear-gradient(to left, rgb(194, 194, 194) 5%, transparent 0);
+  width: min-content;
 }
 </style>
