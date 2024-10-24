@@ -304,42 +304,42 @@
                 disable-pagination
               >
                 <template v-slot:item.hmnew="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(8)">
+                  <div class="pointer" @click="changeFilterStatusClick(8)">
                     {{ item.hmnew }}
                   </div>
                 </template>
                 <template v-slot:item.hmrenew="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(33)">
+                  <div class="pointer" @click="changeFilterStatusClick(33)">
                     {{ item.hmrenew }}
                   </div>
                 </template>
                 <template v-slot:item.hmcb="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(9)">
+                  <div class="pointer" @click="changeFilterStatusClick(9)">
                     {{ item.hmcb }}
                   </div>
                 </template>
                 <template v-slot:item.hmdp="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(10)">
+                  <div class="pointer" @click="changeFilterStatusClick(10)">
                     {{ item.hmdp }}
                   </div>
                 </template>
                 <template v-slot:item.hmpnd="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(20)">
+                  <div class="pointer" @click="changeFilterStatusClick(20)">
                     {{ item.hmpnd }}
                   </div>
                 </template>
                 <template v-slot:item.hmpot="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(32)">
+                  <div class="pointer" @click="changeFilterStatusClick(32)">
                     {{ item.hmpot }}
                   </div>
                 </template>
                 <template v-slot:item.hmnoans="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(7)">
+                  <div class="pointer" @click="changeFilterStatusClick(7)">
                     {{ item.hmnoans }}
                   </div>
                 </template>
                 <template v-slot:item.hmnointerest="{ item }">
-                  <div class="btn" @click="changeFilterStatusClick(12)">
+                  <div class="pointer" @click="changeFilterStatusClick(12)">
                     {{ item.hmnointerest }}
                   </div>
                 </template>
@@ -361,9 +361,12 @@
                   v-slot:item.id="{ item }"
                   v-if="$attrs.user.office_id == 0"
                 >
-                  <v-btn @click.stop="deleteImport(item)" plain
-                    ><v-icon>mdi-delete</v-icon></v-btn
+                  <v-icon @click.stop="deleteImport(item)" size="medium"
+                    >mdi-delete</v-icon
                   >
+                  <!-- <v-btn @click.stop="deleteImport(item)" plain
+                    ><v-icon>mdi-delete</v-icon></v-btn
+                  > -->
                 </template>
               </v-data-table>
             </v-col>
@@ -419,7 +422,7 @@
                                   ></v-checkbox>
                                 </td>
                                 <td
-                                  class="text-start common-column pointer"
+                                  class="text-start common-column pointer pl-5"
                                   width="100px"
                                   @click="clickrow(geoItem)"
                                 >
@@ -439,14 +442,14 @@
                                   {{ geoItem.sum
                                   }}<v-icon
                                     small
-                                    class="mr-2"
+                                    style="position: absolute"
                                     @click.stop="editItem(geoItem)"
                                   >
                                     mdi-pencil
                                   </v-icon>
                                 </td>
                                 <td
-                                  class="text-center common-column pointer"
+                                  class="text-center common-column pointer fz17"
                                   width="100px"
                                   @click="clickrow(geoItem)"
                                 >
@@ -1330,11 +1333,12 @@ export default {
     ],
     import_headers: [
       { text: "Дата", value: "start", sortable: false },
-      { text: "Сумма", value: "sum" },
-      { text: "L/A", value: "cp", sortable: false },
+      { text: "Сумма", value: "sum", align: "center" },
+      { text: "Поставщик", value: "provider", sortable: false },
+      // { text: "L/A", value: "cp", sortable: false },
       { text: "Коментарий", value: "message", sortable: false },
-      { text: "Total", value: "hm" },
-      { text: "ГЕО", value: "geo" },
+      { text: "Total", value: "hm", cellСlass: "fz17", align: "center" },
+      { text: "ГЕО", value: "geo", align: "center" },
 
       {
         text: "NEW",
@@ -1380,29 +1384,35 @@ export default {
         align: "center",
       },
       {
-        text: "NoAnswer",
+        text: "NoAns",
         value: "hmnoans",
         class: "noans",
         cellClass: "noans fz17",
         align: "center",
       },
       {
-        text: "NotInterest",
+        text: "NotInt",
         value: "hmnointerest",
         class: "nointerest",
         cellClass: "nointerest fz17",
         align: "center",
       },
-      { text: "", value: "id", sortable: false },
+      { text: "", value: "id", align: "center", sortable: false },
     ],
     providerHeaders: [
-      { text: "Provider", value: "provider", width: "100px" },
+      {
+        text: "Provider",
+        value: "provider",
+        width: "100px",
+        cellClass: "fz17",
+      },
       { text: "L|A", value: "", width: "100px", align: "center" },
       { text: "Sum", value: "sum", width: "100px", align: "center" },
       {
         text: "Total",
         value: "hm",
         width: "100px",
+        cellClass: "fz17",
         align: "center",
       },
       {
@@ -1462,7 +1472,7 @@ export default {
         align: "center",
       },
       {
-        text: "NotInterest",
+        text: "NotInt",
         value: "hmnointerest",
         width: "100px",
         class: "nointerest",
@@ -1475,14 +1485,20 @@ export default {
         text: "Date",
         value: "date",
         width: "100px",
+        cellClass: "pl-2",
       },
       { text: "L|A", value: "", width: "100px", align: "center" },
-      { text: "Sum", value: "sum", width: "100px", align: "center" },
+      {
+        text: "Sum",
+        value: "sum",
+        width: "100px",
+        align: "center",
+      },
       {
         text: "Total",
         value: "hm",
         width: "100px",
-
+        cellClass: "fz17",
         align: "center",
       },
       {
@@ -1827,20 +1843,25 @@ export default {
   },
   computed: {
     filteredProviderSummaries() {
-      return this.providerSummaries.filter((provider) => {
-        // Check if the provider matches the selected providers
-        const providerMatch =
-          this.filter_import_provider.length === 0 ||
-          this.filter_import_provider.includes(provider.id);
+      return this.providerSummaries
+        .map((provider) => {
+          // Filter the dates to include only those with the selected geos
+          const filteredDates = provider.dates
+            .map((date) => {
+              const filteredGeos = date.geo.filter((geo) =>
+                this.filter_geo.includes(geo.geo)
+              );
+              return filteredGeos.length > 0
+                ? { ...date, geo: filteredGeos }
+                : null;
+            })
+            .filter((date) => date !== null);
 
-        // Check if any of the dates' geos match the selected geos
-        const geoMatch =
-          this.filter_geo.length === 0 ||
-          provider.dates.some((date) =>
-            date.geo.some((geo) => this.filter_geo.includes(geo.geo))
-          );
-        return providerMatch && geoMatch;
-      });
+          return filteredDates.length > 0
+            ? { ...provider, dates: filteredDates }
+            : null;
+        })
+        .filter((provider) => provider !== null);
     },
     filteredItems() {
       let reg = new RegExp("^" + this.filtertel);
@@ -3389,10 +3410,36 @@ export default {
   background: linear-gradient(to left, rgb(194, 194, 194) 5%, transparent 0);
   /* width: min-content; */
 }
+main
+  .theme--light.v-data-table
+  > .v-data-table__wrapper
+  > table
+  > tbody
+  > tr
+  > td:not(.v-data-table__mobile-row),
 .theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
   border-bottom: none !important;
   border: none !important;
 }
+.v-data-table
+  > .v-data-table__wrapper
+  tbody
+  tr.v-data-table__expanded__content {
+  box-shadow: none;
+}
+.v-data-table tbody tr {
+  box-shadow: none;
+}
+#provTable
+  > .v-data-table__wrapper
+  > table
+  > tbody
+  > tr:not(.v-data-table__expanded__content) {
+  border-top: 1px solid #9561e2;
+}
+/* #geoTable > .v-data-table__wrapper > table > tbody > tr > td:nth-child(1) {
+  background: none;
+} */
 .pointer {
   cursor: pointer;
 }
