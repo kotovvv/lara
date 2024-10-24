@@ -422,7 +422,7 @@
                                   ></v-checkbox>
                                 </td>
                                 <td
-                                  class="text-start common-column pointer pl-5"
+                                  class="text-start common-column pointer pl-8"
                                   width="100px"
                                   @click="clickrow(geoItem)"
                                 >
@@ -1485,7 +1485,7 @@ export default {
         text: "Date",
         value: "date",
         width: "100px",
-        cellClass: "pl-2",
+        cellClass: "pl-5",
       },
       { text: "L|A", value: "", width: "100px", align: "center" },
       {
@@ -1843,25 +1843,20 @@ export default {
   },
   computed: {
     filteredProviderSummaries() {
-      return this.providerSummaries
-        .map((provider) => {
-          // Filter the dates to include only those with the selected geos
-          const filteredDates = provider.dates
-            .map((date) => {
-              const filteredGeos = date.geo.filter((geo) =>
-                this.filter_geo.includes(geo.geo)
-              );
-              return filteredGeos.length > 0
-                ? { ...date, geo: filteredGeos }
-                : null;
-            })
-            .filter((date) => date !== null);
+      return this.providerSummaries.filter((provider) => {
+        // Check if the provider matches the selected providers
+        const providerMatch =
+          this.filter_import_provider.length === 0 ||
+          this.filter_import_provider.includes(provider.id);
 
-          return filteredDates.length > 0
-            ? { ...provider, dates: filteredDates }
-            : null;
-        })
-        .filter((provider) => provider !== null);
+        // Check if any of the dates' geos match the selected geos
+        const geoMatch =
+          this.filter_geo.length === 0 ||
+          provider.dates.some((date) =>
+            date.geo.some((geo) => this.filter_geo.includes(geo.geo))
+          );
+        return providerMatch && geoMatch;
+      });
     },
     filteredItems() {
       let reg = new RegExp("^" + this.filtertel);
@@ -3414,10 +3409,10 @@ export default {
 .v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
   padding: 0;
 }
-.v-data-table__expanded tr > td:nth-child(1) {
+/* .v-data-table__expanded tr > td:nth-child(1) {
   background: linear-gradient(to left, rgb(194, 194, 194) 5%, transparent 0);
-  /* width: min-content; */
-}
+
+} */
 main
   .theme--light.v-data-table
   > .v-data-table__wrapper
@@ -3450,5 +3445,14 @@ main
 } */
 .pointer {
   cursor: pointer;
+}
+#provTable > .v-data-table__wrapper > table > tbody > tr {
+  background: #e0e0e0;
+}
+#dateTable > .v-data-table__wrapper > table > tbody > tr {
+  background: #eeeeee;
+}
+#geoTable > .v-data-table__wrapper > table > tbody > tr {
+  background: #f5f5f5;
 }
 </style>
