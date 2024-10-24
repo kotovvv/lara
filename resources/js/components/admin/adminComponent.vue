@@ -61,6 +61,7 @@
 <script>
 const users = () => import("./users");
 const importcsv = () => import("./importcsv");
+const importcsvnew = () => import("./importcsvnew");
 const statusLid = () => import("./statusLid");
 // const workPlaces = () => import("./workPlaces");
 const providers = () => import("./providers");
@@ -85,6 +86,11 @@ export default {
         name: "importcsv",
         icon: "mdi-arrow-down-bold-box-outline",
       },
+      {
+        text: "Imports",
+        name: "importcsvnew",
+        icon: "mdi-arrow-down-bold-box-outline",
+      },
       { text: "Пользователи", name: "users", icon: "mdi-account" },
       {
         text: "Статусы лидов",
@@ -107,6 +113,7 @@ export default {
   computed: {
     adminComponent() {
       if (this.adminMenu == "importcsv") return importcsv;
+      if (this.adminMenu == "importcsvnew") return importcsvnew;
       if (this.adminMenu == "users") return users;
       if (this.adminMenu == "statusLid") return statusLid;
       // if (this.adminMenu == "workPlaces") return workPlaces;
