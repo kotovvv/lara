@@ -2376,6 +2376,7 @@ export default {
       //   obj[k],
       // ]);
       var wb = XLSX.utils.book_new(); // make Workbook of Excel
+      var wbuni = XLSX.utils.book_new();
 
       if (self.email_tel === "tel") {
         unique = self.out_db.map((i) => ({
@@ -2420,6 +2421,7 @@ export default {
 
       window["unique"] = XLSX.utils.json_to_sheet(unique);
       XLSX.utils.book_append_sheet(wb, window["unique"], "unique");
+      XLSX.utils.book_append_sheet(wbuni, window["unique"], "unique");
 
       window["list"] = XLSX.utils.json_to_sheet(self.filtereduplicate_leads);
       XLSX.utils.book_append_sheet(wb, window["list"], "duplicate");
@@ -2459,6 +2461,12 @@ export default {
           new Date().toDateString() +
           ".xlsx"
       ); // name of the file is 'book.xlsx'
+      if (unique.length) {
+        XLSX.writeFile(
+          wbuni,
+          unique.length + "-un_" + new Date().toDateString() + ".xlsx"
+        );
+      }
     },
     checkEmails() {
       let vm = this;
