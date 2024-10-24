@@ -281,235 +281,272 @@
           </v-row>
           <!-- style="height: 80vh; overflow-y: auto" -->
 
-          <v-tabs v-model="tabimport">
+          <!-- <v-tabs v-model="tabimport">
             <v-tab value="files">Files</v-tab>
             <v-tab value="api">API</v-tab>
           </v-tabs>
           <v-tabs-items v-model="tabimport">
-            <v-tab-item :key="'files'">
-              <v-row>
-                <v-col cols="6">
-                  <v-data-table
-                    height="80vh"
-                    :headers="import_headers"
-                    :fixed-header="true"
-                    item-key="id"
-                    :items="filter_imports"
-                    ref="importtable"
-                    show-select
-                    :search="search"
-                    v-model="importSelected"
-                    @click:row="clickrow"
-                    disable-pagination
+            <v-tab-item :key="'files'"> -->
+          <v-row>
+            <v-col cols="6">
+              <v-data-table
+                height="80vh"
+                :headers="import_headers"
+                :fixed-header="true"
+                item-key="id"
+                :items="filter_imports"
+                ref="importtable"
+                show-select
+                :search="search"
+                v-model="importSelected"
+                @click:row="clickrow"
+                hide-default-footer
+                disable-pagination
+              >
+                <template v-slot:item.hmnew="{ item }">
+                  <div class="btn" @click="changeFilterStatusClick(8)">
+                    {{ item.hmnew }}
+                  </div>
+                </template>
+                <template v-slot:item.hmrenew="{ item }">
+                  <div class="btn" @click="changeFilterStatusClick(33)">
+                    {{ item.hmrenew }}
+                  </div>
+                </template>
+                <template v-slot:item.hmcb="{ item }">
+                  <div class="btn" @click="changeFilterStatusClick(9)">
+                    {{ item.hmcb }}
+                  </div>
+                </template>
+                <template v-slot:item.hmdp="{ item }">
+                  <div class="btn" @click="changeFilterStatusClick(10)">
+                    {{ item.hmdp }}
+                  </div>
+                </template>
+                <template v-slot:item.hmpnd="{ item }">
+                  <div class="btn" @click="changeFilterStatusClick(20)">
+                    {{ item.hmpnd }}
+                  </div>
+                </template>
+                <template v-slot:item.hmpot="{ item }">
+                  <div class="btn" @click="changeFilterStatusClick(32)">
+                    {{ item.hmpot }}
+                  </div>
+                </template>
+                <template v-slot:item.hmnoans="{ item }">
+                  <div class="btn" @click="changeFilterStatusClick(7)">
+                    {{ item.hmnoans }}
+                  </div>
+                </template>
+                <template v-slot:item.hmnointerest="{ item }">
+                  <div class="btn" @click="changeFilterStatusClick(12)">
+                    {{ item.hmnointerest }}
+                  </div>
+                </template>
+                <template v-slot:item.start="{ item }">
+                  <div>{{ item.start.substring(0, 10) }}</div>
+                  <div>{{ item.start.substring(11) }}</div>
+                </template>
+                <template v-slot:item.provider="{ item }">
+                  <div>{{ item.provider }}</div>
+                  <div>{{ item.baer }}</div>
+                </template>
+                <template v-slot:item.message="{ item }">
+                  {{ item.message }}
+                  <v-icon small class="mr-2" @click.stop="editItem(item)">
+                    mdi-pencil
+                  </v-icon>
+                </template>
+                <template
+                  v-slot:item.id="{ item }"
+                  v-if="$attrs.user.office_id == 0"
+                >
+                  <v-btn @click.stop="deleteImport(item)" plain
+                    ><v-icon>mdi-delete</v-icon></v-btn
                   >
-                    <template v-slot:item.hmrenew="{ item }">
-                      <div class="btn" @click="changeFilterStatusClick(33)">
-                        {{ item.hmrenew }}
-                      </div>
-                    </template>
-                    <template v-slot:item.hmnew="{ item }">
-                      <div class="btn" @click="changeFilterStatusClick(8)">
-                        {{ item.hmnew }}
-                      </div>
-                    </template>
-                    <template v-slot:item.hmcb="{ item }">
-                      <div class="btn" @click="changeFilterStatusClick(9)">
-                        {{ item.hmcb }}
-                      </div>
-                    </template>
-                    <template v-slot:item.hmdp="{ item }">
-                      <div class="btn" @click="changeFilterStatusClick(10)">
-                        {{ item.hmdp }}
-                      </div>
-                    </template>
-                    <template v-slot:item.hmpnd="{ item }">
-                      <div class="btn" @click="changeFilterStatusClick(20)">
-                        {{ item.hmpnd }}
-                      </div>
-                    </template>
-                    <template v-slot:item.hmpot="{ item }">
-                      <div class="btn" @click="changeFilterStatusClick(32)">
-                        {{ item.hmpot }}
-                      </div>
-                    </template>
-                    <template v-slot:item.hmnoans="{ item }">
-                      <div class="btn" @click="changeFilterStatusClick(7)">
-                        {{ item.hmnoans }}
-                      </div>
-                    </template>
-                    <template v-slot:item.hmnointerest="{ item }">
-                      <div class="btn" @click="changeFilterStatusClick(12)">
-                        {{ item.hmnointerest }}
-                      </div>
-                    </template>
-                    <template v-slot:item.start="{ item }">
-                      <div>{{ item.start.substring(0, 10) }}</div>
-                      <div>{{ item.start.substring(11) }}</div>
-                    </template>
-                    <template v-slot:item.provider="{ item }">
-                      <div>{{ item.provider }}</div>
-                      <div>{{ item.baer }}</div>
-                    </template>
-                    <template v-slot:item.message="{ item }">
-                      {{ item.message }}
-                      <v-icon small class="mr-2" @click.stop="editItem(item)">
-                        mdi-pencil
-                      </v-icon>
-                    </template>
-                    <template
-                      v-slot:item.id="{ item }"
-                      v-if="$attrs.user.office_id == 0"
+                </template>
+              </v-data-table>
+            </v-col>
+            <v-col cols="6">
+              <v-data-table
+                :headers="providerHeaders"
+                :items="filteredProviderSummaries"
+                item-value="id"
+                id="provTable"
+                show-expand
+                single-expand
+                hide-default-footer
+                class="elevation-1 common-table"
+                :expanded.sync="expanded"
+                @click:row="clickrowd"
+                fixed-header
+                height="80vh"
+                disable-pagination
+              >
+                <template v-slot:expanded-item="{ item }">
+                  <td :colspan="providerHeaders.length + 1">
+                    <v-data-table
+                      :headers="dateHeaders"
+                      :items="item.dates"
+                      item-value="id"
+                      id="dateTable"
+                      show-expand
+                      single-expand
+                      :expanded.sync="expandedate"
+                      @click:row="toggleExpandDate"
+                      hide-default-header
+                      hide-default-footer
+                      class="common-table date-table"
                     >
-                      <v-btn @click.stop="deleteImport(item)" plain
-                        ><v-icon>mdi-delete</v-icon></v-btn
-                      >
-                    </template>
-                  </v-data-table>
-                </v-col>
-                <v-col cols="6">
-                  <v-data-table
-                    :headers="providerHeaders"
-                    :items="filteredProviderSummaries"
-                    item-value="id"
-                    id="provTable"
-                    show-expand
-                    single-expand
-                    class="elevation-1 common-table"
-                    :expanded.sync="expanded"
-                    @click:row="clickrowd"
-                    fixed-header
-                    height="80vh"
-                  >
-                    <template v-slot:expanded-item="{ item }">
-                      <td :colspan="providerHeaders.length + 1">
-                        <v-data-table
-                          :headers="dateHeaders"
-                          :items="item.dates"
-                          item-value="id"
-                          id="dateTable"
-                          show-expand
-                          single-expand
-                          :expanded.sync="expandedate"
-                          @click:row="toggleExpandDate"
-                          hide-default-header
-                          hide-default-footer
-                          class="common-table date-table"
-                        >
-                          <template v-slot:expanded-item="{ item: dateItem }">
-                            <td :colspan="providerHeaders.length + 1">
-                              <v-data-table
-                                :headers="geoHeaders"
-                                :items="dateItem.geo"
-                                item-value="id"
-                                item-key="id"
-                                id="geoTable"
-                                hide-default-header
-                                hide-default-footer
-                                class="common-table"
-                              >
-                                <template v-slot:item="{ item: geoItem }">
-                                  <tr>
-                                    <td>
-                                      <v-checkbox
-                                        :input-value="isSelected(geoItem)"
-                                        @change="clickGeo(geoItem)"
-                                      ></v-checkbox>
-                                    </td>
-                                    <td
-                                      class="text-start common-column"
-                                      width="100px"
-                                      @click="clickrow(geoItem)"
-                                    >
-                                      {{ geoItem.geo }}
-                                    </td>
-                                    <td
-                                      class="text-start common-column"
-                                      width="100px"
-                                    >
-                                      {{ geoItem.sp }}
-                                    </td>
-                                    <td
-                                      class="text-center common-column"
-                                      width="100px"
-                                    >
-                                      {{ geoItem.sum
-                                      }}<v-icon
-                                        small
-                                        class="mr-2"
-                                        @click.stop="editItem(geoItem)"
-                                      >
-                                        mdi-pencil
-                                      </v-icon>
-                                    </td>
-                                    <td
-                                      class="text-center common-column"
-                                      width="100px"
-                                    >
-                                      {{ geoItem.hm }}
-                                    </td>
-                                    <td
-                                      class="text-center common-column new"
-                                      width="100px"
-                                    >
-                                      {{ geoItem.hmnew }}
-                                    </td>
-                                    <td
-                                      class="text-center common-column renew"
-                                      width="100px"
-                                    >
-                                      {{ geoItem.hmrenew }}
-                                    </td>
-                                    <td
-                                      class="text-center common-column callback"
-                                      width="100px"
-                                    >
-                                      {{ geoItem.hmcb }}
-                                    </td>
-                                    <td
-                                      class="text-center common-column deposit"
-                                      width="100px"
-                                    >
-                                      {{ geoItem.hmdp }}
-                                    </td>
-                                    <td
-                                      class="text-center common-column pending"
-                                      width="100px"
-                                    >
-                                      {{ geoItem.hmpnd }}
-                                    </td>
-                                    <td
-                                      class="text-center common-column potential"
-                                      width="100px"
-                                    >
-                                      {{ geoItem.hmpot }}
-                                    </td>
-                                    <td
-                                      class="text-center common-column noans"
-                                      width="100px"
-                                    >
-                                      {{ geoItem.hmnoans }}
-                                    </td>
-                                    <td
-                                      class="text-center common-column nointerest"
-                                      width="100px"
-                                    >
-                                      {{ geoItem.hmnointerest }}
-                                    </td>
-                                  </tr>
-                                </template>
-                              </v-data-table>
-                            </td>
-                          </template>
-                        </v-data-table>
-                      </td>
-                    </template>
-                  </v-data-table>
-                </v-col>
-              </v-row>
-            </v-tab-item>
+                      <template v-slot:expanded-item="{ item: dateItem }">
+                        <td :colspan="providerHeaders.length + 1">
+                          <v-data-table
+                            :headers="geoHeaders"
+                            :items="dateItem.geo"
+                            item-value="id"
+                            item-key="id"
+                            id="geoTable"
+                            hide-default-header
+                            hide-default-footer
+                            class="common-table"
+                          >
+                            <template v-slot:item="{ item: geoItem }">
+                              <tr>
+                                <td>
+                                  <v-checkbox
+                                    :input-value="isSelected(geoItem)"
+                                    @change="clickGeo(geoItem)"
+                                  ></v-checkbox>
+                                </td>
+                                <td
+                                  class="text-start common-column pointer"
+                                  width="100px"
+                                  @click="clickrow(geoItem)"
+                                >
+                                  {{ geoItem.geo }}
+                                </td>
+                                <td
+                                  class="text-start common-column pointer"
+                                  width="100px"
+                                  @click="clickrow(geoItem)"
+                                >
+                                  {{ geoItem.sp }}
+                                </td>
+                                <td
+                                  class="text-center common-column pointer"
+                                  width="100px"
+                                >
+                                  {{ geoItem.sum
+                                  }}<v-icon
+                                    small
+                                    class="mr-2"
+                                    @click.stop="editItem(geoItem)"
+                                  >
+                                    mdi-pencil
+                                  </v-icon>
+                                </td>
+                                <td
+                                  class="text-center common-column pointer"
+                                  width="100px"
+                                  @click="clickrow(geoItem)"
+                                >
+                                  {{ geoItem.hm }}
+                                </td>
+                                <td
+                                  class="text-center common-column new pointer"
+                                  width="100px"
+                                  @click="
+                                    changeFilterStatusClick(8);
+                                    clickrow(geoItem);
+                                  "
+                                >
+                                  {{ geoItem.hmnew }}
+                                </td>
+                                <td
+                                  class="text-center common-column renew pointer"
+                                  width="100px"
+                                  @click="
+                                    changeFilterStatusClick(33);
+                                    clickrow(geoItem);
+                                  "
+                                >
+                                  {{ geoItem.hmrenew }}
+                                </td>
+                                <td
+                                  class="text-center common-column callback pointer"
+                                  width="100px"
+                                  @click="
+                                    changeFilterStatusClick(9);
+                                    clickrow(geoItem);
+                                  "
+                                >
+                                  {{ geoItem.hmcb }}
+                                </td>
+                                <td
+                                  class="text-center common-column deposit pointer"
+                                  width="100px"
+                                  @click="
+                                    changeFilterStatusClick(10);
+                                    clickrow(geoItem);
+                                  "
+                                >
+                                  {{ geoItem.hmdp }}
+                                </td>
+                                <td
+                                  class="text-center common-column pending pointer"
+                                  width="100px"
+                                  @click="
+                                    changeFilterStatusClick(20);
+                                    clickrow(geoItem);
+                                  "
+                                >
+                                  {{ geoItem.hmpnd }}
+                                </td>
+                                <td
+                                  class="text-center common-column potential pointer"
+                                  width="100px"
+                                  @click="
+                                    changeFilterStatusClick(32);
+                                    clickrow(geoItem);
+                                  "
+                                >
+                                  {{ geoItem.hmpot }}
+                                </td>
+                                <td
+                                  class="text-center common-column noans pointer"
+                                  width="100px"
+                                  @click="
+                                    changeFilterStatusClick(7);
+                                    clickrow(geoItem);
+                                  "
+                                >
+                                  {{ geoItem.hmnoans }}
+                                </td>
+                                <td
+                                  class="text-center common-column nointerest pointer"
+                                  width="100px"
+                                  @click="
+                                    changeFilterStatusClick(12);
+                                    clickrow(geoItem);
+                                  "
+                                >
+                                  {{ geoItem.hmnointerest }}
+                                </td>
+                              </tr>
+                            </template>
+                          </v-data-table>
+                        </td>
+                      </template>
+                    </v-data-table>
+                  </td>
+                </template>
+              </v-data-table>
+            </v-col>
+          </v-row>
+          <!--    </v-tab-item>
             <v-tab-item :key="'api'">
               <v-col cols="12">
-                <!-- <table class="table">
+                 <table class="table">
                   <tbody>
                     <tr>
                       <td class="text-center" width="110">
@@ -666,10 +703,10 @@
                       </v-expansion-panel-content>
                     </v-expansion-panel>
                   </v-expansion-panels>
-                </div> -->
+                </div>
               </v-col>
             </v-tab-item>
-          </v-tabs-items>
+          </v-tabs-items>-->
 
           <v-col cols="12" id="info_prov">
             {{ item.name }} {{ item.start }}
@@ -3351,5 +3388,12 @@ export default {
 .v-data-table__expanded tr > td:nth-child(1) {
   background: linear-gradient(to left, rgb(194, 194, 194) 5%, transparent 0);
   /* width: min-content; */
+}
+.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th {
+  border-bottom: none !important;
+  border: none !important;
+}
+.pointer {
+  cursor: pointer;
 }
 </style>
