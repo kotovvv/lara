@@ -2887,45 +2887,7 @@ export default {
             this.loading = false;
           }
         });
-      this.activeRequests++;
-      this.loading = true;
-      axios
-        .post("api/getlidsImportedProvider", data)
-        .then(function (response) {
-          self.leads = response.data;
-          self.leads.map(function (e) {
-            if (e.updated_at) {
-              e.date_updated = e.updated_at.substring(0, 10);
-            }
-            if (e.created_at) {
-              e.date_created = e.created_at.substring(0, 10);
-            }
-            try {
-              e.status =
-                self.statuses.find((s) => s.id == e.status_id).name || "";
-            } catch (error) {
-              e.status = "";
-            }
 
-            try {
-              e.provider = self.providers.find(
-                (p) => p.id == e.provider_id
-              ).name;
-            } catch (error) {
-              e.provider = "";
-            }
-          });
-          self.filterStatuses();
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .finally(() => {
-          this.activeRequests--;
-          if (this.activeRequests === 0) {
-            this.loading = false;
-          }
-        });
       this.$nextTick(() => {
         const element = document.getElementById("info_prov");
         if (element) {
