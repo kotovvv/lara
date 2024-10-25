@@ -373,7 +373,7 @@
             <v-col cols="6">
               <v-data-table
                 :headers="providerHeaders"
-                :items="filteredProviderSummaries"
+                :items="filter_importsProvLeads"
                 item-value="id"
                 id="provTable"
                 show-expand
@@ -1843,21 +1843,51 @@ export default {
   },
   computed: {
     filteredProviderSummaries() {
-      return this.providerSummaries.filter((provider) => {
-        // Check if the provider matches the selected providers
-        const providerMatch =
-          this.filter_import_provider.length === 0 ||
-          this.filter_import_provider.includes(provider.id);
-
-        // Check if any of the dates' geos match the selected geos
-        const geoMatch =
-          this.filter_geo.length === 0 ||
-          provider.dates.some((date) =>
-            date.geo.some((geo) => this.filter_geo.includes(geo.geo))
-          );
-        return providerMatch && geoMatch;
+      // Assuming providerSummaries is populated from importsProvLeads
+      const providerSummaries = this.importsProvLeads.map((lead) => {
+        // Transform lead data to provider summary format
+        return {
+          provider_id: lead.provider_id,
+          dates: lead.dates.map((date) => ({
+            date: date.date,
+            geo: date.geo.map((geo) => ({
+              geo: geo.geo,
+              // other geo properties...
+            })),
+          })),
+        };
       });
+
+      return providerSummaries
+        .filter((provider) => {
+          // Check if the provider matches the selected providers
+          const providerMatch =
+            this.filter_import_provider.length === 0 ||
+            this.filter_import_provider.includes(provider.provider_id);
+
+          if (!providerMatch) {
+            return false;
+          }
+
+          // Filter the dates to include only those with the selected geos
+          const filteredDates = provider.dates
+            .map((date) => {
+              const filteredGeos = date.geo.filter((geo) =>
+                this.filter_geo.includes(geo.geo)
+              );
+              return filteredGeos.length > 0
+                ? { ...date, geo: filteredGeos }
+                : null;
+            })
+            .filter((date) => date !== null);
+
+          return filteredDates.length > 0
+            ? { ...provider, dates: filteredDates }
+            : null;
+        })
+        .filter((provider) => provider !== null);
     },
+
     filteredItems() {
       let reg = new RegExp("^" + this.filtertel);
       return this.parse_csv.filter((i) => {
@@ -1875,12 +1905,14 @@ export default {
     },
     filter_importsProvLeads() {
       if (this.importsProvLeads.length) {
-        return this.importsProvLeads.filter((i) => {
+        let prov = this.importsProvLeads.filter((i) => {
           return (
-            this.filter_import_provider.length == 0 ||
-            this.filter_import_provider.includes(i.provider_id)
+            (this.filter_import_provider.length == 0 ||
+              this.filter_import_provider.includes(i.provider_id)) &&
+            (!this.filter_geo.length || this.filter_geo.includes(i.geo))
           );
         });
+        return this.provsumm(prov);
       }
     },
     filtereduplicate_leads() {
@@ -1897,6 +1929,83 @@ export default {
     },
   },
   methods: {
+    provsumm(prov) {
+      const providers = {};
+      const office_id = this.$attrs.user.office_id;
+
+      prov.map((row) => {
+        const hmData = JSON.parse(row.hm_json).find(
+          (hm) => hm.office_id === office_id
+        );
+        if (!hmData) return;
+
+        if (!providers[row.provider]) {
+          providers[row.provider] = {
+            id: row.provider_id, // Add a unique identifier
+            provider: row.provider,
+            hmnew: 0,
+            hmcb: 0,
+            hmdp: 0,
+            hmpnd: 0,
+            hmpot: 0,
+            hm: 0,
+            sum: 0,
+            dates: {},
+          };
+        }
+
+        providers[row.provider].hmnew += parseInt(hmData.hmnew);
+        providers[row.provider].hmcb += parseInt(hmData.hmcb);
+        providers[row.provider].hmdp += parseInt(hmData.hmdp);
+        providers[row.provider].hmpnd += parseInt(hmData.hmpnd);
+        providers[row.provider].hmpot += parseInt(hmData.hmpot);
+        providers[row.provider].hm += parseInt(hmData.hm);
+        providers[row.provider].sum += parseInt(row.sum);
+
+        if (!providers[row.provider].dates[row.date]) {
+          providers[row.provider].dates[row.date] = {
+            date: row.date,
+            id: row.provider_id + row.date,
+            hmnew: 0,
+            hmcb: 0,
+            hmdp: 0,
+            hmpnd: 0,
+            hmpot: 0,
+            hm: 0,
+            sum: 0,
+            geo: [],
+          };
+        }
+
+        providers[row.provider].dates[row.date].hmnew += parseInt(hmData.hmnew);
+        providers[row.provider].dates[row.date].hmcb += parseInt(hmData.hmcb);
+        providers[row.provider].dates[row.date].hmdp += parseInt(hmData.hmdp);
+        providers[row.provider].dates[row.date].hmpnd += parseInt(hmData.hmpnd);
+        providers[row.provider].dates[row.date].hmpot += parseInt(hmData.hmpot);
+        providers[row.provider].dates[row.date].hm += parseInt(hmData.hm);
+        providers[row.provider].dates[row.date].sum += parseInt(row.sum);
+
+        providers[row.provider].dates[row.date].geo.push({
+          geo: row.geo,
+          cp: row.cp,
+          start: row.date,
+          provider_id: row.provider_id,
+          hmnew: parseInt(hmData.hmnew),
+          hmcb: parseInt(hmData.hmcb),
+          hmdp: parseInt(hmData.hmdp),
+          hmpnd: parseInt(hmData.hmpnd),
+          hmpot: parseInt(hmData.hmpot),
+          hm: parseInt(hmData.hm),
+          sum: parseInt(row.sum),
+          id: row.id,
+        });
+      });
+
+      return Object.values(providers).map((provider) => {
+        provider.dates = Object.values(provider.dates);
+        return provider;
+      });
+    },
     filterOfficeStatus(office, status) {
       if (office == 0) {
         if (this.filterOfficeTabl.length > 0) {
@@ -2160,94 +2269,6 @@ export default {
               self.providers.filter((i) => {
                 return a_prov.includes(i.id);
               })
-            );
-
-            const providers = {};
-            const office_id = self.$attrs.user.office_id;
-
-            self.importsProvLeads.map((row) => {
-              const hmData = JSON.parse(row.hm_json).find(
-                (hm) => hm.office_id === office_id
-              );
-              if (!hmData) return;
-
-              if (!providers[row.provider]) {
-                providers[row.provider] = {
-                  id: row.provider_id, // Add a unique identifier
-                  provider: row.provider,
-                  hmnew: 0,
-                  hmcb: 0,
-                  hmdp: 0,
-                  hmpnd: 0,
-                  hmpot: 0,
-                  hm: 0,
-                  sum: 0,
-                  dates: {},
-                };
-              }
-
-              providers[row.provider].hmnew += parseInt(hmData.hmnew);
-              providers[row.provider].hmcb += parseInt(hmData.hmcb);
-              providers[row.provider].hmdp += parseInt(hmData.hmdp);
-              providers[row.provider].hmpnd += parseInt(hmData.hmpnd);
-              providers[row.provider].hmpot += parseInt(hmData.hmpot);
-              providers[row.provider].hm += parseInt(hmData.hm);
-              providers[row.provider].sum += parseInt(row.sum);
-
-              if (!providers[row.provider].dates[row.date]) {
-                providers[row.provider].dates[row.date] = {
-                  date: row.date,
-                  id: row.provider_id + row.date,
-                  hmnew: 0,
-                  hmcb: 0,
-                  hmdp: 0,
-                  hmpnd: 0,
-                  hmpot: 0,
-                  hm: 0,
-                  sum: 0,
-                  geo: [],
-                };
-              }
-
-              providers[row.provider].dates[row.date].hmnew += parseInt(
-                hmData.hmnew
-              );
-              providers[row.provider].dates[row.date].hmcb += parseInt(
-                hmData.hmcb
-              );
-              providers[row.provider].dates[row.date].hmdp += parseInt(
-                hmData.hmdp
-              );
-              providers[row.provider].dates[row.date].hmpnd += parseInt(
-                hmData.hmpnd
-              );
-              providers[row.provider].dates[row.date].hmpot += parseInt(
-                hmData.hmpot
-              );
-              providers[row.provider].dates[row.date].hm += parseInt(hmData.hm);
-              providers[row.provider].dates[row.date].sum += parseInt(row.sum);
-
-              providers[row.provider].dates[row.date].geo.push({
-                geo: row.geo,
-                cp: row.cp,
-                start: row.date,
-                provider_id: row.provider_id,
-                hmnew: parseInt(hmData.hmnew),
-                hmcb: parseInt(hmData.hmcb),
-                hmdp: parseInt(hmData.hmdp),
-                hmpnd: parseInt(hmData.hmpnd),
-                hmpot: parseInt(hmData.hmpot),
-                hm: parseInt(hmData.hm),
-                sum: parseInt(row.sum),
-                id: row.id,
-              });
-            });
-
-            self.providerSummaries = Object.values(providers).map(
-              (provider) => {
-                provider.dates = Object.values(provider.dates);
-                return provider;
-              }
             );
           }
         })
