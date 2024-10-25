@@ -1945,10 +1945,13 @@ export default {
             id: row.provider_id, // Add a unique identifier
             provider: row.provider,
             hmnew: 0,
+            hmrenew: 0,
             hmcb: 0,
             hmdp: 0,
             hmpnd: 0,
             hmpot: 0,
+            hmnoans: 0,
+            hmnointerest: 0,
             hm: 0,
             sum: 0,
             dates: {},
@@ -1956,10 +1959,13 @@ export default {
         }
 
         providers[row.provider].hmnew += parseInt(hmData.hmnew);
+        providers[row.provider].hmrenew += parseInt(hmData.hmrenew);
         providers[row.provider].hmcb += parseInt(hmData.hmcb);
         providers[row.provider].hmdp += parseInt(hmData.hmdp);
         providers[row.provider].hmpnd += parseInt(hmData.hmpnd);
         providers[row.provider].hmpot += parseInt(hmData.hmpot);
+        providers[row.provider].hmnoans += parseInt(hmData.hmnoans);
+        providers[row.provider].hmnointerest += parseInt(hmData.hmnointerest);
         providers[row.provider].hm += parseInt(hmData.hm);
         providers[row.provider].sum += parseInt(row.sum);
 
@@ -1968,10 +1974,13 @@ export default {
             date: row.date,
             id: row.provider_id + row.date,
             hmnew: 0,
+            hmrenew: 0,
             hmcb: 0,
             hmdp: 0,
             hmpnd: 0,
             hmpot: 0,
+            hmnoans: 0,
+            hmnointerest: 0,
             hm: 0,
             sum: 0,
             geo: [],
@@ -1979,10 +1988,19 @@ export default {
         }
 
         providers[row.provider].dates[row.date].hmnew += parseInt(hmData.hmnew);
+        providers[row.provider].dates[row.date].hmrenew += parseInt(
+          hmData.hmrenew
+        );
         providers[row.provider].dates[row.date].hmcb += parseInt(hmData.hmcb);
         providers[row.provider].dates[row.date].hmdp += parseInt(hmData.hmdp);
         providers[row.provider].dates[row.date].hmpnd += parseInt(hmData.hmpnd);
         providers[row.provider].dates[row.date].hmpot += parseInt(hmData.hmpot);
+        providers[row.provider].dates[row.date].hmnoans += parseInt(
+          hmData.hmnoans
+        );
+        providers[row.provider].dates[row.date].hmnointerest += parseInt(
+          hmData.hmnointerest
+        );
         providers[row.provider].dates[row.date].hm += parseInt(hmData.hm);
         providers[row.provider].dates[row.date].sum += parseInt(row.sum);
 
@@ -1992,10 +2010,13 @@ export default {
           start: row.date,
           provider_id: row.provider_id,
           hmnew: parseInt(hmData.hmnew),
+          hmrenew: parseInt(hmData.hmrenew),
           hmcb: parseInt(hmData.hmcb),
           hmdp: parseInt(hmData.hmdp),
           hmpnd: parseInt(hmData.hmpnd),
           hmpot: parseInt(hmData.hmpot),
+          hmnoans: parseInt(hmData.hmnoans),
+          hmnointerest: parseInt(hmData.hmnointerest),
           hm: parseInt(hmData.hm),
           sum: parseInt(row.sum),
           id: row.id,
