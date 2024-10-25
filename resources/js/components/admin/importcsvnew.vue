@@ -1842,6 +1842,16 @@ export default {
     this.getStatuses();
   },
   computed: {
+    filteredLeads() {
+      return this.leads.filter((i) => {
+        return (
+          (!this.filterStatusTabl.length ||
+            this.filterStatusTabl.includes(i.status_id)) &&
+          (!this.filterOfficeTabl.length ||
+            this.filterOfficeTabl.includes(i.office))
+        );
+      });
+    },
     filteredProviderSummaries() {
       // Assuming providerSummaries is populated from importsProvLeads
       const providerSummaries = this.importsProvLeads.map((lead) => {
