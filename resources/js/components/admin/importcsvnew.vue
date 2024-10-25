@@ -429,11 +429,11 @@
                                   {{ geoItem.geo }}
                                 </td>
                                 <td
-                                  class="text-start common-column pointer"
+                                  class="text-center common-column pointer"
                                   width="100px"
                                   @click="clickrow(geoItem)"
                                 >
-                                  {{ geoItem.sp }}
+                                  {{ geoItem.cp }}
                                 </td>
                                 <td
                                   class="text-center common-column pointer"
@@ -1934,6 +1934,7 @@ export default {
       const office_id = this.$attrs.user.office_id;
 
       prov.map((row) => {
+        if (!row.hm_json) return;
         const hmData = JSON.parse(row.hm_json).find(
           (hm) => hm.office_id === office_id
         );
