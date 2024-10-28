@@ -280,7 +280,7 @@
             </v-col>
           </v-row>
           <!-- style="height: 80vh; overflow-y: auto" -->
-          <v-container>
+          <v-container fluid id="tabs">
             <v-row>
               <v-col>
                 <v-tabs v-model="tabimport">
@@ -729,6 +729,8 @@
                 ref="datatablelids"
                 @click:row="getLog"
                 :single-expand="true"
+                v-model.lazy.trim="selectedTop"
+                show-select
               >
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">
@@ -748,6 +750,11 @@
                 >
                   <v-row>
                     <!-- <v-spacer></v-spacer> -->
+                    <v-col cols="2">
+                      <v-btn v-if="selectedTop.length" @click="setTop"
+                        >set Top</v-btn
+                      ></v-col
+                    >
                     <v-col cols="3" class="mt-3">
                       <v-data-footer
                         :pagination="pagination"
@@ -963,6 +970,8 @@
                   'items-per-page-options': [100, 200, 500, -1],
                   'items-per-page-text': '',
                 }"
+                v-model.lazy.trim="selectedTop"
+                show-select
               >
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length" class="blackborder">
@@ -971,6 +980,11 @@
                 </template>
                 <template v-slot:top="{ pagination, options, updateOptions }">
                   <v-row>
+                    <v-col cols="2">
+                      <v-btn v-if="selectedTop.length" @click="setTop"
+                        >set Top</v-btn
+                      ></v-col
+                    >
                     <v-col>
                       <v-autocomplete
                         v-model="filter_provider"
@@ -1162,6 +1176,7 @@ export default {
     selectedProvider: 0,
     related_user: [],
     selected: [],
+    selectedTop: [],
     importSelected: [],
     files: [],
     search: "",
@@ -1201,8 +1216,6 @@ export default {
         text: "Коментарий",
         value: "message",
         sortable: false,
-        //  width: "150px",
-        //  cellClass: "max150",
       },
       { text: "Total", value: "hm", cellСlass: "fz17", align: "center" },
       { text: "ГЕО", value: "geo", align: "center" },
@@ -1806,6 +1819,19 @@ export default {
     },
   },
   methods: {
+    setTop() {
+      const vm = this;
+      let data = {
+        data: vm.selectedTop,
+      };
+      data.data = data.data.map((el) => {
+        return { id: el.id, top: 1 };
+      });
+      axios.post("api/setTop", data).then((response) => {
+        vm.$refs.confirm.show("Сохранено");
+        vm.selectedTop = [];
+      });
+    },
     provsumm(prov) {
       const providers = {};
       const office_id = this.$attrs.user.office_id;
@@ -3233,17 +3259,12 @@ export default {
 .csv .v-data-table > .v-data-table__wrapper {
   padding: 0 !important;
 }
-.csv .v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
-.csv .v-data-table > .v-data-table__wrapper > table > thead > tr > th {
+#tabs .v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
+#tabs .v-data-table > .v-data-table__wrapper > table > thead > tr > th {
   font-size: 1.1rem !important;
   font-weight: bold;
 }
-.max150 {
-  max-width: 150px;
-  /* overflow: auto;
-  text-overflow: ellipsis;
-   white-space: nowrap; */
-}
+
 .v-expansion-panel-header {
   padding: 7px 24px !important;
 }

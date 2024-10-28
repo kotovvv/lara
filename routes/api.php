@@ -61,6 +61,7 @@ Route::get('getDataDay/{id}', [UsersController::class, 'getDataDay']);
 
 Route::post('Lid/newlids', [LidsController::class, 'newlids'])->name('Lid.newlids');
 Route::post('Lid/updatelids', [LidsController::class, 'updatelids'])->name('Lid.updatelids');
+Route::post('setTop', [LidsController::class, 'setTop']);
 Route::post('Lid/searchlids', [LidsController::class, 'searchlids'])->name('Lid.searchlids');
 Route::post('Lid/searchlids3', [LidsController::class, 'searchlids3'])->name('searchlids3');
 Route::get('getlidid', [LidsController::class, 'getlidid'])->name('getlidid');

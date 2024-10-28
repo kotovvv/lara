@@ -251,6 +251,20 @@ class LidsController extends Controller
   }
 
 
+  public function setTop(Request $request)
+  {
+    $data = $request->all();
+    foreach ($data['data'] as $lid) {
+      $a_lid = [
+        'top' => $lid['top'],
+        'updated_at' => Now()
+      ];
+      Lid::where('id', $lid['id'])->update($a_lid);
+    }
+    return response('Lids top changed', 200);
+  }
+
+
   public function updatelids(Request $request)
   {
     $data = $request->all();
