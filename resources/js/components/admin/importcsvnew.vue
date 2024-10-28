@@ -752,7 +752,7 @@
                     <!-- <v-spacer></v-spacer> -->
                     <v-col cols="2">
                       <v-btn v-if="selectedTop.length" @click="setTop"
-                        >set Top</v-btn
+                        >Назначить приоритет</v-btn
                       ></v-col
                     >
                     <v-col cols="3" class="mt-3">
@@ -982,7 +982,7 @@
                   <v-row>
                     <v-col cols="2">
                       <v-btn v-if="selectedTop.length" @click="setTop"
-                        >set Top</v-btn
+                        >Назначить приоритет</v-btn
                       ></v-col
                     >
                     <v-col>
