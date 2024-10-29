@@ -335,8 +335,9 @@ class LidsController extends Controller
     if (isset($data['message'])) {
       $load_mess = $data['message'];
     }
+    $geo = '';
 
-    foreach ($data['data'] as $lid) {
+    foreach ($data['data'] as  $key => $lid) {
       $n_lid = new Lid;
       $n_lid->dep_reg = $data['dep_reg'];
 
@@ -352,6 +353,7 @@ class LidsController extends Controller
       if (isset($lid['tel'])) {
         $n_lid->tel =  preg_replace('/[^0-9]/', '', $lid['tel']);
         $n_lid->client_geo = $this->getGeo($n_lid->tel);
+        if ($key == 0) $geo = $n_lid->client_geo;
         if (strlen($n_lid->tel) < 6) {
           continue;
         }
@@ -428,6 +430,7 @@ class LidsController extends Controller
       }
     }
     $res['date_end'] = date('Y-m-d H:i:s');
+    $res['geo'] = $geo;
     return response($res, 200);
   }
 

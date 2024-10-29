@@ -282,7 +282,7 @@
           <!-- style="height: 80vh; overflow-y: auto" -->
           <v-container fluid id="tabs">
             <v-row>
-              <v-col>
+              <v-col cols="9">
                 <v-tabs v-model="tabimport">
                   <v-tab value="files">CPL</v-tab>
                   <v-tab value="api">CPA</v-tab>
@@ -1209,7 +1209,7 @@ export default {
     ],
     import_headers: [
       { text: "Дата", value: "start", sortable: false },
-      { text: "Сумма", value: "sum", align: "center" },
+      { text: "Сумма", value: "sum", align: "center", class: "w150" },
       { text: "Поставщик", value: "provider", sortable: false },
       // { text: "L/A", value: "cp", sortable: false },
       {
@@ -1217,8 +1217,14 @@ export default {
         value: "message",
         sortable: false,
       },
-      { text: "Total", value: "hm", cellСlass: "fz17", align: "center" },
-      { text: "ГЕО", value: "geo", align: "center" },
+      {
+        text: "Total",
+        value: "hm",
+        cellСlass: "fz17",
+        align: "center",
+        class: "w150",
+      },
+      { text: "ГЕО", value: "geo", align: "center", class: "w150" },
 
       {
         text: "NEW",
@@ -3255,7 +3261,9 @@ export default {
   font-weight: bold;
   /* width: 182px; */
 }
-
+.w150 {
+  min-width: 150px;
+}
 .csv .v-data-table > .v-data-table__wrapper {
   padding: 0 !important;
 }

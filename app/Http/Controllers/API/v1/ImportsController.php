@@ -281,6 +281,7 @@ class ImportsController extends Controller
       DB::table('imports_provider')->where('id', $data['id'])->update(['sum' => $data['sum'], 'cp' => $data['cp']]);
     }
   }
+
   public function getHistory(Request $request)
   {
     $data = $request->all();
