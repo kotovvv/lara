@@ -240,6 +240,7 @@
                 :hide-default-footer="true"
                 ref="datatable"
                 @click:row="clickrow"
+                :item-class="getRowClass"
               >
                 <template v-slot:top="{}" v-if="hm > 100">
                   <v-row class="align-center">
@@ -821,6 +822,10 @@ export default {
       this.$refs.datetime.time = "";
       this.selected = [];
       this.selectedStatus = 0;
+    },
+    getRowClass(item) {
+      // Return a class based on the row's data
+      return item.top == 1 ? "purple lighten-5" : "";
     },
     getHm() {
       let self = this;

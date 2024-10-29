@@ -304,6 +304,43 @@
                       hide-default-footer
                       disable-pagination
                     >
+                      <template slot="body.prepend">
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td class="text-center new">
+                            {{ sumField("hmnew") }}
+                          </td>
+                          <td class="text-center renew">
+                            {{ sumField("hmrenew") }}
+                          </td>
+                          <td class="text-center callback">
+                            {{ sumField("hmcb") }}
+                          </td>
+                          <td class="text-center deposit">
+                            {{ sumField("hmdp") }}
+                          </td>
+                          <td class="text-center pending">
+                            {{ sumField("hmpnd") }}
+                          </td>
+                          <td class="text-center potential">
+                            {{ sumField("hmpot") }}
+                          </td>
+                          <td class="text-center noans">
+                            {{ sumField("noans") }}
+                          </td>
+                          <td class="text-center nointerest">
+                            {{ sumField("nointerest") }}
+                          </td>
+                          <td></td>
+                        </tr>
+                      </template>
                       <template v-slot:item.hmnew="{ item }">
                         <div
                           class="pointer"
@@ -409,6 +446,39 @@
                       height="80vh"
                       disable-pagination
                     >
+                      <template slot="body.prepend">
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td class="text-center new">
+                            {{ sumField("hmnew") }}
+                          </td>
+                          <td class="text-center renew">
+                            {{ sumField("hmrenew") }}
+                          </td>
+                          <td class="text-center callback">
+                            {{ sumField("hmcb") }}
+                          </td>
+                          <td class="text-center deposit">
+                            {{ sumField("hmdp") }}
+                          </td>
+                          <td class="text-center pending">
+                            {{ sumField("hmpnd") }}
+                          </td>
+                          <td class="text-center potential">
+                            {{ sumField("hmpot") }}
+                          </td>
+                          <td class="text-center noans">
+                            {{ sumField("noans") }}
+                          </td>
+                          <td class="text-center nointerest">
+                            {{ sumField("nointerest") }}
+                          </td>
+                        </tr>
+                      </template>
                       <template v-slot:expanded-item="{ item }">
                         <td :colspan="providerHeaders.length + 1">
                           <v-data-table
@@ -1209,6 +1279,7 @@ export default {
     ],
     import_headers: [
       { text: "Дата", value: "start", sortable: false },
+      { text: "Загрузил", value: "user", sortable: false, align: "center" },
       { text: "Сумма", value: "sum", align: "center", class: "w150" },
       { text: "Поставщик", value: "provider", sortable: false },
       // { text: "L/A", value: "cp", sortable: false },
@@ -1834,7 +1905,7 @@ export default {
         return { id: el.id, top: 1 };
       });
       axios.post("api/setTop", data).then((response) => {
-        vm.$refs.confirm.show("Сохранено");
+        console.log("Сохранено");
         vm.selectedTop = [];
       });
     },
@@ -2829,6 +2900,9 @@ export default {
           self.getImports();
         })
         .catch((error) => console.log(error));
+    },
+    sumField(key) {
+      return this.filter_imports.reduce((a, b) => a + (b[key] || 0), 0);
     },
     getImports() {
       let self = this;

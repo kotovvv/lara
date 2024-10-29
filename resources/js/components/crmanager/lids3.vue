@@ -460,6 +460,11 @@
             >
             <v-spacer></v-spacer>
             <v-col>
+              <v-btn v-if="selected.length" @click="setTop"
+                >Назначить приоритет</v-btn
+              ></v-col
+            >
+            <v-col>
               <v-btn class="btn" v-if="selected.length" @click="dialog = true"
                 >Редактировать</v-btn
               >
@@ -1818,6 +1823,19 @@ export default {
         send.data = this.selected.map((e) => e);
         this.changeLids(send);
       }
+    },
+    setTop() {
+      const vm = this;
+      let data = {
+        data: vm.selected,
+      };
+      data.data = data.data.map((el) => {
+        return { id: el.id, top: 1 };
+      });
+      axios.post("api/setTop", data).then((response) => {
+        console.log("Сохранено");
+        vm.selected = [];
+      });
     },
     changeLids(send) {
       const self = this;
