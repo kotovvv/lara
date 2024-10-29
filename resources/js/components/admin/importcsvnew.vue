@@ -454,28 +454,28 @@
                           <td></td>
                           <td></td>
                           <td class="text-center new">
-                            {{ sumField("hmnew") }}
+                            {{ sumFieldProv("hmnew") }}
                           </td>
                           <td class="text-center renew">
-                            {{ sumField("hmrenew") }}
+                            {{ sumFieldProv("hmrenew") }}
                           </td>
                           <td class="text-center callback">
-                            {{ sumField("hmcb") }}
+                            {{ sumFieldProv("hmcb") }}
                           </td>
                           <td class="text-center deposit">
-                            {{ sumField("hmdp") }}
+                            {{ sumFieldProv("hmdp") }}
                           </td>
                           <td class="text-center pending">
-                            {{ sumField("hmpnd") }}
+                            {{ sumFieldProv("hmpnd") }}
                           </td>
                           <td class="text-center potential">
-                            {{ sumField("hmpot") }}
+                            {{ sumFieldProv("hmpot") }}
                           </td>
                           <td class="text-center noans">
-                            {{ sumField("noans") }}
+                            {{ sumFieldProv("noans") }}
                           </td>
                           <td class="text-center nointerest">
-                            {{ sumField("nointerest") }}
+                            {{ sumFieldProv("nointerest") }}
                           </td>
                         </tr>
                       </template>
@@ -2059,9 +2059,7 @@ export default {
         this.filter_status.push(status_id);
       }
     },
-    sumField(item, tab) {
-      return tab.reduce((a, b) => parseInt(a) + parseInt(b[item] || 0), 0);
-    },
+
     importCallc() {
       const vm = this;
       axios
@@ -2903,6 +2901,12 @@ export default {
     },
     sumField(key) {
       return this.filter_imports.reduce((a, b) => a + (b[key] || 0), 0);
+    },
+    sumFieldProv(key) {
+      return this.filter_importsProvLeads.reduce(
+        (a, b) => a + (b[key] || 0),
+        0
+      );
     },
     getImports() {
       let self = this;
