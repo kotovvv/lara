@@ -350,6 +350,7 @@ export default {
             .substring(0, 19)
             .replace("T", " ");
           info.end = response.data.date_end.substring(0, 19).replace("T", " ");
+          info.geo = response.data.geo;
         })
 
         .catch(function (error) {

@@ -333,10 +333,10 @@
                             {{ sumField("hmpot") }}
                           </td>
                           <td class="text-center noans">
-                            {{ sumField("noans") }}
+                            {{ sumField("hmnoans") }}
                           </td>
                           <td class="text-center nointerest">
-                            {{ sumField("nointerest") }}
+                            {{ sumField("hmnointerest") }}
                           </td>
                           <td></td>
                         </tr>
@@ -472,10 +472,10 @@
                             {{ sumFieldProv("hmpot") }}
                           </td>
                           <td class="text-center noans">
-                            {{ sumFieldProv("noans") }}
+                            {{ sumFieldProv("hmnoans") }}
                           </td>
                           <td class="text-center nointerest">
-                            {{ sumFieldProv("nointerest") }}
+                            {{ sumFieldProv("hmnointerest") }}
                           </td>
                         </tr>
                       </template>
@@ -542,7 +542,7 @@
                                         </v-icon>
                                       </td>
                                       <td
-                                        class="text-center common-column pointer fz17"
+                                        class="text-center common-column pointer"
                                         width="100px"
                                         @click="clickrow(geoItem)"
                                       >
@@ -1278,9 +1278,9 @@ export default {
       { text: "Афилятор", value: "afilyator" },
     ],
     import_headers: [
-      { text: "Дата", value: "start", sortable: false },
+      { text: "Дата", value: "start", sortable: false, class: "w100" },
       { text: "Загрузил", value: "user", sortable: false, align: "center" },
-      { text: "Сумма", value: "sum", align: "center", class: "w150" },
+      { text: "Сумма", value: "sum", align: "center", class: "w100" },
       { text: "Поставщик", value: "provider", sortable: false },
       // { text: "L/A", value: "cp", sortable: false },
       {
@@ -1291,45 +1291,44 @@ export default {
       {
         text: "Total",
         value: "hm",
-        cellСlass: "fz17",
         align: "center",
-        class: "w150",
+        class: "w100",
       },
-      { text: "ГЕО", value: "geo", align: "center", class: "w150" },
+      { text: "ГЕО", value: "geo", align: "center", class: "w100" },
 
       {
         text: "NEW",
         value: "hmnew",
         class: "new",
-        cellClass: "new fz17",
+        cellClass: "new",
         align: "center",
       },
       {
         text: "ReNew",
         value: "hmrenew",
         class: "renew",
-        cellClass: "renew fz17",
+        cellClass: "renew",
         align: "center",
       },
       {
         text: "CallBack",
         value: "hmcb",
         class: "callback",
-        cellClass: "callback fz17",
+        cellClass: "callback",
         align: "center",
       },
       {
         text: "Deposit",
         value: "hmdp",
         class: "deposit",
-        cellClass: "deposit fz17",
+        cellClass: "deposit",
         align: "center",
       },
       {
         text: "Pending",
         value: "hmpnd",
         class: "pending",
-        cellClass: "pending fz17",
+        cellClass: "pending",
         align: "center",
       },
       {
@@ -1337,21 +1336,21 @@ export default {
         value: "hmpot",
 
         class: "potential",
-        cellClass: "potential fz17",
+        cellClass: "potential",
         align: "center",
       },
       {
         text: "NoAns",
         value: "hmnoans",
         class: "noans",
-        cellClass: "noans fz17",
+        cellClass: "noans",
         align: "center",
       },
       {
         text: "NotInt",
         value: "hmnointerest",
         class: "nointerest",
-        cellClass: "nointerest fz17",
+        cellClass: "nointerest",
         align: "center",
       },
       { text: "", value: "id", align: "center", sortable: false },
@@ -1377,7 +1376,7 @@ export default {
         value: "hmnew",
         width: "100px",
         class: "new",
-        cellClass: "new fz17",
+        cellClass: "new",
         align: "center",
       },
       {
@@ -1385,7 +1384,7 @@ export default {
         value: "hmrenew",
         width: "100px",
         class: "renew",
-        cellClass: "renew fz17",
+        cellClass: "renew",
         align: "center",
       },
       {
@@ -1393,7 +1392,7 @@ export default {
         value: "hmcb",
         width: "100px",
         class: "callback",
-        cellClass: "callback fz17",
+        cellClass: "callback",
         align: "center",
       },
       {
@@ -1401,7 +1400,7 @@ export default {
         value: "hmdp",
         width: "100px",
         class: "deposit",
-        cellClass: "deposit fz17",
+        cellClass: "deposit",
         align: "center",
       },
       {
@@ -1409,7 +1408,7 @@ export default {
         value: "hmpnd",
         width: "100px",
         class: "pending",
-        cellClass: "pending fz17",
+        cellClass: "pending",
         align: "center",
       },
       {
@@ -1417,7 +1416,7 @@ export default {
         value: "hmpot",
         width: "100px",
         class: "potential",
-        cellClass: "potential fz17",
+        cellClass: "potential",
         align: "center",
       },
       {
@@ -1425,7 +1424,7 @@ export default {
         value: "hmnoans",
         width: "100px",
         class: "noans",
-        cellClass: "noans fz17",
+        cellClass: "noans",
         align: "center",
       },
       {
@@ -1433,7 +1432,7 @@ export default {
         value: "hmnointerest",
         width: "100px",
         class: "nointerest",
-        cellClass: "nointerest fz17",
+        cellClass: "nointerest",
         align: "center",
       },
     ],
@@ -1463,7 +1462,7 @@ export default {
         value: "hmnew",
         width: "100px",
         class: "new",
-        cellClass: "new fz17",
+        cellClass: "new",
         align: "center",
       },
       {
@@ -1471,7 +1470,7 @@ export default {
         value: "hmrenew",
         width: "100px",
         class: "renew",
-        cellClass: "renew fz17",
+        cellClass: "renew",
         align: "center",
       },
       {
@@ -1479,7 +1478,7 @@ export default {
         value: "hmcb",
         width: "100px",
         class: "callback",
-        cellClass: "callback fz17",
+        cellClass: "callback",
         align: "center",
       },
       {
@@ -1487,7 +1486,7 @@ export default {
         value: "hmdp",
         width: "100px",
         class: "deposit",
-        cellClass: "deposit fz17",
+        cellClass: "deposit",
         align: "center",
       },
       {
@@ -1495,7 +1494,7 @@ export default {
         value: "hmpnd",
         width: "100px",
         class: "pending",
-        cellClass: "pending fz17",
+        cellClass: "pending",
         align: "center",
       },
       {
@@ -1503,7 +1502,7 @@ export default {
         value: "hmpot",
         width: "100px",
         class: "potential",
-        cellClass: "potential fz17",
+        cellClass: "potential",
         align: "center",
       },
       {
@@ -1511,7 +1510,7 @@ export default {
         value: "hmnoans",
         width: "100px",
         class: "noans",
-        cellClass: "noans fz17",
+        cellClass: "noans",
         align: "center",
       },
       {
@@ -1519,7 +1518,7 @@ export default {
         value: "hmnointerest",
         width: "100px",
         class: "nointerest",
-        cellClass: "nointerest fz17",
+        cellClass: "nointerest",
         align: "center",
       },
     ],
@@ -1533,7 +1532,7 @@ export default {
         value: "hmnew",
         width: "100px",
         class: "new",
-        cellClass: "new fz17",
+        cellClass: "new",
         align: "center",
       },
       {
@@ -1541,7 +1540,7 @@ export default {
         value: "hmrenew",
         width: "100px",
         class: "renew",
-        cellClass: "renew fz17",
+        cellClass: "renew",
         align: "center",
       },
       {
@@ -1549,7 +1548,7 @@ export default {
         value: "hmcb",
         width: "100px",
         class: "callback",
-        cellClass: "callback fz17",
+        cellClass: "callback",
         align: "center",
       },
       {
@@ -1557,7 +1556,7 @@ export default {
         value: "hmdp",
         width: "100px",
         class: "deposit",
-        cellClass: "deposit fz17",
+        cellClass: "deposit",
         align: "center",
       },
       {
@@ -1565,7 +1564,7 @@ export default {
         value: "hmpnd",
         width: "100px",
         class: "pending",
-        cellClass: "pending fz17",
+        cellClass: "pending",
         align: "center",
       },
       {
@@ -1573,7 +1572,7 @@ export default {
         value: "hmpot",
         width: "100px",
         class: "potential",
-        cellClass: "potential fz17",
+        cellClass: "potential",
         align: "center",
       },
       {
@@ -1581,7 +1580,7 @@ export default {
         value: "hmnoans",
         width: "100px",
         class: "noans",
-        cellClass: "noans fz17",
+        cellClass: "noans",
         align: "center",
       },
       {
@@ -1589,7 +1588,7 @@ export default {
         value: "hmnointerest",
         width: "100px",
         class: "nointerest",
-        cellClass: "nointerest fz17",
+        cellClass: "nointerest",
         align: "center",
       },
       {
@@ -1617,7 +1616,7 @@ export default {
         value: "hmnew",
         sortable: false,
         class: "new",
-        cellClass: "new fz17",
+        cellClass: "new",
         align: "center",
         width: "150px",
       },
@@ -1626,7 +1625,7 @@ export default {
         value: "hmcb",
         sortable: false,
         class: "callback",
-        cellClass: "callback fz17",
+        cellClass: "callback",
         align: "center",
         width: "150px",
       },
@@ -1635,7 +1634,7 @@ export default {
         value: "hmdp",
         sortable: false,
         class: "deposit",
-        cellClass: "deposit fz17",
+        cellClass: "deposit",
         align: "center",
         width: "150px",
       },
@@ -1644,7 +1643,7 @@ export default {
         value: "hmpnd",
         sortable: false,
         class: "pending",
-        cellClass: "pending fz17",
+        cellClass: "pending",
         align: "center",
         width: "150px",
       },
@@ -1653,7 +1652,7 @@ export default {
         value: "hmpot",
         sortable: false,
         class: "potential",
-        cellClass: "potential fz17",
+        cellClass: "potential",
         align: "center",
         width: "150px",
       },
@@ -1808,51 +1807,6 @@ export default {
             this.filterOfficeTabl.includes(i.office))
         );
       });
-    },
-    filteredProviderSummaries() {
-      // Assuming providerSummaries is populated from importsProvLeads
-      const providerSummaries = this.importsProvLeads.map((lead) => {
-        // Transform lead data to provider summary format
-        return {
-          provider_id: lead.provider_id,
-          dates: lead.dates.map((date) => ({
-            date: date.date,
-            geo: date.geo.map((geo) => ({
-              geo: geo.geo,
-              // other geo properties...
-            })),
-          })),
-        };
-      });
-
-      return providerSummaries
-        .filter((provider) => {
-          // Check if the provider matches the selected providers
-          const providerMatch =
-            this.filter_import_provider.length === 0 ||
-            this.filter_import_provider.includes(provider.provider_id);
-
-          if (!providerMatch) {
-            return false;
-          }
-
-          // Filter the dates to include only those with the selected geos
-          const filteredDates = provider.dates
-            .map((date) => {
-              const filteredGeos = date.geo.filter((geo) =>
-                this.filter_geo.includes(geo.geo)
-              );
-              return filteredGeos.length > 0
-                ? { ...date, geo: filteredGeos }
-                : null;
-            })
-            .filter((date) => date !== null);
-
-          return filteredDates.length > 0
-            ? { ...provider, dates: filteredDates }
-            : null;
-        })
-        .filter((provider) => provider !== null);
     },
 
     filteredItems() {
@@ -2900,12 +2854,15 @@ export default {
         .catch((error) => console.log(error));
     },
     sumField(key) {
-      return this.filter_imports.reduce((a, b) => a + (b[key] || 0), 0);
+      return this.filter_imports.reduce(
+        (a, b) => parseInt(a) + parseInt(b[key] || 0),
+        0
+      );
     },
     sumFieldProv(key) {
       if (this.importsProvLeads.length == 0) return 0;
       return this.filter_importsProvLeads.reduce(
-        (a, b) => a + (b[key] || 0),
+        (a, b) => parseInt(a) + parseInt(b[key] || 0),
         0
       );
     },
@@ -2936,12 +2893,7 @@ export default {
               sum,
               cp,
               baer,
-              hmnew,
-              hm,
-              hmcb,
-              hmdp,
-              hmpnd,
-              hmpot,
+
               hm_json,
               geo,
             }) => ({
@@ -2957,12 +2909,7 @@ export default {
               sum,
               cp,
               baer,
-              hmnew,
-              hm,
-              hmcb,
-              hmdp,
-              hmpnd,
-              hmpot,
+
               hm_json,
               geo,
             })
@@ -2972,40 +2919,39 @@ export default {
               return el.geo;
             })
           );
-          if (self.$attrs.user.office_id > 0) {
-            let office_id = self.$attrs.user.office_id;
-            self.imports = self.imports.map((i) => {
-              let hm_json = JSON.parse(i.hm_json);
-              i.hmnew = hm_json.filter((f) => {
-                return f.office_id == office_id;
-              })[0].hmnew;
-              i.hmrenew = hm_json.filter((f) => {
-                return f.office_id == office_id;
-              })[0].hmrenew;
-              i.hm = hm_json.filter((f) => {
-                return f.office_id == office_id;
-              })[0].hm;
-              i.hmcb = hm_json.filter((f) => {
-                return f.office_id == office_id;
-              })[0].hmcb;
-              i.hmdp = hm_json.filter((f) => {
-                return f.office_id == office_id;
-              })[0].hmdp;
-              i.hmpnd = hm_json.filter((f) => {
-                return f.office_id == office_id;
-              })[0].hmpnd;
-              i.hmpot = hm_json.filter((f) => {
-                return f.office_id == office_id;
-              })[0].hmpot;
-              i.hmnoans = hm_json.filter((f) => {
-                return f.office_id == office_id;
-              })[0].hmnoans;
-              i.hmnointerest = hm_json.filter((f) => {
-                return f.office_id == office_id;
-              })[0].hmnointerest;
-              return i;
-            });
-          }
+
+          let office_id = self.$attrs.user.office_id;
+          self.imports = self.imports.map((i) => {
+            let hm_json = JSON.parse(i.hm_json);
+            i.hmnew = hm_json.filter((f) => {
+              return f.office_id == office_id;
+            })[0].hmnew;
+            i.hmrenew = hm_json.filter((f) => {
+              return f.office_id == office_id;
+            })[0].hmrenew;
+            i.hm = hm_json.filter((f) => {
+              return f.office_id == office_id;
+            })[0].hm;
+            i.hmcb = hm_json.filter((f) => {
+              return f.office_id == office_id;
+            })[0].hmcb;
+            i.hmdp = hm_json.filter((f) => {
+              return f.office_id == office_id;
+            })[0].hmdp;
+            i.hmpnd = hm_json.filter((f) => {
+              return f.office_id == office_id;
+            })[0].hmpnd;
+            i.hmpot = hm_json.filter((f) => {
+              return f.office_id == office_id;
+            })[0].hmpot;
+            i.hmnoans = hm_json.filter((f) => {
+              return f.office_id == office_id;
+            })[0].hmnoans;
+            i.hmnointerest = hm_json.filter((f) => {
+              return f.office_id == office_id;
+            })[0].hmnointerest;
+            return i;
+          });
 
           let a_prov = _.uniq(
             _.map(self.imports, (el) => {
@@ -3335,13 +3281,12 @@ export default {
   font-size: 0.75rem;
   font-weight: bold;
 }
-.fz17 {
-  font-size: 1.2rem !important;
-  font-weight: bold;
-  /* width: 182px; */
-}
+
 .w150 {
   min-width: 150px;
+}
+.w100 {
+  min-width: 100px;
 }
 .csv .v-data-table > .v-data-table__wrapper {
   padding: 0 !important;
