@@ -443,6 +443,7 @@ export default {
           info.sum = self.sum;
           info.cp = self.cp;
           info.message = self.load_mess;
+          info.geo = ans_info.geo;
           axios
             .post("api/imports/0/0", info)
             .then(function (response) {

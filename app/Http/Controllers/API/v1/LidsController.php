@@ -255,11 +255,13 @@ class LidsController extends Controller
   {
     $data = $request->all();
     foreach ($data['data'] as $lid) {
-      $a_lid = [
-        'top' => $lid['top'],
-        'updated_at' => Now()
-      ];
-      Lid::where('id', $lid['id'])->update($a_lid);
+      if ($lid['status_id'] == 8 || $lid['status_id'] == 33) {
+        $a_lid = [
+          'top' => $lid['top'],
+          'updated_at' => Now()
+        ];
+        Lid::where('id', $lid['id'])->update($a_lid);
+      }
     }
     return response('Lids top changed', 200);
   }

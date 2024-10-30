@@ -1902,7 +1902,7 @@ export default {
         data: vm.selectedTop,
       };
       data.data = data.data.map((el) => {
-        return { id: el.id, top: 1 };
+        return { id: el.id, top: 1, status_id: el.status_id };
       });
       axios.post("api/setTop", data).then((response) => {
         console.log("Сохранено");
