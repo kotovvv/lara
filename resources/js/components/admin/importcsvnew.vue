@@ -1,7 +1,7 @@
  <template>
   <div class="csv">
     <v-snackbar v-model="snackbar" top right timeout="-1">
-      <v-card-text v-html="message"></v-card-text>
+      {{ message }}
       <template v-slot:action="{ attrs }">
         <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
           X
@@ -2903,6 +2903,7 @@ export default {
       return this.filter_imports.reduce((a, b) => a + (b[key] || 0), 0);
     },
     sumFieldProv(key) {
+      if (this.importsProvLeads.length == 0) return 0;
       return this.filter_importsProvLeads.reduce(
         (a, b) => a + (b[key] || 0),
         0
