@@ -429,7 +429,6 @@
                       </template>
                     </v-data-table>
                   </v-tab-item>
-
                   <v-tab-item :key="'api'">
                     <v-data-table
                       :headers="providerHeaders"
@@ -443,8 +442,9 @@
                       :expanded.sync="expanded"
                       @click:row="clickrowd"
                       fixed-header
-                      height="80vh"
                       disable-pagination
+                      :items-per-page="-1"
+                      height="80vh"
                     >
                       <template slot="body.prepend">
                         <tr>
@@ -493,6 +493,8 @@
                             hide-default-header
                             hide-default-footer
                             class="common-table date-table"
+                            disable-pagination
+                            :items-per-page="-1"
                           >
                             <template v-slot:expanded-item="{ item: dateItem }">
                               <td :colspan="providerHeaders.length + 1">
@@ -505,6 +507,8 @@
                                   hide-default-header
                                   hide-default-footer
                                   class="common-table"
+                                  disable-pagination
+                                  :items-per-page="-1"
                                 >
                                   <template v-slot:item="{ item: geoItem }">
                                     <tr>
