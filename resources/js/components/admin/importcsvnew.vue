@@ -446,6 +446,11 @@
                       :items-per-page="-1"
                       height="80vh"
                     >
+                      <template v-slot:item.hm="{ item }">
+                        <div class="pointer" @click="clickrow(item)">
+                          {{ item.hm }}
+                        </div>
+                      </template>
                       <template slot="body.prepend">
                         <tr>
                           <td></td>
@@ -496,6 +501,11 @@
                             disable-pagination
                             :items-per-page="-1"
                           >
+                            <template v-slot:item.hm="{ item }">
+                              <div class="pointer" @click="clickrow(item)">
+                                {{ item.hm }}
+                              </div>
+                            </template>
                             <template v-slot:expanded-item="{ item: dateItem }">
                               <td :colspan="providerHeaders.length + 1">
                                 <v-data-table
@@ -1921,6 +1931,7 @@ export default {
             hmnointerest: 0,
             hm: 0,
             sum: 0,
+            provider_id: row.provider_id,
             geo: [],
           };
         }
@@ -2764,14 +2775,30 @@ export default {
       self.activeRequests++;
       self.loading = true;
       self.item = item;
-      self.item.name = self.providers.find(
-        (s) => s.id == item.provider_id
-      ).name;
-      data.id = item.id;
-      data.provider_id = item.provider_id;
+      if (item.dates) {
+        self.item.name = item.provider;
+        data.provider_id = item.id;
+        data.dates = data.dates = item.dates.map((el) => {
+          return el.date;
+        });
+      } else if (item.date) {
+        self.item.name = self.providers.find(
+          (s) => s.id == item.provider_id
+        ).name;
+        data.provider_id = item.provider_id;
+        data.date = item.date;
+      } else {
+        self.item.name = self.providers.find(
+          (s) => s.id == item.provider_id
+        ).name;
+        data.id = item.id;
+        data.provider_id = item.provider_id;
+        data.geo = item.geo;
+      }
+
       data.message = item.message;
       data.start = item.start;
-      data.geo = item.geo;
+
       if (item.end != undefined) {
         data.end = item.end;
       }
