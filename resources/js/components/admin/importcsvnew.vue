@@ -478,7 +478,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th class="text-center"></th>
+                            <th></th>
                             <th class="text-center">
                               {{ sumFieldProv("hm") }}
                             </th>
