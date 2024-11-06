@@ -313,11 +313,13 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th class="text-center">{{ sumField("sum") }}</th>
+                            <th class="text-center"></th>
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
+                            <th class="text-center">
+                              {{ sumField("hm") }}
+                            </th>
                             <th class="text-center new">
                               {{ sumField("hmnew") }}
                             </th>
@@ -476,10 +478,10 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th class="text-center"></th>
                             <th class="text-center">
-                              {{ sumFieldProv("sum") }}
+                              {{ sumFieldProv("hm") }}
                             </th>
-                            <th></th>
                             <th class="text-center new">
                               {{ sumFieldProv("hmnew") }}
                             </th>
