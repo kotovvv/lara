@@ -313,7 +313,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
+                            <th class="text-center">{{ sumField("sum") }}</th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -349,6 +349,7 @@
                             <th
                               v-for="header in props.headers"
                               :key="header.text"
+                              class="text-center"
                               :class="header.class || ''"
                             >
                               {{ header.text }}
@@ -475,7 +476,9 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
+                            <th class="text-center">
+                              {{ sumFieldProv("sum") }}
+                            </th>
                             <th></th>
                             <th class="text-center new">
                               {{ sumFieldProv("hmnew") }}
@@ -506,6 +509,7 @@
                             <th
                               v-for="header in props.headers"
                               :key="header.text"
+                              class="text-center"
                               :class="header.class || ''"
                             >
                               {{ header.text }}
@@ -1331,13 +1335,13 @@ export default {
         value: "message",
         sortable: false,
       },
+      { text: "ГЕО", value: "geo", align: "center", class: "w100" },
       {
         text: "Total",
         value: "hm",
         align: "center",
         class: "w100",
       },
-      { text: "ГЕО", value: "geo", align: "center", class: "w100" },
 
       {
         text: "NEW",
