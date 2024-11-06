@@ -885,21 +885,31 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $users_ids = [];
     $where_ids_off = '';
     $office_id = 0;
-
+    $lids_prov = [];
     if (session()->has('user_id')) {
       $user = User::where('id', (int) session()->get('user_id'))->first();
-      // if ( $user['group_id']) {
-      //   $res = User::select('id')->where('group_id', $user['group_id'])->get()->toArray();
-      //   foreach ($res as $item) {
-      //     $users_ids[] = $item['id'];
-      //   }
-      //   $where_ids_off = ' user_id IN (' . implode(',', $users_ids) . ') AND ';
-      // }
 
       if ($user['office_id'] > 0) {
         $office_id = $user['office_id'];
         $where_ids_off .= 'l.office_id = ' . $user['office_id'] . ' AND ';
       }
+    }
+
+    if (isset($req['dates'])) {
+      $lids_prov = DB::table('imported_leads')->select('lead_id')->where('api_key_id', $req['provider_id'])->whereIn(DB::raw('DATE(upload_time)'), $req['dates'])->pluck('lead_id')->toArray();
+    }
+    if (isset($req['date'])) {
+      $lids_prov = DB::table('imported_leads')->select('lead_id')->where('api_key_id', $req['provider_id'])->whereDate('upload_time', $req['date'])->pluck('lead_id')->toArray();
+    }
+    if (isset($req['dates']) || isset($req['date'])) {
+      return Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
+        ->whereIn('lids.id', $lids_prov)
+        ->leftJoin('users', 'users.id', '=', 'user_id')
+        ->leftJoin('offices', 'offices.id', '=', 'lids.office_id')
+        ->when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('lids.office_id', $office_id);
+        })
+        ->get();
     }
 
     $geo = isset($req['geo']) ? $req['geo'] : '';
@@ -918,9 +928,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           return $query->whereIn('user_id', $users_ids);
         })
         ->get();
-      // if (isset($req['id']) && isset($lids[0]['tel'])) {
-      //   DB::table('imports')->where('id', $req['id'])->update(['geo' => $this->getGeo($lids[0]['tel'])]);
-      // }
+
       return $lids;
     } elseif (isset($req['provider_id']) && isset($req['start']) && isset($req['end'])) {
       $lids = Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
