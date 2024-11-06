@@ -302,45 +302,62 @@
                       v-model="importSelected"
                       @click:row="clickrow"
                       hide-default-footer
+                      hide-default-header
                       disable-pagination
                     >
-                      <template slot="body.prepend">
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td class="text-center new">
-                            {{ sumField("hmnew") }}
-                          </td>
-                          <td class="text-center renew">
-                            {{ sumField("hmrenew") }}
-                          </td>
-                          <td class="text-center callback">
-                            {{ sumField("hmcb") }}
-                          </td>
-                          <td class="text-center deposit">
-                            {{ sumField("hmdp") }}
-                          </td>
-                          <td class="text-center pending">
-                            {{ sumField("hmpnd") }}
-                          </td>
-                          <td class="text-center potential">
-                            {{ sumField("hmpot") }}
-                          </td>
-                          <td class="text-center noans">
-                            {{ sumField("hmnoans") }}
-                          </td>
-                          <td class="text-center nointerest">
-                            {{ sumField("hmnointerest") }}
-                          </td>
-                          <td></td>
-                        </tr>
+                      <!-- Кастомный заголовок для первой строки с вычисляемыми значениями -->
+                      <template v-slot:header="{ props }">
+                        <thead>
+                          <!-- Первая строка с вычисляемыми значениями -->
+                          <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="text-center new">
+                              {{ sumField("hmnew") }}
+                            </th>
+                            <th class="text-center renew">
+                              {{ sumField("hmrenew") }}
+                            </th>
+                            <th class="text-center callback">
+                              {{ sumField("hmcb") }}
+                            </th>
+                            <th class="text-center deposit">
+                              {{ sumField("hmdp") }}
+                            </th>
+                            <th class="text-center pending">
+                              {{ sumField("hmpnd") }}
+                            </th>
+                            <th class="text-center potential">
+                              {{ sumField("hmpot") }}
+                            </th>
+                            <th class="text-center noans">
+                              {{ sumField("hmnoans") }}
+                            </th>
+                            <th class="text-center nointerest">
+                              {{ sumField("hmnointerest") }}
+                            </th>
+                            <th></th>
+                          </tr>
+                          <!-- Вторая строка с названиями полей из headers -->
+                          <tr>
+                            <th
+                              v-for="header in props.headers"
+                              :key="header.text"
+                              :class="header.class || ''"
+                            >
+                              {{ header.text }}
+                            </th>
+                          </tr>
+                        </thead>
                       </template>
+
+                      <!-- Слоты для строк таблицы -->
                       <template v-slot:item.hmnew="{ item }">
                         <div
                           class="pointer"
@@ -437,7 +454,6 @@
                       id="provTable"
                       show-expand
                       single-expand
-                      hide-default-footer
                       class="elevation-1 common-table"
                       :expanded.sync="expanded"
                       @click:row="clickrowd"
@@ -445,44 +461,57 @@
                       disable-pagination
                       :items-per-page="-1"
                       height="80vh"
+                      hide-default-header
+                      hide-default-footer
                     >
                       <template v-slot:item.hm="{ item }">
                         <div class="pointer" @click="clickrow(item)">
                           {{ item.hm }}
                         </div>
                       </template>
-                      <template slot="body.prepend">
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td class="text-center new">
-                            {{ sumFieldProv("hmnew") }}
-                          </td>
-                          <td class="text-center renew">
-                            {{ sumFieldProv("hmrenew") }}
-                          </td>
-                          <td class="text-center callback">
-                            {{ sumFieldProv("hmcb") }}
-                          </td>
-                          <td class="text-center deposit">
-                            {{ sumFieldProv("hmdp") }}
-                          </td>
-                          <td class="text-center pending">
-                            {{ sumFieldProv("hmpnd") }}
-                          </td>
-                          <td class="text-center potential">
-                            {{ sumFieldProv("hmpot") }}
-                          </td>
-                          <td class="text-center noans">
-                            {{ sumFieldProv("hmnoans") }}
-                          </td>
-                          <td class="text-center nointerest">
-                            {{ sumFieldProv("hmnointerest") }}
-                          </td>
-                        </tr>
+                      <template v-slot:header="{ props }">
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="text-center new">
+                              {{ sumFieldProv("hmnew") }}
+                            </th>
+                            <th class="text-center renew">
+                              {{ sumFieldProv("hmrenew") }}
+                            </th>
+                            <th class="text-center callback">
+                              {{ sumFieldProv("hmcb") }}
+                            </th>
+                            <th class="text-center deposit">
+                              {{ sumFieldProv("hmdp") }}
+                            </th>
+                            <th class="text-center pending">
+                              {{ sumFieldProv("hmpnd") }}
+                            </th>
+                            <th class="text-center potential">
+                              {{ sumFieldProv("hmpot") }}
+                            </th>
+                            <th class="text-center noans">
+                              {{ sumFieldProv("hmnoans") }}
+                            </th>
+                            <th class="text-center nointerest">
+                              {{ sumFieldProv("hmnointerest") }}
+                            </th>
+                          </tr>
+                          <tr>
+                            <th
+                              v-for="header in props.headers"
+                              :key="header.text"
+                              :class="header.class || ''"
+                            >
+                              {{ header.text }}
+                            </th>
+                          </tr>
+                        </thead>
                       </template>
                       <template v-slot:expanded-item="{ item }">
                         <td :colspan="providerHeaders.length + 1">
@@ -3313,9 +3342,6 @@ export default {
   font-weight: bold;
 }
 
-.w150 {
-  min-width: 150px;
-}
 .w100 {
   min-width: 100px;
 }
@@ -3366,7 +3392,7 @@ export default {
   overflow-x: hidden;
 }
 
-.common-table .v-data-table-header th,
+.common-table th,
 .common-table td {
   width: 100px;
   max-width: 100px;
