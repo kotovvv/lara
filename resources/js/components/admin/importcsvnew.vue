@@ -3436,7 +3436,8 @@ main
   .v-data-table__wrapper
   > table
   > tbody
-  > tr:not(.v-data-table__expanded__content) {
+  > tr:not(.v-data-table__expanded__content),
+.csv .v-data-table__wrapper > table > thead > tr {
   border-top: 1px solid #9561e2;
 }
 
