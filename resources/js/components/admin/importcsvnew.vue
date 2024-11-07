@@ -2989,33 +2989,36 @@ export default {
           let office_id = self.$attrs.user.office_id;
           self.imports = self.imports.map((i) => {
             let hm_json = JSON.parse(i.hm_json);
-            i.hmnew = hm_json.filter((f) => {
-              return f.office_id == office_id;
-            })[0].hmnew;
-            i.hmrenew = hm_json.filter((f) => {
-              return f.office_id == office_id;
-            })[0].hmrenew;
-            i.hm = hm_json.filter((f) => {
-              return f.office_id == office_id;
-            })[0].hm;
-            i.hmcb = hm_json.filter((f) => {
-              return f.office_id == office_id;
-            })[0].hmcb;
-            i.hmdp = hm_json.filter((f) => {
-              return f.office_id == office_id;
-            })[0].hmdp;
-            i.hmpnd = hm_json.filter((f) => {
-              return f.office_id == office_id;
-            })[0].hmpnd;
-            i.hmpot = hm_json.filter((f) => {
-              return f.office_id == office_id;
-            })[0].hmpot;
-            i.hmnoans = hm_json.filter((f) => {
-              return f.office_id == office_id;
-            })[0].hmnoans;
-            i.hmnointerest = hm_json.filter((f) => {
-              return f.office_id == office_id;
-            })[0].hmnointerest;
+            if (hm_json.length > 0) {
+              i.hmnew = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmnew;
+              i.hmrenew = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmrenew;
+              i.hm = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hm;
+              i.hmcb = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmcb;
+              i.hmdp = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmdp;
+              i.hmpnd = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmpnd;
+              i.hmpot = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmpot;
+              i.hmnoans = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmnoans;
+              i.hmnointerest = hm_json.filter((f) => {
+                return f.office_id == office_id;
+              })[0].hmnointerest;
+            }
+
             return i;
           });
 
