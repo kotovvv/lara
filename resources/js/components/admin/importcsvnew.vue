@@ -302,7 +302,6 @@
                       v-model="importSelected"
                       @click:row="clickrow"
                       hide-default-footer
-                      hide-default-header
                       disable-pagination
                     >
                       <!-- Кастомный заголовок для первой строки с вычисляемыми значениями -->
@@ -347,7 +346,7 @@
                             <th></th>
                           </tr>
                           <!-- Вторая строка с названиями полей из headers -->
-                          <tr>
+                          <tr class="d-none">
                             <th
                               v-for="header in props.headers"
                               :key="header.text"
@@ -464,7 +463,6 @@
                       disable-pagination
                       :items-per-page="-1"
                       height="80vh"
-                      hide-default-header
                       hide-default-footer
                     >
                       <template v-slot:item.hm="{ item }">
@@ -507,7 +505,7 @@
                               {{ sumFieldProv("hmnointerest") }}
                             </th>
                           </tr>
-                          <tr>
+                          <tr class="d-none">
                             <th
                               v-for="header in props.headers"
                               :key="header.text"
