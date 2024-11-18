@@ -320,28 +320,76 @@
                               {{ sumField("hm") }}
                             </th>
                             <th class="text-center new">
-                              {{ sumField("hmnew") }}
+                              {{ sumField("hmnew") }} -
+                              {{
+                                (
+                                  (sumField("hmnew") * 100) /
+                                  sumField("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center renew">
-                              {{ sumField("hmrenew") }}
+                              {{ sumField("hmrenew") }} -
+                              {{
+                                (
+                                  (sumField("hmrenew") * 100) /
+                                  sumField("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center callback">
-                              {{ sumField("hmcb") }}
+                              {{ sumField("hmcb") }} -
+                              {{
+                                (
+                                  (sumField("hmcb") * 100) /
+                                  sumField("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center deposit">
-                              {{ sumField("hmdp") }}
+                              {{ sumField("hmdp") }} -
+                              {{
+                                (
+                                  (sumField("hmdp") * 100) /
+                                  sumField("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center pending">
-                              {{ sumField("hmpnd") }}
+                              {{ sumField("hmpnd") }} -
+                              {{
+                                (
+                                  (sumField("hmpnd") * 100) /
+                                  sumField("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center potential">
-                              {{ sumField("hmpot") }}
+                              {{ sumField("hmpot") }} -
+                              {{
+                                (
+                                  (sumField("hmpot") * 100) /
+                                  sumField("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center noans">
-                              {{ sumField("hmnoans") }}
+                              {{ sumField("hmnoans") }} -
+                              {{
+                                (
+                                  (sumField("hmnoans") * 100) /
+                                  sumField("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center nointerest">
-                              {{ sumField("hmnointerest") }}
+                              {{ sumField("hmnointerest") }} -
+                              {{
+                                (
+                                  (sumField("hmnointerest") * 100) /
+                                  sumField("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th></th>
                           </tr>
@@ -359,13 +407,28 @@
                         </thead>
                       </template>
 
+                      <!-- Slots for table rows
+                      <template v-slot:item="{ item }">
+                        <tr :class="{ work: selectedRowId === item.id }">
+                          <td>{{ item.start }}</td>
+                          <td>{{ item.user }}</td>
+                          <td>{{ item.sum }}</td>
+                          <td>{{ item.sum }}</td>
+                          <td>{{ item.provider }}</td>
+                          <td>{{ item.message }}</td>
+                          <td>{{ item.geo }}</td>
+                          <td>{{ item.hm }}</td>
+                        </tr>
+                      </template>-->
+
                       <!-- Слоты для строк таблицы -->
                       <template v-slot:item.hmnew="{ item }">
                         <div
                           class="pointer"
                           @click="changeFilterStatusClick(8)"
                         >
-                          {{ item.hmnew }}
+                          {{ item.hmnew }} -
+                          {{ ((item.hmnew * 100) / item.hm).toFixed(2) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmrenew="{ item }">
@@ -373,7 +436,8 @@
                           class="pointer"
                           @click="changeFilterStatusClick(33)"
                         >
-                          {{ item.hmrenew }}
+                          {{ item.hmrenew }} -
+                          {{ ((item.hmrenew * 100) / item.hm).toFixed(2) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmcb="{ item }">
@@ -381,7 +445,8 @@
                           class="pointer"
                           @click="changeFilterStatusClick(9)"
                         >
-                          {{ item.hmcb }}
+                          {{ item.hmcb }} -
+                          {{ ((item.hmcb * 100) / item.hm).toFixed(2) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmdp="{ item }">
@@ -389,7 +454,8 @@
                           class="pointer"
                           @click="changeFilterStatusClick(10)"
                         >
-                          {{ item.hmdp }}
+                          {{ item.hmdp }} -
+                          {{ ((item.hmdp * 100) / item.hm).toFixed(2) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmpnd="{ item }">
@@ -397,7 +463,8 @@
                           class="pointer"
                           @click="changeFilterStatusClick(20)"
                         >
-                          {{ item.hmpnd }}
+                          {{ item.hmpnd }} -
+                          {{ ((item.hmpnd * 100) / item.hm).toFixed(2) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmpot="{ item }">
@@ -405,7 +472,8 @@
                           class="pointer"
                           @click="changeFilterStatusClick(32)"
                         >
-                          {{ item.hmpot }}
+                          {{ item.hmpot }} -
+                          {{ ((item.hmpot * 100) / item.hm).toFixed(2) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmnoans="{ item }">
@@ -413,7 +481,8 @@
                           class="pointer"
                           @click="changeFilterStatusClick(7)"
                         >
-                          {{ item.hmnoans }}
+                          {{ item.hmnoans }} -
+                          {{ ((item.hmnoans * 100) / item.hm).toFixed(2) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmnointerest="{ item }">
@@ -421,7 +490,10 @@
                           class="pointer"
                           @click="changeFilterStatusClick(12)"
                         >
-                          {{ item.hmnointerest }}
+                          {{ item.hmnointerest }} -
+                          {{
+                            ((item.hmnointerest * 100) / item.hm).toFixed(2)
+                          }}%
                         </div>
                       </template>
                       <template v-slot:item.start="{ item }">
@@ -481,28 +553,76 @@
                               {{ sumFieldProv("hm") }}
                             </th>
                             <th class="text-center new">
-                              {{ sumFieldProv("hmnew") }}
+                              {{ sumFieldProv("hmnew") }} -
+                              {{
+                                (
+                                  (sumFieldProv("hmnew") * 100) /
+                                  sumFieldProv("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center renew">
-                              {{ sumFieldProv("hmrenew") }}
+                              {{ sumFieldProv("hmrenew") }} -
+                              {{
+                                (
+                                  (sumFieldProv("hmrenew") * 100) /
+                                  sumFieldProv("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center callback">
-                              {{ sumFieldProv("hmcb") }}
+                              {{ sumFieldProv("hmcb") }} -
+                              {{
+                                (
+                                  (sumFieldProv("hmcb") * 100) /
+                                  sumFieldProv("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center deposit">
-                              {{ sumFieldProv("hmdp") }}
+                              {{ sumFieldProv("hmdp") }} -
+                              {{
+                                (
+                                  (sumFieldProv("hmdp") * 100) /
+                                  sumFieldProv("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center pending">
-                              {{ sumFieldProv("hmpnd") }}
+                              {{ sumFieldProv("hmpnd") }} -
+                              {{
+                                (
+                                  (sumFieldProv("hmpnd") * 100) /
+                                  sumFieldProv("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center potential">
-                              {{ sumFieldProv("hmpot") }}
+                              {{ sumFieldProv("hmpot") }} -
+                              {{
+                                (
+                                  (sumFieldProv("hmpot") * 100) /
+                                  sumFieldProv("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center noans">
-                              {{ sumFieldProv("hmnoans") }}
+                              {{ sumFieldProv("hmnoans") }} -
+                              {{
+                                (
+                                  (sumFieldProv("hmnoans") * 100) /
+                                  sumFieldProv("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                             <th class="text-center nointerest">
-                              {{ sumFieldProv("hmnointerest") }}
+                              {{ sumFieldProv("hmnointerest") }} -
+                              {{
+                                (
+                                  (sumFieldProv("hmnointerest") * 100) /
+                                  sumFieldProv("hm")
+                                ).toFixed(2)
+                              }}%
                             </th>
                           </tr>
                           <tr class="d-none">
@@ -603,7 +723,13 @@
                                           clickrow(geoItem);
                                         "
                                       >
-                                        {{ geoItem.hmnew }}
+                                        {{ geoItem.hmnew }} -
+                                        {{
+                                          (
+                                            (geoItem.hmnew * 100) /
+                                            geoItem.hm
+                                          ).toFixed(2)
+                                        }}%
                                       </td>
                                       <td
                                         class="text-center common-column renew pointer"
@@ -613,7 +739,13 @@
                                           clickrow(geoItem);
                                         "
                                       >
-                                        {{ geoItem.hmrenew }}
+                                        {{ geoItem.hmrenew }} -
+                                        {{
+                                          (
+                                            (geoItem.hmrenew * 100) /
+                                            geoItem.hm
+                                          ).toFixed(2)
+                                        }}%
                                       </td>
                                       <td
                                         class="text-center common-column callback pointer"
@@ -623,7 +755,13 @@
                                           clickrow(geoItem);
                                         "
                                       >
-                                        {{ geoItem.hmcb }}
+                                        {{ geoItem.hmcb }} -
+                                        {{
+                                          (
+                                            (geoItem.hmcb * 100) /
+                                            geoItem.hm
+                                          ).toFixed(2)
+                                        }}%
                                       </td>
                                       <td
                                         class="text-center common-column deposit pointer"
@@ -633,7 +771,13 @@
                                           clickrow(geoItem);
                                         "
                                       >
-                                        {{ geoItem.hmdp }}
+                                        {{ geoItem.hmdp }} -
+                                        {{
+                                          (
+                                            (geoItem.hmdp * 100) /
+                                            geoItem.hm
+                                          ).toFixed(2)
+                                        }}%
                                       </td>
                                       <td
                                         class="text-center common-column pending pointer"
@@ -643,7 +787,13 @@
                                           clickrow(geoItem);
                                         "
                                       >
-                                        {{ geoItem.hmpnd }}
+                                        {{ geoItem.hmpnd }} -
+                                        {{
+                                          (
+                                            (geoItem.hmpnd * 100) /
+                                            geoItem.hm
+                                          ).toFixed(2)
+                                        }}%
                                       </td>
                                       <td
                                         class="text-center common-column potential pointer"
@@ -653,7 +803,13 @@
                                           clickrow(geoItem);
                                         "
                                       >
-                                        {{ geoItem.hmpot }}
+                                        {{ geoItem.hmpot }} -
+                                        {{
+                                          (
+                                            (geoItem.hmpot * 100) /
+                                            geoItem.hm
+                                          ).toFixed(2)
+                                        }}%
                                       </td>
                                       <td
                                         class="text-center common-column noans pointer"
@@ -663,7 +819,13 @@
                                           clickrow(geoItem);
                                         "
                                       >
-                                        {{ geoItem.hmnoans }}
+                                        {{ geoItem.hmnoans }} -
+                                        {{
+                                          (
+                                            (geoItem.hmnoans * 100) /
+                                            geoItem.hm
+                                          ).toFixed(2)
+                                        }}%
                                       </td>
                                       <td
                                         class="text-center common-column nointerest pointer"
@@ -673,7 +835,13 @@
                                           clickrow(geoItem);
                                         "
                                       >
-                                        {{ geoItem.hmnointerest }}
+                                        {{ geoItem.hmnointerest }} -
+                                        {{
+                                          (
+                                            (geoItem.hmnointerest * 100) /
+                                            geoItem.hm
+                                          ).toFixed(2)
+                                        }}%
                                       </td>
                                     </tr>
                                   </template>
@@ -697,6 +865,7 @@
               {{ usr[0] }}.
             </span>
           </v-col>
+          <v-col cols="12"> <b>Total: </b>{{ leads.length }} </v-col>
           <v-col cols="12" v-for="office in lidsByOffice" :key="office.name">
             <div class="d-flex align-center">
               <v-checkbox
@@ -1822,6 +1991,8 @@ export default {
     d_statuses: [],
     d_providers: [],
     d_offices: [],
+
+    selectedRowId: null,
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -2797,9 +2968,11 @@ export default {
       return this.importSelected.some((item) => item.id === geoItem.id);
     },
 
-    clickrow(item) {
+    clickrow(item, row) {
       let self = this;
       let data = {};
+      console.log(row);
+      self.selectedRowId = item.id;
       self.leads = [];
       self.Statuses = [];
       self.historyStatus = [];
@@ -3465,5 +3638,14 @@ main
     .v-data-table__empty-wrapper
   ) {
   background: #f9f9f9;
+}
+.csv
+  .theme--light.v-data-table
+  > .v-data-table__wrapper
+  > table
+  > tbody
+  > tr:hover
+  > td {
+  background: #eeeeee !important;
 }
 </style>
