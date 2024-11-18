@@ -303,6 +303,7 @@
                       @click:row="clickrow"
                       hide-default-footer
                       disable-pagination
+                      :item-class="getRowClass"
                     >
                       <!-- Кастомный заголовок для первой строки с вычисляемыми значениями -->
                       <template v-slot:header="{ props }">
@@ -396,8 +397,8 @@
                           <!-- Вторая строка с названиями полей из headers -->
                           <tr class="d-none">
                             <th
-                              v-for="header in props.headers"
-                              :key="header.text"
+                              v-for="(header, x) in props.headers"
+                              :key="x"
                               class="text-center"
                               :class="header.class || ''"
                             >
@@ -1992,7 +1993,7 @@ export default {
     d_providers: [],
     d_offices: [],
 
-    selectedRowId: null,
+    selectedRow: null,
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -2967,12 +2968,14 @@ export default {
     isSelected(geoItem) {
       return this.importSelected.some((item) => item.id === geoItem.id);
     },
-
-    clickrow(item, row) {
+    getRowClass(item) {
+      return this.selectedRow === item ? "selected-row" : "";
+    },
+    clickrow(item) {
       let self = this;
       let data = {};
-      console.log(row);
-      self.selectedRowId = item.id;
+
+      self.selectedRow = item;
       self.leads = [];
       self.Statuses = [];
       self.historyStatus = [];
@@ -3645,6 +3648,15 @@ main
   > table
   > tbody
   > tr:hover
+  > td {
+  background: #eeeeee !important;
+}
+.csv
+  .theme--light.v-data-table
+  > .v-data-table__wrapper
+  > table
+  > tbody
+  tr.selected-row
   > td {
   background: #eeeeee !important;
 }
