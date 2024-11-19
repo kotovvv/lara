@@ -60,7 +60,6 @@
 
 <script>
 const users = () => import("./users");
-const importcsv = () => import("./importcsv");
 const importcsvnew = () => import("./importcsvnew");
 const statusLid = () => import("./statusLid");
 // const workPlaces = () => import("./workPlaces");
@@ -81,11 +80,6 @@ export default {
     selectedItem: 0,
 
     items: [
-      {
-        text: "Импорт CSV",
-        name: "importcsv",
-        icon: "mdi-arrow-down-bold-box-outline",
-      },
       {
         text: "Imports",
         name: "importcsvnew",
@@ -108,11 +102,10 @@ export default {
       { text: "Отчёты", name: "reportPie", icon: "mdi-timetable" },
       { text: "Отчёт по BTC", name: "reportBTC", icon: "mdi-cash" },
     ],
-    adminMenu: "importcsv",
+    adminMenu: "importcsvnew",
   }),
   computed: {
     adminComponent() {
-      if (this.adminMenu == "importcsv") return importcsv;
       if (this.adminMenu == "importcsvnew") return importcsvnew;
       if (this.adminMenu == "users") return users;
       if (this.adminMenu == "statusLid") return statusLid;

@@ -326,7 +326,7 @@
                                 (
                                   (sumField("hmnew") * 100) /
                                   sumField("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center renew">
@@ -335,7 +335,7 @@
                                 (
                                   (sumField("hmrenew") * 100) /
                                   sumField("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center callback">
@@ -344,7 +344,7 @@
                                 (
                                   (sumField("hmcb") * 100) /
                                   sumField("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center deposit">
@@ -353,7 +353,7 @@
                                 (
                                   (sumField("hmdp") * 100) /
                                   sumField("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center pending">
@@ -362,7 +362,7 @@
                                 (
                                   (sumField("hmpnd") * 100) /
                                   sumField("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center potential">
@@ -371,7 +371,7 @@
                                 (
                                   (sumField("hmpot") * 100) /
                                   sumField("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center noans">
@@ -380,7 +380,7 @@
                                 (
                                   (sumField("hmnoans") * 100) /
                                   sumField("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center nointerest">
@@ -389,7 +389,7 @@
                                 (
                                   (sumField("hmnointerest") * 100) /
                                   sumField("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th></th>
@@ -429,7 +429,7 @@
                           @click="changeFilterStatusClick(8)"
                         >
                           {{ item.hmnew }} -
-                          {{ ((item.hmnew * 100) / item.hm).toFixed(2) }}%
+                          {{ ((item.hmnew * 100) / item.hm).toFixed(0) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmrenew="{ item }">
@@ -438,7 +438,7 @@
                           @click="changeFilterStatusClick(33)"
                         >
                           {{ item.hmrenew }} -
-                          {{ ((item.hmrenew * 100) / item.hm).toFixed(2) }}%
+                          {{ ((item.hmrenew * 100) / item.hm).toFixed(0) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmcb="{ item }">
@@ -447,7 +447,7 @@
                           @click="changeFilterStatusClick(9)"
                         >
                           {{ item.hmcb }} -
-                          {{ ((item.hmcb * 100) / item.hm).toFixed(2) }}%
+                          {{ ((item.hmcb * 100) / item.hm).toFixed(0) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmdp="{ item }">
@@ -456,7 +456,7 @@
                           @click="changeFilterStatusClick(10)"
                         >
                           {{ item.hmdp }} -
-                          {{ ((item.hmdp * 100) / item.hm).toFixed(2) }}%
+                          {{ ((item.hmdp * 100) / item.hm).toFixed(0) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmpnd="{ item }">
@@ -465,7 +465,7 @@
                           @click="changeFilterStatusClick(20)"
                         >
                           {{ item.hmpnd }} -
-                          {{ ((item.hmpnd * 100) / item.hm).toFixed(2) }}%
+                          {{ ((item.hmpnd * 100) / item.hm).toFixed(0) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmpot="{ item }">
@@ -474,7 +474,7 @@
                           @click="changeFilterStatusClick(32)"
                         >
                           {{ item.hmpot }} -
-                          {{ ((item.hmpot * 100) / item.hm).toFixed(2) }}%
+                          {{ ((item.hmpot * 100) / item.hm).toFixed(0) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmnoans="{ item }">
@@ -483,7 +483,7 @@
                           @click="changeFilterStatusClick(7)"
                         >
                           {{ item.hmnoans }} -
-                          {{ ((item.hmnoans * 100) / item.hm).toFixed(2) }}%
+                          {{ ((item.hmnoans * 100) / item.hm).toFixed(0) }}%
                         </div>
                       </template>
                       <template v-slot:item.hmnointerest="{ item }">
@@ -493,7 +493,7 @@
                         >
                           {{ item.hmnointerest }} -
                           {{
-                            ((item.hmnointerest * 100) / item.hm).toFixed(2)
+                            ((item.hmnointerest * 100) / item.hm).toFixed(0)
                           }}%
                         </div>
                       </template>
@@ -559,7 +559,7 @@
                                 (
                                   (sumFieldProv("hmnew") * 100) /
                                   sumFieldProv("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center renew">
@@ -568,7 +568,7 @@
                                 (
                                   (sumFieldProv("hmrenew") * 100) /
                                   sumFieldProv("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center callback">
@@ -577,7 +577,7 @@
                                 (
                                   (sumFieldProv("hmcb") * 100) /
                                   sumFieldProv("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center deposit">
@@ -586,7 +586,7 @@
                                 (
                                   (sumFieldProv("hmdp") * 100) /
                                   sumFieldProv("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center pending">
@@ -595,7 +595,7 @@
                                 (
                                   (sumFieldProv("hmpnd") * 100) /
                                   sumFieldProv("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center potential">
@@ -604,7 +604,7 @@
                                 (
                                   (sumFieldProv("hmpot") * 100) /
                                   sumFieldProv("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center noans">
@@ -613,7 +613,7 @@
                                 (
                                   (sumFieldProv("hmnoans") * 100) /
                                   sumFieldProv("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                             <th class="text-center nointerest">
@@ -622,7 +622,7 @@
                                 (
                                   (sumFieldProv("hmnointerest") * 100) /
                                   sumFieldProv("hm")
-                                ).toFixed(2)
+                                ).toFixed(0)
                               }}%
                             </th>
                           </tr>
@@ -673,9 +673,14 @@
                                   class="common-table"
                                   disable-pagination
                                   :items-per-page="-1"
+                                  :item-class="getRowClass"
                                 >
                                   <template v-slot:item="{ item: geoItem }">
-                                    <tr>
+                                    <tr
+                                      :class="{
+                                        'selected-row': selectedRow === geoItem,
+                                      }"
+                                    >
                                       <td>
                                         <v-checkbox
                                           :input-value="isSelected(geoItem)"
@@ -729,7 +734,7 @@
                                           (
                                             (geoItem.hmnew * 100) /
                                             geoItem.hm
-                                          ).toFixed(2)
+                                          ).toFixed(0)
                                         }}%
                                       </td>
                                       <td
@@ -745,7 +750,7 @@
                                           (
                                             (geoItem.hmrenew * 100) /
                                             geoItem.hm
-                                          ).toFixed(2)
+                                          ).toFixed(0)
                                         }}%
                                       </td>
                                       <td
@@ -761,7 +766,7 @@
                                           (
                                             (geoItem.hmcb * 100) /
                                             geoItem.hm
-                                          ).toFixed(2)
+                                          ).toFixed(0)
                                         }}%
                                       </td>
                                       <td
@@ -777,7 +782,7 @@
                                           (
                                             (geoItem.hmdp * 100) /
                                             geoItem.hm
-                                          ).toFixed(2)
+                                          ).toFixed(0)
                                         }}%
                                       </td>
                                       <td
@@ -793,7 +798,7 @@
                                           (
                                             (geoItem.hmpnd * 100) /
                                             geoItem.hm
-                                          ).toFixed(2)
+                                          ).toFixed(0)
                                         }}%
                                       </td>
                                       <td
@@ -809,7 +814,7 @@
                                           (
                                             (geoItem.hmpot * 100) /
                                             geoItem.hm
-                                          ).toFixed(2)
+                                          ).toFixed(0)
                                         }}%
                                       </td>
                                       <td
@@ -825,7 +830,7 @@
                                           (
                                             (geoItem.hmnoans * 100) /
                                             geoItem.hm
-                                          ).toFixed(2)
+                                          ).toFixed(0)
                                         }}%
                                       </td>
                                       <td
@@ -841,7 +846,7 @@
                                           (
                                             (geoItem.hmnointerest * 100) /
                                             geoItem.hm
-                                          ).toFixed(2)
+                                          ).toFixed(0)
                                         }}%
                                       </td>
                                     </tr>
@@ -866,7 +871,11 @@
               {{ usr[0] }}.
             </span>
           </v-col>
-          <v-col cols="12"> <b>Total: </b>{{ leads.length }} </v-col>
+          <v-col cols="12" v-if="lidsByOffice.length > 1">
+            <p style="font-size: 1.2rem; font-weight: bold">
+              Total: {{ leads.length }}
+            </p>
+          </v-col>
           <v-col cols="12" v-for="office in lidsByOffice" :key="office.name">
             <div class="d-flex align-center">
               <v-checkbox
