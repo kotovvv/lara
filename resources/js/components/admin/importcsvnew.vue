@@ -305,10 +305,8 @@
                       disable-pagination
                       :item-class="getRowClass"
                     >
-                      <!-- Кастомный заголовок для первой строки с вычисляемыми значениями -->
                       <template v-slot:header="{ props }">
                         <thead>
-                          <!-- Первая строка с вычисляемыми значениями -->
                           <tr>
                             <th></th>
                             <th></th>
@@ -394,7 +392,6 @@
                             </th>
                             <th></th>
                           </tr>
-                          <!-- Вторая строка с названиями полей из headers -->
                           <tr class="d-none">
                             <th
                               v-for="(header, x) in props.headers"
@@ -408,21 +405,6 @@
                         </thead>
                       </template>
 
-                      <!-- Slots for table rows
-                      <template v-slot:item="{ item }">
-                        <tr :class="{ work: selectedRowId === item.id }">
-                          <td>{{ item.start }}</td>
-                          <td>{{ item.user }}</td>
-                          <td>{{ item.sum }}</td>
-                          <td>{{ item.sum }}</td>
-                          <td>{{ item.provider }}</td>
-                          <td>{{ item.message }}</td>
-                          <td>{{ item.geo }}</td>
-                          <td>{{ item.hm }}</td>
-                        </tr>
-                      </template>-->
-
-                      <!-- Слоты для строк таблицы -->
                       <template v-slot:item.hmnew="{ item }">
                         <div
                           class="pointer"
@@ -860,9 +842,10 @@
                     </v-data-table>
                   </v-tab-item>
                 </v-tabs-items>
-              </v-col></v-row
-            ></v-container
-          >
+              </v-col>
+              <v-col cols="3">
+                <PieChart :datap="chartDataTime" /> </v-col></v-row
+          ></v-container>
           <v-col cols="12" id="info_prov">
             {{ item.name }} {{ item.start }}
             <v-btn class="btn mx-1" @click="getHistory">История</v-btn>
@@ -1431,8 +1414,17 @@ import importxlsx from "./importxlsx";
 import logtel from "../manager/logtel";
 import selectUsers from "./UI/selectUsers";
 import _ from "lodash";
+import PieChart from "../provider/pieComponents.vue";
 export default {
   name: "ImportCSV",
+  components: {
+    importBTC,
+    importxlsx,
+    logtel,
+    ConfirmDlg: () => import("./ConfirmDlg"),
+    selectUsers,
+    PieChart,
+  },
   data: () => ({
     true: true,
     i_geos: [],
@@ -2003,6 +1995,24 @@ export default {
     d_offices: [],
 
     selectedRow: null,
+    chartDataTime: {
+      labels: ["new", "renew", "cb", "dp", "pnd", "pot", "noans", "nointerest"],
+      datasets: [
+        {
+          backgroundColor: [
+            "#DDE4E4FF",
+            "#C3F3FF",
+            "#1D92F09F",
+            "#21CB7BFF",
+            "#A3ADB7FF",
+            "#7FD74E",
+            "#EFA0238C",
+            "#A544D2B2",
+          ],
+          data: [],
+        },
+      ],
+    },
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -2078,6 +2088,34 @@ export default {
     },
   },
   methods: {
+    callcSumm(obj) {
+      const sums = {
+        hmnew: 0,
+        hmrenew: 0,
+        hmcb: 0,
+        hmdp: 0,
+        hmpnd: 0,
+        hmpot: 0,
+        hmnoans: 0,
+        hmnointerest: 0,
+        hm: 0,
+      };
+
+      obj.forEach((item) => {
+        const hmJson = JSON.parse(item.hm_json);
+        hmJson.forEach((obj) => {
+          if (obj.office_id !== undefined) {
+            Object.keys(sums).forEach((key) => {
+              if (obj[key] !== undefined) {
+                sums[key] += parseInt(obj[key], 10);
+              }
+            });
+          }
+        });
+      });
+      this.chartDataTime.datasets[0].data = Object.values(sums);
+    },
+
     setTop() {
       const vm = this;
       let data = {
@@ -3222,6 +3260,7 @@ export default {
           //     );
           //   });
           // }
+          self.callcSumm(self.imports);
           self.ImportedProvLids();
         })
         .catch((error) => console.log(error))
@@ -3467,13 +3506,6 @@ export default {
         }
       );
     },
-  },
-  components: {
-    importBTC,
-    importxlsx,
-    logtel,
-    ConfirmDlg: () => import("./ConfirmDlg"),
-    selectUsers,
   },
 };
 </script>
