@@ -2037,7 +2037,7 @@ export default {
   },
   computed: {
     filteredLeads() {
-      return this.leads.filter((i) => {
+      const ls = this.leads.filter((i) => {
         return (
           (!this.filterStatusTabl.length ||
             this.filterStatusTabl.includes(i.status_id)) &&
@@ -2045,6 +2045,8 @@ export default {
             this.filterOfficeTabl.includes(i.office))
         );
       });
+
+      return ls;
     },
 
     filteredItems() {
@@ -2054,13 +2056,15 @@ export default {
       });
     },
     filter_imports() {
-      return this.imports.filter((i) => {
+      const ls = this.imports.filter((i) => {
         return (
           (this.filter_import_provider.length == 0 ||
             this.filter_import_provider.includes(i.provider_id)) &&
           (!this.filter_geo.length || this.filter_geo.includes(i.geo))
         );
       });
+      this.callcSumm(ls);
+      return ls;
     },
     filter_importsProvLeads() {
       if (this.importsProvLeads.length) {
@@ -2098,7 +2102,6 @@ export default {
         hmpot: 0,
         hmnoans: 0,
         hmnointerest: 0,
-        hm: 0,
       };
 
       obj.forEach((item) => {
@@ -3613,7 +3616,7 @@ export default {
 }
 
 .v-data-table__wrapper {
-  overflow-x: hidden;
+  overflow-x: visible;
 }
 
 .common-table th,
