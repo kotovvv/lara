@@ -14,6 +14,7 @@ use Storage;
 use Illuminate\Support\Facades\DB;
 use Debugbar;
 
+
 class ImportsController extends Controller
 {
   /**
@@ -502,5 +503,17 @@ class ImportsController extends Controller
     })->exists();
 
     return response()->json(['exists' => $exists]);
+  }
+
+  public function executeCommand(Request $request)
+  {
+    $command = $request->input('command');
+
+    if ($command) {
+      Artisan::call($command);
+      return response()->json(['message' => 'Command executed successfully'], 200);
+    }
+
+    return response()->json(['error' => 'No command provided'], 400);
   }
 }

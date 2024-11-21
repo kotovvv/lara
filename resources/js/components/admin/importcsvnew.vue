@@ -922,6 +922,9 @@
                 </v-tabs-items>
               </v-col>
               <v-col cols="3">
+                <v-btn icon @click="renewImport"
+                  ><v-icon>mdi-refresh</v-icon></v-btn
+                >
                 <PieChart :datap="chartDataTime" />
 
                 <div id="wrp_stat" class="wrp__statuses mt-2">
@@ -2212,6 +2215,19 @@ export default {
     },
   },
   methods: {
+    renewImport() {
+      const self = this;
+      self.loading = true;
+      axios
+        .post("/api/executeCommand", { command: "import:callc" })
+        .then((response) => {
+          console.log("Command executed successfully");
+          this.getImports();
+        })
+        .catch((error) => {
+          console.error("Error executing command:", error);
+        });
+    },
     changeTabImport() {
       this.selectedRow = null;
       if (this.tabimport == 0) {

@@ -120,3 +120,4 @@ Route::get('onCdr', [LogsController::class, 'onCdr']);
 Route::post('getCalls', [LogsController::class, 'getCalls']);
 Route::get('importCallc', [ImportsController::class, 'importCallc']);
 Route::post('checkLoadMess', [ImportsController::class, 'checkLoadMess']);
+Route::post('executeCommand', [ImportsController::class, 'executeCommand']);
