@@ -922,8 +922,41 @@
                 </v-tabs-items>
               </v-col>
               <v-col cols="3">
-                <PieChart :datap="chartDataTime" /> </v-col></v-row
-          ></v-container>
+                <PieChart :datap="chartDataTime" />
+
+                <div id="wrp_stat" class="wrp__statuses mt-2">
+                  <template v-for="(stat, key) in chartDataTime.labels">
+                    <div class="status_wrp" :key="key">
+                      <b
+                        style="color: #000000"
+                        :style="{
+                          background:
+                            chartDataTime.datasets[0].backgroundColor[key],
+
+                          outline:
+                            '3px solid' +
+                            chartDataTime.datasets[0].backgroundColor[key],
+                        }"
+                        >{{ chartDataTime.datasets[0].data[key] }}</b
+                      >
+                      <span>
+                        <small>
+                          {{
+                            (
+                              (chartDataTime.datasets[0].data[key] * 100) /
+                              hm
+                            ).toFixed(2)
+                          }}%</small
+                        >
+                        {{ stat }}</span
+                      >
+                    </div>
+                  </template>
+                  <!-- </div> -->
+                </div>
+              </v-col></v-row
+            ></v-container
+          >
           <v-col cols="12" id="info_prov">
             {{ item.name }} {{ item.start }}
             <v-btn class="btn mx-1" @click="getHistory">История</v-btn>
@@ -2071,7 +2104,7 @@ export default {
     d_statuses: [],
     d_providers: [],
     d_offices: [],
-
+    hm: 0,
     selectedRow: null,
     chartDataTime: {
       labels: [
@@ -2198,6 +2231,7 @@ export default {
         hmnoans: 0,
         hmnointerest: 0,
       };
+      this.hm = 0;
       const office_id = this.$attrs.user.office_id;
       if (this.tabimport == 0) {
         obj.forEach((item) => {
@@ -2209,6 +2243,7 @@ export default {
                   sums[key] += parseInt(obj[key], 10);
                 }
               });
+              this.hm += parseInt(obj.hm, 10);
             }
           });
         });
@@ -2220,6 +2255,7 @@ export default {
             }
           });
         });
+        this.hm = obj.reduce((acc, item) => acc + parseInt(item.hm, 10), 0);
       }
       this.chartDataTime.datasets[0].data = Object.values(sums);
     },
