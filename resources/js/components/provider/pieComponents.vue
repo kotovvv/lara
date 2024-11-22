@@ -13,68 +13,104 @@
 </template>
 
 <script>
-import { Pie } from 'vue-chartjs/legacy'
-
+import { Pie } from "vue-chartjs/legacy";
 import {
   Chart as ChartJS,
   Title,
   Tooltip,
   Legend,
   ArcElement,
-  CategoryScale
-} from 'chart.js'
+  CategoryScale,
+} from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  CategoryScale,
+  ChartDataLabels
+);
 
 export default {
-  name: 'PieChart',
+  name: "PieChart",
   components: {
-    Pie
+    Pie,
   },
   props: {
-    datap:{
+    datap: {
       type: Object,
     },
     chartId: {
       type: String,
-      default: 'pie-chart'
+      default: "pie-chart",
     },
     datasetIdKey: {
       type: String,
-      default: 'label'
+      default: "label",
     },
     width: {
       type: Number,
-      default: 400
+      default: 400,
     },
     height: {
       type: Number,
-      default: 400
+      default: 400,
     },
     cssClasses: {
-      default: '',
-      type: String
+      default: "",
+      type: String,
     },
     styles: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     plugins: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   data() {
     return {
+      style: {
+        padding: "100px",
+      },
       chartData: this.datap,
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins:{legend:{display:false,position: "bottom"}}
-
-
-      }
-    }
-  }
-}
+        layout: {
+          padding: {
+            top: 20,
+            bottom: 20,
+            left: 20,
+            right: 20,
+          },
+        },
+        plugins: {
+          legend: { display: false, position: "bottom" },
+          datalabels: {
+            formatter: (value, context) => {
+              let sum = 0;
+              let dataArr = context.chart.data.datasets[0].data;
+              dataArr.map((data) => {
+                sum += data;
+              });
+              let percentage = ((value * 100) / sum).toFixed(2) + "%";
+              return percentage;
+            },
+            color: "#000",
+            font: {
+              weight: "bold",
+              size: 18,
+            },
+            align: "end", // Align the labels outside the sectors
+            anchor: "end", // Anchor the labels outside the sectors
+          },
+        },
+      },
+    };
+  },
+};
 </script>

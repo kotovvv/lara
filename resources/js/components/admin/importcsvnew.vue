@@ -925,7 +925,7 @@
                 <v-btn icon @click="renewImport"
                   ><v-icon>mdi-refresh</v-icon></v-btn
                 >
-                <PieChart :datap="chartDataTime" />
+                <PieChart :datap="chartDataTime" :plugins="plugins" />
 
                 <div id="wrp_stat" class="wrp__statuses mt-2">
                   <template v-for="(stat, key) in chartDataTime.labels">
@@ -2136,6 +2136,18 @@ export default {
         },
       ],
     },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            let percentage = tooltipItem.raw;
+            let total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
+            let percent = ((percentage / total) * 100).toFixed(1);
+            return `${tooltipItem.label}: ${percent}%`;
+          },
+        },
+      },
+    },
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -2154,9 +2166,9 @@ export default {
 
   mounted() {
     this.getProviders();
-    //this.ImportedProvLids();
     this.getOffices();
     this.getStatuses();
+    this.renewImport();
   },
   computed: {
     filteredLeads() {
@@ -3297,7 +3309,7 @@ export default {
               baer,
             })
           );
-          self.getImports();
+          // self.getImports();
         })
         .catch((error) => console.log(error));
     },
