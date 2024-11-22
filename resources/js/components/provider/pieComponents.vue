@@ -91,7 +91,7 @@ export default {
             formatter: (value, context) => {
               let sum = context.dataset.data.reduce((a, b) => a + b, 0);
               let percentage = ((value / sum) * 100).toFixed(2) + "%";
-              return percentage;
+              return percentage > 1 ? percentage + "%" : "";
             },
             color: "#000",
             font: {
