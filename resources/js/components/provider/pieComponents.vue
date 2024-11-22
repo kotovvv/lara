@@ -52,11 +52,11 @@ export default {
     },
     width: {
       type: Number,
-      default: 400,
+      default: 500,
     },
     height: {
       type: Number,
-      default: 400,
+      default: 500,
     },
     cssClasses: {
       default: "",
