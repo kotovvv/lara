@@ -2009,7 +2009,7 @@ export default {
       { text: "Создан", value: "date_created" },
       { text: "Статус", value: "status_name" },
       { text: "Изменён", value: "date_updated" },
-      { text: "Название базы", value: "load_mess" },
+      //{ text: "Название базы", value: "load_mess" },
       { text: "Депозит", value: "deposit" },
       { text: "Сообщение", value: "text" },
       { text: "Звонков", value: "qtytel" },
