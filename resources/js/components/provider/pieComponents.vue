@@ -68,45 +68,52 @@ export default {
     },
     plugins: {
       type: Array,
-      default: () => [],
+      default: () => [ChartDataLabels],
     },
   },
   data() {
     return {
-      style: {
-        padding: "100px",
-      },
       chartData: this.datap,
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
         layout: {
           padding: {
-            top: 20,
-            bottom: 20,
-            left: 20,
-            right: 20,
+            top: 40,
+            bottom: 40,
+            left: 40,
+            right: 40,
           },
         },
         plugins: {
-          legend: { display: false, position: "bottom" },
+          legend: { display: false },
           datalabels: {
             formatter: (value, context) => {
-              let sum = 0;
-              let dataArr = context.chart.data.datasets[0].data;
-              dataArr.map((data) => {
-                sum += data;
-              });
-              let percentage = ((value * 100) / sum).toFixed(2) + "%";
+              let sum = context.dataset.data.reduce((a, b) => a + b, 0);
+              let percentage = ((value / sum) * 100).toFixed(2) + "%";
               return percentage;
             },
             color: "#000",
             font: {
               weight: "bold",
-              size: 18,
+              size: 16,
             },
-            align: "end", // Align the labels outside the sectors
-            anchor: "end", // Anchor the labels outside the sectors
+            align: "end",
+            anchor: "end",
+            offset: 15,
+            borderWidth: 2, // Толщина линии
+            borderColor: (context) => {
+              // Цвет линии можно динамически задавать
+              return context.dataset.backgroundColor[context.dataIndex];
+            },
+            backgroundColor: "#fff", // Белый фон для читабельности
+            borderRadius: 4, // Закругленные углы фона метки
+            padding: {
+              top: 6,
+              bottom: 6,
+              left: 8,
+              right: 8,
+            },
           },
         },
       },

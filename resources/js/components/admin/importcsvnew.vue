@@ -925,7 +925,7 @@
                 <v-btn icon @click="renewImport"
                   ><v-icon>mdi-refresh</v-icon></v-btn
                 >
-                <PieChart :datap="chartDataTime" :plugins="plugins" />
+                <PieChart :datap="chartDataTime" />
 
                 <div id="wrp_stat" class="wrp__statuses mt-2">
                   <template v-for="(stat, key) in chartDataTime.labels">
@@ -2135,18 +2135,6 @@ export default {
           data: [],
         },
       ],
-    },
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            let percentage = tooltipItem.raw;
-            let total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
-            let percent = ((percentage / total) * 100).toFixed(1);
-            return `${tooltipItem.label}: ${percent}%`;
-          },
-        },
-      },
     },
   }),
   watch: {
