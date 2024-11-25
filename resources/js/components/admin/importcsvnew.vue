@@ -3835,6 +3835,9 @@ main
   left: 50%;
   transform: translateX(-50%);
 }
+.pointer.common-column small {
+  bottom: 5px;
+}
 #provTable > .v-data-table__wrapper > table > tbody,
 #cpl > .v-data-table__wrapper > table > tbody {
   background: #e0e0e0;
