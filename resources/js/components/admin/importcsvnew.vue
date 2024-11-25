@@ -3826,8 +3826,15 @@ main
 
 .pointer {
   cursor: pointer;
+  position: relative;
 }
 
+.pointer small {
+  position: absolute;
+  bottom: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+}
 #provTable > .v-data-table__wrapper > table > tbody,
 #cpl > .v-data-table__wrapper > table > tbody {
   background: #e0e0e0;
