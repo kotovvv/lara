@@ -3838,6 +3838,19 @@ main
 .pointer.common-column small {
   bottom: 5px;
 }
+
+#provTable th,
+#cpl th {
+  position: relative;
+}
+#provTable th small,
+#cpl th small {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 #provTable > .v-data-table__wrapper > table > tbody,
 #cpl > .v-data-table__wrapper > table > tbody {
   background: #e0e0e0;
