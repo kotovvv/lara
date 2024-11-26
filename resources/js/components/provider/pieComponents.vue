@@ -100,7 +100,8 @@ export default {
             },
             align: "end",
             anchor: "end",
-            offset: 15,
+            clip: false,
+            offset: 5,
             borderWidth: 2, // Толщина линии
             borderColor: (context) => {
               // Цвет линии можно динамически задавать
@@ -109,10 +110,10 @@ export default {
             backgroundColor: "#fff", // Белый фон для читабельности
             borderRadius: 4, // Закругленные углы фона метки
             padding: {
-              top: 6,
-              bottom: 6,
-              left: 18,
-              right: 18,
+              top: 3,
+              bottom: 3,
+              left: 6,
+              right: 6,
             },
           },
         },
