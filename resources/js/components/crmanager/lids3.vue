@@ -325,6 +325,7 @@
             v-model.lazy.trim="selected"
             id="tablids"
             :headers="headers"
+            fixed-header
             :search="search"
             :single-select="false"
             item-key="id"
