@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
    */
   protected $commands = [
     Commands\load_calls::class,
-    Commands\ImportCallc::class,
+    //Commands\ImportCallc::class,
   ];
 
   /**

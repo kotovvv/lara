@@ -273,7 +273,10 @@ class UsersController extends Controller
     $user = User::where('id', (int) session()->get('user_id'))->first();
 
     // $role_id = $user->role_id;
-    $group_id = $user['group_id'];
+    $group_id = 0;
+    if (isset($user['group_id'])) {
+      $group_id = $user['group_id'];
+    }
     return User::select([
       'users.*',
       DB::raw('(SELECT COUNT(*) FROM lids l WHERE l.user_id = users.id) as hmlids '),
