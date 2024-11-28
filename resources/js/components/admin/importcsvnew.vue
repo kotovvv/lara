@@ -3839,16 +3839,17 @@ main
   bottom: 5px;
 }
 
-#provTable th,
+/*#provTable th,
 #cpl th {
   position: relative;
-}
+}*/
 #provTable th small,
 #cpl th small {
-  position: absolute;
+  /*position: relative;
   bottom: -2px;
   left: 50%;
-  transform: translateX(-50%);
+   transform: translateX(-50%); */
+  display: block;
 }
 
 #provTable > .v-data-table__wrapper > table > tbody,
