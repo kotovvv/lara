@@ -307,7 +307,7 @@
                     >
                       <template v-slot:header="{ props }">
                         <thead>
-                          <tr>
+                          <tr id="headerProTr" style="border-top: none">
                             <th></th>
                             <th></th>
                             <th></th>
@@ -573,7 +573,7 @@
                       </template>
                       <template v-slot:header="{ props }">
                         <thead>
-                          <tr>
+                          <tr id="headerProTr2" style="border-top: none">
                             <th></th>
                             <th></th>
                             <th></th>
@@ -2215,6 +2215,22 @@ export default {
     },
   },
   methods: {
+    headerMove() {
+      setTimeout(() => {
+        const headerProTr = document.querySelector("#headerProTr");
+        const headerProTr2 = document.querySelector("#headerProTr2");
+        const thead = document.querySelector("#cpl thead.v-data-table-header");
+        const thead2 = document.querySelector(
+          "#provTable thead.v-data-table-header"
+        );
+        if (headerProTr && thead) {
+          thead.prepend(headerProTr);
+        }
+        if (headerProTr2 && thead2) {
+          thead2.prepend(headerProTr2);
+        }
+      }, 1000);
+    },
     renewImport() {
       const self = this;
       self.loading = true;
@@ -2234,6 +2250,7 @@ export default {
         this.callcSumm(this.filter_imports);
       } else {
         this.callcSumm(this.filter_importsProvLeads);
+        this.headerMove();
       }
     },
     callcSumm(obj) {
@@ -3423,6 +3440,7 @@ export default {
           // }
           self.callcSumm(self.imports);
           self.ImportedProvLids();
+          self.headerMove();
         })
         .catch((error) => console.log(error))
         .finally(() => {

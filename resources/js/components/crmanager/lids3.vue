@@ -1932,7 +1932,9 @@ export default {
 #tablids .v-data-table__wrapper {
   overflow: auto;
   max-height: 54vh;
+  padding-top: 0;
 }
+
 #tablids .text-start.sortable {
   vertical-align: top;
 }
