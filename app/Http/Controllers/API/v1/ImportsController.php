@@ -40,9 +40,10 @@ class ImportsController extends Controller
       })
       ->orderByDesc('end')->get();
     //delete callc
-    // foreach ($imports as $import) {
-    //   Import::where('id', $import->id)->update(['callc' => 1]);
-    // }
+
+    foreach (Import::select('id')->whereNull('hm_json')->whereDate('start', date('Y-m-d'))->get() as $import) {
+      Import::where('id', $import->id)->update(['callc' => 1]);
+    }
 
     return $imports;
   }
