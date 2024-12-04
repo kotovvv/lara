@@ -39,9 +39,10 @@ class ImportsController extends Controller
         return $query->whereNotNull(DB::raw("JSON_SEARCH(office_ids, 'one', $office_id) "));
       })
       ->orderByDesc('end')->get();
-    foreach ($imports as $import) {
-      Import::where('id', $import->id)->update(['callc' => 1]);
-    }
+    //delete callc
+    // foreach ($imports as $import) {
+    //   Import::where('id', $import->id)->update(['callc' => 1]);
+    // }
 
     return $imports;
   }

@@ -270,6 +270,7 @@ class LidsController extends Controller
   public function updatelids(Request $request)
   {
     $data = $request->all();
+    $res = [];
     foreach ($data['data'] as $lid) {
       $a_lid = [
         'status_id' => $lid['status_id'],
@@ -296,6 +297,11 @@ class LidsController extends Controller
       }
       $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
 
+      //set update for imports
+      $l = Lid::select('created_at', 'provider_id')->first($lid['id']);
+      $date_s = date('Y-m-d', strtotime($l->created_at));
+      DB::table('imports')->whereDate('start', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
+      DB::table('imports_provider')->where('date', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
 
       $a_lid['lid_id'] = $lid['id'];
       $a_lid['tel'] = $lid['tel'];
@@ -1752,11 +1758,12 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     } elseif ($office_id > 0) {
       $where = " WHERE JSON_SEARCH(office_ids, 'one'," . $office_id . ") IS NOT NULL ";
     }
-    $ips = DB::table('imports_provider')->whereBetween('date', [$from, $to])->get();
-    // for update hm* on schedule
-    foreach ($ips as $ip) {
-      DB::table('imports_provider')->where('id', $ip->id)->update(['callc' => 1]);
-    }
+    //delete callc
+    // $ips = DB::table('imports_provider')->whereBetween('date', [$from, $to])->get();
+    // // for update hm* on schedule
+    // foreach ($ips as $ip) {
+    //   DB::table('imports_provider')->where('id', $ip->id)->update(['callc' => 1]);
+    // }
 
     if (count($ips)) {
       $sql = "SELECT ip.*,ip.date start, p.name provider,  sum(hmnew),  sum(hmcb),  sum(hmdp),  sum(hm) FROM `imports_provider` ip LEFT JOIN providers p ON p.`id` = ip.`provider_id` " . $where . " GROUP BY DATE, provider_id, geo  ORDER BY DATE DESC, provider_id ASC";
