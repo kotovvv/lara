@@ -244,6 +244,12 @@ class LidsController extends Controller
       ];
       if (isset($data['status_id'])) $a_lid['status_id'] = $data['status_id'];
       $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
+
+      //set update for imports
+      $l = Lid::select('created_at', 'provider_id')->first($lid['id']);
+      $date_s = date('Y-m-d', strtotime($l->created_at));
+      DB::table('imports')->whereDate('start', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
+      DB::table('imports_provider')->where('date', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
     }
     if ($res) {
       return response('Lids manager changed', 200);
@@ -391,7 +397,7 @@ class LidsController extends Controller
 
       $n_lid->user_id = $data['user_id'];
       $n_lid->office_id = $office_id;
-      $n_lid->created_at = Now();
+      $n_lid->created_at = $res['date_start'];
 
       if (isset($lid['afilyator'])) {
         $n_lid->afilyator = substr(trim($lid['afilyator']), 0, 50);
@@ -429,7 +435,7 @@ class LidsController extends Controller
           'status_id' => $n_lid->status_id,
           'user_id' => $n_lid->user_id,
           'text' => $n_lid->text,
-          'created_at' => Now(),
+          'created_at' => $res['date_start'],
           'lid_id' => $n_lid->id
         ];
         Log::insert($log);
@@ -1196,7 +1202,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => $n_lid->created_at, 'geo' => $geo]);
     $lids = DB::table('imported_leads')->select('lead_id')->where('api_key_id', $f_key->id)->where('upload_time', $n_lid->created_at)->where('geo', $geo);
     $a_office_ids = json_encode(Lid::whereIn('id', $lids)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
-    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo, 'office_ids' => $a_office_ids], ['date' => date('Y-m-d'), 'office_ids' => $a_office_ids]);
+    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo, 'office_ids' => $a_office_ids, 'callc' => 1], ['date' => date('Y-m-d'), 'office_ids' => $a_office_ids, 'callc' => 1]);
 
     $res['status'] = 'OK';
     $res['id'] = $id;
@@ -1314,7 +1320,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $n_lid->save();
     $id = $n_lid->id;
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now(), 'geo' => $geo]);
-    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo], ['date' => date('Y-m-d')]);
+    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo, 'callc' => 1], ['date' => date('Y-m-d'), 'callc' => 1]);
 
     $res['status'] = 'OK';
     $res['id'] = $id;
@@ -1404,7 +1410,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $n_lid->save();
     $id = $n_lid->id;
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now(), 'geo' => $geo]);
-    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo], ['date' => date('Y-m-d')]);
+    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo, 'callc' => 1], ['date' => date('Y-m-d'), 'callc' => 1]);
 
     $res['status'] = 'error';
     $res['id'] = $id;
@@ -1498,7 +1504,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $n_lid->save();
     $id = $n_lid->id;
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now(), 'geo' => $geo]);
-    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo], ['date' => date('Y-m-d')]);
+    DB::table('imports_provider')->updateOrInsert(['date' => date('Y-m-d'), 'provider_id' => $f_key->id, 'geo' => $geo, 'callc' => 1], ['date' => date('Y-m-d'), 'callc' => 1]);
 
     $res['status'] = 'OK';
     $res['id'] = $id;

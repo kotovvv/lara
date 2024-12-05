@@ -206,7 +206,7 @@ class ImportsController extends Controller
     if (count($office_ids) > 0 && !in_array(0, $office_ids)) {
       $a_import['office_ids'] = json_encode($office_ids);
     }
-
+    $a_import['callc'] = 1;
     DB::table('imports')->insert($a_import);
   }
 
