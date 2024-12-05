@@ -925,9 +925,9 @@
                 <v-btn icon @click="renewImport"
                   ><v-icon>mdi-refresh</v-icon></v-btn
                 >
-                <PieChart :datap="chartDataTime" />
-
-                <div id="wrp_stat" class="wrp__statuses mt-2">
+                <!-- <PieChart :datap="chartDataTime" /> -->
+                <PieCanvasjs :yValues="yValues" indexLabelRadius="150" />
+                <!-- <div id="wrp_stat" class="wrp__statuses mt-2">
                   <template v-for="(stat, key) in chartDataTime.labels">
                     <div class="status_wrp" :key="key">
                       <b
@@ -955,8 +955,8 @@
                       >
                     </div>
                   </template>
-                  <!-- </div> -->
-                </div>
+
+                </div> -->
               </v-col></v-row
             ></v-container
           >
@@ -1528,7 +1528,8 @@ import importxlsx from "./importxlsx";
 import logtel from "../manager/logtel";
 import selectUsers from "./UI/selectUsers";
 import _ from "lodash";
-import PieChart from "../provider/pieComponents.vue";
+// import PieChart from "../provider/pieComponents.vue";
+import PieCanvasjs from "./UI/pieCanvasjsComponent.vue";
 export default {
   name: "ImportCSV",
   components: {
@@ -1537,7 +1538,8 @@ export default {
     logtel,
     ConfirmDlg: () => import("./ConfirmDlg"),
     selectUsers,
-    PieChart,
+    // PieChart,
+    PieCanvasjs,
   },
   data: () => ({
     true: true,
@@ -2109,33 +2111,35 @@ export default {
     d_offices: [],
     hm: 0,
     selectedRow: null,
-    chartDataTime: {
-      labels: [
-        "new",
-        "renew",
-        "callback",
-        "deposit",
-        "pending",
-        "potential",
-        "noanswer",
-        "not interested",
-      ],
-      datasets: [
-        {
-          backgroundColor: [
-            "#DDE4E4FF",
-            "#C3F3FF",
-            "#1D92F09F",
-            "#21CB7BFF",
-            "#A3ADB7FF",
-            "#7FD74E",
-            "#EFA0238C",
-            "#A544D2B2",
-          ],
-          data: [],
-        },
-      ],
-    },
+    yValues: [0, 0, 0, 0, 0, 0, 0, 0],
+
+    // chartDataTime: {
+    //   labels: [
+    //     "new",
+    //     "renew",
+    //     "callback",
+    //     "deposit",
+    //     "pending",
+    //     "potential",
+    //     "noanswer",
+    //     "not interested",
+    //   ],
+    //   datasets: [
+    //     {
+    //       backgroundColor: [
+    //         "#DDE4E4FF",
+    //         "#C3F3FF",
+    //         "#1D92F09F",
+    //         "#21CB7BFF",
+    //         "#A3ADB7FF",
+    //         "#7FD74E",
+    //         "#EFA0238C",
+    //         "#A544D2B2",
+    //       ],
+    //       data: [],
+    //     },
+    //   ],
+    // },
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -2290,7 +2294,8 @@ export default {
         });
         this.hm = obj.reduce((acc, item) => acc + parseInt(item.hm, 10), 0);
       }
-      this.chartDataTime.datasets[0].data = Object.values(sums);
+      // this.chartDataTime.datasets[0].data = Object.values(sums);
+      this.yValues = Object.values(sums);
     },
 
     setTop() {
