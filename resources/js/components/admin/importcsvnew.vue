@@ -926,7 +926,7 @@
                   ><v-icon>mdi-refresh</v-icon></v-btn
                 >
                 <!-- <PieChart :datap="chartDataTime" /> -->
-                <PieCanvasjs :yValues="yValues" indexLabelRadius="150" />
+                <PieCanvasjs />
                 <!-- <div id="wrp_stat" class="wrp__statuses mt-2">
                   <template v-for="(stat, key) in chartDataTime.labels">
                     <div class="status_wrp" :key="key">
@@ -2111,7 +2111,7 @@ export default {
     d_offices: [],
     hm: 0,
     selectedRow: null,
-    yValues: [0, 0, 0, 0, 0, 0, 0, 0],
+    yValues: [125, 0, 0, 0, 125, 0, 0, 0],
 
     // chartDataTime: {
     //   labels: [
@@ -2295,7 +2295,7 @@ export default {
         this.hm = obj.reduce((acc, item) => acc + parseInt(item.hm, 10), 0);
       }
       // this.chartDataTime.datasets[0].data = Object.values(sums);
-      this.yValues = Object.values(sums);
+      // this.yValues = Object.values(sums);
     },
 
     setTop() {

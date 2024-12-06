@@ -72,7 +72,8 @@ export default {
         data: [
           {
             type: "pie",
-            indexLabel: "{label}: {y}",
+            // indexLabel: "{label}: {y}",
+            indexLabel: "{label}: (#percent%)",
             indexLabelRadius: this.indexLabelRadius,
             dataPoints: this.dataPoints,
           },
