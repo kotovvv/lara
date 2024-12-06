@@ -925,37 +925,43 @@
                 <v-btn icon @click="renewImport"
                   ><v-icon>mdi-refresh</v-icon></v-btn
                 >
-                <PieChart :datap="chartDataTime" />
-
-                <div id="wrp_stat" class="wrp__statuses mt-2">
-                  <template v-for="(stat, key) in chartDataTime.labels">
-                    <div class="status_wrp" :key="key">
+                <CanvasJSChart :options="chartOptions" />
+                <div
+                  id="wrp_stat"
+                  class="wrp__statuses"
+                  :style="{ 'flex-direction': ' column' }"
+                >
+                  <template v-for="i in Statuses">
+                    <div
+                      class="status_wrp"
+                      :class="{
+                        active:
+                          filterOfficeTabl.length == 0 &&
+                          filterStatusTabl.includes(i.id),
+                      }"
+                      :key="i.id"
+                      @click="filterOfficeStatus(0, i.id)"
+                    >
                       <b
-                        style="color: #000000"
                         :style="{
-                          background:
-                            chartDataTime.datasets[0].backgroundColor[key],
-
-                          outline:
-                            '3px solid' +
-                            chartDataTime.datasets[0].backgroundColor[key],
+                          background: i.color,
+                          outline: '1px solid' + i.color,
                         }"
-                        >{{ chartDataTime.datasets[0].data[key] }}</b
+                        >{{ i.hm }}</b
                       >
-                      <span>
-                        <small>
-                          {{
-                            (
-                              (chartDataTime.datasets[0].data[key] * 100) /
-                              hm
-                            ).toFixed(2)
-                          }}%</small
-                        >
-                        {{ stat }}</span
+                      <span>{{ i.name }}</span>
+                      <v-btn
+                        v-if="
+                          filterOfficeTabl.length == 0 &&
+                          filterStatusTabl.includes(i.id)
+                        "
+                        icon
+                        x-small
                       >
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
                     </div>
                   </template>
-                  <!-- </div> -->
                 </div>
               </v-col></v-row
             ></v-container
@@ -1528,7 +1534,8 @@ import importxlsx from "./importxlsx";
 import logtel from "../manager/logtel";
 import selectUsers from "./UI/selectUsers";
 import _ from "lodash";
-import PieChart from "../provider/pieComponents.vue";
+
+import CanvasJSChart from "./UI/pieCanvasJsComponent.vue";
 export default {
   name: "ImportCSV",
   components: {
@@ -1537,7 +1544,8 @@ export default {
     logtel,
     ConfirmDlg: () => import("./ConfirmDlg"),
     selectUsers,
-    PieChart,
+
+    CanvasJSChart,
   },
   data: () => ({
     true: true,
@@ -2109,30 +2117,22 @@ export default {
     d_offices: [],
     hm: 0,
     selectedRow: null,
-    chartDataTime: {
-      labels: [
-        "new",
-        "renew",
-        "callback",
-        "deposit",
-        "pending",
-        "potential",
-        "noanswer",
-        "not interested",
-      ],
-      datasets: [
+    chartOptions: {
+      animationEnabled: true,
+      title: {
+        text: "Vue.js Basic Column Chart",
+      },
+      data: [
         {
-          backgroundColor: [
-            "#DDE4E4FF",
-            "#C3F3FF",
-            "#1D92F09F",
-            "#21CB7BFF",
-            "#A3ADB7FF",
-            "#7FD74E",
-            "#EFA0238C",
-            "#A544D2B2",
+          type: "pie",
+          indexLabel: "{label} {y}(#percent%)",
+          dataPoints: [
+            { label: "apple", y: 10 },
+            { label: "orange", y: 15 },
+            { label: "banana", y: 25 },
+            { label: "mango", y: 30 },
+            { label: "grape", y: 28 },
           ],
-          data: [],
         },
       ],
     },
@@ -2290,7 +2290,40 @@ export default {
         });
         this.hm = obj.reduce((acc, item) => acc + parseInt(item.hm, 10), 0);
       }
-      this.chartDataTime.datasets[0].data = Object.values(sums);
+
+      const defaultStatusColor = {
+        hmnew: { label: "new", color: "#DDE4E4FF" },
+        hmrenew: { label: "renew", color: "#C3F3FF" },
+        hmcb: { label: "callback", color: "#1D92F09F" },
+        hmdp: { label: "deposit", color: "#21CB7BFF" },
+        hmpnd: { label: "pending", color: "#A3ADB7FF" },
+        hmpot: { label: "potential", color: "#7FD74E" },
+        hmnoans: { label: "noanswer", color: "#EFA0238C" },
+        hmnointerest: { label: "not interested", color: "#A544D2B2" },
+      };
+      this.chartOptions = {
+        ...this.chartOptions,
+        title: {
+          text: "",
+        },
+        data: [
+          {
+            type: "pie",
+            indexLabel: "{label} (#percent%)",
+            dataPoints: [], // Assuming obj is an array of data points
+          },
+        ],
+      };
+      this.chartOptions.data[0].dataPoints = Object.entries(sums).map(
+        ([key, value]) => {
+          return {
+            label: defaultStatusColor[key].label,
+            y: value,
+            color: defaultStatusColor[key].color,
+          };
+        }
+      );
+      this.updateChart = true;
     },
 
     setTop() {
