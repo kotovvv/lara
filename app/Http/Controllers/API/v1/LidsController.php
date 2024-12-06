@@ -304,7 +304,7 @@ class LidsController extends Controller
       $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
 
       //set update for imports
-      $l = Lid::select('created_at', 'provider_id')->first($lid['id']);
+      $l = Lid::select('created_at', 'provider_id')->where('id', $lid['id'])->first();
       $date_s = date('Y-m-d', strtotime($l->created_at));
       DB::table('imports')->whereDate('start', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
       DB::table('imports_provider')->where('date', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
