@@ -2254,6 +2254,7 @@ export default {
       }
     },
     callcSumm(obj) {
+      this.Statuses = [];
       const sums = {
         hmnew: 0,
         hmrenew: 0,
@@ -3053,6 +3054,24 @@ export default {
         });
       });
       self.Statuses = _.orderBy(self.Statuses, "order");
+      self.chartOptions = {
+        ...self.chartOptions,
+        title: {
+          text: "",
+        },
+        data: [
+          {
+            type: "pie",
+            indexLabel: "{label} (#percent%)",
+            dataPoints: self.Statuses.map((status) => ({
+              label: status.name,
+              y: status.hm,
+              color: status.color,
+            })),
+          },
+        ],
+      };
+      self.updateChart = true;
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
@@ -3233,7 +3252,7 @@ export default {
       let data = {};
 
       self.selectedRow = item;
-      self.callcSumm([item]);
+      // self.callcSumm([item]);
       self.leads = [];
       self.Statuses = [];
       self.historyStatus = [];
