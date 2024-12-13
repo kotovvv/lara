@@ -322,7 +322,12 @@ export default {
           workbook = XLSX.read(btoa(fixedData), { type: "base64" }),
           firstSheetName = workbook.SheetNames[0],
           worksheet = workbook.Sheets[firstSheetName];
-        vm.table = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        vm.loading = true;
+        setTimeout(() => {
+          vm.table = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          vm.loading = false;
+        }, 100);
       };
       reader.readAsArrayBuffer(f);
     },
