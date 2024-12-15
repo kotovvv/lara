@@ -130,7 +130,7 @@
             @click="putSelectedLidsDB"
             >Назначить</v-btn
           >
-          <v-card height="60vh" class="pa-5 overflow-x-auto">
+          <v-card height="77vh" class="pa-5 overflow-x-auto">
             Укажите пользователя для лидов
             <v-list>
               <div v-for="office in offices" :key="office.id">
@@ -557,5 +557,9 @@ export default {
 <style >
 #inspire #importXLS .v-text-field__details {
   display: initial;
+}
+#loadedTable {
+  height: 80vh;
+  overflow: auto;
 }
 </style>

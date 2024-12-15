@@ -699,11 +699,6 @@
                             disable-pagination
                             :items-per-page="-1"
                           >
-                            <template v-slot:item.hm="{ item }">
-                              <div class="pointer" @click="clickrow(item)">
-                                {{ item.hm }}
-                              </div>
-                            </template>
                             <template v-slot:expanded-item="{ item: dateItem }">
                               <td :colspan="providerHeaders.length + 1">
                                 <v-data-table
@@ -2254,6 +2249,7 @@ export default {
       }
     },
     callcSumm(obj) {
+      if (obj == undefined) return;
       this.Statuses = [];
       const sums = {
         hmnew: 0,
@@ -2513,6 +2509,7 @@ export default {
       } else {
         this.expanded = [];
       }
+      this.clickrow(item);
     },
     closeAll() {
       Object.keys(this.$refs).forEach((k) => {
@@ -3203,6 +3200,7 @@ export default {
       row.expand(!row.isExpanded);
     },
     toggleExpandDate(item) {
+      this.clickrow(item);
       const itemId = item.id; // Use the unique identifier
       const expandedItem = this.expandedate.find(
         (expandedItem) => expandedItem.id === itemId
