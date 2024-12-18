@@ -566,9 +566,84 @@
                       height="80vh"
                       hide-default-footer
                     >
-                      <template v-slot:item.hm="{ item }">
-                        <div class="pointer" @click="clickrow(item)">
-                          {{ item.hm }}
+                      <template v-slot:item.hmnew="{ item }">
+                        <div>
+                          {{ item.hmnew }}
+                          <small>
+                            {{
+                              ((item.hmnew * 100) / item.hm).toFixed(2)
+                            }}%</small
+                          >
+                        </div>
+                      </template>
+                      <template v-slot:item.hmrenew="{ item }">
+                        <div>
+                          {{ item.hmrenew }}
+                          <small>
+                            {{
+                              ((item.hmrenew * 100) / item.hm).toFixed(2)
+                            }}%</small
+                          >
+                        </div>
+                      </template>
+                      <template v-slot:item.hmcb="{ item }">
+                        <div>
+                          {{ item.hmcb }}
+                          <small>
+                            {{
+                              ((item.hmcb * 100) / item.hm).toFixed(2)
+                            }}%</small
+                          >
+                        </div>
+                      </template>
+                      <template v-slot:item.hmdp="{ item }">
+                        <div>
+                          {{ item.hmdp }}
+                          <small>
+                            {{
+                              ((item.hmdp * 100) / item.hm).toFixed(2)
+                            }}%</small
+                          >
+                        </div>
+                      </template>
+                      <template v-slot:item.hmpnd="{ item }">
+                        <div>
+                          {{ item.hmpnd }}
+                          <small>
+                            {{
+                              ((item.hmpnd * 100) / item.hm).toFixed(2)
+                            }}%</small
+                          >
+                        </div>
+                      </template>
+                      <template v-slot:item.hmpot="{ item }">
+                        <div>
+                          {{ item.hmpot }}
+                          <small>
+                            {{
+                              ((item.hmpot * 100) / item.hm).toFixed(2)
+                            }}%</small
+                          >
+                        </div>
+                      </template>
+                      <template v-slot:item.hmnoans="{ item }">
+                        <div>
+                          {{ item.hmnoans }}
+                          <small>
+                            {{
+                              ((item.hmnoans * 100) / item.hm).toFixed(2)
+                            }}%</small
+                          >
+                        </div>
+                      </template>
+                      <template v-slot:item.hmnointerest="{ item }">
+                        <div>
+                          {{ item.hmnointerest }}
+                          <small>
+                            {{
+                              ((item.hmnointerest * 100) / item.hm).toFixed(2)
+                            }}%</small
+                          >
                         </div>
                       </template>
                       <template v-slot:header="{ props }">
@@ -699,6 +774,73 @@
                             disable-pagination
                             :items-per-page="-1"
                           >
+                            <template v-slot:item.hmnew="{ item }">
+                              {{ item.hmnew }}
+                              <small>
+                                {{
+                                  ((item.hmnew * 100) / item.hm).toFixed(2)
+                                }}%</small
+                              >
+                            </template>
+                            <template v-slot:item.hmrenew="{ item }">
+                              {{ item.hmrenew }}
+                              <small>
+                                {{
+                                  ((item.hmrenew * 100) / item.hm).toFixed(2)
+                                }}%</small
+                              >
+                            </template>
+                            <template v-slot:item.hmcb="{ item }">
+                              {{ item.hmcb }}
+                              <small>
+                                {{
+                                  ((item.hmcb * 100) / item.hm).toFixed(2)
+                                }}%</small
+                              >
+                            </template>
+                            <template v-slot:item.hmdp="{ item }">
+                              {{ item.hmdp }}
+                              <small>
+                                {{
+                                  ((item.hmdp * 100) / item.hm).toFixed(2)
+                                }}%</small
+                              >
+                            </template>
+                            <template v-slot:item.hmpnd="{ item }">
+                              {{ item.hmpnd }}
+                              <small>
+                                {{
+                                  ((item.hmpnd * 100) / item.hm).toFixed(2)
+                                }}%</small
+                              >
+                            </template>
+                            <template v-slot:item.hmpot="{ item }">
+                              {{ item.hmpot }}
+                              <small>
+                                {{
+                                  ((item.hmpot * 100) / item.hm).toFixed(2)
+                                }}%</small
+                              >
+                            </template>
+                            <template v-slot:item.hmnoans="{ item }">
+                              {{ item.hmnoans }}
+                              <small>
+                                {{
+                                  ((item.hmnoans * 100) / item.hm).toFixed(2)
+                                }}%</small
+                              >
+                            </template>
+                            <template v-slot:item.hmnointerest="{ item }">
+                              {{ item.hmnointerest }}
+                              <small>
+                                {{
+                                  ((item.hmnointerest * 100) / item.hm).toFixed(
+                                    2
+                                  )
+                                }}%</small
+                              >
+                            </template>
+
                             <template v-slot:expanded-item="{ item: dateItem }">
                               <td :colspan="providerHeaders.length + 1">
                                 <v-data-table
@@ -3912,6 +4054,7 @@ main
   position: relative;
 }*/
 #provTable th small,
+#provTable td > div small,
 #cpl th small {
   /*position: relative;
   bottom: -2px;
