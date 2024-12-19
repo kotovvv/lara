@@ -2257,19 +2257,13 @@ export default {
     chartOptions: {
       animationEnabled: true,
       title: {
-        text: "Vue.js Basic Column Chart",
+        text: "",
       },
       data: [
         {
           type: "pie",
           indexLabel: "{label} {y}(#percent%)",
-          dataPoints: [
-            { label: "apple", y: 10 },
-            { label: "orange", y: 15 },
-            { label: "banana", y: 25 },
-            { label: "mango", y: 30 },
-            { label: "grape", y: 28 },
-          ],
+          dataPoints: [],
         },
       ],
     },
@@ -2456,9 +2450,13 @@ export default {
       this.chartOptions.data[0].dataPoints = Object.entries(sums).map(
         ([key, value]) => {
           return {
-            label: defaultStatusColor[key].label,
+            label:
+              defaultStatusColor[key].label.charAt(0).toUpperCase() +
+              defaultStatusColor[key].label.slice(1),
             y: value,
             color: defaultStatusColor[key].color,
+            indexLabelFontColor: defaultStatusColor[key].color,
+            indexLabelFontWeight: "bold",
           };
         }
       );
@@ -3203,9 +3201,11 @@ export default {
             type: "pie",
             indexLabel: "{label} (#percent%)",
             dataPoints: self.Statuses.map((status) => ({
-              label: status.name,
+              label: status.name.charAt(0).toUpperCase() + status.name.slice(1),
               y: status.hm,
               color: status.color,
+              indexLabelFontColor: status.color,
+              indexLabelFontWeight: "bold",
             })),
           },
         ],
@@ -4100,5 +4100,8 @@ main
   tr.selected-row
   > td {
   background: #eeeeee !important;
+}
+.canvasjs-chart-credit {
+  display: none;
 }
 </style>
