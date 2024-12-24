@@ -26,6 +26,17 @@
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
+        <v-list-droup>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-icon @click="sunmoon">{{
+                themeDark
+                  ? "mdi-moon-waning-crescent"
+                  : "mdi-white-balance-sunny"
+              }}</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+        </v-list-droup>
 
         <v-list-item-group class="mt-10">
           <v-list-item @click="$emit('login', {})">
@@ -64,19 +75,39 @@ export default {
     drawer: null,
     selectedItem: 0,
     managerMenu: "report",
-
+    themeDark: false,
     items: [
       { text: "Отчёты", name: "report", icon: "mdi-timetable" },
       { text: "Manager", name: "mlids", icon: "mdi-phone-log-outline" },
     ],
   }),
+  mounted() {
+    if (localStorage.themeDark) {
+      if (localStorage.themeDark == "true") {
+        this.$vuetify.theme.dark = true;
+        this.themeDark = true;
+      } else {
+        this.$vuetify.theme.dark = false;
+        this.themeDark = false;
+      }
+    }
+  },
   computed: {
     managerComponent() {
       if (this.managerMenu == "mlids") return mlids;
       if (this.managerMenu == "report") return report;
     },
   },
-
-  methods: {},
+  watch: {
+    themeDark(newName) {
+      localStorage.themeDark = newName;
+      this.$vuetify.theme.dark = newName;
+    },
+  },
+  methods: {
+    sunmoon() {
+      this.themeDark = !this.themeDark;
+    },
+  },
 };
 </script>

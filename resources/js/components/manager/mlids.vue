@@ -140,6 +140,7 @@
                 @click:row="clickrow"
                 :items-per-page="100"
                 hide-default-footer
+                :item-class="getRowTimeClass"
               >
                 <!-- v-if="$props.user.sip == 0" -->
                 <template v-slot:item.tel="{ item }">
@@ -638,6 +639,15 @@ export default {
   },
   computed: {},
   methods: {
+    getRowTimeClass(item) {
+      if (
+        document.getElementById("inspire").classList.contains("theme--dark")
+      ) {
+        return "orange darken-4";
+      } else {
+        return "orange lighten-4";
+      }
+    },
     getServers() {
       const self = this;
       axios
@@ -824,8 +834,25 @@ export default {
       this.selectedStatus = 0;
     },
     getRowClass(item) {
-      // Return a class based on the row's data
-      return item.top == 1 ? "purple lighten-5" : "";
+      if (item.status_id == 9) {
+        if (item.ontime && new Date(item.ontime) < new Date()) {
+          if (
+            document.getElementById("inspire").classList.contains("theme--dark")
+          ) {
+            return "red darken-4";
+          } else {
+            return "red lighten-4";
+          }
+        } else if (item.ontime && new Date(item.ontime) >= new Date()) {
+          if (
+            document.getElementById("inspire").classList.contains("theme--dark")
+          ) {
+            return "orange darken-4";
+          } else {
+            return "orange lighten-4";
+          }
+        }
+      }
     },
     getHm() {
       let self = this;
@@ -1156,6 +1183,9 @@ export default {
   display: inline-block;
   margin-right: 1rem;
   color: #000;
+}
+.theme--dark .tel {
+  color: #fdffdc;
 }
 .tel.active {
   color: #7620df;
