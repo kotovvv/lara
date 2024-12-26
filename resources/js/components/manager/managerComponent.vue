@@ -107,6 +107,13 @@ export default {
   methods: {
     sunmoon() {
       this.themeDark = !this.themeDark;
+      this.managerMenu = "mlids";
+      this.$nextTick(() => {
+        this.managerMenu = "";
+        this.$nextTick(() => {
+          this.managerMenu = "mlids";
+        });
+      });
     },
   },
 };

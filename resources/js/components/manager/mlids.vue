@@ -410,9 +410,35 @@
           <v-textarea
             class="px-2 border mb-4"
             rows="1"
+            ref="textArea"
             v-model="text_message"
             :value="text_message"
           ></v-textarea>
+
+          <div
+            class="wrp__words"
+            v-if="
+              statuses.length > 0 &&
+              selectedStatus > 0 &&
+              statusesnonew.find((s) => s.id == selectedStatus).words != null
+            "
+          >
+            <template
+              v-for="word in statusesnonew
+                .find((s) => s.id == selectedStatus)
+                .words.split(';')"
+            >
+              <v-chip
+                v-if="word.length > 0 && word.trim() !== ''"
+                class="ma-1"
+                @click="addWord(word)"
+                :key="word"
+              >
+                {{ word }}
+              </v-chip>
+            </template>
+          </div>
+
           <v-row>
             <v-col v-if="selectedStatus == 10">
               Сумма депозита*
@@ -639,6 +665,19 @@ export default {
   },
   computed: {},
   methods: {
+    addWord(word) {
+      this.text_message += " " + word + " ";
+      this.$nextTick(() => {
+        const textArea = this.$refs.textArea.$el.querySelector("textarea");
+        if (textArea) {
+          textArea.focus();
+          textArea.setSelectionRange(
+            this.text_message.length,
+            this.text_message.length
+          );
+        }
+      });
+    },
     getRowTimeClass(item) {
       if (
         document.getElementById("inspire").classList.contains("theme--dark")
@@ -843,7 +882,13 @@ export default {
           } else {
             return "red lighten-4";
           }
-        } else if (item.ontime && new Date(item.ontime) >= new Date()) {
+        } else if (
+          item.ontime &&
+          new Date(item.ontime) <
+            new Date(new Date().setHours(8, 0, 0, 0)).setDate(
+              new Date().getDate() + 1
+            )
+        ) {
           if (
             document.getElementById("inspire").classList.contains("theme--dark")
           ) {
@@ -997,10 +1042,11 @@ export default {
       axios
         .get("/api/statuses")
         .then((res) => {
-          self.statuses = res.data.map(({ name, id, color }) => ({
+          self.statuses = res.data.map(({ name, id, color, words }) => ({
             name,
             id,
             color,
+            words,
           }));
           self.statusesnonew = self.statuses.filter((e) => e.id != 8);
           self.filterstatuses = self.statuses.map((e) => e);

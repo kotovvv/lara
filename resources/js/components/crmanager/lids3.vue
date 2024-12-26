@@ -345,6 +345,7 @@
             :loading="loading"
             loading-text="Загружаю... Ожидайте"
             expand-icon=""
+            :item-class="getRowClass"
           >
             <template v-slot:top="{}">
               <v-row class="mb-4">
@@ -1106,6 +1107,11 @@ export default {
   },
   computed: {},
   methods: {
+    getRowClass(item) {
+      if (item.top == 1) {
+        return "purple lighten-5";
+      }
+    },
     getLangName(ln) {
       if (!ln.client_lang) return "";
       return this.lng.find(({ id }) => id == ln.client_lang).name;
@@ -1830,12 +1836,17 @@ export default {
       let data = {
         data: vm.selected,
       };
+      vm.selected.map((el) => {
+        const lidix = vm.lids.findIndex((l) => l.id === el.id);
+        if (lidix) {
+          vm.lids[lidix].top = 1;
+        }
+      });
       data.data = data.data.map((el) => {
         return { id: el.id, top: 1, status_id: el.status_id };
       });
       axios.post("api/setTop", data).then((response) => {
         console.log("Сохранено");
-        vm.selected = [];
       });
     },
     changeLids(send) {

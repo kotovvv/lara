@@ -56,7 +56,14 @@
                         v-model="editedItem.color"
                       ></v-color-picker>
                     </v-col>
-                    <v-col cols="4"> </v-col>
+                    <v-col cols="12">
+                      <v-textarea
+                        filled
+                        label="Слова"
+                        auto-grow
+                        v-model="editedItem.words"
+                      ></v-textarea>
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -120,14 +127,16 @@ export default {
     editedItem: {
       name: "",
       active: 0,
-      color:'#fff',
-      order:0
+      color: "#fff",
+      order: 0,
+      words: "",
     },
     defaultItem: {
       name: "",
       active: 0,
-      color:'#fff',
-      order:0
+      color: "#fff",
+      order: 0,
+      words: "",
     },
   }),
 
