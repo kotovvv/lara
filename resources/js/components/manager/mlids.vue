@@ -420,11 +420,11 @@
             v-if="
               statuses.length > 0 &&
               selectedStatus > 0 &&
-              statusesnonew.find((s) => s.id == selectedStatus).words != null
+              statuses.find((s) => s.id == selectedStatus).words != null
             "
           >
             <template
-              v-for="word in statusesnonew
+              v-for="word in statuses
                 .find((s) => s.id == selectedStatus)
                 .words.split(';')"
             >
