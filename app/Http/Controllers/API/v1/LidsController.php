@@ -149,7 +149,7 @@ class LidsController extends Controller
           return $query->where('email', $search);
         })
         ->when(strpos($search, '@') === false, function ($query) use ($search) {
-          return $query->whereRaw('MATCH(NAME,tel,email,TEXT) AGAINST ("' . $search . '")');
+          return $query->whereRaw('MATCH(lids.name,tel,email,TEXT) AGAINST ("' . $search . '")');
         });
       $response['hm'] = $q_leads->count();
 
@@ -169,7 +169,6 @@ class LidsController extends Controller
         ->when($sortBy && $sortBy == 'user_id', function ($query) use ($sortDesc) {
           return $query->leftJoin('users', 'users.id', '=', 'lids.user_id')->orderBy('users.name', $sortDesc);
         })
-
         ->get();
 
       return response($response);
