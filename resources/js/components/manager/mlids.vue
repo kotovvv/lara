@@ -840,6 +840,10 @@ export default {
       return false;
     },
     writeText() {
+      if (this.selectedStatus == 9) {
+        this.text_message =
+          this.$refs.datetime.formattedDatetime + " " + this.text_message;
+      }
       if (this.text_message.length > 0) {
         (
           this.lids.find((i) => i.id == this.lid_id) ||
