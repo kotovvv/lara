@@ -974,7 +974,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           })
           ->get();
       }
-    } else {
+    } elseif (isset($req['start'])) {
       $sql = "SELECT l.*,users.fio as user,offices.name as office FROM `lids` l left join users on (users.id = l.user_id) left join offices on (offices.id = l.office_id) WHERE  " . $where_ids_off . " l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "' AND geo = '" . $geo . "') ";
       $lids = DB::select(DB::raw($sql));
       $office_ids = [];

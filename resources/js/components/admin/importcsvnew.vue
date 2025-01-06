@@ -10,7 +10,7 @@
     </v-snackbar>
     <v-tabs v-model="tab" background-color="primary" dark>
       <v-tab> XLSX </v-tab>
-      <v-tab> Imports </v-tab>
+      <v-tab @click="renewImport()"> Imports </v-tab>
 
       <v-tab v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0">
         ВТС
@@ -2287,7 +2287,7 @@ export default {
     this.getProviders();
     this.getOffices();
     this.getStatuses();
-    this.renewImport();
+    //this.renewImport();
   },
   computed: {
     filteredLeads() {
