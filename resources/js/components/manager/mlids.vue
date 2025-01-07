@@ -237,7 +237,7 @@
                 :single-select="true"
                 :single-expand="true"
                 :items="lids"
-                :items-per-page="100"
+                :items-per-page="limit != 'all' ? limit : -1"
                 :hide-default-footer="true"
                 ref="datatable"
                 @click:row="clickrow"
@@ -430,7 +430,7 @@
             >
               <v-chip
                 v-if="word.length > 0 && word.trim() !== ''"
-                class="ma-1"
+                class="ma-1 rounded-1"
                 @click="addWord(word)"
                 :key="word"
               >
@@ -457,14 +457,15 @@
             <v-col>
               Дата/время
               <div class="border px-2">
-                <!-- @input="setTime" -->
                 <v-datetime-picker
                   ref="datetime"
                   :time-picker-props="timeProps"
                   :datetime="datetime"
+                  @input="setdatetime"
                 >
-                </v-datetime-picker></div
-            ></v-col>
+                </v-datetime-picker>
+              </div>
+            </v-col>
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
@@ -665,6 +666,12 @@ export default {
   },
   computed: {},
   methods: {
+    setdatetime() {
+      if (this.selectedStatus == 9) {
+        this.text_message =
+          this.$refs.datetime.formattedDatetime + " " + this.text_message;
+      }
+    },
     addWord(word) {
       this.text_message += " " + word + " ";
       this.$nextTick(() => {
@@ -840,10 +847,6 @@ export default {
       return false;
     },
     writeText() {
-      if (this.selectedStatus == 9) {
-        this.text_message =
-          this.$refs.datetime.formattedDatetime + " " + this.text_message;
-      }
       if (this.text_message.length > 0) {
         (
           this.lids.find((i) => i.id == this.lid_id) ||
@@ -1300,5 +1303,8 @@ td .status_wrp {
   margin: 0 1rem;
   background: #000;
   cursor: pointer;
+}
+.wrp__words .v-chip {
+  border-radius: 4px;
 }
 </style>

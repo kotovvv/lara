@@ -85,34 +85,76 @@ class ImportsController extends Controller
   {
     $req = $request->all();
     $office_id = session()->get('office_id');
-    $where = $office_id > 0 ? "  bl.`office_id` = " . $office_id . " AND " : "";
     $dateFrom = $req['datefrom'];
     $dateTo = $req['dateto'];
     $onlynew = $req['onlynew'];
 
-    $sql = "SELECT bl.`id`, bl.`address`, bl.`summ`, bl.`office_id`, bl.`other`, bl.`trx_count`, l.`id` lid_id, l.`name`, l.`created_at`, l.`tel`, l.`email`, l.`provider_id`, l.`status_id`, s.`name` s_name, s.`color` s_color, p.`name` p_name, (SELECT IF (SUM(d.`depozit`), SUM(d.`depozit`), '') FROM `depozits` d WHERE l.`id` = d.`lid_id` AND d.`created_at` > '" . $dateFrom . " 00:00:00' AND d.`created_at` < '" . $dateTo . " 23:59:59') depozit FROM `btc_list` bl INNER JOIN `lids` l ON (bl.`lid_id` = l.`id`) INNER JOIN `providers` p ON (l.`provider_id` = p.`id`) INNER JOIN `statuses` s ON (l.`status_id` = s.`id`) WHERE " . $where . "`other` REGEXP '[^|].*' ORDER BY l.`id`";
-    $rows = DB::select(DB::raw($sql));
-    //array dates (from to)
+    $query = DB::table('btc_list as bl')
+      ->join('lids as l', 'bl.lid_id', '=', 'l.id')
+      ->join('providers as p', 'l.provider_id', '=', 'p.id')
+      ->join('statuses as s', 'l.status_id', '=', 's.id')
+      ->leftJoin('depozits as d', function ($join) use ($dateFrom, $dateTo) {
+        $join->on('l.id', '=', 'd.lid_id')
+          ->where('d.created_at', '>=', $dateFrom . ' 00:00:00')
+          ->where('d.created_at', '<=', $dateTo . ' 23:59:59');
+      })
+      ->select(
+        'bl.id',
+        // 'bl.address',
+        'bl.summ',
+        'bl.office_id',
+        'bl.other',
+        'bl.trx_count',
+        'l.id as lid_id',
+        'l.name',
+        'l.created_at',
+        'l.tel',
+        'l.email',
+        'l.provider_id',
+        'l.status_id',
+        's.name as s_name',
+        's.color as s_color',
+        'p.name as p_name',
+        DB::raw('COALESCE(SUM(d.depozit), 0) as depozit')
+      )
+      ->whereBetween('bl.date_time', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
+      ->whereRaw($office_id > 0 ? "bl.office_id = $office_id AND `other` REGEXP '[^|].*'" : "`other` REGEXP '[^|].*'")
+      ->groupBy(
+        'bl.id',
+        // 'bl.address',
+        'bl.summ',
+        'bl.office_id',
+        'bl.other',
+        'bl.trx_count',
+        'l.id',
+        'l.name',
+        'l.created_at',
+        'l.tel',
+        'l.email',
+        'l.provider_id',
+        'l.status_id',
+        's.name',
+        's.color',
+        'p.name'
+      )
+      ->orderBy('l.id')
+      ->get();
+
     $a_list_date = $this->date_range($dateFrom, $dateTo);
-    $res['data'] = $data =  [];
+    $res['data'] = $data = [];
     $res['providers'] = [];
     $res['statuses'] = [];
     $res['result'] = "success";
 
-    $compareLidId = $sum_lid = $ia =  0;
-    if ($rows) {
-      //foreach row
-      foreach ($rows as $lid) {
+    $compareLidId = $sum_lid = $ia = 0;
+    if ($query) {
+      foreach ($query as $lid) {
         $a_date_sum = $a_intersect = [];
         $sum_dat = 0;
         $other = $lid->other;
         $a_date_sum[0] = explode('|', $other);
         $max = count($a_date_sum[0]);
-        for (
-          $i = 1;
-          $i < $max;
-          $i += 2
-        ) {
+        for ($i = 1; $i < $max; $i += 2) {
           $a_date_sum[1][] = date('Y-m-d', $a_date_sum[0][$i]);
         }
 
@@ -128,10 +170,9 @@ class ImportsController extends Controller
             $res['providers'][] = ['id' => $lid->provider_id, 'name' => $lid->p_name];
             $res['statuses'][] = ['id' => $lid->status_id, 'name' => $lid->s_name, 'color' => $lid->s_color];
           }
-          // group same lids
           if ($compareLidId == $lid->lid_id) {
-            $data[$ia - 1]['summ']  += $lid->summ;
-            $data[$ia - 1]['sum_dat']  += $sum_dat;
+            $data[$ia - 1]['summ'] += $lid->summ;
+            $data[$ia - 1]['sum_dat'] += $sum_dat;
             continue;
           } else {
             $compareLidId = $lid->lid_id;
@@ -141,10 +182,10 @@ class ImportsController extends Controller
               'email' => $lid->email,
               'tel' => $lid->tel,
               'created_at' => $lid->created_at,
-              'address' => $lid->address,
+              // 'address' => $lid->address,
               'lid_id' => $lid->lid_id,
-              'status_id' =>  $lid->status_id,
-              's_name' =>  $lid->s_name,
+              'status_id' => $lid->status_id,
+              's_name' => $lid->s_name,
               'summ' => $lid->summ,
               'office_id' => $lid->office_id,
               'provider_id' => $lid->provider_id,
@@ -154,7 +195,6 @@ class ImportsController extends Controller
             ];
           }
         }
-        //next row
       }
     }
 
