@@ -90,9 +90,9 @@ class ImportsController extends Controller
     $onlynew = $req['onlynew'];
 
     $query = DB::table('btc_list as bl')
-      ->join('lids as l', 'bl.lid_id', '=', 'l.id')
-      ->join('providers as p', 'l.provider_id', '=', 'p.id')
-      ->join('statuses as s', 'l.status_id', '=', 's.id')
+      ->leftJoin('lids as l', 'bl.lid_id', '=', 'l.id')
+      ->leftJoin('providers as p', 'l.provider_id', '=', 'p.id')
+      ->leftJoin('statuses as s', 'l.status_id', '=', 's.id')
       ->leftJoin('depozits as d', function ($join) use ($dateFrom, $dateTo) {
         $join->on('l.id', '=', 'd.lid_id')
           ->where('d.created_at', '>=', $dateFrom . ' 00:00:00')
