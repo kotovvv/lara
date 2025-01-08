@@ -26,24 +26,24 @@ class ImportsController extends Controller
   {
     $office_id = session()->get('office_id');
 
-    $imports = Import::select([
-      'imports.*',
-      DB::raw('(SELECT `name` FROM `providers` WHERE `id` = `provider_id`) AS provider'),
-      DB::raw('(SELECT `name` FROM `users` WHERE `id` = `user_id`) AS user')
-      //,DB::raw('(SELECT `group_id` FROM `users` WHERE `id` = `user_id`) AS group_id')
-    ])
+    $imports = Import::with(['provider', 'user'])
       ->when($from != 0 && $to != 0, function ($query) use ($from, $to) {
         return $query->whereBetween('start', [$from . ' 00:00:00', $to . ' 23:59:59']);
       })
       ->when($office_id > 0, function ($query) use ($office_id) {
-        return $query->whereNotNull(DB::raw("JSON_SEARCH(office_ids, 'one', $office_id) "));
+        return $query->whereNotNull(DB::raw("JSON_SEARCH(office_ids, 'one', $office_id)"));
       })
-      ->orderByDesc('end')->get();
-    //delete callc
+      ->orderByDesc('end')
+      ->get();
 
-    foreach (Import::select('id')->whereNull('hm_json')->whereDate('start', date('Y-m-d'))->get() as $import) {
-      Import::where('id', $import->id)->update(['callc' => 1]);
+    foreach ($imports as $import) {
+      $import->provider_name = $import->provider->name;
+      $import->user_name = $import->user->fio;
     }
+
+    Import::whereNull('hm_json')
+      ->whereDate('start', date('Y-m-d'))
+      ->update(['callc' => 1]);
 
     return $imports;
   }

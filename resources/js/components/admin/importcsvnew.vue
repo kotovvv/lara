@@ -10,7 +10,7 @@
     </v-snackbar>
     <v-tabs v-model="tab" background-color="primary" dark>
       <v-tab> XLSX </v-tab>
-      <v-tab @click="renewImport()"> Imports </v-tab>
+      <v-tab> Imports </v-tab>
 
       <v-tab v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0">
         ВТС
@@ -1755,10 +1755,15 @@ export default {
       { text: "Афилятор", value: "afilyator" },
     ],
     import_headers: [
-      { text: "Дата", value: "start", sortable: false, class: "w100" },
-      { text: "Загрузил", value: "user", sortable: false, align: "center" },
+      { text: "Дата", value: "start", class: "w100" },
+      {
+        text: "Загрузил",
+        value: "user_name",
+        sortable: false,
+        align: "center",
+      },
       { text: "Сумма", value: "sum", align: "center", class: "w100" },
-      { text: "Поставщик", value: "provider", sortable: false },
+      { text: "Поставщик", value: "provider_name", sortable: false },
       // { text: "L/A", value: "cp", sortable: false },
       {
         text: "Коментарий",
@@ -2287,7 +2292,9 @@ export default {
     this.getProviders();
     this.getOffices();
     this.getStatuses();
-    //this.renewImport();
+    this.$nextTick(() => {
+      this.renewImport();
+    });
   },
   computed: {
     filteredLeads() {
@@ -3541,9 +3548,11 @@ export default {
               id,
               start,
               end,
-              provider,
+              // provider,
+              provider_name,
               provider_id,
-              user,
+              // user,
+              user_name,
               message,
               group_id,
               load_key,
@@ -3557,9 +3566,11 @@ export default {
               id,
               start,
               end,
-              provider,
+              // provider,
+              provider_name,
               provider_id,
-              user,
+              // user,
+              user_name,
               message,
               group_id,
               load_key,
