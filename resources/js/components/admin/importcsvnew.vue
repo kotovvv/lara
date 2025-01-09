@@ -10,7 +10,7 @@
     </v-snackbar>
     <v-tabs v-model="tab" background-color="primary" dark>
       <v-tab> XLSX </v-tab>
-      <v-tab> Imports </v-tab>
+      <v-tab @click="getImports()"> Imports </v-tab>
 
       <v-tab v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0">
         ВТС
@@ -2292,9 +2292,7 @@ export default {
     this.getProviders();
     this.getOffices();
     this.getStatuses();
-    this.$nextTick(() => {
-      this.renewImport();
-    });
+    this.renewImport();
   },
   computed: {
     filteredLeads() {
@@ -2371,7 +2369,7 @@ export default {
     },
     renewImport() {
       const self = this;
-      self.loading = true;
+
       axios
         .post("/api/executeCommand", { command: "import:callc" })
         .then((response) => {
