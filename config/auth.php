@@ -90,8 +90,8 @@ return [
     'users' => [
       'provider' => 'users',
       'table' => 'password_resets',
-      'expire' => 180,
-      'throttle' => 180,
+      'expire' => 360,
+      'throttle' => 360,
     ],
   ],
 
@@ -106,6 +106,6 @@ return [
     |
     */
 
-  'password_timeout' => 10800,
+  'password_timeout' => 21600,
 
 ];
