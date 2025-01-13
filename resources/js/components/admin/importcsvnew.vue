@@ -213,6 +213,7 @@
                     label="GEO"
                     outlined
                     rounded
+                    multiple
                     :clearable="clearable"
                     @change="filter_geo = filter_geo || []"
                   >
