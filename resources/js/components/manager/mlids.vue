@@ -689,8 +689,14 @@ export default {
       if (
         document.getElementById("inspire").classList.contains("theme--dark")
       ) {
+        if (item.ontime && new Date(item.ontime) < new Date()) {
+          return "red darken-4";
+        }
         return "orange darken-4";
       } else {
+        if (item.ontime && new Date(item.ontime) < new Date()) {
+          return "red lighten-4";
+        }
         return "orange lighten-4";
       }
     },
