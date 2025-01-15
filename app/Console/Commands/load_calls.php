@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Lid;
 use App\Models\User;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 use DB;
 
 
@@ -62,7 +62,7 @@ class Load_calls extends Command
         // $row[5] - status
         if (!is_array($row)) continue;
         if (!preg_match('/^[0-9]+$/', $row[0])) continue;
-        if ($curdate != date('Y-m-d', $row[3])) continue; //only today
+        if (!is_numeric($row[3]) || $curdate != date('Y-m-d', $row[3])) continue; //only today
         // $a_lid =  $this->getLeadOnTel($row[0], $row[3]);
         $user = User::where(['serv' => $serv, 'user_serv' => $user_serv, 'active' => 1])->first();
         if (!$user) {
