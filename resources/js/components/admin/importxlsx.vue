@@ -558,8 +558,8 @@ export default {
 #inspire #importXLS .v-text-field__details {
   display: initial;
 }
-#loadedTable {
-  height: 80vh;
+#loadedTable .v-data-table__wrapper {
   overflow: auto;
+  height: 80vh;
 }
 </style>
