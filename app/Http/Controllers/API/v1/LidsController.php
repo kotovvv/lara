@@ -356,11 +356,11 @@ class LidsController extends Controller
 
       if (isset($lid['tel']) && preg_match('/^[0-9]+$/', $lid['tel'])) {
         $n_lid->tel =  preg_replace('/[^0-9]/', '', $lid['tel']);
+        $n_lid->client_geo = $this->getGeo($n_lid->tel);
         if (strlen($n_lid->tel) < 6) {
           continue;
         }
         if ($geo == '') {
-          $n_lid->client_geo = $this->getGeo($n_lid->tel);
           $geo = $n_lid->client_geo;
         }
       } else {
