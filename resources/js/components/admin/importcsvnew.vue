@@ -1514,6 +1514,7 @@
                 :headers="duplicate_leads_headers"
                 item-key="id"
                 :items="filtereduplicate_leads"
+                id="duplicate_leads"
                 ref="duplicatetable"
                 @click:row="clickrowd"
                 show-expand
@@ -1529,6 +1530,39 @@
                   <td :colspan="headers.length" class="blackborder">
                     <logtel :lid_id="item.id" :key="item.id" />
                   </td>
+                </template>
+
+                <template v-slot:item.email="{ item }">
+                  <template
+                    v-if="
+                      $attrs.user.role_id == 1 && $attrs.user.office_id == 0
+                    "
+                  >
+                    {{ item.email }}
+                  </template>
+                  <template v-else>
+                    <MaskedField
+                      :value="item.email"
+                      type="email"
+                      :isUnmasked="isRowUnmasked(item.id)"
+                    />
+                  </template>
+                </template>
+                <template v-slot:item.tel="{ item }">
+                  <template
+                    v-if="
+                      $attrs.user.role_id == 1 && $attrs.user.office_id == 0
+                    "
+                  >
+                    {{ item.tel }}
+                  </template>
+                  <template v-else>
+                    <MaskedField
+                      :value="item.tel"
+                      type="phone"
+                      :isUnmasked="isRowUnmasked(item.id)"
+                    />
+                  </template>
                 </template>
                 <template v-slot:top="{ pagination, options, updateOptions }">
                   <v-row>
@@ -1680,13 +1714,14 @@
 </template>
 
 <script>
-import XLSX from "xlsx";
 import axios from "axios";
+import XLSX from "xlsx";
+import _ from "lodash";
 import importBTC from "./importBTC";
 import importxlsx from "./importxlsx";
 import logtel from "../manager/logtel";
 import selectUsers from "./UI/selectUsers";
-import _ from "lodash";
+import MaskedField from "../UI/MaskedField.vue";
 
 import CanvasJSChart from "./UI/pieCanvasJsComponent.vue";
 export default {
@@ -1697,7 +1732,7 @@ export default {
     logtel,
     ConfirmDlg: () => import("./ConfirmDlg"),
     selectUsers,
-
+    MaskedField,
     CanvasJSChart,
   },
   data: () => ({
@@ -2290,6 +2325,7 @@ export default {
     },
     filter_user: [],
     i_users: [],
+    unmaskedRowId: null,
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -2673,7 +2709,18 @@ export default {
       } else {
         this.expanded = [];
       }
+      this.toggleRowMask(item);
       this.clickrow(item);
+    },
+    isRowUnmasked(id) {
+      return this.unmaskedRowId === id;
+    },
+    toggleRowMask(item) {
+      if (this.unmaskedRowId === item.id) {
+        this.unmaskedRowId = null;
+      } else {
+        this.unmaskedRowId = item.id;
+      }
     },
     closeAll() {
       Object.keys(this.$refs).forEach((k) => {

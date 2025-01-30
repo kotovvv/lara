@@ -36,7 +36,9 @@ export default {
     maskedValue() {
       if (this.type === "email") {
         const [localPart, domain] = this.value.split("@");
-        return `*****@${domain}`; //${localPart.slice(0, 5)}
+        return `${"*".repeat(Math.min(5, localPart.length))}${localPart.slice(
+          Math.min(5, localPart.length)
+        )}@${domain}`;
       } else if (this.type === "phone") {
         return `${this.value.slice(0, 5)}*****`;
       }

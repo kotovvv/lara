@@ -152,7 +152,20 @@
                       lid_id = item.id;
                     "
                   >
-                    {{ item.tel }}
+                    <template
+                      v-if="
+                        $props.user.role_id == 1 && $props.user.office_id == 0
+                      "
+                    >
+                      {{ item.tel }}
+                    </template>
+                    <template v-else>
+                      <MaskedField
+                        :value="item.tel"
+                        type="phone"
+                        :isUnmasked="isRowUnmasked(item.id)"
+                      />
+                    </template>
                   </a>
                   <span
                     @click.prevent.stop="
@@ -164,28 +177,23 @@
                     <v-icon small> mdi-headset </v-icon>
                   </span>
                 </template>
-                <!-- <template v-slot:item.tel="{ item }" v-else>
-                  <span
-                    class="tel"
-                    @click.prevent.stop="
-                      qtytel(item.id);
-                      wp_call(item);
+                <template v-slot:item.email="{ item }">
+                  <template
+                    v-if="
+                      $props.user.role_id == 1 && $props.user.office_id == 0
                     "
                   >
-                    {{ item.tel }}
-                  </span>
-                  <span>
-                    <a
-                      :href="'sip:' + item.tel"
-                      @click.stop="
-                        qtytel(item.id);
-                        lid_id = item.id;
-                      "
-                    >
-                      <v-icon small> mdi-headset </v-icon>
-                    </a>
-                  </span>
-                </template> -->
+                    {{ item.email }}
+                  </template>
+                  <template v-else>
+                    <MaskedField
+                      :value="item.email"
+                      type="email"
+                      :isUnmasked="isRowUnmasked(item.id)"
+                    />
+                  </template>
+                </template>
+
                 <template v-slot:item.status="{ item }">
                   <div class="status_wrp" @click.stop="openDialog(item)">
                     <b
@@ -278,7 +286,21 @@
                           lid_id = item.id;
                         "
                       >
-                        {{ item.tel }}
+                        <template
+                          v-if="
+                            $props.user.role_id == 1 &&
+                            $props.user.office_id == 0
+                          "
+                        >
+                          {{ item.tel }}
+                        </template>
+                        <template v-else>
+                          <MaskedField
+                            :value="item.tel"
+                            type="phone"
+                            :isUnmasked="isRowUnmasked(item.id)"
+                          />
+                        </template>
                       </a>
                       <span
                         @click.prevent.stop="
@@ -297,7 +319,21 @@
                           wp_call(item);
                         "
                       >
-                        {{ item.tel }}
+                        <template
+                          v-if="
+                            $props.user.role_id == 1 &&
+                            $props.user.office_id == 0
+                          "
+                        >
+                          {{ item.tel }}
+                        </template>
+                        <template v-else>
+                          <MaskedField
+                            :value="item.tel"
+                            type="phone"
+                            :isUnmasked="isRowUnmasked(item.id)"
+                          />
+                        </template>
                       </span>
                       <span>
                         <a
@@ -316,7 +352,22 @@
                     </span>
                   </div>
                 </template>
-
+                <template v-slot:item.email="{ item }">
+                  <template
+                    v-if="
+                      $props.user.role_id == 1 && $props.user.office_id == 0
+                    "
+                  >
+                    {{ item.email }}
+                  </template>
+                  <template v-else>
+                    <MaskedField
+                      :value="item.email"
+                      type="email"
+                      :isUnmasked="isRowUnmasked(item.id)"
+                    />
+                  </template>
+                </template>
                 <template v-slot:item.status="{ item }">
                   <div class="status_wrp mx-1" @click.stop="openDialog(item)">
                     <b
@@ -566,9 +617,11 @@
 import XLSX from "xlsx";
 import axios from "axios";
 import logtel from "./logtel";
+import MaskedField from "../UI/MaskedField.vue";
 export default {
   components: {
     logtel,
+    MaskedField,
   },
   props: ["user"],
   data: () => ({
@@ -641,6 +694,7 @@ export default {
     limit: 100,
     servers: [],
     selectedServer: {},
+    unmaskedRowId: null,
   }),
   mounted: function () {
     this.getProviders();
@@ -666,6 +720,16 @@ export default {
   },
   computed: {},
   methods: {
+    isRowUnmasked(id) {
+      return this.unmaskedRowId === id;
+    },
+    toggleRowMask(item) {
+      if (this.unmaskedRowId === item.id) {
+        this.unmaskedRowId = null;
+      } else {
+        this.unmaskedRowId = item.id;
+      }
+    },
     setdatetime() {
       if (this.selectedStatus == 9) {
         this.text_message =
@@ -992,6 +1056,7 @@ export default {
       this.$refs.datatable.expansion = {};
 
       this.lid_id = i.id;
+      this.toggleRowMask(i);
       row.expand(!row.isExpanded);
     },
     putSelectedLidsDB() {

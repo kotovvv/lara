@@ -423,20 +423,32 @@
               </v-row>
             </template>
             <template v-slot:item.email="{ item }">
-              <MaskedField
-                :value="item.email"
-                type="email"
-                :isUnmasked="isUnmasked(item.id, 'email')"
-                @toggle-mask="toggleMask(item.id, 'email')"
-              />
+              <template
+                v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
+              >
+                {{ item.email }}
+              </template>
+              <template v-else>
+                <MaskedField
+                  :value="item.email"
+                  type="email"
+                  :isUnmasked="isRowUnmasked(item.id)"
+                />
+              </template>
             </template>
             <template v-slot:item.tel="{ item }">
-              <MaskedField
-                :value="item.tel"
-                type="phone"
-                :isUnmasked="isUnmasked(item.id, 'phone')"
-                @toggle-mask="toggleMask(item.id, 'phone')"
-              />
+              <template
+                v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
+              >
+                {{ item.tel }}
+              </template>
+              <template v-else>
+                <MaskedField
+                  :value="item.tel"
+                  type="phone"
+                  :isUnmasked="isRowUnmasked(item.id)"
+                />
+              </template>
             </template>
             <template v-slot:item.client_lang="{ item }">
               <span class="light-green--text lighten-1 lngtxt">{{
@@ -1002,6 +1014,7 @@ export default {
     process: 0,
     controller: new AbortController(),
     unmaskedField: null,
+    unmaskedRowId: null,
   }),
   mounted: function () {
     this.getUsers();
@@ -1132,24 +1145,34 @@ export default {
   },
   computed: {},
   methods: {
-    isUnmasked(id, type) {
-      return (
-        this.unmaskedField &&
-        this.unmaskedField.id === id &&
-        this.unmaskedField.type === type
-      );
+    isRowUnmasked(id) {
+      return this.unmaskedRowId === id;
     },
-    toggleMask(id, type) {
-      if (
-        this.unmaskedField &&
-        this.unmaskedField.id === id &&
-        this.unmaskedField.type === type
-      ) {
-        this.unmaskedField = null;
+    toggleRowMask(item) {
+      if (this.unmaskedRowId === item.id) {
+        this.unmaskedRowId = null;
       } else {
-        this.unmaskedField = { id, type };
+        this.unmaskedRowId = item.id;
       }
     },
+    // isUnmasked(id, type) {
+    //   return (
+    //     this.unmaskedField &&
+    //     this.unmaskedField.id === id &&
+    //     this.unmaskedField.type === type
+    //   );
+    // },
+    // toggleMask(id, type) {
+    //   if (
+    //     this.unmaskedField &&
+    //     this.unmaskedField.id === id &&
+    //     this.unmaskedField.type === type
+    //   ) {
+    //     this.unmaskedField = null;
+    //   } else {
+    //     this.unmaskedField = { id, type };
+    //   }
+    // },
     getRowClass(item) {
       if (item.top == 1) {
         return "purple lighten-5";
@@ -1669,6 +1692,7 @@ export default {
       } else {
         this.expanded = [];
       }
+      this.toggleRowMask(item);
       /* if (!row.isSelected) {
         this.tel = item.tel;
         this.lid_id = item.id;
