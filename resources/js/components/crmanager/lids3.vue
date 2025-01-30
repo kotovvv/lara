@@ -422,6 +422,22 @@
                 </v-col>
               </v-row>
             </template>
+            <template v-slot:item.email="{ item }">
+              <MaskedField
+                :value="item.email"
+                type="email"
+                :isUnmasked="isUnmasked(item.id, 'email')"
+                @toggle-mask="toggleMask(item.id, 'email')"
+              />
+            </template>
+            <template v-slot:item.tel="{ item }">
+              <MaskedField
+                :value="item.tel"
+                type="phone"
+                :isUnmasked="isUnmasked(item.id, 'phone')"
+                @toggle-mask="toggleMask(item.id, 'phone')"
+              />
+            </template>
             <template v-slot:item.client_lang="{ item }">
               <span class="light-green--text lighten-1 lngtxt">{{
                 getLangName(item)
@@ -696,8 +712,16 @@ import axios from "axios";
 import _ from "lodash";
 import logtel from "../manager/logtel";
 import GeoTel from "../UI/GeoTel";
+import MaskedField from "../UI/MaskedField.vue";
 
 export default {
+  name: "lids3",
+  components: {
+    logtel,
+    ConfirmDlg: () => import("../admin/ConfirmDlg"),
+    FlagsSVG: () => import("../UI/FlagsSVG"),
+    MaskedField,
+  },
   props: ["user"],
   data: () => ({
     change_lang: "",
@@ -977,6 +1001,7 @@ export default {
     GeoTel,
     process: 0,
     controller: new AbortController(),
+    unmaskedField: null,
   }),
   mounted: function () {
     this.getUsers();
@@ -1107,6 +1132,24 @@ export default {
   },
   computed: {},
   methods: {
+    isUnmasked(id, type) {
+      return (
+        this.unmaskedField &&
+        this.unmaskedField.id === id &&
+        this.unmaskedField.type === type
+      );
+    },
+    toggleMask(id, type) {
+      if (
+        this.unmaskedField &&
+        this.unmaskedField.id === id &&
+        this.unmaskedField.type === type
+      ) {
+        this.unmaskedField = null;
+      } else {
+        this.unmaskedField = { id, type };
+      }
+    },
     getRowClass(item) {
       if (item.top == 1) {
         return "purple lighten-5";
@@ -1924,11 +1967,6 @@ export default {
           });
       }
     },
-  },
-  components: {
-    logtel,
-    ConfirmDlg: () => import("../admin/ConfirmDlg"),
-    FlagsSVG: () => import("../UI/FlagsSVG"),
   },
 };
 </script>

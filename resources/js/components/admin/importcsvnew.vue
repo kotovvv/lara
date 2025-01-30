@@ -206,6 +206,21 @@
                     </template>
                   </v-autocomplete>
                 </v-col>
+                <v-col cols="1" v-if="tabimport == 0">
+                  <v-autocomplete
+                    v-model="filter_user"
+                    :items="i_users"
+                    item-text="user_name"
+                    item-value="user_name"
+                    label="Загрузил"
+                    outlined
+                    rounded
+                    multiple
+                    :clearable="clearable"
+                    @change="filter_user = filter_user || []"
+                  >
+                  </v-autocomplete>
+                </v-col>
                 <v-col cols="1">
                   <v-autocomplete
                     v-model="filter_geo"
@@ -2273,6 +2288,8 @@ export default {
         },
       ],
     },
+    filter_user: [],
+    i_users: [],
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -2320,7 +2337,8 @@ export default {
         return (
           (this.filter_import_provider.length == 0 ||
             this.filter_import_provider.includes(i.provider_id)) &&
-          (!this.filter_geo.length || this.filter_geo.includes(i.geo))
+          (!this.filter_geo.length || this.filter_geo.includes(i.geo)) &&
+          (!this.filter_user.length || this.filter_user.includes(i.user_name))
         );
       });
       // this.callcSumm(ls);
@@ -3552,6 +3570,7 @@ export default {
               provider_id,
               // user,
               user_name,
+
               message,
               group_id,
               load_key,
@@ -3570,6 +3589,7 @@ export default {
               provider_id,
               // user,
               user_name,
+
               message,
               group_id,
               load_key,
@@ -3631,6 +3651,12 @@ export default {
           self.i_providers = self.providers.filter((i) => {
             return a_prov.includes(i.id);
           });
+          self.i_users = self.imports.reduce((acc, curr) => {
+            if (!acc.some((user) => user.user_name === curr.user_name)) {
+              acc.push({ user_name: curr.user_name });
+            }
+            return acc;
+          }, []);
 
           // if (self.$attrs.user.group_id > 0) {
           //   self.imports = self.imports.filter((i) => {
