@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/manager', function () {
 //     return view('manager');
 // });
-Route::get('/', function () {
+
+Route::middleware(['auth'])->group(function () {
+  Route::get('/', function () {
     return view('app');
+  });
 });

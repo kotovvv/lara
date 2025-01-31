@@ -3064,16 +3064,12 @@ export default {
       const dup_not = self.filtereduplicate_leads.filter((dd) => {
         return !a_bad_tel.includes(dd["tel"]);
       });
-      // const dup_call = self.filtereduplicate_leads.filter((dd) => {
-      //   return (
-      //     dd.status_id == 9 &&
-      //     (Date.now() - Date.parse(dd.updated)) / (60 * 60 * 24 * 1000) > 21
-      //   );
-      // });
-      con = con.concat(unique, dup_not); //, dup_call
-      window["con"] = XLSX.utils.json_to_sheet(con);
-      XLSX.utils.book_append_sheet(wb, window["con"], "CHECK_TO_UPLOAD");
-      //}
+
+      if (self.$attrs.user.role_id == 1 && self.$attrs.user.office_id == 0) {
+        con = con.concat(unique, dup_not); //, dup_call
+        window["con"] = XLSX.utils.json_to_sheet(con);
+        XLSX.utils.book_append_sheet(wb, window["con"], "CHECK_TO_UPLOAD");
+      }
 
       window["unique"] = XLSX.utils.json_to_sheet(unique);
       XLSX.utils.book_append_sheet(wb, window["unique"], "unique");
