@@ -2717,7 +2717,7 @@ export default {
     },
     toggleRowMask(item) {
       if (this.unmaskedRowId === item.id) {
-        this.unmaskedRowId = null;
+        // this.unmaskedRowId = null;
       } else {
         this.unmaskedRowId = item.id;
       }

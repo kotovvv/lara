@@ -1,5 +1,5 @@
 <template>
-  <div @click="toggleMask">
+  <div>
     <span v-if="isMasked">{{ maskedValue }}</span>
     <span v-else>{{ value }}</span>
   </div>
