@@ -14,14 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 // route to show the login form
-//Route::get('/', array('uses' => 'App\Http\Controllers\HomeController@showLogin'));
-
-// Route::get('/', function () {
-//     return view('admin');
-// });
-// Route::get('/manager', function () {
-//     return view('manager');
-// });
+Route::get('/login', function () {
+  return view('login');
+})->name('login');
 
 Route::middleware(['auth'])->group(function () {
   Route::get('/', function () {

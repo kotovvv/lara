@@ -31,7 +31,7 @@
         </v-list-item-group>
 
         <v-list-item-group class="mt-10">
-          <v-list-item @click="$emit('login', {})" title="Exit">
+          <v-list-item @click="$emit('logout')" title="Exit">
             <v-list-item-icon>
               <v-icon>mdi-logout</v-icon>
             </v-list-item-icon>
@@ -59,19 +59,19 @@
 </template>
 
 <script>
-const users = () => import("./users");
-const importcsvnew = () => import("./importcsvnew");
-const statusLid = () => import("./statusLid");
-// const workPlaces = () => import("./workPlaces");
-const providers = () => import("./providers");
-const mlids = () => import("../manager/mlids");
-const lids = () => import("../crmanager/lids");
-//const lidsplus = () => import("../crmanager/lidsplus");
-const calls = () => import("../crmanager/calls");
-const lids3 = () => import("../crmanager/lids3");
-const report = () => import("./report");
-const reportPie = () => import("./reportPie");
-const reportBTC = () => import("./reportBTC");
+const users = () => import("./users.vue");
+const importcsvnew = () => import("./importcsvnew.vue");
+const statusLid = () => import("./statusLid.vue");
+// const workPlaces = () => import("./workPlaces.vue");
+const providers = () => import("./providers.vue");
+const mlids = () => import("../manager/mlids.vue");
+const lids = () => import("../crmanager/lids.vue");
+//const lidsplus = () => import("../crmanager/lidsplus.vue");
+const calls = () => import("../crmanager/calls.vue");
+const lids3 = () => import("../crmanager/lids3.vue");
+const report = () => import("./report.vue");
+const reportPie = () => import("./reportPie.vue");
+const reportBTC = () => import("./reportBTC.vue");
 
 export default {
   props: ["user"],

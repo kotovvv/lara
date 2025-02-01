@@ -9,12 +9,12 @@
 
           <div class="status_wrp wrp_date px-3">
             <v-row align="center">
-              <v-btn @click="clearFilter()" small text>
-                <v-icon>close</v-icon>
+              <v-btn @click="clearFilter()" small icon>
+                <v-icon>mdi-close</v-icon>
               </v-btn>
-              <v-btn @click="clearuser" small text
-                ><v-icon>refresh</v-icon></v-btn
-              >
+              <v-btn @click="clearuser" small icon>
+                <v-icon>mdi-refresh</v-icon>
+              </v-btn>
               <v-col>
                 <v-menu
                   v-model="dateFrom"
@@ -67,8 +67,8 @@
                 </v-menu>
               </v-col>
 
-              <v-btn @click="cleardate" small text
-                ><v-icon>close</v-icon></v-btn
+              <v-btn @click="cleardate" small icon
+                ><v-icon>mdi-close</v-icon></v-btn
               >
               <v-checkbox v-model="savedates"></v-checkbox>
               <v-checkbox v-model="callback"></v-checkbox>

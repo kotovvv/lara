@@ -4,8 +4,8 @@
       <v-row>
         <v-col cols="1">
           <p>Сброс</p>
-          <v-btn @click="clearFilter" class="border" outlined rounded
-            ><v-icon>close</v-icon></v-btn
+          <v-btn @click="clearFilter" class="border" outlined rounded icon
+            ><v-icon>mdi-close</v-icon></v-btn
           >
         </v-col>
         <v-col>
@@ -71,12 +71,12 @@
                 </v-menu>
               </v-col>
 
-              <v-btn @click="cleardate" small text
-                ><v-icon>close</v-icon></v-btn
+              <v-btn @click="cleardate" small icon
+                ><v-icon>mdi-close</v-icon></v-btn
               >
               <v-checkbox v-model="savedates"></v-checkbox>
-              <v-btn @click="clearuser" small text
-                ><v-icon>refresh</v-icon></v-btn
+              <v-btn @click="clearuser" small icon
+                ><v-icon>mdi-refresh</v-icon></v-btn
               >
             </v-row>
           </div>

@@ -27,13 +27,15 @@ class loginController extends Controller
 
     if ($provider && Hash::check($request->password, $provider['password'])) {
       $provider->role_id = 4;
+      $token = $provider->createToken('auth_token')->plainTextToken;
       return response()->json([
         'status'   => 'success',
         'user' =>  $provider,
+        'token' => $token,
       ]);
     }
     if (Auth::attempt(['name' => $request->name, 'password' => $request->password])) {
-      $user                  = Auth::user();
+      $user = Auth::user();
       if (session()->get('office_id') === $user['office_id']) {
         $ses =  'Has session';
       } else {
@@ -41,10 +43,12 @@ class loginController extends Controller
         session()->put('user_id', $user['id']);
         $ses =  'Created session';
       }
+      $token = $user->createToken('auth_token')->plainTextToken;
       return response()->json([
         'status'   => 'success',
         'user' => $user,
-        'ses' => $ses
+        'ses' => $ses,
+        'token' => $token,
       ]);
     } else {
       return response()->json([

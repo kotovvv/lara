@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API\v1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-
 use App\Models\Import;
 use App\Models\Lid;
 use App\Models\Log;
@@ -14,14 +13,8 @@ use Storage;
 use Illuminate\Support\Facades\DB;
 use Debugbar;
 
-
 class ImportsController extends Controller
 {
-  /**
-   * Display a listing of the resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
   public function index($from = 0, $to = 0)
   {
     $office_id = session()->get('office_id');
@@ -58,7 +51,7 @@ class ImportsController extends Controller
     return $response;
   }
 
-  private function  date_range($first, $last, $step = '+1 day', $output_format = 'Y-m-d')
+  private function date_range($first, $last, $step = '+1 day', $output_format = 'Y-m-d')
   {
     $dates = array();
     $current = strtotime($first);
@@ -223,22 +216,11 @@ class ImportsController extends Controller
     return response($res, 200);
   }
 
-  /**
-   * Show the form for creating a new resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
   public function create()
   {
     //
   }
 
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
   public function store(Request $request, $from = 0, $to = 0)
   {
     $a_import = $request->all();
@@ -256,59 +238,26 @@ class ImportsController extends Controller
     DB::table('imports')->where('load_key', $load_key)->delete();
   }
 
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
   public function show($id)
   {
     //
   }
 
-  /**
-   * Show the form for editing the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
   public function edit($id)
   {
     //
   }
 
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
   public function update(Request $request, $id)
   {
     //
   }
 
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
   public function destroy($id)
   {
     //
   }
 
-
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-
-   * @return \Illuminate\Http\Response
-   */
   public function importUpdate(Request $request)
   {
     $data = $request->all();
@@ -335,7 +284,6 @@ class ImportsController extends Controller
     $lidids = DB::table('historyimport')->where('imports_id', $loads_id)->when($message != null, function ($query) use ($message) {
       return $query->where('load_mess', $message);
     })->orderBy('created_at', 'DESC')->get()->pluck('lids')->toArray();
-    // $sql= "SELECT lids FROM `historyimport` WHERE imports_id = ". $loads_id." ORDER BY created_at DESC LIMIT 1";
     if (count($lidids)) {
       $getLiads = Lid::whereIn('lids.id', explode(',', $lidids[0]));
       $response['statuses'] = $getLiads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
@@ -348,6 +296,7 @@ class ImportsController extends Controller
     $response['history'] = DB::table('historyimport')->where('imports_id', $loads_id)->orderBy('created_at', 'DESC')->get();
     return $response;
   }
+
   public function redistributeLids(Request $request)
   {
     $data = $request->all();
@@ -358,39 +307,29 @@ class ImportsController extends Controller
     $provider_id = $data['provider_id'];
     $message = isset($data['message']) ? $data['message'] : '';
     $start = $data['start'];
-    //$end = isset($data['end']) ? $data['end'] : '';
     $geo = isset($data['geo']) ? $data['geo'] : '';
 
     $historyimp = [];
     if ($message) {
-
-      //?- get row from imports on id - $id']
-      //- get id from lids on load_mess and date
       $getLiads = Lid::where('load_mess', $message)
         ->whereDate('lids.created_at', date('Y-m-d', strtotime($start)));
-      //- get statuses for this leads
       $historyimp['statuses'] = $getLiads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
         ->groupBy('statuses.id')
         ->orderBy('statuses.order', 'ASC')
         ->get();
-
 
       $historyimp['lids'] = implode(',', $lid_ids);
 
       $historyimp['imports_id'] = $id;
       $historyimp['load_mess'] = $message;
       $historyimp['created_at'] = Now();
-      //- insert to history
       DB::table('historyimport')->insert($historyimp);
     } else {
-      //- get id lids from imported_lids on provider_id and date
       $lidsId = DB::table('imported_leads')->where('api_key_id', $provider_id)->whereDate('upload_time', $start)->where('geo', $geo)->pluck('lead_id')->toArray();
-
 
       $getLiads = Lid::whereIn('lids.id', $lidsId);
 
-      //- get statuses for this liads
       $historyimp['statuses'] = $getLiads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
         ->groupBy('statuses.id')
@@ -400,7 +339,6 @@ class ImportsController extends Controller
       $historyimp['lids'] = implode(',', $lid_ids);
       $historyimp['imports_id'] = $id;
       $historyimp['created_at'] = Now();
-      //- insert to history
       DB::table('historyimport')->insert($historyimp);
     }
     $hm = ceil(count($lid_ids) / count($usersIds));
@@ -411,16 +349,10 @@ class ImportsController extends Controller
       Lid::whereIn('id', $lid_ids)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => 8, 'text' => '', 'qtytel' => 0]);
     }
     if ($message) {
-      // $a_group_ids = json_encode(
-      //   Lid::where('load_mess', $message)->leftJoin('users', 'users.id', '=', 'lids.user_id')->whereDate('lids.created_at', date('Y-m-d', strtotime($start)))->groupBy('users.group_id')->pluck('users.group_id')->toArray()
-      // );
-
-      // get offices users
       $a_office_ids = json_encode(Lid::where('load_mess', $message)
         ->whereDate('lids.created_at', date('Y-m-d', strtotime($start)))->where('office_id', '!=', 0)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
       DB::table('imports')->where('id', $id)->update(['office_ids' => $a_office_ids]);
     } else {
-      // get offices users
       $a_office_ids = json_encode(Lid::whereIn('lids.id', $lidsId)->where('office_id', '!=', 0)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
       DB::table('imports_provider')->where('id', $id)->update(['office_ids' => $a_office_ids]);
     }
@@ -438,22 +370,16 @@ class ImportsController extends Controller
     $setLiads = [];
 
     foreach ($imoprtsIdsm as $import_) {
-
       $historyimp = [];
       if (isset($import_['message'])) {
-
-        //?- get row from imports on id - $import_['id']
-        //- get id from lids on load_mess and date
         $getLiads = Lid::where('load_mess', $import_['message'])
           ->whereDate('lids.created_at', date('Y-m-d', strtotime($import_['start'])));
 
-        //- get statuses for this leads
         $historyimp['statuses'] = $getLiads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
           ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
           ->groupBy('statuses.id')
           ->orderBy('statuses.order', 'ASC')
           ->get();
-        //- select lids which must changed
         $setLiads = Lid::where('load_mess', $import_['message'])->when(count($resetStatus) > 0, function ($query) use ($resetStatus) {
           return $query->whereIn('status_id', $resetStatus);
         })->whereDate('lids.created_at', date('Y-m-d', strtotime($import_['start'])))->get()->pluck('id')->toArray();
@@ -463,45 +389,32 @@ class ImportsController extends Controller
         $historyimp['imports_id'] = $import_['id'];
         $historyimp['load_mess'] = $import_['message'];
         $historyimp['created_at'] = Now();
-        //- insert to history
         DB::table('historyimport')->insert($historyimp);
-        //- collect $alliads
         $alliads = array_merge($alliads, $setLiads);
 
-        // $a_group_ids = json_encode(
-        //   Lid::where('load_mess',  $import_['message'])->leftJoin('users', 'users.id', '=', 'lids.user_id')->whereDate('lids.created_at', date('Y-m-d', strtotime($import_['start'])))->groupBy('users.group_id')->pluck('users.group_id')->toArray()
-        // );
-
-        // get offices users
-        $a_office_ids = json_encode(Lid::where('load_mess',  $import_['message'])
+        $a_office_ids = json_encode(Lid::where('load_mess', $import_['message'])
           ->whereDate('lids.created_at', date('Y-m-d', strtotime($import_['start'])))->where('office_id', '!=', 0)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
         DB::table('imports')->where('id', $import_['id'])->update(['office_ids' => $a_office_ids]);
       } else {
-        //- get id lids from imported_lids on provider_id and date
         $lidsId = DB::table('imported_leads')->where('api_key_id', $import_['provider_id'])->whereDate('upload_time', $import_['start'])->where('geo', $import_['geo'])->pluck('lead_id')->toArray();
 
         $getLiads = Lid::whereIn('lids.id', $lidsId);
 
-
-        //- get statuses for this liads
         $historyimp['statuses'] = $getLiads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
           ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
           ->groupBy('statuses.id')
           ->orderBy('statuses.order', 'ASC')
           ->get();
-        //- select lids which must changed
         $setLiads = Lid::whereIn('lids.id', $lidsId)->when(count($resetStatus) > 0, function ($query) use ($resetStatus) {
           return $query->whereIn('status_id', $resetStatus);
         })->get()->pluck('id')->toArray();
         $historyimp['lids'] = implode(',', $setLiads);
         $historyimp['imports_id'] = $import_['id'];
         $historyimp['created_at'] = Now();
-        //- collect $alliads
         $alliads = array_merge($alliads, $setLiads);
         if (!$alliads) {
           return response('No alliads', 403);
         }
-        //- insert to history
         DB::table('historyimport')->insert($historyimp);
       }
     }
@@ -514,14 +427,11 @@ class ImportsController extends Controller
       Lid::whereIn('id', $lid_ids)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => 8, 'text' => '', 'qtytel' => 0]);
     }
     foreach ($imoprtsIdsm as $import_) {
-
       if (isset($import_['message'])) {
-        // get offices users
         $a_office_ids = json_encode(Lid::where('load_mess', $import_['message'])
           ->whereDate('lids.created_at', date('Y-m-d', strtotime($import_['start'])))->where('office_id', '!=', 0)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
         DB::table('imports')->where('id', $import_['id'])->update(['office_ids' => $a_office_ids]);
       } else {
-        // get offices users
         $a_office_ids = json_encode(Lid::whereIn('lids.id', $lidsId)->where('office_id', '!=', 0)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
         DB::table('imports_provider')->where('id', $import_['id'])->update(['office_ids' => $a_office_ids]);
       }
@@ -536,7 +446,7 @@ class ImportsController extends Controller
     return response('Await', 200);
   }
 
-  public  function checkLoadMess(Request $request)
+  public function checkLoadMess(Request $request)
   {
     $id = $request->get('id') !== null ? (int) $request->get('id') : 0;
     $load_mess = $request->get('load_mess');

@@ -58,6 +58,8 @@
 
 <script>
 import axios from "axios";
+import Cookies from "js-cookie";
+
 export default {
   props: ["login"],
   data: () => ({
@@ -77,13 +79,18 @@ export default {
   }),
   methods: {
     onSubmit() {
-      const self = this
+      const self = this;
       this.errors = {};
       axios
         .post("/api/login", this.fields)
         .then((response) => {
           self.$emit("login", response.data.user);
-          localStorage.user = JSON.stringify(response.data.user)
+          const secure = window.location.protocol === "https:";
+          Cookies.set("auth_token", response.data.token, {
+            sameSite: "None",
+            secure: secure,
+          });
+          window.location.href = "/";
         })
         .catch((error) => {
           if (error.response.status === 422) {
