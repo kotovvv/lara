@@ -80,6 +80,7 @@ export default {
   methods: {
     onSubmit() {
       const self = this;
+      localStorage.removeItem("user");
       this.errors = {};
       axios
         .post("/api/login", this.fields)

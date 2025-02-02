@@ -144,14 +144,7 @@
               >
                 <!-- v-if="$props.user.sip == 0" -->
                 <template v-slot:item.tel="{ item }">
-                  <a
-                    class="tel"
-                    :href="'sip:' + item.tel"
-                    @click.stop="
-                      qtytel(item.id);
-                      lid_id = item.id;
-                    "
-                  >
+                  <v-btn text class="tel" @click.stop="runSIP(item)">
                     <template
                       v-if="
                         $props.user.role_id == 1 && $props.user.office_id == 0
@@ -166,7 +159,7 @@
                         :isUnmasked="isRowUnmasked(item.id)"
                       />
                     </template>
-                  </a>
+                  </v-btn>
                   <span
                     @click.prevent.stop="
                       qtytel(item.id);
@@ -278,14 +271,7 @@
                 <template v-slot:item.tel="{ item }">
                   <div class="d-flex justify-space-between">
                     <template v-if="$props.user.sip == 0">
-                      <a
-                        class="tel"
-                        :href="'sip:' + item.tel"
-                        @click.stop="
-                          qtytel(item.id);
-                          lid_id = item.id;
-                        "
-                      >
+                      <v-btn text class="tel" @click.stop="runSIP(item)">
                         <template
                           v-if="
                             $props.user.role_id == 1 &&
@@ -301,7 +287,7 @@
                             :isUnmasked="isRowUnmasked(item.id)"
                           />
                         </template>
-                      </a>
+                      </v-btn>
                       <span
                         @click.prevent.stop="
                           qtytel(item.id);
@@ -336,15 +322,9 @@
                         </template>
                       </span>
                       <span>
-                        <a
-                          :href="'sip:' + item.tel"
-                          @click.stop="
-                            qtytel(item.id);
-                            lid_id = item.id;
-                          "
-                        >
+                        <v-btn small icon @click.stop="runSIP(item)">
                           <v-icon small> mdi-headset </v-icon>
-                        </a>
+                        </v-btn>
                       </span>
                     </template>
                     <span @click.prevent.stop="openDialogBTC(item)">
@@ -720,6 +700,11 @@ export default {
   },
   computed: {},
   methods: {
+    runSIP(item) {
+      this.qtytel(item.id);
+      this.lid_id = item.id;
+      window.location.href = "sip:" + item.tel;
+    },
     isRowUnmasked(id) {
       return this.unmaskedRowId === id;
     },
