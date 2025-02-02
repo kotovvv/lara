@@ -37,6 +37,7 @@ export default {
   },
   methods: {
     onLogin(data) {
+      console.log("User data:", data); // Add this line
       this.user = data;
       const secure = window.location.protocol === "https:";
       Cookies.set("auth_token", data.token, {

@@ -84,6 +84,7 @@ export default {
       axios
         .post("/api/login", this.fields)
         .then((response) => {
+          console.log("Login response:", response.data); // Add this line
           self.$emit("login", response.data.user);
           const secure = window.location.protocol === "https:";
           Cookies.set("auth_token", response.data.token, {

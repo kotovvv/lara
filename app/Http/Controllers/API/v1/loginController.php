@@ -9,6 +9,7 @@ use Hash;
 use App\Models\Provider;
 use App\Models\User;
 use Session;
+use Log;
 
 class loginController extends Controller
 {
@@ -23,6 +24,8 @@ class loginController extends Controller
   }
   public function login(Request $request)
   {
+    Log::info('Login attempt', ['name' => $request->name]); // Add this line
+
     $provider = Provider::where('name', $request->name)->first();
 
     if ($provider && Hash::check($request->password, $provider['password'])) {
