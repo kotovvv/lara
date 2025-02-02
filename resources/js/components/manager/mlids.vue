@@ -144,7 +144,7 @@
               >
                 <!-- v-if="$props.user.sip == 0" -->
                 <template v-slot:item.tel="{ item }">
-                  <v-btn text class="tel" @click.stop="runSIP(item)">
+                  <span class="tel" @click.stop="runSIP(item)">
                     <template
                       v-if="
                         $props.user.role_id == 1 && $props.user.office_id == 0
@@ -159,7 +159,7 @@
                         :isUnmasked="isRowUnmasked(item.id)"
                       />
                     </template>
-                  </v-btn>
+                  </span>
                   <span
                     @click.prevent.stop="
                       qtytel(item.id);
@@ -271,7 +271,7 @@
                 <template v-slot:item.tel="{ item }">
                   <div class="d-flex justify-space-between">
                     <template v-if="$props.user.sip == 0">
-                      <v-btn text class="tel" @click.stop="runSIP(item)">
+                      <span class="tel" @click.stop="runSIP(item)">
                         <template
                           v-if="
                             $props.user.role_id == 1 &&
@@ -287,7 +287,7 @@
                             :isUnmasked="isRowUnmasked(item.id)"
                           />
                         </template>
-                      </v-btn>
+                      </span>
                       <span
                         @click.prevent.stop="
                           qtytel(item.id);
@@ -322,9 +322,9 @@
                         </template>
                       </span>
                       <span>
-                        <v-btn small icon @click.stop="runSIP(item)">
+                        <span @click.stop="runSIP(item)">
                           <v-icon small> mdi-headset </v-icon>
-                        </v-btn>
+                        </span>
                       </span>
                     </template>
                     <span @click.prevent.stop="openDialogBTC(item)">
