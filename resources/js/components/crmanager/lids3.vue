@@ -470,7 +470,10 @@
             </template>
           </v-data-table>
           <v-row class="align-center mt-2">
-            <v-col cols="2" v-if="$props.user.role_id == 1">
+            <v-col
+              cols="2"
+              v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
+            >
               <v-btn outlined rounded @click="getAllLidsForXls" class="border">
                 <v-icon left> mdi-file-excel </v-icon>
                 Скачать таблицу
@@ -483,7 +486,7 @@
                 v-if="
                   selected.length &&
                   $props.user.role_id === 1 &&
-                  $props.user.group_id == 0
+                  $props.user.office_id == 0
                 "
                 ><v-icon>mdi-delete</v-icon>Удалить логи</v-btn
               ></v-col
