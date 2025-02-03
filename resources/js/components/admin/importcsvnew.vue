@@ -3684,7 +3684,7 @@ export default {
           let office_id = self.$attrs.user.office_id;
           self.imports = self.imports.map((i) => {
             let hm_json = JSON.parse(i.hm_json);
-            if (hm_json.length > 0) {
+            if (hm_json && hm_json.length > 5) {
               i.hmnew = hm_json.filter((f) => {
                 return f.office_id == office_id;
               })[0].hmnew;

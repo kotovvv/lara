@@ -30,8 +30,8 @@ class ImportsController extends Controller
       ->get();
 
     foreach ($imports as $import) {
-      $import->provider_name = $import->provider->name;
-      $import->user_name = $import->user->fio;
+      $import->provider_name = $import->provider ? $import->provider->name : null;
+      $import->user_name = $import->user ? $import->user->fio : null;
     }
 
     Import::whereNull('hm_json')
