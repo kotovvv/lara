@@ -79,6 +79,13 @@ export default {
   }),
   methods: {
     onSubmit() {
+      if (this.fields.name === "" || this.fields.password === "") {
+        this.errors = {
+          name: this.fields.name === "" ? ["без логина?"] : [],
+          password: this.fields.password === "" ? ["А Пароль?"] : [],
+        };
+        return;
+      }
       const self = this;
       localStorage.removeItem("user");
       this.errors = {};

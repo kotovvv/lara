@@ -48,6 +48,7 @@ export default {
     },
     onLogout() {
       this.clear();
+      Cookies.remove("auth_token"); // Ensure token is removed
       window.location.href = "/login";
     },
     clear() {
