@@ -179,7 +179,7 @@
                   <MaskedField
                     :value="item.email"
                     type="email"
-                    :isUnmasked="isRowUnasked(item.id)"
+                    :isUnmasked="isRowUnmasked(item.id)"
                   />
                 </template>
               </template>
