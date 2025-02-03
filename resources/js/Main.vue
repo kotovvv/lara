@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     onLogin(data) {
-      console.log("User data:", data); // Add this line
+      if (data.token == "") return;
       this.user = data;
       const secure = window.location.protocol === "https:";
       Cookies.set("auth_token", data.token, {
@@ -48,12 +48,12 @@ export default {
     },
     onLogout() {
       this.clear();
-      Cookies.remove("auth_token"); // Ensure token is removed
       window.location.href = "/login";
     },
     clear() {
       this.user = {};
       Cookies.remove("auth_token");
+      Cookies.remove("XSRF-TOKEN"); // Ensure XSRF-TOKEN is removed
     },
     async fetchUser() {
       const token = Cookies.get("auth_token");

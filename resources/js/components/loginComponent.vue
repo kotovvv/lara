@@ -92,7 +92,7 @@ export default {
       axios
         .post("/api/login", this.fields)
         .then((response) => {
-          console.log("Login response:", response.data); // Add this line
+          if (response.data.token == "") return;
           self.$emit("login", response.data.user);
           const secure = window.location.protocol === "https:";
           Cookies.set("auth_token", response.data.token, {
@@ -106,6 +106,11 @@ export default {
             self.errors = error.response.data.errors || {};
           }
         });
+    },
+    clear() {
+      this.user = {};
+      Cookies.remove("auth_token");
+      Cookies.remove("XSRF-TOKEN"); // Ensure XSRF-TOKEN is removed
     },
   },
 };

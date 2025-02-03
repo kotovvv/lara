@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// route to show the login form
+// Re-add the route to show the login form
 Route::get('/login', function () {
   return view('login');
 })->name('login');

@@ -56,7 +56,8 @@ class loginController extends Controller
     } else {
       return response()->json([
         'status' => 'error',
-        'user'   => 'Unauthorized Access'
+        'user'   => 'Unauthorized Access',
+        'token' => ''
       ]);
     }
   }

@@ -1034,7 +1034,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
   {
     $data = $request->all();
 
-    if (!$data['ontime']) $data['ontime'] = null;
+    if (!isset($data['ontime'])) $data['ontime'] = null;
     $a_lid = [
       'ontime' => $data['ontime'],
       'updated_at' => Now()
