@@ -1996,7 +1996,7 @@ export default {
 
 #tablids .v-data-table__wrapper {
   overflow: auto;
-  max-height: 54vh;
+  max-height: 67vh;
   padding-top: 0;
 }
 
