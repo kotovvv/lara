@@ -143,7 +143,7 @@
             >
               <!-- v-if="$props.user.sip == 0" -->
               <template v-slot:item.tel="{ item }">
-                <span class="tel" @click.stop="runSIP(item)">
+                <span class="tel" @click="runSIP(item)">
                   <template
                     v-if="
                       $props.user.role_id == 1 && $props.user.office_id == 0
@@ -266,7 +266,7 @@
               <template v-slot:item.tel="{ item }">
                 <div class="d-flex justify-space-between">
                   <template v-if="$props.user.sip == 0">
-                    <span class="tel" @click.stop="runSIP(item)">
+                    <span class="tel" @click="runSIP(item)">
                       <template
                         v-if="
                           $props.user.role_id == 1 && $props.user.office_id == 0
@@ -315,7 +315,7 @@
                       </template>
                     </span>
                     <span>
-                      <span @click.stop="runSIP(item)">
+                      <span @click="runSIP(item)">
                         <v-icon small> mdi-headset </v-icon>
                       </span>
                     </span>
