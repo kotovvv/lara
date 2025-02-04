@@ -1456,6 +1456,9 @@ export default {
         } else {
           self.process = 0;
         }
+        setTimeout(() => {
+          self.selectRow();
+        }, 300);
       } catch (error) {
         console.log(error);
         self.loading = false;
