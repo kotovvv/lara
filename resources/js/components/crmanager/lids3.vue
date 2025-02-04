@@ -486,7 +486,7 @@
                 v-if="
                   selected.length &&
                   $props.user.role_id === 1 &&
-                  $props.user.office_id == 0
+                  $props.user.group_id == 0
                 "
                 ><v-icon>mdi-delete</v-icon>Удалить логи</v-btn
               ></v-col
