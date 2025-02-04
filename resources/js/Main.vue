@@ -48,7 +48,7 @@ export default {
     },
     onLogout() {
       this.clear();
-      window.location.href = "/login";
+      // No need to redirect to /login, the component will handle it
     },
     clear() {
       this.user = {};

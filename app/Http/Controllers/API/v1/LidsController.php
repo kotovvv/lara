@@ -1193,7 +1193,12 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
       $n_lid->company_name = '';
     }
 
-    $n_lid->afilyator = $req['umcfields']['affiliate_user'];
+    if (isset($req['umcfields']['affiliate_user'])) {
+      $n_lid->afilyator = $req['umcfields']['affiliate_user'];
+    } else {
+      $n_lid->afilyator = '';
+    }
+
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = (int) $req['user_id'];
 
