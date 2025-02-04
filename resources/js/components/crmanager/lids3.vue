@@ -1323,7 +1323,7 @@ export default {
       //console.log(at["aria-selected"]);
       return at["aria-selected"];
     },
-    getLids3() {
+    async getLids3() {
       let self = this;
       let data = {};
       const { sortBy, sortDesc } = self.options;
@@ -1335,7 +1335,6 @@ export default {
       if (self.forXls) {
         self.limit = "all";
       }
-      self.loading = true;
 
       if (sortBy.length === 1) {
         data.sortBy = sortBy[0];
@@ -1382,95 +1381,85 @@ export default {
       if (this.callback === true) {
         data.callback = 1;
       }
+
+      // Reset the AbortController
+      this.controller = new AbortController();
       data.signal = this.controller.signal;
 
-      axios
-        .post("/api/getLids3", data)
-        .then((res) => {
-          self.hm = res.data.hm;
+      self.loading = true;
+      try {
+        const res = await axios.post("/api/getLids3", data);
+        self.hm = res.data.hm;
 
-          if (self.page == 0) {
-            self.Statuses = res.data.statuses;
-            if (Array.isArray(res.data.languges)) {
-              let a_l = res.data.languges.reduce(
-                (ac, cv) => ac.concat(cv.name),
-                []
-              );
-              self.languges = self.lng.filter((l) => {
-                return a_l.includes(l.id);
-              });
-            }
-            // self.geo = res.data.geo;
-            // if (localStorage.filterGeo) {
-            //   const a_geo = localStorage.filterGeo.split(",");
-            //   if (a_geo.length > 0) {
-            //     self.geo = self.geo.concat(a_geo);
-            //     self.geo = [...new Set(self.geo)];
-            //   }
-            // }
+        if (self.page == 0) {
+          self.Statuses = res.data.statuses;
+          if (Array.isArray(res.data.languges)) {
+            let a_l = res.data.languges.reduce(
+              (ac, cv) => ac.concat(cv.name),
+              []
+            );
+            self.languges = self.lng.filter((l) => {
+              return a_l.includes(l.id);
+            });
+          }
+        }
+
+        let d_lids = res.data.lids;
+
+        d_lids.map(function (e) {
+          if (e.updated_at) {
+            e.date_updated = e.updated_at.substring(0, 10);
+          }
+          if (e.created_at) {
+            e.date_created = e.created_at.substring(0, 10);
           }
 
-          let d_lids = res.data.lids;
-
-          d_lids.map(function (e) {
-            if (e.updated_at) {
-              e.date_updated = e.updated_at.substring(0, 10);
-            }
-            if (e.created_at) {
-              e.date_created = e.created_at.substring(0, 10);
-            }
-
-            try {
-              e.status =
-                self.statuses.find((s) => s.id == e.status_id).name || "";
-            } catch (error) {
-              e.status = "";
-            }
-            try {
-              e.office_name =
-                self.offices.find((s) => s.id == e.office_id).name || "";
-            } catch (error) {
-              e.office_name = "";
-            }
-
-            try {
-              e.user = self.users.find((u) => u.id == e.user_id).fio;
-            } catch (error) {
-              e.user = "";
-            }
-            try {
-              e.provider = self.providers.find(
-                (p) => p.id == e.provider_id
-              ).name;
-            } catch (error) {
-              e.provider = "";
-            }
-          });
-          if (self.forXls) {
-            self.lidsXls = d_lids;
-            self.exportXlsx(self.old_limit);
-            self.limit = self.old_limit;
-            self.forXls = false;
-          } else {
-            self.lids = d_lids;
+          try {
+            e.status =
+              self.statuses.find((s) => s.id == e.status_id).name || "";
+          } catch (error) {
+            e.status = "";
           }
-          self.loading = false;
-          // self.filterLang = "";
-          //self.filterGeo = "";
-          if (self.process > 1 && !self.forXls) {
-            console.log("time");
-            self.process = 0;
-            setTimeout(() => {
-              this.getLids3();
-            }, 300);
-          } else {
-            self.process = 0;
+          try {
+            e.office_name =
+              self.offices.find((s) => s.id == e.office_id).name || "";
+          } catch (error) {
+            e.office_name = "";
           }
-        })
-        .then(() => {
-          self.selectRow();
-        })
-        .catch((error) => console.log(error));
+
+          try {
+            e.user = self.users.find((u) => u.id == e.user_id).fio;
+          } catch (error) {
+            e.user = "";
+          }
+          try {
+            e.provider = self.providers.find((p) => p.id == e.provider_id).name;
+          } catch (error) {
+            e.provider = "";
+          }
+        });
+        if (self.forXls) {
+          self.lidsXls = d_lids;
+          self.exportXlsx(self.old_limit);
+          self.limit = self.old_limit;
+          self.forXls = false;
+        } else {
+          self.lids = d_lids;
+        }
+        self.loading = false;
+        if (self.process > 1 && !self.forXls) {
+          console.log("time");
+          self.process = 0;
+          setTimeout(() => {
+            this.getLids3();
+          }, 300);
+        } else {
+          self.process = 0;
+        }
+      } catch (error) {
+        console.log(error);
+        self.loading = false;
+      }
     },
     selectRow() {
       if (this.hmrow) {
