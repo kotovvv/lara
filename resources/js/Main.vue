@@ -53,10 +53,11 @@ export default {
     clear() {
       this.user = {};
       Cookies.remove("auth_token");
-      Cookies.remove("XSRF-TOKEN"); // Ensure XSRF-TOKEN is removed
+      //Cookies.remove("XSRF-TOKEN"); // Ensure XSRF-TOKEN is removed
     },
     async fetchUser() {
       const token = Cookies.get("auth_token");
+      if (token == "") return;
       if (token) {
         try {
           const response = await axios.get("/api/user", {
