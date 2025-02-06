@@ -612,14 +612,14 @@ class LidsController extends Controller
 
     $response = [];
     $q_leads = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') depozit'))
+      ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
+        return $query->whereIn('lids.office_id', $office_ids);
+      })
       ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
         return $query->where('lids.user_id', $id);
       })
       ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
         return $query->whereIn('lids.user_id', $users_ids);
-      })
-      ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
-        return $query->whereIn('lids.office_id', $office_ids);
       })
       ->when(count($providers) > 0, function ($query) use ($providers) {
         return $query->whereIn('lids.provider_id', $providers);
@@ -686,14 +686,14 @@ class LidsController extends Controller
       $response['statuses'] = Lid::select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
 
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
+        ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
+          return $query->whereIn('lids.office_id', $office_ids);
+        })
         ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
           return $query->where('lids.user_id', $id);
         })
         ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
           return $query->whereIn('lids.user_id', $users_ids);
-        })
-        ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
-          return $query->whereIn('lids.office_id', $office_ids);
         })
         ->when(count($providers) > 0, function ($query) use ($providers) {
           return $query->whereIn('lids.provider_id', $providers);
@@ -729,14 +729,14 @@ class LidsController extends Controller
         ->when(count($date) > 0, function ($query) use ($date) {
           return $query->whereBetween('lids.created_at', $date);
         })
+        ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
+          return $query->whereIn('lids.office_id', $office_ids);
+        })
         ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
           return $query->where('lids.user_id', $id);
         })
         ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
           return $query->whereIn('lids.user_id', $users_ids);
-        })
-        ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
-          return $query->whereIn('lids.office_id', $office_ids);
         })
         ->groupBy('client_lang')
         //->orderBy('lids.created_at', 'DESC')
