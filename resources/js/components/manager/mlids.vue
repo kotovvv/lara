@@ -16,52 +16,12 @@
           ></v-text-field>
         </v-card-title>
       </v-col>
+
       <v-col cols="2">
         Запрос по поставщикам
         <v-autocomplete
           v-model="filterProviders"
-          :items="providers"
-          item-text="name"
-          item-value="id"
-          outlined
-          rounded
-          multiple
-          @change="
-            page = 0;
-            getLidsPost();
-          "
-          :menu-props="{ maxHeight: '80vh' }"
-        >
-          <template v-slot:selection="{ item, index }">
-            <span v-if="index <= 2">{{ item.name }} </span>
-            <span v-if="index > 2" class="grey--text text-caption">
-              (+{{ filterProviders.length - 1 }} )
-            </span>
-          </template>
-        </v-autocomplete>
-      </v-col>
-      <v-col cols="2">
-        Запрос по номеру
-      <v-col cols="2">
-        <v-card-title>
-          <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Поиск"
-            outlined
-            rounded
-            @click:append="
-              page = 0;
-              getLidsPost();
-            "
-          ></v-text-field>
-        </v-card-title>
-      </v-col>
-      <v-col cols="2">
-        Запрос по поставщикам
-        <v-autocomplete
-          v-model="filterProviders"
-          :items="providers"
+          :items="providers?.length ? providers : []"
           item-text="name"
           item-value="id"
           outlined
@@ -99,7 +59,7 @@
         Запрос по статусу
         <v-select
           v-model="filterStatus"
-          :items="filterstatuses"
+          :items="filterstatuses?.length ? filterstatuses : []"
           item-text="name"
           item-value="id"
           outlined
@@ -140,7 +100,7 @@
         Сервер
         <v-select
           v-model="selectedServer"
-          :items="servers"
+          :items="servers?.length ? servers : []"
           item-text="name"
           item-value="name"
           outlined
@@ -175,7 +135,7 @@
               item-key="id"
               :single-select="true"
               :single-expand="true"
-              :items="todayItems"
+              :items="todayItems?.length ? todayItems : []"
               ref="todaytable"
               @click:row="clickrow"
               :items-per-page="100"
@@ -184,7 +144,7 @@
             >
               <!-- v-if="$props.user.sip == 0" -->
               <template v-slot:item.tel="{ item }">
-                <span class="tel" @click="runSIP(item)">
+                <span class="tel" @click.prevent.stop="runSIP(item)">
                   <template
                     v-if="
                       $props.user.role_id == 1 && $props.user.office_id == 0
@@ -307,7 +267,7 @@
               <template v-slot:item.tel="{ item }">
                 <div class="d-flex justify-space-between">
                   <template v-if="$props.user.sip == 0">
-                    <span class="tel" @click="runSIP(item)">
+                    <span class="tel" @click.prevent.stop="runSIP(item)">
                       <template
                         v-if="
                           $props.user.role_id == 1 && $props.user.office_id == 0
@@ -356,7 +316,7 @@
                       </template>
                     </span>
                     <span>
-                      <span @click="runSIP(item)">
+                      <span @click.prevent.stop="runSIP(item)">
                         <v-icon small> mdi-headset </v-icon>
                       </span>
                     </span>
