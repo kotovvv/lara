@@ -126,8 +126,6 @@
       <v-col cols="12">
         <v-col cols="12">
           <v-card :class="{ 'd-none': todayItems.length == 0 }">
-            <!-- @click:row="clickrow"
-              :expanded="expanded" show-expand  hide-default-header   show-select -->
             <v-data-table
               id="ontime"
               v-model.lazy.trim="selected"
@@ -142,9 +140,8 @@
               hide-default-footer
               :item-class="getRowTimeClass"
             >
-              <!-- v-if="$props.user.sip == 0" -->
               <template v-slot:item.tel="{ item }">
-                <span class="tel" @click.prevent.stop="runSIP(item)">
+                <span class="tel" @click.stop="runSIP(item)">
                   <template
                     v-if="
                       $props.user.role_id == 1 && $props.user.office_id == 0
@@ -166,7 +163,6 @@
                     wp_call(item);
                   "
                 >
-                  <!-- :class="{ active: active_el == item.id }" -->
                   <v-icon small> mdi-headset </v-icon>
                 </span>
               </template>
@@ -267,7 +263,7 @@
               <template v-slot:item.tel="{ item }">
                 <div class="d-flex justify-space-between">
                   <template v-if="$props.user.sip == 0">
-                    <span class="tel" @click.prevent.stop="runSIP(item)">
+                    <span class="tel" @click.stop="runSIP(item)">
                       <template
                         v-if="
                           $props.user.role_id == 1 && $props.user.office_id == 0
@@ -295,7 +291,7 @@
                   <template v-else>
                     <span
                       class="tel"
-                      @click.prevent.stop="
+                      @click.stop="
                         qtytel(item.id);
                         wp_call(item);
                       "
@@ -316,7 +312,7 @@
                       </template>
                     </span>
                     <span>
-                      <span @click.prevent.stop="runSIP(item)">
+                      <span @click="runSIP(item)">
                         <v-icon small> mdi-headset </v-icon>
                       </span>
                     </span>
@@ -692,8 +688,14 @@ export default {
   methods: {
     runSIP(item) {
       this.qtytel(item.id);
-      // this.lid_id = item.id;
       window.location.href = "sip:" + item.tel;
+      if (!this.$refs.datatable.expansion[item.id]) {
+        this.$refs.datatable.expansion = {};
+        this.lid_id = item.id;
+        this.toggleRowMask(item);
+        this.$refs.datatable.expand(item);
+        // this.$refs.datatable.expansion[item.id] = true;
+      }
     },
     isRowUnmasked(id) {
       return this.unmaskedRowId === id;
