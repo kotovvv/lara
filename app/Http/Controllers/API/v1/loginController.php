@@ -9,6 +9,7 @@ use Hash;
 use App\Models\Provider;
 use App\Models\User;
 use Session;
+use Log;
 
 class loginController extends Controller
 {
@@ -23,17 +24,21 @@ class loginController extends Controller
   }
   public function login(Request $request)
   {
+    Log::info('Login attempt', ['name' => $request->name]); // Add this line
+
     $provider = Provider::where('name', $request->name)->first();
 
     if ($provider && Hash::check($request->password, $provider['password'])) {
       $provider->role_id = 4;
+      $token = $provider->createToken('auth_token')->plainTextToken;
       return response()->json([
         'status'   => 'success',
         'user' =>  $provider,
+        'token' => $token,
       ]);
     }
     if (Auth::attempt(['name' => $request->name, 'password' => $request->password])) {
-      $user                  = Auth::user();
+      $user = Auth::user();
       if (session()->get('office_id') === $user['office_id']) {
         $ses =  'Has session';
       } else {
@@ -41,15 +46,18 @@ class loginController extends Controller
         session()->put('user_id', $user['id']);
         $ses =  'Created session';
       }
+      $token = $user->createToken('auth_token')->plainTextToken;
       return response()->json([
         'status'   => 'success',
         'user' => $user,
-        'ses' => $ses
+        'ses' => $ses,
+        'token' => $token,
       ]);
     } else {
       return response()->json([
         'status' => 'error',
-        'user'   => 'Unauthorized Access'
+        'user'   => 'Unauthorized Access',
+        'token' => ''
       ]);
     }
   }

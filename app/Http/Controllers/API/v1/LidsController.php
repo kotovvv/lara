@@ -612,14 +612,14 @@ class LidsController extends Controller
 
     $response = [];
     $q_leads = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') depozit'))
+      ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
+        return $query->whereIn('lids.office_id', $office_ids);
+      })
       ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
         return $query->where('lids.user_id', $id);
       })
       ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
         return $query->whereIn('lids.user_id', $users_ids);
-      })
-      ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
-        return $query->whereIn('lids.office_id', $office_ids);
       })
       ->when(count($providers) > 0, function ($query) use ($providers) {
         return $query->whereIn('lids.provider_id', $providers);
@@ -686,14 +686,14 @@ class LidsController extends Controller
       $response['statuses'] = Lid::select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
 
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
+        ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
+          return $query->whereIn('lids.office_id', $office_ids);
+        })
         ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
           return $query->where('lids.user_id', $id);
         })
         ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
           return $query->whereIn('lids.user_id', $users_ids);
-        })
-        ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
-          return $query->whereIn('lids.office_id', $office_ids);
         })
         ->when(count($providers) > 0, function ($query) use ($providers) {
           return $query->whereIn('lids.provider_id', $providers);
@@ -729,14 +729,14 @@ class LidsController extends Controller
         ->when(count($date) > 0, function ($query) use ($date) {
           return $query->whereBetween('lids.created_at', $date);
         })
+        ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
+          return $query->whereIn('lids.office_id', $office_ids);
+        })
         ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
           return $query->where('lids.user_id', $id);
         })
         ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
           return $query->whereIn('lids.user_id', $users_ids);
-        })
-        ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
-          return $query->whereIn('lids.office_id', $office_ids);
         })
         ->groupBy('client_lang')
         //->orderBy('lids.created_at', 'DESC')
@@ -1034,7 +1034,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
   {
     $data = $request->all();
 
-    if (!$data['ontime']) $data['ontime'] = null;
+    if (!isset($data['ontime'])) $data['ontime'] = null;
     $a_lid = [
       'ontime' => $data['ontime'],
       'updated_at' => Now()
@@ -1193,7 +1193,12 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
       $n_lid->company_name = '';
     }
 
-    $n_lid->afilyator = $req['umcfields']['affiliate_user'];
+    if (isset($req['umcfields']['affiliate_user'])) {
+      $n_lid->afilyator = $req['umcfields']['affiliate_user'];
+    } else {
+      $n_lid->afilyator = '';
+    }
+
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = (int) $req['user_id'];
 
@@ -1563,7 +1568,11 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         $a_date_ftd = [];
         if ($ftd) {
           $date_ftd = DB::select(DB::raw("SELECT created_at as date FROM depozits WHERE `lid_id` = " . $lid->id . " ORDER by created_at ASC LIMIT 1"));
-          $a_date_ftd = ['ftd_date' => $date_ftd[0]->date];
+          if ($date_ftd) {
+            $a_date_ftd = ['ftd_date' => $date_ftd[0]->date];
+          } else {
+            $a_date_ftd = ['ftd_date' => ''];
+          }
         }
 
         $a1 = array_merge([

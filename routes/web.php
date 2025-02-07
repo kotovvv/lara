@@ -13,15 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// route to show the login form
-//Route::get('/', array('uses' => 'App\Http\Controllers\HomeController@showLogin'));
-
-// Route::get('/', function () {
-//     return view('admin');
-// });
-// Route::get('/manager', function () {
-//     return view('manager');
-// });
 Route::get('/', function () {
-    return view('app');
+  return view('app');
 });

@@ -64,7 +64,7 @@
               </v-menu>
             </v-col>
 
-            <v-btn @click="cleardate" small text><v-icon>close</v-icon></v-btn>
+            <v-btn @click="cleardate" small text></v-icon></v-btn>
           </v-row>
         </div>
       </v-col>
