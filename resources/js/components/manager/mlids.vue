@@ -1,155 +1,279 @@
 <template>
   <div id="mlids">
     <v-row>
-      <v-col cols="12">
-        <v-row>
-          <v-col cols="2">
-            <v-card-title>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Поиск"
-                outlined
-                rounded
-                @click:append="
-                  page = 0;
-                  getLidsPost();
-                "
-              ></v-text-field>
-            </v-card-title>
-          </v-col>
-          <v-col cols="2">
-            Запрос по поставщикам
-            <v-autocomplete
-              v-model="filterProviders"
-              :items="providers"
-              item-text="name"
-              item-value="id"
-              outlined
-              rounded
-              multiple
-              @change="
-                page = 0;
-                getLidsPost();
-              "
-              :menu-props="{ maxHeight: '80vh' }"
-            >
-              <template v-slot:selection="{ item, index }">
-                <span v-if="index <= 2">{{ item.name }} </span>
-                <span v-if="index > 2" class="grey--text text-caption">
-                  (+{{ filterProviders.length - 1 }} )
-                </span>
-              </template>
-            </v-autocomplete>
-          </v-col>
-          <v-col cols="2">
-            Запрос по номеру
+      <v-col cols="2">
+        <v-card-title>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Поиск"
+            outlined
+            rounded
+            @click:append="
+              page = 0;
+              getLidsPost();
+            "
+          ></v-text-field>
+        </v-card-title>
+      </v-col>
+      <v-col cols="2">
+        Запрос по поставщикам
+        <v-autocomplete
+          v-model="filterProviders"
+          :items="providers"
+          item-text="name"
+          item-value="id"
+          outlined
+          rounded
+          multiple
+          @change="
+            page = 0;
+            getLidsPost();
+          "
+          :menu-props="{ maxHeight: '80vh' }"
+        >
+          <template v-slot:selection="{ item, index }">
+            <span v-if="index <= 2">{{ item.name }} </span>
+            <span v-if="index > 2" class="grey--text text-caption">
+              (+{{ filterProviders.length - 1 }} )
+            </span>
+          </template>
+        </v-autocomplete>
+      </v-col>
+      <v-col cols="2">
+        Запрос по номеру
 
-            <v-text-field
-              v-model.lazy.trim="filtertel"
-              append-icon="mdi-phone"
-              outlined
-              rounded
-              @click:append="
-                page = 0;
-                getLidsPost();
-              "
-            ></v-text-field>
-          </v-col>
-          <v-col cols="2">
-            Запрос по статусу
-            <v-select
-              v-model="filterStatus"
-              :items="filterstatuses"
-              item-text="name"
-              item-value="id"
-              outlined
-              rounded
-              multiple
-              @change="
-                page = 0;
-                getLidsPost();
-              "
-              :menu-props="{ maxHeight: '80vh' }"
+        <v-text-field
+          v-model.lazy.trim="filtertel"
+          append-icon="mdi-phone"
+          outlined
+          rounded
+          @click:append="
+            page = 0;
+            getLidsPost();
+          "
+        ></v-text-field>
+      </v-col>
+      <v-col cols="2">
+        Запрос по статусу
+        <v-select
+          v-model="filterStatus"
+          :items="filterstatuses"
+          item-text="name"
+          item-value="id"
+          outlined
+          rounded
+          multiple
+          @change="
+            page = 0;
+            getLidsPost();
+          "
+          :menu-props="{ maxHeight: '80vh' }"
+        >
+          <template v-slot:selection="{ item, index }">
+            <span v-if="index === 0">{{ item.name }} </span>
+            <span v-if="index === 1" class="grey--text text-caption">
+              (+{{ filterStatus.length - 1 }} )
+            </span>
+          </template>
+          <template v-slot:item="{ item, attrs }">
+            <v-badge
+              :value="attrs['aria-selected'] == 'true'"
+              color="#7620df"
+              dot
+              left
             >
-              <template v-slot:selection="{ item, index }">
-                <span v-if="index === 0">{{ item.name }} </span>
-                <span v-if="index === 1" class="grey--text text-caption">
-                  (+{{ filterStatus.length - 1 }} )
-                </span>
-              </template>
-              <template v-slot:item="{ item, attrs }">
-                <v-badge
-                  :value="attrs['aria-selected'] == 'true'"
-                  color="#7620df"
-                  dot
-                  left
-                >
-                  <i
-                    :style="{
-                      background: item.color,
-                      outline: '1px solid grey',
-                    }"
-                    class="sel_stat mr-4"
-                  ></i>
-                </v-badge>
-                {{ item.name }}
-              </template>
-            </v-select>
-          </v-col>
-          <v-col cols="2">
-            Сервер
-            <v-select
-              v-model="selectedServer"
-              :items="servers"
-              item-text="name"
-              item-value="name"
-              outlined
-              rounded
-              return-object
-              :change="wp_close"
-            >
-              <template v-slot:selection="{ item, index }">
-                <span v-if="index <= 2">{{ item.name }} </span>
-                <span v-if="index > 2" class="grey--text text-caption">
-                  (+{{ filterProviders.length - 1 }} )
-                </span>
-              </template>
-            </v-select>
-          </v-col>
-        </v-row>
-        <v-progress-linear
-          :active="loading"
-          indeterminate
-          color="purple"
-        ></v-progress-linear>
-        <v-row>
-          <v-col>
-            <v-card :class="{ 'd-none': todayItems.length == 0 }">
-              <!-- @click:row="clickrow"
+              <i
+                :style="{
+                  background: item.color,
+                  outline: '1px solid grey',
+                }"
+                class="sel_stat mr-4"
+              ></i>
+            </v-badge>
+            {{ item.name }}
+          </template>
+        </v-select>
+      </v-col>
+      <v-col cols="2">
+        Сервер
+        <v-select
+          v-model="selectedServer"
+          :items="servers?.length ? servers : []"
+          item-text="name"
+          item-value="name"
+          outlined
+          rounded
+          return-object
+          :change="wp_close"
+        >
+          <template v-slot:selection="{ item, index }">
+            <span v-if="index <= 2">{{ item.name }} </span>
+            <span v-if="index > 2" class="grey--text text-caption">
+              (+{{ filterProviders.length - 1 }} )
+            </span>
+          </template>
+        </v-select>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-progress-linear
+        :active="loading"
+        indeterminate
+        color="purple"
+      ></v-progress-linear>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-card :class="{ 'd-none': todayItems.length == 0 }">
+          <!-- @click:row="clickrow"
               :expanded="expanded" show-expand  hide-default-header   show-select -->
-              <v-data-table
-                id="ontime"
-                v-model.lazy.trim="selected"
-                :headers="headerstime"
-                item-key="id"
-                :single-select="true"
-                :single-expand="true"
-                :items="todayItems"
-                ref="todaytable"
-                @click:row="clickrow"
-                :items-per-page="100"
-                hide-default-footer
-                :item-class="getRowTimeClass"
+          <v-data-table
+            id="ontime"
+            v-model.lazy.trim="selected"
+            :headers="headerstime"
+            item-key="id"
+            :single-select="true"
+            :single-expand="true"
+            :items="todayItems?.length ? todayItems : []"
+            ref="todaytable"
+            @click:row="clickrow"
+            :items-per-page="100"
+            hide-default-footer
+            :item-class="getRowTimeClass"
+          >
+            <!-- v-if="$props.user.sip == 0" -->
+            <template v-slot:item.tel="{ item }">
+              <span
+                class="tel"
+                @click.prevent.stop="
+                  redirect(item.tel);
+                  qtytel(item.id);
+                "
               >
-                <!-- v-if="$props.user.sip == 0" -->
-                <template v-slot:item.tel="{ item }">
-                  <a
+                <template
+                  v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
+                >
+                  {{ item.tel }}
+                </template>
+                <template v-else>
+                  <MaskedField
+                    :value="item.tel"
+                    type="phone"
+                    :isUnmasked="isRowUnmasked(item.id)"
+                  />
+                </template>
+              </span>
+              <span
+                @click.prevent.stop="
+                  qtytel(item.id);
+                  wp_call(item);
+                "
+              >
+                <!-- :class="{ active: active_el == item.id }" -->
+                <v-icon small> mdi-headset </v-icon>
+              </span>
+            </template>
+            <template v-slot:item.email="{ item }">
+              <template
+                v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
+              >
+                {{ item.email }}
+              </template>
+              <template v-else>
+                <MaskedField
+                  :value="item.email"
+                  type="email"
+                  :isUnmasked="isRowUnmasked(item.id)"
+                />
+              </template>
+            </template>
+
+            <template v-slot:item.status="{ item }">
+              <div class="status_wrp" @click.stop="openDialog(item)">
+                <b
+                  :style="{
+                    background: stylecolor(item.status_id),
+                    outline: '#999 solid 1px',
+                  }"
+                ></b>
+                <span>{{ item.status }}</span>
+              </div>
+            </template>
+            <template v-slot:item.text="{ item }">
+              <span class="fixwidth" :title="item.text">{{ item.text }}</span>
+            </template>
+            <template v-slot:item.address="{ item }">
+              <v-btn
+                small
+                class="teal lighten-4"
+                @click.stop="copyTo(item.address)"
+                v-if="item.address"
+                >{{ item.address }}</v-btn
+              >
+            </template>
+            <template v-slot:item.actions="{ item }">
+              <v-icon small @click.stop="deleteTime(item)"> mdi-delete </v-icon>
+            </template>
+            <template v-slot:expanded-item="{ headers, item }">
+              <td :colspan="headers.length" class="blackborder">
+                <v-row>
+                  <v-col cols="12">
+                    <logtel :lid_id="lid_id" :key="lid_id" />
+                  </v-col>
+                </v-row>
+              </td>
+            </template>
+          </v-data-table>
+        </v-card>
+        <v-card>
+          <!-- show-expand show-select  :expanded="expanded" :search="search"-->
+          <v-data-table
+            id="maintable"
+            v-model.lazy.trim="selected"
+            :headers="headers"
+            item-key="id"
+            :single-select="true"
+            :single-expand="true"
+            :items="lids"
+            :items-per-page="limit != 'all' ? limit : -1"
+            :hide-default-footer="true"
+            ref="datatable"
+            @click:row="clickrow"
+            :item-class="getRowClass"
+          >
+            <template v-slot:top="{}" v-if="hm > 100">
+              <v-row class="align-center">
+                <v-spacer></v-spacer>
+
+                <h5 class="mb-0">Всего:{{ hm }}</h5>
+                <v-pagination
+                  v-model="page"
+                  class="my-4"
+                  :length="parseInt(hm / limit) + 1"
+                  @input="getLidsPost()"
+                  total-visible="10"
+                ></v-pagination>
+                <v-col cols="1">
+                  <v-select
+                    v-model="limit"
+                    rounded
+                    class="mt-2 border"
+                    :items="[10, 50, 100, 250, 500, 'all']"
+                    @change="getLidsPost(1)"
+                  ></v-select
+                ></v-col>
+              </v-row>
+            </template>
+            <!-- lid_id = item.id; -->
+            <template v-slot:item.tel="{ item }">
+              <div class="d-flex justify-space-between">
+                <template v-if="$props.user.sip == 0">
+                  <span
                     class="tel"
-                    :href="'sip:' + item.tel"
-                    @click.stop="
+                    @click.prevent.stop="
+                      redirect(item.tel);
                       qtytel(item.id);
-                      lid_id = item.id;
                     "
                   >
                     <template
@@ -166,246 +290,104 @@
                         :isUnmasked="isRowUnmasked(item.id)"
                       />
                     </template>
-                  </a>
+                  </span>
                   <span
                     @click.prevent.stop="
                       qtytel(item.id);
                       wp_call(item);
                     "
                   >
-                    <!-- :class="{ active: active_el == item.id }" -->
                     <v-icon small> mdi-headset </v-icon>
                   </span>
                 </template>
-                <template v-slot:item.email="{ item }">
-                  <template
-                    v-if="
-                      $props.user.role_id == 1 && $props.user.office_id == 0
+                <template v-else>
+                  <span
+                    class="tel"
+                    @click.prevent.stop="
+                      redirect(item.tel);
+                      qtytel(item.id);
                     "
                   >
-                    {{ item.email }}
-                  </template>
-                  <template v-else>
-                    <MaskedField
-                      :value="item.email"
-                      type="email"
-                      :isUnmasked="isRowUnmasked(item.id)"
-                    />
-                  </template>
-                </template>
-
-                <template v-slot:item.status="{ item }">
-                  <div class="status_wrp" @click.stop="openDialog(item)">
-                    <b
-                      :style="{
-                        background: stylecolor(item.status_id),
-                        outline: '#999 solid 1px',
-                      }"
-                    ></b>
-                    <span>{{ item.status }}</span>
-                  </div>
-                </template>
-                <template v-slot:item.text="{ item }">
-                  <span class="fixwidth" :title="item.text">{{
-                    item.text
-                  }}</span>
-                </template>
-                <template v-slot:item.address="{ item }">
-                  <v-btn
-                    small
-                    class="teal lighten-4"
-                    @click.stop="copyTo(item.address)"
-                    v-if="item.address"
-                    >{{ item.address }}</v-btn
-                  >
-                </template>
-                <template v-slot:item.actions="{ item }">
-                  <v-icon small @click.stop="deleteTime(item)">
-                    mdi-delete
-                  </v-icon>
-                </template>
-                <template v-slot:expanded-item="{ headers, item }">
-                  <td :colspan="headers.length" class="blackborder">
-                    <v-row>
-                      <v-col cols="12">
-                        <logtel :lid_id="lid_id" :key="lid_id" />
-                      </v-col>
-                    </v-row>
-                  </td>
-                </template>
-              </v-data-table>
-            </v-card>
-            <v-card>
-              <!-- show-expand show-select  :expanded="expanded" :search="search"-->
-              <v-data-table
-                id="maintable"
-                v-model.lazy.trim="selected"
-                :headers="headers"
-                item-key="id"
-                :single-select="true"
-                :single-expand="true"
-                :items="lids"
-                :items-per-page="limit != 'all' ? limit : -1"
-                :hide-default-footer="true"
-                ref="datatable"
-                @click:row="clickrow"
-                :item-class="getRowClass"
-              >
-                <template v-slot:top="{}" v-if="hm > 100">
-                  <v-row class="align-center">
-                    <v-spacer></v-spacer>
-
-                    <h5 class="mb-0">Всего:{{ hm }}</h5>
-                    <v-pagination
-                      v-model="page"
-                      class="my-4"
-                      :length="parseInt(hm / limit) + 1"
-                      @input="getLidsPost()"
-                      total-visible="10"
-                    ></v-pagination>
-                    <v-col cols="1">
-                      <v-select
-                        v-model="limit"
-                        rounded
-                        class="mt-2 border"
-                        :items="[10, 50, 100, 250, 500, 'all']"
-                        @change="getLidsPost(1)"
-                      ></v-select
-                    ></v-col>
-                  </v-row>
-                </template>
-
-                <template v-slot:item.tel="{ item }">
-                  <div class="d-flex justify-space-between">
-                    <template v-if="$props.user.sip == 0">
-                      <a
-                        class="tel"
-                        :href="'sip:' + item.tel"
-                        @click.stop="
-                          qtytel(item.id);
-                          lid_id = item.id;
-                        "
-                      >
-                        <template
-                          v-if="
-                            $props.user.role_id == 1 &&
-                            $props.user.office_id == 0
-                          "
-                        >
-                          {{ item.tel }}
-                        </template>
-                        <template v-else>
-                          <MaskedField
-                            :value="item.tel"
-                            type="phone"
-                            :isUnmasked="isRowUnmasked(item.id)"
-                          />
-                        </template>
-                      </a>
-                      <span
-                        @click.prevent.stop="
-                          qtytel(item.id);
-                          wp_call(item);
-                        "
-                      >
-                        <v-icon small> mdi-headset </v-icon>
-                      </span>
+                    <template
+                      v-if="
+                        $props.user.role_id == 1 && $props.user.office_id == 0
+                      "
+                    >
+                      {{ item.tel }}
                     </template>
                     <template v-else>
-                      <span
-                        class="tel"
-                        @click.prevent.stop="
-                          qtytel(item.id);
-                          wp_call(item);
-                        "
-                      >
-                        <template
-                          v-if="
-                            $props.user.role_id == 1 &&
-                            $props.user.office_id == 0
-                          "
-                        >
-                          {{ item.tel }}
-                        </template>
-                        <template v-else>
-                          <MaskedField
-                            :value="item.tel"
-                            type="phone"
-                            :isUnmasked="isRowUnmasked(item.id)"
-                          />
-                        </template>
-                      </span>
-                      <span>
-                        <a
-                          :href="'sip:' + item.tel"
-                          @click.stop="
-                            qtytel(item.id);
-                            lid_id = item.id;
-                          "
-                        >
-                          <v-icon small> mdi-headset </v-icon>
-                        </a>
-                      </span>
+                      <MaskedField
+                        :value="item.tel"
+                        type="phone"
+                        :isUnmasked="isRowUnmasked(item.id)"
+                      />
                     </template>
-                    <span @click.prevent.stop="openDialogBTC(item)">
-                      <v-icon class="bitcoin"> mdi-bitcoin </v-icon>
+                  </span>
+                  <span>
+                    <span
+                      @click.prevent.stop="
+                        qtytel(item.id);
+                        lid_id = item.id;
+                        window.location.href = 'sip:' + item.tel;
+                      "
+                    >
+                      <v-icon small> mdi-headset </v-icon>
                     </span>
-                  </div>
+                  </span>
                 </template>
-                <template v-slot:item.email="{ item }">
-                  <template
-                    v-if="
-                      $props.user.role_id == 1 && $props.user.office_id == 0
-                    "
-                  >
-                    {{ item.email }}
-                  </template>
-                  <template v-else>
-                    <MaskedField
-                      :value="item.email"
-                      type="email"
-                      :isUnmasked="isRowUnmasked(item.id)"
-                    />
-                  </template>
-                </template>
-                <template v-slot:item.status="{ item }">
-                  <div class="status_wrp mx-1" @click.stop="openDialog(item)">
-                    <b
-                      :style="{
-                        background: stylecolor(item.status_id),
-                        outline: '#999 solid 1px',
-                      }"
-                    ></b>
-                    <span>{{ item.status }}</span>
-                  </div>
-                </template>
-                <template v-slot:item.text="{ item }">
-                  <span class="fixwidth" :title="item.text">{{
-                    item.text
-                  }}</span>
-                </template>
-                <template v-slot:item.address="{ item }">
-                  <v-btn
-                    small
-                    class="teal lighten-4"
-                    @click.stop="copyTo(item.address)"
-                    v-if="item.address"
-                    >{{ item.address }}</v-btn
-                  >
-                </template>
-                <template v-slot:expanded-item="{ headers, item }">
-                  <td :colspan="headers.length" class="blackborder">
-                    <v-row>
-                      <v-col cols="12">
-                        <logtel :lid_id="lid_id" :key="componentKey" />
-                      </v-col>
-                    </v-row>
-                  </td>
-                </template>
-              </v-data-table>
-            </v-card>
-          </v-col>
-        </v-row>
+                <span @click.prevent.stop="openDialogBTC(item)">
+                  <v-icon class="bitcoin"> mdi-bitcoin </v-icon>
+                </span>
+              </div>
+            </template>
+            <template v-slot:item.email="{ item }">
+              <template
+                v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
+              >
+                {{ item.email }}
+              </template>
+              <template v-else>
+                <MaskedField
+                  :value="item.email"
+                  type="email"
+                  :isUnmasked="isRowUnmasked(item.id)"
+                />
+              </template>
+            </template>
+            <template v-slot:item.status="{ item }">
+              <div class="status_wrp mx-1" @click.stop="openDialog(item)">
+                <b
+                  :style="{
+                    background: stylecolor(item.status_id),
+                    outline: '#999 solid 1px',
+                  }"
+                ></b>
+                <span>{{ item.status }}</span>
+              </div>
+            </template>
+            <template v-slot:item.text="{ item }">
+              <span class="fixwidth" :title="item.text">{{ item.text }}</span>
+            </template>
+            <template v-slot:item.address="{ item }">
+              <v-btn
+                small
+                class="teal lighten-4"
+                @click.stop="copyTo(item.address)"
+                v-if="item.address"
+                >{{ item.address }}</v-btn
+              >
+            </template>
+            <template v-slot:expanded-item="{ headers, item }">
+              <td :colspan="headers.length" class="blackborder">
+                <v-row>
+                  <v-col cols="12">
+                    <logtel :lid_id="lid_id" :key="componentKey" />
+                  </v-col>
+                </v-row>
+              </td>
+            </template>
+          </v-data-table>
+        </v-card>
       </v-col>
     </v-row>
 
@@ -720,6 +702,9 @@ export default {
   },
   computed: {},
   methods: {
+    redirect(tel) {
+      window.location.href = "sip:" + tel;
+    },
     isRowUnmasked(id) {
       return this.unmaskedRowId === id;
     },
