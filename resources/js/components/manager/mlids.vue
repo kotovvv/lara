@@ -732,7 +732,7 @@ export default {
   methods: {
     runSIP(item) {
       this.qtytel(item.id);
-      this.lid_id = item.id;
+      // this.lid_id = item.id;
       window.location.href = "sip:" + item.tel;
     },
     isRowUnmasked(id) {
