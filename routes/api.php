@@ -21,9 +21,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-  return $request->user();
+Route::middleware('auth.user_or_provider')->get('/user', function (Request $request) {
+  $user = $request->user();
+  if ($user && !isset($user->role_id)) {
+    $user->role_id = 4;
+  }
+  return $user;
 });
+
 
 Route::post('/login', [loginController::class, 'login']);
 

@@ -10,6 +10,14 @@
     </v-snackbar>
     <v-container>
       <v-row>
+        <v-spacer></v-spacer>
+        <v-col>
+          <v-btn @click="$emit('logout')" title="Exit"
+            ><v-icon>mdi-logout</v-icon></v-btn
+          ></v-col
+        ></v-row
+      >
+      <v-row>
         <v-tabs v-model="tab">
           <v-tab>Report</v-tab>
           <v-tab>Import</v-tab>
@@ -353,16 +361,20 @@
               ></v-file-input>
               <v-btn @click="checkEmails" v-if="list_email" class="primary"
                 >Проверить<v-progress-circular
-                v-if="loading"
-      indeterminate
-      color="amber"
-    ></v-progress-circular></v-btn
-              >
+                  v-if="loading"
+                  indeterminate
+                  color="amber"
+                ></v-progress-circular
+              ></v-btn>
               <div v-if="in_db.length" class="mt-4">
-                <v-btn @click="download('in')">{{'Скачать дубликаты (' +in_db.length+')'}}</v-btn>
+                <v-btn @click="download('in')">{{
+                  "Скачать дубликаты (" + in_db.length + ")"
+                }}</v-btn>
               </div>
               <div v-if="out_db.length" class="mt-4">
-                <v-btn @click="download('out')">{{'Скачать уникальные (' +out_db.length+')'}}</v-btn>
+                <v-btn @click="download('out')">{{
+                  "Скачать уникальные (" + out_db.length + ")"
+                }}</v-btn>
               </div>
             </v-col>
           </v-row>
@@ -476,8 +488,8 @@ export default {
   },
   methods: {
     download(inout) {
-      let filename = inout=='in'?'duplicat':'unique'+"_db.txt";
-      let text = ''
+      let filename = inout == "in" ? "duplicat" : "unique" + "_db.txt";
+      let text = "";
       if (inout == "in") {
         text = this.in_db.toString().replace(/[,]/, "\n");
       } else {
@@ -499,24 +511,33 @@ export default {
     },
     checkEmails() {
       let vm = this;
-      vm.snackbar= false
-      vm.loading = true
-      vm.message = ''
+      vm.snackbar = false;
+      vm.loading = true;
+      vm.message = "";
       vm.in_db = [];
       vm.out_db = [];
       let data = {};
-      data.emails = vm.list_email.replace(/(\r)/gm, "").split("\n").filter((n) => n);
+      data.emails = vm.list_email
+        .replace(/(\r)/gm, "")
+        .split("\n")
+        .filter((n) => n);
       axios
         .post("api/checkEmails", data)
         .then(function (res) {
-          vm.in_db = res.data.emails.filter(n => n);
+          vm.in_db = res.data.emails.filter((n) => n);
 
-          vm.out_db = [...new Set(data.emails.filter((i) => !vm.in_db.includes(i)))];
-          vm.message = 'Уникальных: '+ vm.out_db.length+ '<br>Дубликатов: '+vm.in_db.length
-          vm.snackbar=true
-          vm.loading = false
-          vm.list_email = ''
-          vm.files = []
+          vm.out_db = [
+            ...new Set(data.emails.filter((i) => !vm.in_db.includes(i))),
+          ];
+          vm.message =
+            "Уникальных: " +
+            vm.out_db.length +
+            "<br>Дубликатов: " +
+            vm.in_db.length;
+          vm.snackbar = true;
+          vm.loading = false;
+          vm.list_email = "";
+          vm.files = [];
         })
         .catch(function (error) {
           console.log(error);

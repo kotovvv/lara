@@ -24,8 +24,9 @@ class loginController extends Controller
   }
   public function login(Request $request)
   {
-    Log::info('Login attempt', ['name' => $request->name]); // Add this line
+    Log::info('Login attempt', ['name' => $request->name]);
 
+    // Check if the provider exists
     $provider = Provider::where('name', $request->name)->first();
 
     if ($provider && Hash::check($request->password, $provider['password'])) {
@@ -37,6 +38,8 @@ class loginController extends Controller
         'token' => $token,
       ]);
     }
+
+    // Check if the user exists
     if (Auth::attempt(['name' => $request->name, 'password' => $request->password])) {
       $user = Auth::user();
       if (session()->get('office_id') === $user['office_id']) {
@@ -53,13 +56,13 @@ class loginController extends Controller
         'ses' => $ses,
         'token' => $token,
       ]);
-    } else {
-      return response()->json([
-        'status' => 'error',
-        'user'   => 'Unauthorized Access',
-        'token' => ''
-      ]);
     }
+
+    return response()->json([
+      'status' => 'error',
+      'user'   => 'Unauthorized Access',
+      'token' => ''
+    ]);
   }
 
   public function session(Request $request)
