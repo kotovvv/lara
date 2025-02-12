@@ -11,12 +11,10 @@ use App\Models\Log;
 use App\Models\Import;
 use App\Models\Balans;
 use App\Models\Depozit;
-use DB;
-use Debugbar;
+
 use Hash;
-use Storage;
-use File;
-use Session;
+
+use Illuminate\Support\Facades\DB;
 
 class UsersController extends Controller
 {
@@ -30,15 +28,20 @@ class UsersController extends Controller
   {
     if (session()->has('office_id')) {
       $office_id = session()->get('office_id');
-      return User::select(['users.*'])
-        ->when($office_id > 0, function ($query) use ($office_id) {
-          return $query->where('office_id', $office_id);
-        })
-        ->orderBy('office_id')
-        ->orderBy('role_id')
-        // ->orderBy('group_id')
-        ->orderBy('order')
-        ->get();
+      $data = cache('users' . $office_id);
+      if (!$data) {
+        $data = User::select(['users.*'])
+          ->when($office_id > 0, function ($query) use ($office_id) {
+            return $query->where('office_id', $office_id);
+          })
+          ->orderBy('office_id')
+          ->orderBy('role_id')
+          // ->orderBy('group_id')
+          ->orderBy('order')
+          ->get();
+        cache(['users' . $office_id => $data], 60); // Cache for 360 minutes
+      }
+      return $data;
     }
   }
 
@@ -62,9 +65,17 @@ class UsersController extends Controller
   {
     if (session()->has('office_id')) {
       $office_id = session()->get('office_id');
-      $where = $office_id > 0 ? " where `id` = " . $office_id : "";
-      $sql = 'SELECT * FROM `offices` ' . $where . ' ORDER BY NAME';
-      return DB::select(DB::raw($sql));
+      $data = cache('offises' . $office_id);
+      if (!$data) {
+        $data = DB::table('offices')
+          ->when($office_id > 0, function ($query) use ($office_id) {
+            return $query->where('id', $office_id);
+          })
+          ->orderBy('name')
+          ->get();
+        cache(['offises' . $office_id => $data], 60); // Cache for 360 minutes
+      }
+      return $data;
     }
   }
 

@@ -24,10 +24,14 @@ class ProvidersController extends Controller
   {
     if (session()->has('office_id')) {
       $office_id = session()->get('office_id');
-
-      return Provider::when($office_id > 0, function ($query) use ($office_id) {
-        return $query->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]');
-      })->orderBy('name', 'ASC')->get();
+      $data = cache('provider' . $office_id);
+      if (!$data) {
+        $data = Provider::when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]');
+        })->orderBy('name', 'ASC')->get();
+        cache(['provider' . $office_id => $data], 60);
+      }
+      return $data;
     }
   }
 
@@ -36,10 +40,13 @@ class ProvidersController extends Controller
     // return Provider::all();
     if (session()->has('office_id')) {
       $office_id = session()->get('office_id');
-
-      return Provider::when($office_id > 0, function ($query) use ($office_id) {
-        return $query->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]');
-      })->get();
+      $data = cache('providers' . $office_id);
+      if (!$data) {
+        $data = Provider::when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('office_id', 'REGEXP', '[^0-9]' . $office_id . '[^0-9]');
+        })->get();
+      }
+      return $data;
     }
   }
 
