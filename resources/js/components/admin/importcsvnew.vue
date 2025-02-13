@@ -1527,7 +1527,14 @@
                 show-select
               >
                 <template v-slot:expanded-item="{ headers, item }">
-                  <td :colspan="headers.length" class="blackborder">
+                  <td
+                    :colspan="headers.length"
+                    class="blackborder"
+                    v-if="
+                      $attrs.user.office_id == 0 ||
+                      item.office_id == $attrs.user.office_id
+                    "
+                  >
                     <logtel :lid_id="item.id" :key="item.id" />
                   </td>
                 </template>
@@ -3193,6 +3200,9 @@ export default {
           vm.duplicate_leads = vm.duplicate_leads.map((dl) => {
             dl.date_created = dl.created_at.substring(0, 10);
             dl.date_updated = dl.updated_at.substring(0, 10);
+            if (dl.office_id != vm.$attrs.user.office_id) {
+              dl.text = "";
+            }
             return dl;
           });
           let a_status = _.uniq(
