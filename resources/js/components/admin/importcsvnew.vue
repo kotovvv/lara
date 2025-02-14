@@ -3200,7 +3200,10 @@ export default {
           vm.duplicate_leads = vm.duplicate_leads.map((dl) => {
             dl.date_created = dl.created_at.substring(0, 10);
             dl.date_updated = dl.updated_at.substring(0, 10);
-            if (dl.office_id != vm.$attrs.user.office_id) {
+            if (
+              vm.$attrs.user.office_id != 0 ||
+              dl.office_id != vm.$attrs.user.office_id
+            ) {
               dl.text = "";
             }
             return dl;
