@@ -24,7 +24,7 @@ class loginController extends Controller
   }
   public function login(Request $request)
   {
-    Log::info('Login attempt', ['name' => $request->name]);
+    // Log::info('Login attempt', ['name' => $request->name]);
 
     // Check if the provider exists
     $provider = Provider::where('name', $request->name)->first();
