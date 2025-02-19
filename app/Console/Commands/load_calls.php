@@ -7,6 +7,7 @@ use App\Models\Lid;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use DB;
+use Illuminate\Support\Facades\Log;
 
 
 //$ php artisan loadcalls:two
@@ -79,7 +80,13 @@ class Load_calls extends Command
         try {
           DB::table('calls')->updateOrInsert($data);
         } catch (\Throwable $th) {
-          return 0;
+          \Log::error('Error inserting call data', [
+            'user_id' => $data['user_id'],
+            'office_id' => $data['office_id'],
+            'tel' => $data['tel'],
+            'error' => $th->getMessage()
+          ]);
+          //return 0;
         }
       }
       //return $a_row;
