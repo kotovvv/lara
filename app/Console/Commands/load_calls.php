@@ -52,6 +52,9 @@ class Load_calls extends Command
     // $files = Storage::disk('public')->files($directory);
     $curdate = date('Y-m-d');
     foreach ($files as  $file) {
+      if (!Storage::disk('public')->exists($file)) {
+        continue;
+      }
       $user_serv = explode('/', $file)[2];
       $serv = explode('/', $file)[1];
       $data = [];
@@ -80,12 +83,7 @@ class Load_calls extends Command
         try {
           DB::table('calls')->updateOrInsert($data);
         } catch (\Throwable $th) {
-          \Log::error('Error inserting call data', [
-            'user_id' => $data['user_id'],
-            'office_id' => $data['office_id'],
-            'tel' => $data['tel'],
-            'error' => $th->getMessage()
-          ]);
+          Log::error('Error insert call: ' . $th->getMessage());
           //return 0;
         }
       }
