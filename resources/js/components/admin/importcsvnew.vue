@@ -1516,7 +1516,7 @@
                 :items="filtereduplicate_leads"
                 id="duplicate_leads"
                 ref="duplicatetable"
-                @click:row="clickrowd"
+                @click:row="clickrowe"
                 show-expand
                 :expanded.sync="expanded"
                 :footer-props="{
@@ -2711,6 +2711,14 @@ export default {
     },
     filterAPI() {
       this.apigroup = _.groupBy(this.filter_importsProvLeads, "group");
+    },
+    clickrowe(item, row) {
+      if (!row.isExpanded) {
+        this.expanded = [item];
+      } else {
+        this.expanded = [];
+      }
+      this.toggleRowMask(item);
     },
     clickrowd(item, row) {
       if (!row.isExpanded) {
