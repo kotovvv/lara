@@ -3209,7 +3209,7 @@ export default {
             dl.date_created = dl.created_at.substring(0, 10);
             dl.date_updated = dl.updated_at.substring(0, 10);
             if (
-              vm.$attrs.user.office_id != 0 ||
+              vm.$attrs.user.office_id != 0 &&
               dl.office_id != vm.$attrs.user.office_id
             ) {
               dl.text = "";

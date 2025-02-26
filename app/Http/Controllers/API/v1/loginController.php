@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Hash;
+
 use App\Models\Provider;
 use App\Models\User;
 use Session;
 use Log;
+use Illuminate\Support\Facades\Hash;
 
 class loginController extends Controller
 {
