@@ -9,10 +9,10 @@
 
           <div class="status_wrp wrp_date px-3">
             <v-row align="center">
-              <v-btn @click="clearFilter()" small icon>
+              <v-btn @click="clearFilter()" small icon title="Сбросить фильтр">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
-              <v-btn @click="clearuser" small icon>
+              <v-btn @click="clearuser" small icon title="Смотреть свои лиды">
                 <v-icon>mdi-refresh</v-icon>
               </v-btn>
               <v-col>
@@ -67,11 +67,14 @@
                 </v-menu>
               </v-col>
 
-              <v-btn @click="cleardate" small icon
+              <v-btn @click="cleardate" small icon title="Даты по умолчанию"
                 ><v-icon>mdi-close</v-icon></v-btn
               >
-              <v-checkbox v-model="savedates"></v-checkbox>
-              <v-checkbox v-model="callback"></v-checkbox>
+              <v-checkbox
+                v-model="savedates"
+                title="Запоминать даты"
+              ></v-checkbox>
+              <v-checkbox v-model="callback" title="CallBack"></v-checkbox>
             </v-row>
           </div>
         </div>
@@ -1504,7 +1507,6 @@ export default {
       this.disableuser = 0;
       this.getLids3();
       this.controller.abort();
-      this.loading = false;
     },
     getGroup() {
       return _.filter(this.users, function (o) {
