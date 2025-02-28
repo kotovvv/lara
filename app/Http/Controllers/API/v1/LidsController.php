@@ -56,6 +56,13 @@ class LidsController extends Controller
 
     $n_lid = new Lid;
     $n_lid->tel = $insertItem['umcfields']['phone'];
+    $existingLid = Lid::where('tel', '' . $n_lid->tel)->whereIn('status_id', [9, 10, 11, 23, 27])->first();
+    if ($existingLid) {
+      $res['status'] = 'Дубль';
+      $res['id'] = null;
+      $res['insert'] = $n_lid->tel;
+      return response($res, 400);
+    }
     $n_lid->client_geo = $this->getGeo($n_lid->tel);
     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
     if (!$f_lid->isEmpty() &&  $n_lid->provider_id != '76') {
@@ -1134,6 +1141,14 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $geo = '';
     if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
       $n_lid->tel =  preg_replace('/[^0-9]/', '', $req['umcfields']['phone']);
+      $existingLid = Lid::where('tel', '' . $n_lid->tel)->whereIn('status_id', [9, 10, 11, 23, 27])->first();
+      if ($existingLid) {
+        $res['status'] = 'Дубль';
+        $res['id'] = null;
+        $res['insert'] = $n_lid->tel;
+        return response($res, 400);
+      }
+
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
       $geo = $n_lid->client_geo;
       $dup = Provider::where('id', $f_key->id)->value('dup');
@@ -1266,6 +1281,13 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $geo = '';
     if ($phonestr) {
       $n_lid->tel = preg_replace('/[^0-9]/', '', $phonestr);
+      $existingLid = Lid::where('tel', '' . $n_lid->tel)->whereIn('status_id', [9, 10, 11, 23, 27])->first();
+      if ($existingLid) {
+        $res['status'] = 'Дубль';
+        $res['id'] = null;
+        $res['insert'] = $n_lid->tel;
+        return response($res, 400);
+      }
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
       $geo = $n_lid->client_geo;
       $dup = Provider::where('id', $f_key->id)->value('dup');
@@ -1367,6 +1389,13 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $geo = "";
     if (isset($req['umcfields[phone]']) && strlen($req['umcfields[phone]']) > 1) {
       $n_lid->tel =  preg_replace('/[^0-9]/', '', $req['umcfields[phone]']);
+      $existingLid = Lid::where('tel', '' . $n_lid->tel)->whereIn('status_id', [9, 10, 11, 23, 27])->first();
+      if ($existingLid) {
+        $res['status'] = 'Дубль';
+        $res['id'] = null;
+        $res['insert'] = $n_lid->tel;
+        return response($res, 400);
+      }
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
       $geo = $n_lid->client_geo;
       $dup = Provider::where('id', $f_key->id)->value('dup');
@@ -1456,6 +1485,13 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $geo = '';
     if (isset($req['umcfields']['phone']) && strlen($req['umcfields']['phone']) > 1) {
       $n_lid->tel =  $req['umcfields']['phone'];
+      $existingLid = Lid::where('tel', '' . $n_lid->tel)->whereIn('status_id', [9, 10, 11, 23, 27])->first();
+      if ($existingLid) {
+        $res['status'] = 'Дубль';
+        $res['id'] = null;
+        $res['insert'] = $n_lid->tel;
+        return response($res, 400);
+      }
       $n_lid->client_geo = $this->getGeo($n_lid->tel);
       $geo = $n_lid->client_geo;
       $dup = Provider::where('id', $f_key->id)->value('dup');
