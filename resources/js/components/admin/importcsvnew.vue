@@ -1579,6 +1579,7 @@
                       ></v-col
                     >
                     <v-col>
+                      <!--:menu-props="{ maxHeight: '80vh' }" -->
                       <v-autocomplete
                         v-model="filter_provider"
                         label="Фильтр поставщик"
@@ -1588,7 +1589,6 @@
                         outlined
                         rounded
                         multiple
-                        :menu-props="{ maxHeight: '80vh' }"
                         clearable="clearable"
                       >
                         <template v-slot:selection="{ item, index }">
