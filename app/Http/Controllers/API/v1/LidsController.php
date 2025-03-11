@@ -311,9 +311,11 @@ class LidsController extends Controller
 
       //set update for imports
       $l = Lid::select('created_at', 'provider_id')->where('id', $lid['id'])->first();
-      $date_s = date('Y-m-d', strtotime($l->created_at));
-      DB::table('imports')->whereDate('start', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
-      DB::table('imports_provider')->where('date', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
+      if ($l) {
+        $date_s = date('Y-m-d', strtotime($l->created_at));
+        DB::table('imports')->whereDate('start', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
+        DB::table('imports_provider')->where('date', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
+      }
 
       $a_lid['lid_id'] = $lid['id'];
       $a_lid['tel'] = $lid['tel'];
@@ -584,7 +586,7 @@ class LidsController extends Controller
     $where_date = '';
     $duplicate_tel = [];
     if (isset($data['sortBy'])) {
-      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'status' => 'status_id', 'depozit' => 'depozit'][$data['sortBy']];
+      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "provider_name" => 'provider_id', "office_name" => 'office_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'status' => 'status_id', 'depozit' => 'depozit', 'client_geo' => 'client_geo'][$data['sortBy']];
       $sortDesc = $data['sortDesc'] ? 'DESC' : 'ASC';
     } else {
       $sortBy = 'created_at';
