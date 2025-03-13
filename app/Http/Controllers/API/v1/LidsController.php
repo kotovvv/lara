@@ -185,6 +185,9 @@ class LidsController extends Controller
         // ->when(in_array(0, $office_ids), function ($query) use ($office_ids) {
         //   return $query->whereIn('office_id', $office_ids);
         // })
+        ->when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('lids.office_id', $office_id);
+        })
         ->when(strpos($search, '@') != false, function ($query) use ($search) {
           return $query->where('email', $search);
         })
