@@ -383,8 +383,6 @@
                       Отбор
                       <v-text-field
                         class="mx-2 mt-0 pt-0 talign-center nn"
-                        @input="selectRow"
-                        :max="limit"
                         v-model.number="hmrow"
                         hide-details="auto"
                         color="#004D40"
@@ -773,6 +771,8 @@ export default {
     selected: [],
     lids: [],
     lidsXls: [],
+    lidsRedistribute: [],
+    forRedistribute: false,
     forXls: false,
     search: "",
     searchAll: "",
@@ -1090,7 +1090,6 @@ export default {
     },
     filterStatus(newName) {
       localStorage.filterStatus = newName.toString();
-      this.selectRow();
     },
     filterGeo(newName) {
       localStorage.filterGeo = newName;
@@ -1329,6 +1328,9 @@ export default {
     async getLids3() {
       let self = this;
       let data = {};
+      data.page = self.page;
+      data.limit = self.limit;
+      self.lidsRedistribute = [];
       const { sortBy, sortDesc } = self.options;
       self.process++;
       if (self.process > 1) {
@@ -1336,7 +1338,12 @@ export default {
       }
       self.old_limit = self.limit;
       if (self.forXls) {
-        self.limit = "all";
+        data.limit = "all";
+      }
+      if (self.forRedistribute && self.hmrow > 0) {
+        console.log("redistribute getlids 1");
+        data.limit = self.hmrow;
+        data.page = 0;
       }
 
       if (sortBy.length === 1) {
@@ -1374,8 +1381,7 @@ export default {
       data.status_id = self.filterStatus;
       data.tel = self.filtertel;
       data.search = self.search;
-      data.limit = self.limit;
-      data.page = self.page;
+
       data.office_ids = self.filterOffices;
 
       data.filterLang = self.filterLang;
@@ -1441,16 +1447,26 @@ export default {
             e.provider = "";
           }
         });
+        console.log(self.forRedistribute, self.hmrow);
         if (self.forXls) {
           self.lidsXls = d_lids;
           self.exportXlsx(self.old_limit);
           self.limit = self.old_limit;
           self.forXls = false;
+        } else if (self.forRedistribute && self.hmrow > 0) {
+          console.log("redistribute2");
+          self.lidsRedistribute = d_lids.map((e) => {
+            return {
+              id: e.id,
+              provider_id: e.provider_id,
+              created_at: e.created_at.substring(0, 10),
+            };
+          });
         } else {
           self.lids = d_lids;
         }
         self.loading = false;
-        if (self.process > 1 && !self.forXls) {
+        if (self.process > 1 && !self.forXls && !self.forRedistribute) {
           console.log("time");
           self.process = 0;
           setTimeout(() => {
@@ -1459,24 +1475,12 @@ export default {
         } else {
           self.process = 0;
         }
-        setTimeout(() => {
-          self.selectRow();
-        }, 300);
       } catch (error) {
         console.log(error);
         self.loading = false;
       }
     },
-    selectRow() {
-      if (this.hmrow) {
-        this.selected = this.$refs.datatable.internalCurrentItems.slice(
-          0,
-          this.hmrow
-        );
-      } else {
-        this.selected = [];
-      }
-    },
+
     cleardate() {
       this.datetimeFrom = new Date(
         new Date().setDate(new Date().getDate() - 14)
@@ -1697,7 +1701,7 @@ export default {
       } else this.tel = "";
        row.select(!row.isSelected); */
     },
-    changeLidsUser() {
+    async changeLidsUser() {
       const self = this;
       self.loading = true;
       let send = {};
@@ -1707,22 +1711,40 @@ export default {
       if (this.selectedStatus !== 0) {
         send.status_id = this.selectedStatus;
       }
+
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
         send.data = this.selected.map((item) => {
           return { id: item.id };
         });
+        send.date_provider = _.uniqBy(
+          this.selected.map((item) => ({
+            created_at: item.created_at.split("T")[0],
+            provider_id: item.provider_id,
+          })),
+          "created_at"
+        );
+      } else if (this.hmrow && this.hmrow > 0) {
+        this.forRedistribute = true;
+        console.log("redistribute  1");
+        await this.getLids3();
+        console.log("redistribute  2");
+        this.forRedistribute = false;
+        send.data = this.lidsRedistribute.map((item) => {
+          return { id: item.id };
+        });
+        send.date_provider = _.uniqBy(
+          this.lidsRedistribute.map((item) => ({
+            created_at: item.created_at.split("T")[0],
+            provider_id: item.provider_id,
+          })),
+          "created_at"
+        );
       } else {
         this.userid = null;
         self.loading = false;
         return false;
       }
-      send.date_provider = _.uniqBy(
-        this.selected.map((item) => ({
-          created_at: item.created_at.split("T")[0],
-          provider_id: item.provider_id,
-        })),
-        "created_at"
-      );
+
       if (self.$props.user.role_id == 2) {
         //CallBack user not change
         //send.data = send.data.filter((f) => f.status_id != 9);
