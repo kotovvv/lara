@@ -245,20 +245,17 @@ class LidsController extends Controller
   {
     $data = $request->all();
     $res = 0;
-    foreach ($data['data'] as $lid) {
-      $a_lid = [
-        'user_id' => $data['user_id'],
-        'office_id' => User::where('id', (int) $data['user_id'])->value('office_id'),
-        'updated_at' => Now()
-      ];
-      if (isset($data['status_id'])) $a_lid['status_id'] = $data['status_id'];
-      $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
-
+    $a_lid = [
+      'user_id' => $data['user_id'],
+      'office_id' => User::where('id', (int) $data['user_id'])->value('office_id'),
+      'updated_at' => Now()
+    ];
+    if (isset($data['status_id'])) $a_lid['status_id'] = $data['status_id'];
+    $res =  DB::table('lids')->whereIn('id', $data['data'])->update($a_lid);
+    foreach ($data['date_provider'] as $date_provider) {
       //set update for imports
-      $l = Lid::select('created_at', 'provider_id')->first($lid['id']);
-      $date_s = date('Y-m-d', strtotime($l->created_at));
-      DB::table('imports')->whereDate('start', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
-      DB::table('imports_provider')->where('date', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
+      DB::table('imports')->whereDate('start', $date_provider['created_at'])->where('provider_id', $date_provider['provider_id'])->update(['callc' => 1]);
+      DB::table('imports_provider')->where('date', $date_provider['created_at'])->where('provider_id', $date_provider['provider_id'])->update(['callc' => 1]);
     }
     if ($res) {
       return response('Lids manager changed', 200);
@@ -592,7 +589,8 @@ class LidsController extends Controller
       $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "provider_name" => 'provider_id', "office_name" => 'office_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'status' => 'status_id', 'depozit' => 'depozit', 'client_geo' => 'client_geo'][$data['sortBy']];
       $sortDesc = $data['sortDesc'] ? 'DESC' : 'ASC';
     } else {
-      $sortBy = 'created_at';
+      $sortBy = false;
+      //$sortBy = 'created_at';
       $sortDesc = 'DESC';
     }
 

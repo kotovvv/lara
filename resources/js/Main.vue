@@ -55,6 +55,10 @@ export default {
       Cookies.remove("auth_token");
       //Cookies.remove("XSRF-TOKEN"); // Ensure XSRF-TOKEN is removed
     },
+    handleSessionExpiration() {
+      this.clear();
+      window.location.href = "/";
+    },
     async fetchUser() {
       const token = Cookies.get("auth_token");
       if (token == "") return;
@@ -66,7 +70,7 @@ export default {
           this.user = response.data;
         } catch (error) {
           console.error("Error fetching user:", error);
-          this.clear();
+          this.handleSessionExpiration();
         }
       }
     },

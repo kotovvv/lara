@@ -93,7 +93,7 @@ export default {
         .post("/api/login", this.fields)
         .then((response) => {
           if (response.data.token == "") return;
-          self.$emit("login", response.data.user);
+          self.$emit("login", response.data);
           const secure = window.location.protocol === "https:";
           Cookies.set("auth_token", response.data.token, {
             sameSite: "None",

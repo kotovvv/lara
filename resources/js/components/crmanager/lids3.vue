@@ -1699,6 +1699,7 @@ export default {
     },
     changeLidsUser() {
       const self = this;
+      self.loading = true;
       let send = {};
       send.data = [];
       send.user_id = this.userid;
@@ -1707,11 +1708,21 @@ export default {
         send.status_id = this.selectedStatus;
       }
       if (this.selected.length > 0 && this.$refs.datatable.items.length > 0) {
-        send.data = this.selected;
+        send.data = this.selected.map((item) => {
+          return { id: item.id };
+        });
       } else {
         this.userid = null;
+        self.loading = false;
         return false;
       }
+      send.date_provider = _.uniqBy(
+        this.selected.map((item) => ({
+          created_at: item.created_at.split("T")[0],
+          provider_id: item.provider_id,
+        })),
+        "created_at"
+      );
       if (self.$props.user.role_id == 2) {
         //CallBack user not change
         //send.data = send.data.filter((f) => f.status_id != 9);
