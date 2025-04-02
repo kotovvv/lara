@@ -43,6 +43,7 @@ class UsersController extends Controller
       }
       return $data;
     }
+    return response(['error' => 'office_id not found in session'], 400);
   }
 
   public function getServers($id)
@@ -63,20 +64,22 @@ class UsersController extends Controller
 
   public function getOffices()
   {
-    if (session()->has('office_id')) {
-      $office_id = session()->get('office_id');
-      $data = cache('offises' . $office_id);
-      if (!$data) {
-        $data = DB::table('offices')
-          ->when($office_id > 0, function ($query) use ($office_id) {
-            return $query->where('id', $office_id);
-          })
-          ->orderBy('name')
-          ->get();
-        cache(['offises' . $office_id => $data], 60); // Cache for 360 minutes
-      }
-      return $data;
+    if (!session()->has('office_id')) {
+      return response(['error' => 'office_id not found in session'], 419);
     }
+
+    $office_id = session()->get('office_id');
+    $data = cache('offises' . $office_id);
+    if (!$data) {
+      $data = DB::table('offices')
+        ->when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('id', $office_id);
+        })
+        ->orderBy('name')
+        ->get();
+      cache(['offises' . $office_id => $data], 60); // Cache for 360 minutes
+    }
+    return $data;
   }
 
   public function updateOffice(Request $request)
@@ -280,6 +283,9 @@ class UsersController extends Controller
 
   public function getusers()
   {
+    if (!session()->has('user_id')) {
+      return response(['error' => 'user_id not found in session'], 419);
+    }
     $office_id = session()->get('office_id');
     $user = User::where('id', (int) session()->get('user_id'))->first();
 

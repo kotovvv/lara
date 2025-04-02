@@ -1270,6 +1270,9 @@ export default {
       axios
         .get("/api/getOffices")
         .then((res) => {
+          if (res.status == 419) {
+            document.getElementById("logout").click();
+          }
           self.offices = res.data;
           if (self.$props.user.role_id == 1) {
             self.offices.unshift({ id: 0, name: "--все--" });
@@ -1287,7 +1290,12 @@ export default {
             );
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log("error", error);
+          if (error.response.status == 419) {
+            document.getElementById("logout").click();
+          }
+        });
     },
     getProviderName(i) {
       let name = "NA";
@@ -1447,7 +1455,6 @@ export default {
             e.provider = "";
           }
         });
-        console.log(self.forRedistribute, self.hmrow);
         if (self.forXls) {
           self.lidsXls = d_lids;
           self.exportXlsx(self.old_limit);
@@ -1478,6 +1485,9 @@ export default {
       } catch (error) {
         console.log(error);
         self.loading = false;
+        if (error.response.status == 419) {
+          document.getElementById("logout").click();
+        }
       }
     },
 
@@ -1843,7 +1853,12 @@ export default {
           }
           // self.statuses.unshift({ name: "Default", id: 0 });
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status == 419) {
+            document.getElementById("logout").click();
+          }
+        });
     },
     getStatusLids(id) {
       let self = this;

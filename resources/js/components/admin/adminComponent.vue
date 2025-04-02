@@ -31,7 +31,7 @@
         </v-list-item-group>
 
         <v-list-item-group class="mt-10">
-          <v-list-item @click="$emit('logout')" title="Exit">
+          <v-list-item @click="$emit('logout')" id="logout" title="Exit">
             <v-list-item-icon>
               <v-icon>mdi-logout</v-icon>
             </v-list-item-icon>
