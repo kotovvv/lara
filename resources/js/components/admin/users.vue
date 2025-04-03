@@ -488,7 +488,12 @@ export default {
           }
           this.getUsers();
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log("error", error);
+          if (error.response.status == 419) {
+            document.getElementById("logout").click();
+          }
+        });
     },
     saveUsers(u) {
       let self = this;

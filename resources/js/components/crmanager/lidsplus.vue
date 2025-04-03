@@ -669,7 +669,12 @@ export default {
             self.offices = res.data;
             self.filterOffices.push(self.offices[0].id);
           })
-          .catch((error) => console.log(error));
+          .catch((error) => {
+            console.log("error", error);
+            if (error.response.status == 419) {
+              document.getElementById("logout").click();
+            }
+          });
       }
     },
     getProviderName(i) {

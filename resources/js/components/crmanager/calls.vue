@@ -214,7 +214,12 @@ export default {
 
             self.getCalls();
           })
-          .catch((error) => console.log(error));
+          .catch((error) => {
+            console.log("error", error);
+            if (error.response.status == 419) {
+              document.getElementById("logout").click();
+            }
+          });
       } else {
         self.filterOffices = self.$props.user.office_id;
         self.getCalls();

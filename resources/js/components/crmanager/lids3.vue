@@ -1461,7 +1461,6 @@ export default {
           self.limit = self.old_limit;
           self.forXls = false;
         } else if (self.forRedistribute && self.hmrow > 0) {
-          console.log("redistribute2");
           self.lidsRedistribute = d_lids.map((e) => {
             return {
               id: e.id,

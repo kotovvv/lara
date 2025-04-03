@@ -87,7 +87,10 @@
             ref="filterStatus"
             color="red"
             v-model="filterStatus"
-            @change="filterStatuses;getLidsOnDate();"
+            @change="
+              filterStatuses;
+              getLidsOnDate();
+            "
             :items="statuses"
             item-text="name"
             item-value="id"
@@ -174,7 +177,7 @@
     <v-row>
       <v-col cols="12">
         <div class="border pa-4">
-            <!-- show-select -->
+          <!-- show-select -->
           <v-data-table
             v-model.lazy.trim="selected"
             id="tablids"
@@ -212,7 +215,7 @@ import axios from "axios";
 import _ from "lodash";
 import logtel from "../manager/logtel";
 export default {
-    components: {
+  components: {
     logtel,
   },
   mounted: function () {
@@ -274,9 +277,13 @@ export default {
         .then((res) => {
           self.offices = res.data;
           self.selected_office_ids.push(self.offices[0].id);
-
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log("error", error);
+          if (error.response.status == 419) {
+            document.getElementById("logout").click();
+          }
+        });
     },
     getLocalDateTime(DateTime) {
       return new Date(
@@ -302,7 +309,7 @@ export default {
       data.datefrom = this.getLocalDateTime(this.dateTimeFrom);
       data.dateto = this.getLocalDateTime(this.dateTimeTo);
       data.office_ids = this.selected_office_ids;
-      data.statuses= this.filterStatus;
+      data.statuses = this.filterStatus;
       axios
         .post("/api/getLidsOnDate", data)
         .then((res) => {

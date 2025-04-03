@@ -125,7 +125,12 @@ export default {
           }
           self.getUsers();
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log("error", error);
+          if (error.response.status == 419) {
+            document.getElementById("logout").click();
+          }
+        });
     },
     getUsers() {
       let self = this;

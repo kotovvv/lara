@@ -258,7 +258,12 @@ export default {
         .then((res) => {
           self.offices = res.data;
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log("error", error);
+          if (error.response.status == 419) {
+            document.getElementById("logout").click();
+          }
+        });
     },
     getUsers() {
       let self = this;
