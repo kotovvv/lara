@@ -96,6 +96,7 @@
             :menu-props="{ maxHeight: '80vh' }"
             label="Статусы"
             style="width: 14rem"
+            clearable
           >
             <template v-slot:selection="{ item, index }">
               <span v-if="index === 0">{{ item.name }} </span>
@@ -1349,7 +1350,7 @@ export default {
         data.limit = "all";
       }
       if (self.forRedistribute && self.hmrow > 0) {
-        console.log("redistribute getlids 1");
+
         data.limit = self.hmrow;
         data.page = 0;
       }
@@ -1408,18 +1409,18 @@ export default {
         const res = await axios.post("/api/getLids3", data);
         self.hm = res.data.hm;
 
-        if (self.page == 0) {
-          self.Statuses = res.data.statuses;
-          if (Array.isArray(res.data.languges)) {
-            let a_l = res.data.languges.reduce(
-              (ac, cv) => ac.concat(cv.name),
-              []
-            );
-            self.languges = self.lng.filter((l) => {
-              return a_l.includes(l.id);
-            });
-          }
+        //if (self.page == 0) {
+        self.Statuses = res.data.statuses;
+        if (Array.isArray(res.data.languges)) {
+          let a_l = res.data.languges.reduce(
+            (ac, cv) => ac.concat(cv.name),
+            []
+          );
+          self.languges = self.lng.filter((l) => {
+            return a_l.includes(l.id);
+          });
         }
+        //}
 
         let d_lids = res.data.lids;
 
@@ -1854,9 +1855,6 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-          if (error.response.status == 419) {
-            document.getElementById("logout").click();
-          }
         });
     },
     getStatusLids(id) {
