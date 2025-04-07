@@ -1012,7 +1012,9 @@ export default {
     archSelected: [],
     sortBy: "",
     sortDesc: true,
-    options: {},
+    options: {
+      itemsPerPage: 100,
+    },
     filterLang: "",
     filterGeo: [],
     languges: [],
@@ -1339,6 +1341,7 @@ export default {
       let data = {};
       data.page = self.page;
       data.limit = self.limit;
+      self.options.itemsPerPage = self.limit;
       self.lidsRedistribute = [];
       const { sortBy, sortDesc } = self.options;
       self.process++;
@@ -1350,7 +1353,6 @@ export default {
         data.limit = "all";
       }
       if (self.forRedistribute && self.hmrow > 0) {
-
         data.limit = self.hmrow;
         data.page = 0;
       }
@@ -1735,6 +1737,7 @@ export default {
         );
       } else if (this.hmrow && this.hmrow > 0) {
         this.forRedistribute = true;
+        this.lidsRedistribute = [];
         console.log("redistribute  1");
         await this.getLids3();
         console.log("redistribute  2");

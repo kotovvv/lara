@@ -677,7 +677,10 @@ class LidsController extends Controller
       ->when($limit != 'all', function ($query) use ($limit) {
         return $query->limit($limit);
       })
-      ->when($sortBy && !in_array($sortBy, ['provider_id', 'user_id', 'depozit']), function ($query) use ($sortBy, $sortDesc) {
+      ->when($sortBy && $sortBy == 'statuses', function ($query) use ($sortDesc) {
+        return $query->leftJoin('statuses', 'statuses.id', '=', 'status_id')->orderBy('statuses.name', $sortDesc);
+      })
+      ->when($sortBy && !in_array($sortBy, ['provider_id', 'user_id', 'depozit', 'statuses']), function ($query) use ($sortBy, $sortDesc) {
         return $query->orderBy('lids.' . $sortBy, $sortDesc);
       })
       ->when($sortBy && $sortBy == 'provider_id', function ($query) use ($sortDesc) {
