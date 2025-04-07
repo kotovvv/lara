@@ -1341,7 +1341,9 @@ export default {
       let data = {};
       data.page = self.page;
       data.limit = self.limit;
-      self.options.itemsPerPage = self.limit;
+      //if (self.limit != "all") {
+      // self.options.itemsPerPage = self.limit;
+      //}
       self.lidsRedistribute = [];
       const { sortBy, sortDesc } = self.options;
       self.process++;
