@@ -486,7 +486,7 @@
                 @click.stop="clearLiads()"
                 plain
                 v-if="
-                  selected.length &&
+                  (selected.length || hmrow != '') &&
                   $props.user.role_id === 1 &&
                   $props.user.group_id == 0
                 "
@@ -539,7 +539,9 @@
             </v-col>
             <!-- <v-col> -->
             <v-btn
-              :disable="!selected.length && selectedStatus == 0"
+              :disable="
+                (!selected.length && selectedStatus == 0) || hmrow != ''
+              "
               class="border ma-2"
               outlined
               rounded
@@ -1928,20 +1930,56 @@ export default {
       });
       self.Statuses = _.orderBy(self.Statuses, "order");
     },
-    changeStatus() {
+    async changeStatus() {
       const self = this;
-      let send = {};
-      let duplstat_id = [];
-      if (this.selected.length && this.selectedStatus) {
-        this.selected.map(function (e) {
-          if (e.status_id == 22) {
-            duplstat_id.push(e.id);
+      if (
+        await this.$refs.confirm.open(
+          self.hmrow && self.hmrow > 0
+            ? `Изменить статус у ${self.hmrow} первых лидов???`
+            : "Изменить статус???",
+          self.hmrow && self.hmrow > 0
+            ? `Статусы ${self.hmrow} первых лидов будут изменены безвозвратно. Изменяем?`
+            : "Статусы отмеченных лидов будут изменены безвозвратно. Изменяем?"
+        )
+      ) {
+        let send = {};
+        let duplstat_id = [];
+        if (self.hmrow != "") {
+          self.forRedistribute = true;
+          await self.getLids3();
+          self.forRedistribute = false;
+
+          send.data = self.lidsRedistribute.map((e) => {
+            if (e.status_id == 22) duplstat_id.push(e.id);
+            return {
+              ...e,
+              user_id: self.lids.find((l) => l.id == e.id).user_id,
+              status_id: self.selectedStatus,
+              status: self.statuses.find((s) => s.id == self.selectedStatus)
+                .name,
+            };
+          });
+        } else if (this.selected.length && this.selectedStatus) {
+          this.selected.forEach((e) => {
+            if (e.status_id == 22) duplstat_id.push(e.id);
+            e.status_id = self.selectedStatus;
+            e.status = self.statuses.find(
+              (s) => s.id == self.selectedStatus
+            ).name;
+          });
+          send.data = this.selected.map((e) => e);
+        }
+        send.data.map((e) => {
+          const lidindex = self.lids.findIndex((l) => l.id === e.id);
+          if (lidindex !== -1) {
+            Object.assign(self.lids[lidindex], {
+              status_id: self.selectedStatus,
+              status: self.statuses.find((s) => s.id == self.selectedStatus)
+                .name,
+            });
           }
-          e.status_id = self.selectedStatus;
-          e.status = self.statuses.find((s) => s.id == e.status_id).name;
         });
         send.duplstat_id = duplstat_id;
-        send.data = this.selected.map((e) => e);
         this.changeLids(send);
       }
     },
@@ -2006,24 +2044,33 @@ export default {
       const self = this;
       if (
         await this.$refs.confirm.open(
-          "Удалить логи???",
-          "Все логи отмеченных лидов будут удалены безвозвратно. Удаляем?"
+          self.hmrow && self.hmrow > 0
+            ? `Удалить логи у ${self.hmrow} первых лидов???`
+            : "Удалить логи???",
+          self.hmrow && self.hmrow > 0
+            ? `Все логи ${self.hmrow} первых лидов будут удалены безвозвратно. Удаляем?`
+            : "Все логи отмеченных лидов будут удалены безвозвратно. Удаляем?"
         )
       ) {
         let ids = [];
-        self.selected.forEach(function (el) {
-          ids.push(el.id);
-          const lidindex = self.lids.findIndex((l) => {
-            return l.id === el.id;
-          });
+        if (self.hmrow && self.hmrow > 0) {
+          self.forRedistribute = true;
+          await self.getLids3();
+          self.forRedistribute = false;
+          ids = self.lidsRedistribute.map((item) => item.id);
+        } else {
+          ids = self.selected.map((el) => el.id);
+        }
 
+        ids.forEach((id) => {
+          const lidindex = self.lids.findIndex((l) => l.id === id);
           if (lidindex !== -1) {
-            self.lids[lidindex].status_id = 8;
-            self.lids[lidindex].text = "";
-            self.lids[lidindex].qtytel = 0;
-            self.lids[lidindex].status = self.statuses.find(
-              (s) => s.id == 8
-            ).name;
+            Object.assign(self.lids[lidindex], {
+              status_id: 8,
+              text: "",
+              qtytel: 0,
+              status: self.statuses.find((s) => s.id == 8).name,
+            });
           }
         });
 

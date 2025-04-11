@@ -304,7 +304,7 @@ class LidsController extends Controller
           Log::where('lid_id', $lid['id'])->delete();
         }
       }
-      if ($lid['top'] == 1) {
+      if (isset($lid['top']) && $lid['top'] == 1) {
         $a_lid['top'] = 0;
       }
       $res =  DB::table('lids')->where('id', $lid['id'])->update($a_lid);
@@ -318,7 +318,9 @@ class LidsController extends Controller
       }
 
       $a_lid['lid_id'] = $lid['id'];
-      $a_lid['tel'] = $lid['tel'];
+      if (isset($lid['tel'])) {
+        $a_lid['tel'] = $lid['tel'];
+      }
 
       $a_lid['text'] = isset($lid['text']) ? $lid['text'] : '';
       $a_lid['created_at'] = Now();
