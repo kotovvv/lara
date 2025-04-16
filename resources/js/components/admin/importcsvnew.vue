@@ -2211,7 +2211,7 @@ export default {
       { text: "Email", value: "email" },
       { text: "Телефон.", align: "start", value: "tel" },
       { text: "Поставщик", value: "provider_name" },
-      { text: "Афилятор", value: "afilyator" },
+      // { text: "Афилятор", value: "afilyator" },
       { text: "Оффис", value: "office_name" },
       { text: "Менеджер", value: "user_name" },
       { text: "Создан", value: "date_created" },
