@@ -299,6 +299,7 @@ class ImportsController extends Controller
 
   public function redistributeLids(Request $request)
   {
+
     $data = $request->all();
     $lid_ids = $data['lid_ids'];
     $usersIds = $data['usersIds'];
@@ -347,10 +348,13 @@ class ImportsController extends Controller
     }
     $hm = ceil(count($lid_ids) / count($usersIds));
 
-    foreach (array_chunk($lid_ids, $hm) as $n_user => $lid_ids) {
+    foreach (array_chunk($lid_ids, $hm) as $n_user => $lids_id) {
       $office_id = User::where('id', (int) $usersIds[$n_user])->value('office_id');
-
-      Lid::whereIn('id', $lid_ids)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => 8, 'text' => '', 'qtytel' => 0]);
+      if (isset($data['clearLog']) && $data['clearLog'] == true) {
+        Lid::whereIn('id', $lids_id)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => 8, 'text' => '', 'qtytel' => 0]);
+      } else {
+        Lid::whereIn('id', $lids_id)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => 8]);
+      }
     }
     if (isset($data['message'])) {
       $a_office_ids = json_encode(Lid::where('load_mess', $data['message'])
@@ -360,7 +364,9 @@ class ImportsController extends Controller
       $a_office_ids = json_encode(Lid::whereIn('lids.id', $data['lid_ids'])->where('office_id', '!=', 0)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
       DB::table('imports_provider')->where('id', $id)->update(['office_ids' => $a_office_ids]);
     }
-    Log::whereIn('lid_id', $lid_ids)->delete();
+    if (isset($data['clearLog']) && $data['clearLog'] == true) {
+      Log::whereIn('lid_id', $lid_ids)->delete();
+    }
     return response('All done', 200);
   }
 

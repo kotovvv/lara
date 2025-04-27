@@ -2016,7 +2016,7 @@ export default {
       const self = this;
       self.selected = [];
       self.selectedStatus = 0;
-      // self.getLids(self.disableuser);
+      self.getLids3();
     },
     getProviders() {
       let self = this;

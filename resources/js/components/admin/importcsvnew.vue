@@ -249,41 +249,56 @@
                   ></v-col>
                 </v-col>
                 <v-col cols="2">
-                  <v-select
-                    ref="resetStatus"
-                    label="Переназначить статусы"
-                    v-model="resetStatus"
-                    :items="statuses"
-                    item-text="name"
-                    item-value="id"
-                    outlined
-                    rounded
-                    :multiple="true"
-                  >
-                    <template v-slot:selection="{ item, index }">
-                      <span v-if="index === 0">{{ item.name }} </span>
-                      <span v-if="index === 1" class="grey--text text-caption">
-                        (+{{ resetStatus.length - 1 }} )
-                      </span>
-                    </template>
-                    <template v-slot:item="{ item, attrs }">
-                      <v-badge
-                        :value="attrs['aria-selected'] == 'true'"
-                        color="#7620df"
-                        dot
-                        left
+                  <v-row>
+                    <v-col>
+                      <v-select
+                        ref="resetStatus"
+                        label="Переназначить статусы"
+                        v-model="resetStatus"
+                        :items="statuses"
+                        item-text="name"
+                        item-value="id"
+                        outlined
+                        rounded
+                        :multiple="true"
                       >
-                        <i
-                          :style="{
-                            background: item.color,
-                            outline: '1px solid grey',
-                          }"
-                          class="sel_stat mr-4"
-                        ></i>
-                      </v-badge>
-                      {{ item.name }}
-                    </template>
-                  </v-select>
+                        <template v-slot:selection="{ item, index }">
+                          <span v-if="index === 0">{{ item.name }} </span>
+                          <span
+                            v-if="index === 1"
+                            class="grey--text text-caption"
+                          >
+                            (+{{ resetStatus.length - 1 }} )
+                          </span>
+                        </template>
+                        <template v-slot:item="{ item, attrs }">
+                          <v-badge
+                            :value="attrs['aria-selected'] == 'true'"
+                            color="#7620df"
+                            dot
+                            left
+                          >
+                            <i
+                              :style="{
+                                background: item.color,
+                                outline: '1px solid grey',
+                              }"
+                              class="sel_stat mr-4"
+                            ></i>
+                          </v-badge>
+                          {{ item.name }}
+                        </template>
+                      </v-select></v-col
+                    >
+                    <v-col>
+                      <v-switch
+                        class="mt-0"
+                        v-model="clearLog"
+                        :label="`Удалять логи: ${clearLog.toString()}`"
+                        hide-details
+                      ></v-switch
+                    ></v-col>
+                  </v-row>
                 </v-col>
                 <v-btn
                   class="btn"
@@ -2333,6 +2348,7 @@ export default {
     filter_user: [],
     i_users: [],
     unmaskedRowId: null,
+    clearLog: false,
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -2804,6 +2820,7 @@ export default {
       if (this.item.end != undefined) {
         data.end = this.item.end;
       }
+      data.clearLog = this.clearLog;
       axios
         .post("api/redistributeLids", data)
         .then(function (response) {
