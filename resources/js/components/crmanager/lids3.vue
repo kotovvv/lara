@@ -471,6 +471,7 @@
               </td>
             </template>
           </v-data-table>
+
           <v-row class="align-center mt-2">
             <v-col
               cols="2"
@@ -1027,7 +1028,7 @@ export default {
     unmaskedField: null,
     unmaskedRowId: null,
   }),
-  mounted: function () {
+  mounted() {
     this.getUsers();
     this.getProviders();
     this.getStatuses();
@@ -1075,8 +1076,21 @@ export default {
     //setTimeout(() => {
     //  this.getPage();
     //}, 100);
+    const tableWrapper = document.querySelector(
+      "#tablids .v-data-table__wrapper"
+    );
+    if (tableWrapper) {
+      tableWrapper.addEventListener("scroll", this.onScroll);
+    }
   },
-
+  beforeDestroy() {
+    const tableWrapper = document.querySelector(
+      "#tablids .v-data-table__wrapper"
+    );
+    if (tableWrapper) {
+      tableWrapper.removeEventListener("scroll", this.onScroll);
+    }
+  },
   watch: {
     selectedUser(user) {
       if (user == {}) {
@@ -1945,6 +1959,7 @@ export default {
         let send = {};
         let duplstat_id = [];
         if (self.hmrow != "") {
+          self.lidsRedistribute = [];
           self.forRedistribute = true;
           await self.getLids3();
           self.forRedistribute = false;
@@ -1953,10 +1968,10 @@ export default {
             if (e.status_id == 22) duplstat_id.push(e.id);
             return {
               ...e,
-              user_id: self.lids.find((l) => l.id == e.id).user_id,
+              user_id:
+                self.disableuser > 0 ? self.disableuser : this.$props.user.id,
               status_id: self.selectedStatus,
-              status: self.statuses.find((s) => s.id == self.selectedStatus)
-                .name,
+              // status: self.statuses.find((s) => s.id == self.selectedStatus) .name,
             };
           });
         } else if (this.selected.length && this.selectedStatus) {
@@ -2084,6 +2099,80 @@ export default {
             console.log(error);
           });
       }
+    },
+    async onScroll(event) {
+      const container = event.target;
+      if (
+        container.scrollTop + container.clientHeight >=
+        container.scrollHeight - 10
+      ) {
+        await this.loadMoreRows();
+      }
+    },
+    async loadMoreRows() {
+      if (this.loading || this.page >= Math.ceil(this.hm / this.limit)) return;
+      if (this.page == 0) {
+        this.page = 1;
+      }
+      this.page++;
+      const newRows = await this.fetchAdditionalRows();
+      this.lids = [...this.lids, ...newRows];
+    },
+    async fetchAdditionalRows() {
+      let id = this.disableuser > 0 ? this.disableuser : 0;
+      const data = {
+        id: id,
+        page: this.page,
+        limit: this.limit,
+        // Include other filters if necessary
+        provider_id: this.filterProviders,
+        status_id: this.filterStatus,
+        tel: this.filtertel,
+        search: this.search,
+
+        office_ids: this.filterOffices,
+
+        filterLang: this.filterLang,
+        filterGeo: this.filterGeo,
+      };
+      const response = await axios.post("/api/getLids3", data);
+      let d_lids = response.data.lids;
+
+      d_lids.map((e) => {
+        if (e.updated_at) {
+          e.date_updated = e.updated_at.substring(0, 10);
+        }
+        if (e.created_at) {
+          e.date_created = e.created_at.substring(0, 10);
+        }
+
+        try {
+          e.status = this.statuses.find((s) => s.id == e.status_id).name || "";
+        } catch (error) {
+          e.status = "";
+        }
+        try {
+          e.office_name =
+            this.offices.find((s) => s.id == e.office_id).name || "";
+        } catch (error) {
+          e.office_name = "";
+        }
+
+        try {
+          e.user = this.users.find((u) => u.id == e.user_id).fio;
+        } catch (error) {
+          e.user = "";
+        }
+        try {
+          e.provider = this.providers.find((p) => p.id == e.provider_id).name;
+        } catch (error) {
+          e.provider = "";
+        }
+
+        return e;
+      });
+
+      return d_lids || [];
     },
   },
 };
