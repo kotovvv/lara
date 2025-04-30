@@ -1027,147 +1027,8 @@ export default {
     controller: new AbortController(),
     unmaskedField: null,
     unmaskedRowId: null,
+    isFetching: false, // Флаг для предотвращения наложения запросов
   }),
-  mounted() {
-    this.getUsers();
-    this.getProviders();
-    this.getStatuses();
-    this.getOffices();
-    if (localStorage.filterStatus) {
-      this.filterStatus = localStorage.filterStatus
-        .split(",")
-        .map((el) => parseInt(el));
-    }
-    if (localStorage.filterOffices) {
-      this.filterOffices = localStorage.filterOffices
-        .split(",")
-        .map((el) => parseInt(el));
-    }
-    if (localStorage.filterGeo) {
-      this.filterGeo = localStorage.filterGeo.split(",");
-    }
-    if (localStorage.savedates) {
-      this.savedates = localStorage.savedates == "true" ? true : false;
-    }
-    if (localStorage.callback) {
-      this.callback = localStorage.callback == "true" ? true : false;
-    }
-    if (localStorage.tel) {
-      this.filtertel = localStorage.tel;
-    }
-    if (this.savedates == true) {
-      if (localStorage.datetimeFrom) {
-        this.datetimeFrom = new Date(localStorage.datetimeFrom)
-          .toISOString()
-          .substring(0, 10);
-      }
-      if (localStorage.datetimeTo) {
-        this.datetimeTo = new Date(localStorage.datetimeTo)
-          .toISOString()
-          .substring(0, 10);
-      }
-    }
-
-    if (localStorage.filterProviders) {
-      this.filterProviders = localStorage.filterProviders
-        .split(",")
-        .map((el) => parseInt(el));
-    }
-    //setTimeout(() => {
-    //  this.getPage();
-    //}, 100);
-    const tableWrapper = document.querySelector(
-      "#tablids .v-data-table__wrapper"
-    );
-    if (tableWrapper) {
-      tableWrapper.addEventListener("scroll", this.onScroll);
-    }
-  },
-  beforeDestroy() {
-    const tableWrapper = document.querySelector(
-      "#tablids .v-data-table__wrapper"
-    );
-    if (tableWrapper) {
-      tableWrapper.removeEventListener("scroll", this.onScroll);
-    }
-  },
-  watch: {
-    selectedUser(user) {
-      if (user == {}) {
-        this.userid = null;
-        this.akkvalue = [];
-        return;
-      }
-      //this.disableuser = user.id;
-      this.akkvalue = [];
-      this.akkvalue[user.office_id] = _.findIndex(
-        this.group.filter((g) => g.office_id == user.office_id),
-        {
-          group_id: user.group_id,
-        }
-      );
-    },
-    filterStatus(newName) {
-      localStorage.filterStatus = newName.toString();
-    },
-    filterGeo(newName) {
-      localStorage.filterGeo = newName;
-    },
-    filterOffices(newName) {
-      if (newName[0] == 0 && newName.length > 1) {
-        newName = newName.filter(function (item) {
-          return item !== 0;
-        });
-        this.filterOffices = newName;
-      }
-      if (newName.length > 1 && newName.slice(-1)[0] == 0) {
-        newName = [0];
-        this.filterOffices = newName;
-      }
-      // if (newName.includes(0) && !this.filterOffices.includes(0)) {
-      //   newName = [0];
-      //   this.filterOffices = newName;
-      // }
-      localStorage.filterOffices = newName.toString();
-    },
-    callback(newName) {
-      localStorage.callback = newName;
-      this.getLids3();
-    },
-    savedates(newName) {
-      localStorage.savedates = newName;
-      this.getLids3();
-    },
-
-    datetimeFrom(newName) {
-      if (this.savedates == true) {
-        localStorage.datetimeFrom = newName;
-      }
-    },
-    datetimeTo(newName) {
-      if (this.savedates == true) {
-        localStorage.datetimeTo = newName;
-      }
-    },
-    filtertel(newName) {
-      localStorage.tel = newName;
-    },
-    filterProviders(newName) {
-      localStorage.filterProviders = newName.toString();
-    },
-    filterGStatus: function (newval, oldval) {
-      if (newval != 0) {
-        this.getStatusLids(newval);
-      }
-    },
-    options: {
-      handler() {
-        this.getPage();
-      },
-      deep: true,
-    },
-  },
-  computed: {},
   methods: {
     isRowUnmasked(id) {
       return this.unmaskedRowId === id;
@@ -1179,24 +1040,6 @@ export default {
         this.unmaskedRowId = item.id;
       }
     },
-    // isUnmasked(id, type) {
-    //   return (
-    //     this.unmaskedField &&
-    //     this.unmaskedField.id === id &&
-    //     this.unmaskedField.type === type
-    //   );
-    // },
-    // toggleMask(id, type) {
-    //   if (
-    //     this.unmaskedField &&
-    //     this.unmaskedField.id === id &&
-    //     this.unmaskedField.type === type
-    //   ) {
-    //     this.unmaskedField = null;
-    //   } else {
-    //     this.unmaskedField = { id, type };
-    //   }
-    // },
     getRowClass(item) {
       if (item.top == 1) {
         return "purple lighten-5";
@@ -1408,13 +1251,13 @@ export default {
 
       data.provider_id = self.filterProviders;
       data.status_id = self.filterStatus;
-      data.tel = self.filtertel;
-      data.search = self.search;
+      data.tel = this.filtertel;
+      data.search = this.search;
 
       data.office_ids = self.filterOffices;
 
-      data.filterLang = self.filterLang;
-      data.filterGeo = self.filterGeo;
+      data.filterLang = this.filterLang;
+      data.filterGeo = this.filterGeo;
 
       if (this.callback === true) {
         data.callback = 1;
@@ -1958,43 +1801,19 @@ export default {
       ) {
         let send = {};
         let duplstat_id = [];
+        send.status_id = self.selectedStatus;
         if (self.hmrow != "") {
           self.lidsRedistribute = [];
           self.forRedistribute = true;
-          await self.getLids3();
-          self.forRedistribute = false;
-
-          send.data = self.lidsRedistribute.map((e) => {
-            if (e.status_id == 22) duplstat_id.push(e.id);
-            return {
-              ...e,
-              user_id:
-                self.disableuser > 0 ? self.disableuser : this.$props.user.id,
-              status_id: self.selectedStatus,
-              // status: self.statuses.find((s) => s.id == self.selectedStatus) .name,
-            };
-          });
+          console.log("redistribute  1");
+          await this.getLids3();
+          console.log("redistribute  2");
+          this.forRedistribute = false;
+          send.data = this.lidsRedistribute.map((e) => e.id);
         } else if (this.selected.length && this.selectedStatus) {
-          this.selected.forEach((e) => {
-            if (e.status_id == 22) duplstat_id.push(e.id);
-            e.status_id = self.selectedStatus;
-            e.status = self.statuses.find(
-              (s) => s.id == self.selectedStatus
-            ).name;
-          });
-          send.data = this.selected.map((e) => e);
+          send.data = this.selected.map((e) => e.id);
         }
-        send.data.map((e) => {
-          const lidindex = self.lids.findIndex((l) => l.id === e.id);
-          if (lidindex !== -1) {
-            Object.assign(self.lids[lidindex], {
-              status_id: self.selectedStatus,
-              status: self.statuses.find((s) => s.id == self.selectedStatus)
-                .name,
-            });
-          }
-        });
-        send.duplstat_id = duplstat_id;
+
         this.changeLids(send);
       }
     },
@@ -2018,10 +1837,22 @@ export default {
     },
     changeLids(send) {
       const self = this;
+      this.loading = true;
       axios
-        .post("api/Lid/updatelids", send)
+        .post("api/changeStatusLids", send)
         .then(function (response) {
           self.afterUpdateLids();
+          send.data.map((e) => {
+            const lidindex = self.lids.findIndex((l) => l.id === e.id);
+            if (lidindex !== -1) {
+              Object.assign(self.lids[lidindex], {
+                status_id: self.selectedStatus,
+                status: self.statuses.find((s) => s.id == self.selectedStatus)
+                  .name,
+              });
+            }
+          });
+          this.loading = false;
         })
         .catch(function (error) {
           console.log(error);
@@ -2102,41 +1933,82 @@ export default {
     },
     async onScroll(event) {
       const container = event.target;
+      const maxPage = Math.ceil(this.hm / this.limit);
+
+      // Прокрутка вниз
       if (
         container.scrollTop + container.clientHeight >=
-        container.scrollHeight - 10
+          container.scrollHeight - 10 &&
+        !this.isFetching &&
+        this.page < maxPage
       ) {
-        await this.loadMoreRows();
+        if (this.page == 0) {
+          this.page = 1; // Устанавливаем начальную страницу
+        }
+        this.page++; // Увеличиваем на одну страницу
+        await this.loadPage(this.page);
+        // Корректируем смещение ползунка с учетом изменения высоты
+        this.$nextTick(() => {
+          const newScrollHeight = container.scrollHeight;
+          container.scrollTop += newScrollHeight - previousScrollHeight;
+        });
+      }
+
+      // Прокрутка вверх
+      if (container.scrollTop <= 10 && !this.isFetching && this.page > 0) {
+        const previousScrollHeight = container.scrollHeight;
+        this.page--; // Уменьшаем на одну страницу
+        await this.loadPage(this.page);
+        // Корректируем смещение ползунка с учетом изменения высоты
+        this.$nextTick(() => {
+          const newScrollHeight = container.scrollHeight;
+          container.scrollTop = newScrollHeight - previousScrollHeight;
+        });
       }
     },
-    async loadMoreRows() {
-      if (this.loading || this.page >= Math.ceil(this.hm / this.limit)) return;
-      if (this.page == 0) {
-        this.page = 1;
+    async loadPage(page) {
+      this.isFetching = true;
+      this.loading = true;
+
+      try {
+        this.lids = await this.fetchPageRows(page);
+      } catch (error) {
+        console.error("Ошибка при загрузке данных:", error);
+      } finally {
+        this.isFetching = false;
+        this.loading = false;
       }
-      this.page++;
-      const newRows = await this.fetchAdditionalRows();
-      this.lids = [...this.lids, ...newRows];
     },
-    async fetchAdditionalRows() {
-      let id = this.disableuser > 0 ? this.disableuser : 0;
+    async fetchPageRows(page) {
       const data = {
-        id: id,
-        page: this.page,
+        id: this.disableuser > 0 ? this.disableuser : 0,
+        page: page,
         limit: this.limit,
-        // Include other filters if necessary
         provider_id: this.filterProviders,
         status_id: this.filterStatus,
         tel: this.filtertel,
         search: this.search,
-
         office_ids: this.filterOffices,
-
         filterLang: this.filterLang,
         filterGeo: this.filterGeo,
       };
+      if (this.savedates == true) {
+        if (this.datetimeFrom == "") {
+          this.datetimeFrom = new Date(
+            new Date().setDate(new Date().getDate() - 14)
+          )
+            .toISOString()
+            .substring(0, 10);
+        }
+        if (this.datetimeTo == "") {
+          this.datetimeTo = new Date().toISOString().substring(0, 10);
+        }
+
+        data.datefrom = this.getLocalDateTime(this.datetimeFrom);
+        data.dateto = this.getLocalDateTime(this.datetimeTo);
+      }
       const response = await axios.post("/api/getLids3", data);
-      let d_lids = response.data.lids;
+      const d_lids = response.data.lids;
 
       d_lids.map((e) => {
         if (e.updated_at) {
@@ -2161,7 +2033,7 @@ export default {
         try {
           e.user = this.users.find((u) => u.id == e.user_id).fio;
         } catch (error) {
-          e.user = "";
+          euser = "";
         }
         try {
           e.provider = this.providers.find((p) => p.id == e.provider_id).name;
@@ -2173,6 +2045,147 @@ export default {
       });
 
       return d_lids || [];
+    },
+  },
+  mounted() {
+    this.getUsers();
+    this.getProviders();
+    this.getStatuses();
+    this.getOffices();
+
+    if (localStorage.filterStatus) {
+      this.filterStatus = localStorage.filterStatus
+        .split(",")
+        .map((el) => parseInt(el));
+    }
+    if (localStorage.filterOffices) {
+      this.filterOffices = localStorage.filterOffices
+        .split(",")
+        .map((el) => parseInt(el));
+    }
+
+    if (localStorage.filterGeo) {
+      this.filterGeo = localStorage.filterGeo.split(",");
+    }
+    if (localStorage.savedates) {
+      this.savedates = localStorage.savedates == "true" ? true : false;
+    }
+    if (localStorage.callback) {
+      this.callback = localStorage.callback == "true" ? true : false;
+    }
+    if (localStorage.filtertel) {
+      this.filtertel = localStorage.tel;
+    }
+    if (this.savedates == true) {
+      if (localStorage.datetimeFrom) {
+        this.datetimeFrom = new Date(localStorage.datetimeFrom)
+          .toISOString()
+          .substring(0, 10);
+      }
+      if (localStorage.datetimeTo) {
+        this.datetimeTo = new Date(localStorage.datetimeTo)
+          .toISOString()
+          .substring(0, 10);
+      }
+    }
+
+    if (localStorage.filterProviders) {
+      this.filterProviders = localStorage.filterProviders
+        .split(",")
+        .map((el) => parseInt(el));
+    }
+    //setTimeout(() => {
+    //  this.getPage();
+    //}, 100);
+    const tableWrapper = document.querySelector(
+      "#tablids .v-data-table__wrapper"
+    );
+    if (tableWrapper) {
+      tableWrapper.addEventListener("scroll", this.onScroll);
+    }
+  },
+  beforeDestroy() {
+    const tableWrapper = document.querySelector(
+      "#tablids .v-data-table__wrapper"
+    );
+    if (tableWrapper) {
+      tableWrapper.removeEventListener("scroll", this.onScroll);
+    }
+  },
+  watch: {
+    selectedUser(user) {
+      if (user == {}) {
+        this.userid = null;
+        this.akkvalue = [];
+        return;
+      }
+      //this.disableuser = user.id;
+      this.akkvalue = [];
+      this.akkvalue[user.office_id] = _.findIndex(
+        this.group.filter((g) => g.office_id == user.office_id),
+        {
+          group_id: user.group_id,
+        }
+      );
+    },
+    filterStatus(newName) {
+      localStorage.filterStatus = newName.toString();
+    },
+    filterGeo(newName) {
+      localStorage.filterGeo = newName;
+    },
+    filterOffices(newName) {
+      if (newName[0] == 0 && newName.length > 1) {
+        newName = newName.filter(function (item) {
+          return item !== 0;
+        });
+        this.filterOffices = newName;
+      }
+      if (newName.length > 1 && newName.slice(-1)[0] == 0) {
+        newName = [0];
+        this.filterOffices = newName;
+      }
+      // if (newName.includes(0) && !this.filterOffices.includes(0)) {
+      //   newName = [0];
+      //   this.filterOffices = newName;
+      // }
+      localStorage.filterOffices = newName.toString();
+    },
+    callback(newName) {
+      localStorage.callback = newName;
+      this.getLids3();
+    },
+    savedates(newName) {
+      localStorage.savedates = newName;
+      this.getLids3();
+    },
+
+    datetimeFrom(newName) {
+      if (this.savedates == true) {
+        localStorage.datetimeFrom = newName;
+      }
+    },
+    datetimeTo(newName) {
+      if (this.savedates == true) {
+        localStorage.datetimeTo = newName;
+      }
+    },
+    filtertel(newName) {
+      localStorage.tel = newName;
+    },
+    filterProviders(newName) {
+      localStorage.filterProviders = newName.toString();
+    },
+    filterGStatus: function (newval, oldval) {
+      if (newval != 0) {
+        this.getStatusLids(newval);
+      }
+    },
+    options: {
+      handler() {
+        this.getPage();
+      },
+      deep: true,
     },
   },
 };

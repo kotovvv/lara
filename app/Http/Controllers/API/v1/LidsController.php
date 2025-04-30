@@ -334,6 +334,44 @@ class LidsController extends Controller
     }
   }
 
+  public function changeStatusLids(Request $request)
+  {
+    $data = $request->all();
+    $a_lids_id = $data['data'];
+    $new_status_id = $data['status_id'];
+    $res = [];
+    $res = Lid::whereIn('id', $a_lids_id)->update(['status_id' => $new_status_id, 'created_at' => Now()]);
+
+    $a_l = Lid::selectRaw('DATE(created_at) as created_date, provider_id, COUNT(*) as count')
+      ->whereIn('id', $a_lids_id)
+      ->groupBy('created_date', 'provider_id')
+      ->get();
+
+    foreach ($a_l as $l) {
+      $date_s = date('Y-m-d', strtotime($l->created_date));
+      DB::table('imports')->whereDate('start', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
+      DB::table('imports_provider')->where('date', $date_s)->where('provider_id', $l->provider_id)->update(['callc' => 1]);
+    }
+
+    if (!empty($a_lids_id)) {
+      $logs = [];
+      foreach ($a_lids_id as $lid_id) {
+        $logs[] = [
+          'lid_id' => $lid_id,
+          'user_id' => session()->get('user_id'),
+          'status_id' => $new_status_id,
+          'created_at' => now(),
+          'updated_at' => now(),
+        ];
+      }
+      DB::table('logs')->insert($logs);
+    }
+
+    if ($res) {
+      return response('Lids updated', 200);
+    }
+  }
+
   private function getGeo($tel)
   {
     $geo = '';
