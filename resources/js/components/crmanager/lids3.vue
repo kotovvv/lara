@@ -1933,37 +1933,29 @@ export default {
     },
     async onScroll(event) {
       const container = event.target;
-      const maxPage = Math.ceil(this.hm / this.limit);
+      const scrollThreshold = 10;
 
-      // Прокрутка вниз
-      if (
+      if (this.isFetching) return;
+
+      const maxPage = Math.ceil(this.hm / this.limit);
+      const atBottom =
         container.scrollTop + container.clientHeight >=
-          container.scrollHeight - 10 &&
-        !this.isFetching &&
-        this.page < maxPage
-      ) {
+        container.scrollHeight - scrollThreshold;
+      const atTop = container.scrollTop <= scrollThreshold;
+
+      // Прокрутка вниз → следующая страница
+      if (atBottom && this.page < maxPage) {
         if (this.page == 0) {
-          this.page = 1; // Устанавливаем начальную страницу
+          this.page = 1;
         }
-        this.page++; // Увеличиваем на одну страницу
+        this.page++;
         await this.loadPage(this.page);
-        // Корректируем смещение ползунка с учетом изменения высоты
-        this.$nextTick(() => {
-          const newScrollHeight = container.scrollHeight;
-          container.scrollTop += newScrollHeight - previousScrollHeight;
-        });
       }
 
-      // Прокрутка вверх
-      if (container.scrollTop <= 10 && !this.isFetching && this.page > 0) {
-        const previousScrollHeight = container.scrollHeight;
-        this.page--; // Уменьшаем на одну страницу
+      // Прокрутка вверх → предыдущая страница
+      if (atTop && this.page > 0) {
+        this.page--;
         await this.loadPage(this.page);
-        // Корректируем смещение ползунка с учетом изменения высоты
-        this.$nextTick(() => {
-          const newScrollHeight = container.scrollHeight;
-          container.scrollTop = newScrollHeight - previousScrollHeight;
-        });
       }
     },
     async loadPage(page) {
@@ -1978,6 +1970,15 @@ export default {
         this.isFetching = false;
         this.loading = false;
       }
+      this.$nextTick(() => {
+        const container = document.querySelector(
+          "#tablids .v-data-table__wrapper"
+        );
+        if (container) {
+          container.scrollTop =
+            (container.scrollHeight - container.clientHeight) / 2;
+        }
+      });
     },
     async fetchPageRows(page) {
       const data = {
