@@ -1028,6 +1028,8 @@ export default {
     unmaskedField: null,
     unmaskedRowId: null,
     isFetching: false, // Флаг для предотвращения наложения запросов
+    scrollBoundaryHits: 0, // Счетчик достижений границ
+    scrollBoundaryTimer: null, // Таймер для сброса счетчика
   }),
   methods: {
     isRowUnmasked(id) {
@@ -1943,19 +1945,44 @@ export default {
         container.scrollHeight - scrollThreshold;
       const atTop = container.scrollTop <= scrollThreshold;
 
-      // Прокрутка вниз → следующая страница
-      if (atBottom && this.page < maxPage) {
-        if (this.page == 0) {
-          this.page = 1;
-        }
-        this.page++;
-        await this.loadPage(this.page);
-      }
+      // Увеличиваем счетчик достижений границ
+      if (atBottom || atTop) {
+        this.scrollBoundaryHits++;
 
-      // Прокрутка вверх → предыдущая страница
-      if (atTop && this.page > 0) {
-        this.page--;
-        await this.loadPage(this.page);
+        // Сбрасываем таймер, если он уже запущен
+        if (this.scrollBoundaryTimer) {
+          clearTimeout(this.scrollBoundaryTimer);
+        }
+
+        // Устанавливаем таймер на 3 секунды
+        this.scrollBoundaryTimer = setTimeout(() => {
+          this.scrollBoundaryHits = 0;
+        }, 3000);
+
+        // Если границы достигнуты более двух раз за 3 секунды
+        if (this.scrollBoundaryHits > 2) {
+          this.scrollBoundaryHits = 0; // Сбрасываем счетчик
+          clearTimeout(this.scrollBoundaryTimer); // Очищаем таймер
+
+          if (atBottom && this.page < maxPage) {
+            if (this.page == 0) {
+              this.page = 1;
+            }
+            this.page++;
+            await this.loadPage(this.page);
+            this.$nextTick(() => {
+              container.scrollTop = 0; // Перемещаем бегунок в начало таблицы
+            });
+          }
+
+          if (atTop && this.page > 0) {
+            this.page--;
+            await this.loadPage(this.page);
+            this.$nextTick(() => {
+              container.scrollTop = 0; // Перемещаем бегунок в начало таблицы
+            });
+          }
+        }
       }
     },
     async loadPage(page) {
