@@ -147,6 +147,7 @@ class ProvidersController extends Controller
         "provider" => $provider
       ])->setStatusCode(200);
     }
+    cache()->forget('provider' . $data['office_id']);
   }
 
   /**

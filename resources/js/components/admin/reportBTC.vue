@@ -310,9 +310,6 @@ export default {
         })
         .catch((error) => {
           console.log("error", error);
-          if (error.response.status == 419) {
-            document.getElementById("logout").click();
-          }
         });
     },
     getBTCotherOnDate() {

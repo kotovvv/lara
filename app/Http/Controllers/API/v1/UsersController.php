@@ -92,6 +92,7 @@ class UsersController extends Controller
       $sql = "UPDATE `offices` set `name` = '$data[name]', `updated_at` = '" . date("Y-m-d H:i:s") . "' WHERE `id` = " . (int) $data['id'];
       DB::update(DB::raw($sql));
     }
+    cache()->forget('offises' . $data['id']);
   }
 
   /**

@@ -66,6 +66,7 @@ class StatusesController extends Controller
         return response('Status added', 200);
       } else return response('Status add error', 301);
     }
+    cache()->forget('data');
   }
 
   /**

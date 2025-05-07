@@ -1134,9 +1134,6 @@ export default {
       axios
         .get("/api/getOffices")
         .then((res) => {
-          if (res.status == 419) {
-            document.getElementById("logout").click();
-          }
           self.offices = res.data;
           if (self.$props.user.role_id == 1) {
             self.offices.unshift({ id: 0, name: "--все--" });
@@ -1156,9 +1153,6 @@ export default {
         })
         .catch((error) => {
           console.log("error", error);
-          if (error.response.status == 419) {
-            document.getElementById("logout").click();
-          }
         });
     },
     getProviderName(i) {
@@ -1350,9 +1344,6 @@ export default {
       } catch (error) {
         console.log(error);
         self.loading = false;
-        if (error.response.status == 419) {
-          document.getElementById("logout").click();
-        }
       }
     },
 

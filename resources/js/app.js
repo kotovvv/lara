@@ -4,7 +4,7 @@ import 'vuetify/dist/vuetify.min.css';
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 import '@mdi/font/css/materialdesignicons.css';
 import DatetimePicker from "vuetify-datetime-picker";
-// import 'vuetify-datetime-picker/src/stylus/main.styl';
+import './axios/interceptor'; // Подключаем глобальный interceptor
 
 import LoginComponent from './components/loginComponent.vue';
 import MainComponent from './Main.vue';
