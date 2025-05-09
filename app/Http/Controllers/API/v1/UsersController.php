@@ -184,7 +184,7 @@ class UsersController extends Controller
       $arr['user_serv'] = $data['user_serv'] ? $data['user_serv'] : '';
 
       $arr['serv'] = $data['serv'] ? $data['serv'] : '';
-
+      cache()->forget('users' .  $arr['office_id']);
       if (User::where('id', $data['id'])->value('office_id') != $data['office_id']) {
         Lid::where('user_id', $data['id'])->update(['office_id' => $data['office_id']]);
       }
@@ -214,7 +214,7 @@ class UsersController extends Controller
       $user->password = $password;
       $user->order = $data['order'];
       $user->save();
-
+      cache()->forget('users' .  $user['office_id']);
       return response()->json(['message' => 'User added', 'user_id' => $user->id], 200);
     }
   }
