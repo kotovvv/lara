@@ -106,11 +106,11 @@ class ProvidersController extends Controller
       'name' => 'required|max:255',
     ]);
 
-    cache()->forget('provider' . $data['office_id']);
     $data = $request->all();
     $data['related_users_id'] = json_encode($data['related_users_id']);
     $data['office_id'] = json_encode($data['office_id']);
 
+    cache()->forget('provider' . $data['office_id']);
     if (isset($data['password'])) {
       $data['password'] = Hash::make($data['password']);
     }
