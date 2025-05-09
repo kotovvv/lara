@@ -2026,6 +2026,11 @@ export default {
         data.datefrom = this.getLocalDateTime(this.datetimeFrom);
         data.dateto = this.getLocalDateTime(this.datetimeTo);
       }
+      const { sortBy, sortDesc } = this.options;
+      if (sortBy.length === 1) {
+        data.sortBy = sortBy[0];
+        data.sortDesc = sortDesc[0];
+      }
       const response = await axios.post("/api/getLids3", data);
       const d_lids = response.data.lids;
 
