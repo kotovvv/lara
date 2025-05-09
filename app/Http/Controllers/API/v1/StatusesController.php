@@ -53,6 +53,7 @@ class StatusesController extends Controller
   {
     $data = $request->all();
     // Debugbar::info($data);
+    cache()->forget('data');
     if (isset($data['id'])) {
       // Debugbar::info('update');
       unset($data['created_at']);
@@ -66,7 +67,6 @@ class StatusesController extends Controller
         return response('Status added', 200);
       } else return response('Status add error', 301);
     }
-    cache()->forget('data');
   }
 
   /**

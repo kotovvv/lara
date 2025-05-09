@@ -106,6 +106,7 @@ class ProvidersController extends Controller
       'name' => 'required|max:255',
     ]);
 
+    cache()->forget('provider' . $data['office_id']);
     $data = $request->all();
     $data['related_users_id'] = json_encode($data['related_users_id']);
     $data['office_id'] = json_encode($data['office_id']);
@@ -147,7 +148,6 @@ class ProvidersController extends Controller
         "provider" => $provider
       ])->setStatusCode(200);
     }
-    cache()->forget('provider' . $data['office_id']);
   }
 
   /**
