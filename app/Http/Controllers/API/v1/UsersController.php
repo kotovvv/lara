@@ -198,6 +198,9 @@ class UsersController extends Controller
         return response('User updated', 200);
       } else return response('User updated error', 301);
     } else {
+      if (User::where('name', $data['name'])->exists()) {
+        return response()->json(['error' => 'Пользователь с таким именем уже существует'], 405);
+      }
       $user = new User();
       $user->name = $data["name"];
       $user->fio = $data["fio"];

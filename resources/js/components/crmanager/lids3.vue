@@ -258,6 +258,19 @@
             </template>
           </v-autocomplete>
         </div>
+        <div>
+          <p></p>
+          <v-select
+            v-model="filterRD"
+            :items="['', 'Depositors', 'Registrations']"
+            @change="getPage(0)"
+            outlined
+            rounded
+            clearable
+            label="R/D"
+            style="width: 10rem"
+          ></v-select>
+        </div>
         <v-col></v-col>
       </v-row>
     </v-container>
@@ -795,6 +808,7 @@ export default {
       { text: "Изменён", value: "date_updated" },
       { text: "Статус", value: "status" },
       { text: "Депозит", value: "depozit" },
+      { text: "R/D", value: "rd" },
       { text: "Сообщение", value: "text" },
       { text: "Звонков", value: "qtytel" },
       { text: "ПЕРЕЗВОН", value: "ontime" },
@@ -1020,6 +1034,7 @@ export default {
     },
     filterLang: "",
     filterGeo: [],
+    filterRD: null,
     languges: [],
     //geo: [],
     GeoTel,
@@ -1254,6 +1269,7 @@ export default {
 
       data.filterLang = this.filterLang;
       data.filterGeo = this.filterGeo;
+      data.filterRD = this.filterRD;
 
       if (this.callback === true) {
         data.callback = 1;
@@ -1958,6 +1974,9 @@ export default {
           if (atBottom && this.page < maxPage) {
             if (this.page == 0) {
               this.page = 1;
+              if (this.page == maxPage) {
+                return;
+              }
             }
             this.page++;
             await this.loadPage(this.page);

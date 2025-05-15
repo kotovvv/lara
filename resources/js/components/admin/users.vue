@@ -1,5 +1,13 @@
 <template>
   <div>
+    <v-snackbar v-model="snackbar" top center timeout="-1">
+      <v-card-text>{{ message }}</v-card-text>
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          X
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-container fluid>
       <v-row>
         <v-col cols="9">
@@ -303,6 +311,7 @@ import statusUsers from "./statusUsers";
 import axios from "axios";
 export default {
   data: () => ({
+    snackbar: false,
     pic: null,
     imageUrl: "",
     selected: [],
@@ -382,6 +391,7 @@ export default {
     },
     sip: false,
     showActive: true,
+    message: "",
   }),
 
   computed: {
@@ -501,10 +511,18 @@ export default {
       }
       axios
         .post("/api/user/update", form_data)
-        .then((res) => {
-          u.id = res.data.user_id;
+        .then((response) => {
+          u.id = response.data.user_id;
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          if (error.response && error.response.status === 405) {
+            self.message = error.response.data.error || "Ошибка 405";
+            self.snackbar = true;
+            return;
+          }
+
+          console.log(error);
+        });
     },
     saveOffice(u) {
       let self = this;

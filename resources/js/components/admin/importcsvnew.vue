@@ -3195,11 +3195,7 @@ export default {
       vm.in_db = [];
       vm.out_db = [];
       let data = {};
-
-      data.emails = vm.list_email
-        .replace(/[\r]/gm, "")
-        .replaceAll(" ", "")
-        .split("\n");
+      data.emails = vm.list_email.replace(/[\r\t ]/g, "").split("\n");
 
       data.check = 1;
       data.email_tel = vm.email_tel;

@@ -79,6 +79,7 @@ class LidsController extends Controller
     $n_lid->created_at = Now();
     $n_lid->updated_at = Now();
     $n_lid->active = 1;
+    $n_lid->rd = 'Registrations';
     $n_lid->save();
 
     return response('Lid inserted', 200);
@@ -148,7 +149,7 @@ class LidsController extends Controller
     if (isset($data['role_id']) && isset($data['group_id']) && $data['role_id'] == 2) {
       $a_user_ids = User::select('id')->where('group_id', $data['group_id']);
       $q_leads = Lid::select('*')
-        ->whereIn('user_id', $a_user_ids)
+        ->whereIn('lids.user_id', $a_user_ids)
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('lids.office_id', $office_id);
         })
@@ -156,7 +157,7 @@ class LidsController extends Controller
           return $query->where('email', $search);
         })
         ->when(strpos($search, '@') === false, function ($query) use ($search) {
-          return $query->whereRaw('MATCH(lids.name,tel,email,TEXT) AGAINST ("' . $search . '")');
+          return $query->whereRaw('MATCH(lids.name,lids.tel,lids.email,lids.TEXT) AGAINST ("' . $search . '")');
         });
       $response['hm'] = $q_leads->count();
 
@@ -340,7 +341,7 @@ class LidsController extends Controller
     $a_lids_id = $data['data'];
     $new_status_id = $data['status_id'];
     $res = [];
-    $res = Lid::whereIn('id', $a_lids_id)->update(['status_id' => $new_status_id, 'created_at' => Now()]);
+    $res = Lid::whereIn('id', $a_lids_id)->update(['status_id' => $new_status_id, 'updated_at' => Now()]);
 
     $a_l = Lid::selectRaw('DATE(created_at) as created_date, provider_id, COUNT(*) as count')
       ->whereIn('id', $a_lids_id)
@@ -474,7 +475,7 @@ class LidsController extends Controller
           $n_lid->status_id = 22;
         }
       }
-
+      $n_lid->rd = 'Depositors';
       if ($n_lid->provider_id == '76') {
         $n_lid->status_id = 8;
       }
@@ -560,6 +561,7 @@ class LidsController extends Controller
     $status_id = $data['status_id'];
     $search = $data['search'];
     $tel = $data['tel'];
+    $filterRD = $data['filterRD'];
     $limit = $data['limit'];
     $page = $data['page'];
     $providers = [];
@@ -582,6 +584,9 @@ class LidsController extends Controller
       })
       ->when(count($status_id) > 0, function ($query) use ($status_id) {
         return $query->whereIn('status_id', $status_id);
+      })
+      ->when($filterRD, function ($query) use ($filterRD) {
+        return $query->where('rd', $filterRD);
       })
       ->when($tel != '', function ($query) use ($tel) {
         return $query->where('tel', 'like', $tel . '%');
@@ -622,11 +627,12 @@ class LidsController extends Controller
     $page = (int) $data['page'];
     $filterLang = $data['filterLang'];
     $filterGeo = $data['filterGeo'];
+    $filterRD = $data['filterRD'];
     $providers = $date = $users_ids = [];
     $where_date = '';
     $duplicate_tel = [];
     if (isset($data['sortBy'])) {
-      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "provider_name" => 'provider_id', "office_name" => 'office_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'status' => 'status_id', 'depozit' => 'depozit', 'client_geo' => 'client_geo'][$data['sortBy']];
+      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "provider_name" => 'provider_id', "office_name" => 'office_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'dp' => 'dp', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'status' => 'status_id', 'depozit' => 'depozit', 'client_geo' => 'client_geo'][$data['sortBy']];
       $sortDesc = $data['sortDesc'] ? 'DESC' : 'ASC';
     } else {
       $sortBy = false;
@@ -691,6 +697,9 @@ class LidsController extends Controller
       })
       ->when(count($filterGeo) > 0, function ($query) use ($filterGeo) {
         return $query->whereIn('lids.client_geo', $filterGeo);
+      })
+      ->when($filterRD, function ($query) use ($filterRD) {
+        return $query->where('lids.rd', $filterRD);
       })
       ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {
         return $query->where(DB::Raw('(SELECT count(*) cnt FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9)'), '>', 0);
@@ -1263,6 +1272,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
 
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = (int) $req['user_id'];
+    $n_lid->rd = 'Registrations';
 
     $n_lid->created_at = Now();
 
@@ -1393,7 +1403,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = (int) $req['user_id'];
     $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
-
+    $n_lid->rd = 'Registrations';
     $n_lid->created_at = Now();
 
     /*     $f_lid =  Lid::where('tel', '=', $n_lid->tel)->get();
@@ -1501,6 +1511,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $n_lid->provider_id = $f_key->id;
     $n_lid->user_id = $req['user_id'];
     $n_lid->office_id = User::where('id', (int) $req['user_id'])->value('office_id');
+    $n_lid->rd = 'Registrations';
     $n_lid->created_at = Now();
 
     $n_lid->save();
@@ -1603,7 +1614,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     if ($n_lid->provider_id == '76') {
       $n_lid->status_id = 8;
     }
-
+    $n_lid->rd = 'Registrations';
     $n_lid->save();
     $id = $n_lid->id;
     $insert = DB::table('imported_leads')->insert(['lead_id' => $id, 'api_key_id' => $f_key->id, 'upload_time' => Now(), 'geo' => $geo]);

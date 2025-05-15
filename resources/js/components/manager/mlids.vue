@@ -97,6 +97,21 @@
         </v-select>
       </v-col>
       <v-col cols="2">
+        R/D
+        <v-select
+          v-model="filterRD"
+          :items="['', 'Depositors', 'Registrations']"
+          @change="
+            page = 0;
+            getLidsPost();
+          "
+          outlined
+          rounded
+          clearable
+          style="width: 10rem"
+        ></v-select>
+      </v-col>
+      <v-col cols="2">
         Сервер
         <v-select
           v-model="selectedServer"
@@ -621,6 +636,7 @@ export default {
     a_bts: [],
     search: "",
     filtertel: "",
+    filterRD: "",
     headers: [
       { text: "Имя", value: "name" },
       { text: "Email", value: "email" },
@@ -634,6 +650,7 @@ export default {
       { text: "Перезвон", value: "ontime" },
       { text: "Сообщение", value: "text" },
       { text: "Адрес", value: "address" },
+      { text: "R/D", value: "rd" },
     ],
     headerstime: [
       { text: "Имя", value: "name" },
@@ -647,7 +664,7 @@ export default {
       { text: "Депозит", value: "deposit" },
       { text: "Сообщение", value: "text" },
       { text: "Адрес", value: "address" },
-
+      { text: "R/D", value: "rd" },
       { text: "", value: "actions", sortable: false },
     ],
     parse_header: [],
@@ -1121,6 +1138,7 @@ export default {
       data.provider_id = self.filterProviders;
       data.status_id = self.filterStatus;
       data.tel = self.filtertel;
+      data.filterRD = self.filterRD;
       data.search = self.search;
       data.limit = self.limit;
       data.page = p;
