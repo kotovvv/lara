@@ -62,7 +62,7 @@ class LogsController extends Controller
     if (isset($req['office_id'])) {
       $office_id = (int) $req['office_id'];
     }
-    $office = "office_id = $office_id ";
+    $office = "u.office_id = $office_id ";
     if ($office_id == 0) {
       $office = "1 ";
     }
@@ -74,25 +74,27 @@ class LogsController extends Controller
     $dateFrom = $req['dateFrom'] . ' 00:00:00';
     $dateTo = $req['dateTo'] . ' 23:59:59';
 
-    $sql = "SELECT
-    u.id
-    ,u.name
-,(SELECT COUNT(*) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) cnt
-,(SELECT COUNT(DISTINCT(tel)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) utel
-,(SELECT SEC_TO_TIME(SUM(`duration`)+SUM(`connecttime`)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) work
-,(SELECT SEC_TO_TIME(SUM(`duration`)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) dur
-,(SELECT COUNT(*) FROM `calls` c WHERE `duration`> 120 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) mr2
-,(SELECT SEC_TO_TIME(round(AVG(`duration`),0)) FROM `calls` c WHERE  c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) avg
-,(SELECT SEC_TO_TIME(SUM(`pausa`)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) pausa
-,(SELECT SEC_TO_TIME(round(AVG(`pausa`),0)) FROM `calls` c WHERE c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) spausa
-,(SELECT COUNT(`duration`) FROM `calls` c WHERE `duration` > 0 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) good
-,(SELECT COUNT(`duration`) FROM `calls` c WHERE `duration` = 0 AND c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')) bad
-,(SELECT u2.fio FROM `users` u2 WHERE u.group_id = u2.id ) grp
-
-   FROM
-   `users` u
-#WHERE u.id IN (SELECT `user_id` FROM `calls` WHERE $office `timecall` BETWEEN '$dateFrom' AND '$dateTo' GROUP BY `user_id`)
-WHERE $office $where_user_group AND INSTR(u.`servers`,';') order by grp ASC ,name ASC";
+    $sql = "
+SELECT
+    u.id,
+    u.name,
+    COUNT(c.id) as cnt,
+    COUNT(DISTINCT c.tel) as utel,
+    SEC_TO_TIME(SUM(c.duration) + SUM(c.connecttime)) as work,
+    SEC_TO_TIME(SUM(c.duration)) as dur,
+    SUM(c.duration > 120) as mr2,
+    SEC_TO_TIME(ROUND(AVG(c.duration),0)) as avg,
+    SEC_TO_TIME(SUM(c.pausa)) as pausa,
+    SEC_TO_TIME(ROUND(AVG(c.pausa),0)) as spausa,
+    SUM(c.duration > 0) as good,
+    SUM(c.duration = 0) as bad,
+    (SELECT u2.fio FROM users u2 WHERE u.group_id = u2.id) as grp
+FROM users u
+LEFT JOIN calls c ON c.user_id = u.id AND (c.timecall BETWEEN '$dateFrom' AND '$dateTo')
+WHERE $office $where_user_group AND INSTR(u.servers,';')
+GROUP BY u.id, u.name, u.group_id
+ORDER BY grp ASC, u.name ASC
+";
     return DB::select(DB::raw($sql));
   }
 
