@@ -1148,7 +1148,7 @@
             </p>
           </v-col>
           <v-col cols="12" v-for="office in lidsByOffice" :key="office.name">
-            <div class="d-flex align-center">
+            <div class="d-flex align-center" v-if="office.lids.length">
               <v-checkbox
                 style="font-size: 1.2rem; font-weight: bold"
                 v-model="redistributeOffice"
@@ -1156,6 +1156,107 @@
                 :label="office.name + ' - Total ' + office.lids.length"
                 :value="office.name"
               ></v-checkbox>
+              <v-btn icon class="mx-2" @click="toggleOfficeShow(office.id)">
+                <v-icon>
+                  {{
+                    showOffice.includes(office.id) ? "mdi-minus" : "mdi-plus"
+                  }}
+                </v-icon>
+              </v-btn>
+            </div>
+            <div
+              :id="'wrp_stat' + office.id"
+              class="wrp__statuses by_offices"
+              v-if="showOffice.includes(office.id)"
+            >
+              <template>
+                <div>
+                  <v-expansion-panels multiple>
+                    <v-expansion-panel
+                      v-for="group in office.groups"
+                      :key="group.id"
+                    >
+                      <v-expansion-panel-header>
+                        <b class="ml-4 mr-2">{{ group.name }} </b>
+                        <span class="wrp__statuses by_groups">
+                          <div
+                            v-for="status in group.statuses"
+                            :key="status.id"
+                            class="status_wrp"
+                          >
+                            <b
+                              :style="{
+                                background: status.color,
+                                outline: '1px solid ' + status.color,
+                              }"
+                              >{{ status.hm }}</b
+                            >
+                            <span>{{ status.name }}</span>
+                          </div>
+                        </span>
+                      </v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        <div
+                          v-for="user in group.users"
+                          :key="user.id"
+                          class="d-flex flex-wrap"
+                        >
+                          <span class="ml-8 mr-2">{{ user.name }} </span>
+                          <span>
+                            <div class="wrp__statuses by_users">
+                              <div
+                                v-for="status in user.statuses"
+                                :key="status.id"
+                                class="status_wrp"
+                              >
+                                <b
+                                  :style="{
+                                    background: status.color,
+                                    outline: '1px solid ' + status.color,
+                                  }"
+                                  >{{ status.hm }}</b
+                                >
+                                <span>{{ status.name }}</span>
+                              </div>
+                            </div></span
+                          >
+                        </div>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+                  <div v-if="office.usersNoGroup.length">
+                    <h4>Users not in group</h4>
+                    <v-expansion-panels multiple>
+                      <v-expansion-panel
+                        v-for="user in office.usersNoGroup"
+                        :key="user.id"
+                      >
+                        <v-expansion-panel-header>
+                          User: {{ user.name }}
+                        </v-expansion-panel-header>
+                        <v-expansion-panel-content>
+                          <div class="wrp__statuses by_users">
+                            <div
+                              v-for="status in user.statuses"
+                              :key="status.id"
+                              class="status_wrp"
+                            >
+                              <b
+                                :style="{
+                                  background: status.color,
+                                  outline: '1px solid ' + status.color,
+                                }"
+                                >{{ status.hm }}</b
+                              >
+                              <span>{{ status.name }}</span>
+                            </div>
+                          </div>
+                        </v-expansion-panel-content>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                  </div>
+                </div>
+              </template>
             </div>
             <v-col cols="12" v-if="office.statuses">
               <div id="wrp_stat" class="wrp__statuses">
@@ -2349,6 +2450,7 @@ export default {
     i_users: [],
     unmaskedRowId: null,
     clearLog: false,
+    showOffice: [],
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -2370,6 +2472,7 @@ export default {
     this.getOffices();
     this.getStatuses();
     this.renewImport();
+    this.getUsers();
   },
   computed: {
     filteredLeads() {
@@ -2429,6 +2532,15 @@ export default {
     },
   },
   methods: {
+    toggleOfficeShow(office_id) {
+      const index = this.showOffice.indexOf(office_id);
+      if (index > -1) {
+        this.showOffice.splice(index, 1);
+      } else {
+        this.showOffice.push(office_id);
+      }
+    },
+
     headerMove() {
       setTimeout(() => {
         const headerProTr = document.querySelector("#headerProTr");
@@ -3275,41 +3387,14 @@ export default {
     filterStatuses() {
       const self = this;
       let stord = this.leads;
-      let groupByOffice = [];
       self.Statuses = [];
-      self.lidsByOffice = [];
-      groupByOffice = Object.entries(_.groupBy(this.leads, "office_id"));
-      groupByOffice.forEach((a_office) => {
-        let nameoffice = "";
-        try {
-          nameoffice = self.offices.find((o) => {
-            return o.id == a_office[0];
-          }).name;
-        } catch (error) {
-          console.log(error);
-        }
-
-        const lids = Object.entries(_.groupBy(a_office[1], "status"));
-        let statuses = [];
-        lids.map(function (i) {
-          //i[0]//name
-          //i[1]//array
-          let el = self.statuses.find((s) => s.name == i[0]);
-          statuses.push({
-            id: el.id,
-            name: i[0],
-            hm: i[1].length,
-            order: el.order,
-            color: el.color,
-          });
-        });
-        statuses = _.orderBy(statuses, "order");
-        self.lidsByOffice.push({
-          name: nameoffice,
-          lids: a_office[1],
-          statuses: statuses,
-        });
-      });
+      self.lidsByOffice = self.buildLidsByOffice(
+        self.leads,
+        self.offices,
+        self.users,
+        self.statuses,
+        self.getStatusesHelper
+      );
       self.holdLidsUsers = Object.entries(_.groupBy(self.leads, "user"));
       stord = Object.entries(_.groupBy(stord, "status"));
       stord.map(function (i) {
@@ -3345,6 +3430,85 @@ export default {
         ],
       };
       self.updateChart = true;
+    },
+    // Build nested structure: offices -> groups -> users
+    buildLidsByOffice(leads, offices, users, statuses, getStatusesHelper) {
+      return offices.map((office) => {
+        const officeLeads = leads.filter((l) => l.office_id === office.id);
+        const groups = _.groupBy(
+          officeLeads.filter((l) => l.group_id && l.group_id !== 0),
+          "group_id"
+        );
+        const groupArr = Object.entries(groups).map(
+          ([group_id, groupLeads]) => {
+            // Собираем пользователей из leads (user_id, user)
+            const userMap = {};
+            groupLeads.forEach((l) => {
+              if (l.user_id && l.user) {
+                userMap[l.user_id] = l.user;
+              }
+            });
+            const usersArr = Object.entries(userMap).map(([user_id, user]) => {
+              const userLeads = groupLeads.filter((l) => l.user_id == user_id);
+              return {
+                id: Number(user_id),
+                name: user,
+                statuses: getStatusesHelper(userLeads, statuses),
+              };
+            });
+            return {
+              id: group_id,
+              name: users.find((u) => u.id == group_id).fio,
+              statuses: getStatusesHelper(groupLeads, statuses),
+              users: usersArr,
+            };
+          }
+        );
+        // Users not in any group
+        const noGroupLeads = officeLeads.filter(
+          (l) => !l.group_id || l.group_id == 0
+        );
+        // Собираем пользователей без группы из leads
+        const userMapNoGroup = {};
+        noGroupLeads.forEach((l) => {
+          if (l.user_id && l.user) {
+            userMapNoGroup[l.user_id] = l.user;
+          }
+        });
+        const usersNoGroupArr = Object.entries(userMapNoGroup).map(
+          ([user_id, user]) => {
+            const userLeads = noGroupLeads.filter((l) => l.user_id == user_id);
+            return {
+              id: Number(user_id),
+              name: user,
+              statuses: getStatusesHelper(userLeads, statuses),
+            };
+          }
+        );
+        return {
+          id: office.id,
+          name: office.name,
+          statuses: getStatusesHelper(officeLeads, statuses),
+          groups: groupArr,
+          usersNoGroup: usersNoGroupArr,
+          lids: officeLeads,
+        };
+      });
+    },
+    getStatusesHelper(leads, statuses) {
+      const grouped = _.groupBy(leads, "status_id");
+      return Object.entries(grouped)
+        .map(([status_id, arr]) => {
+          const st = statuses.find((s) => s.id == status_id) || {};
+          return {
+            id: st.id,
+            name: st.name,
+            hm: arr.length,
+            order: st.order,
+            color: st.color,
+          };
+        })
+        .sort((a, b) => a.order - b.order);
     },
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
@@ -4252,5 +4416,8 @@ main
 }
 .canvasjs-chart-credit {
   display: none;
+}
+.by_offices .v-expansion-panel::before {
+  box-shadow: none;
 }
 </style>

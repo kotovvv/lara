@@ -993,7 +993,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     if (isset($req['end']) && isset($req['message'])) {
       $date_end = substr($req['end'], 0, 10);
 
-      $lids =   Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
+      $lids =   Lid::select('lids.*', 'users.fio AS  user', 'users.group_id', 'offices.name AS office')
         ->where('load_mess', $req['message'])
         ->whereDate('lids.created_at', $date_end)
         ->leftJoin('users', 'users.id', '=', 'user_id')
@@ -1008,7 +1008,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
 
       return $lids;
     } elseif (isset($req['provider_id']) && isset($req['start']) && isset($req['end'])) {
-      $lids = Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
+      $lids = Lid::select('lids.*', 'users.fio AS  user', 'users.group_id', 'offices.name AS office')
         ->leftJoin('users', 'users.id', '=', 'user_id')
         ->leftJoin('offices', 'offices.id', '=', 'lids.office_id')
         ->where('provider_id', (int) $req['provider_id'])
@@ -1025,7 +1025,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
       } else {
         $message = DB::table('imports')->where('start', $req['start'])->where('end', $req['end'])->where('provider_id', $req['provider_id'])->first()->message;
 
-        return  Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
+        return  Lid::select('lids.*', 'users.fio AS  user', 'users.group_id', 'offices.name AS office')
           ->where('load_mess', $message)
           ->leftJoin('users', 'users.id', '=', 'user_id')
           ->leftJoin('offices', 'offices.id', '=', 'lids.office_id')
@@ -1038,7 +1038,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           ->get();
       }
     } elseif (isset($req['start'])) {
-      $sql = "SELECT l.*,users.fio as user,offices.name as office FROM `lids` l left join users on (users.id = l.user_id) left join offices on (offices.id = l.office_id) WHERE  " . $where_ids_off . " l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "' AND geo = '" . $geo . "') ";
+      $sql = "SELECT l.*,users.fio as user, users.group_id, offices.name as office FROM `lids` l left join users on (users.id = l.user_id) left join offices on (offices.id = l.office_id) WHERE  " . $where_ids_off . " l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "' AND geo = '" . $geo . "') ";
       $lids = DB::select(DB::raw($sql));
       $office_ids = [];
       foreach ($lids as $key => $lid) {
