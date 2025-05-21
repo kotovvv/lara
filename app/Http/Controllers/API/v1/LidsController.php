@@ -627,7 +627,10 @@ class LidsController extends Controller
     $page = (int) $data['page'];
     $filterLang = $data['filterLang'];
     $filterGeo = $data['filterGeo'];
-    $filterRD = $data['filterRD'];
+    $filterRD = null;
+    if (isset($data['filterRD'])) {
+      $filterRD = $data['filterRD'];
+    }
     $providers = $date = $users_ids = [];
     $where_date = '';
     $duplicate_tel = [];
@@ -698,7 +701,7 @@ class LidsController extends Controller
       ->when(count($filterGeo) > 0, function ($query) use ($filterGeo) {
         return $query->whereIn('lids.client_geo', $filterGeo);
       })
-      ->when($filterRD, function ($query) use ($filterRD) {
+      ->when($filterRD != null, function ($query) use ($filterRD) {
         return $query->where('lids.rd', $filterRD);
       })
       ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {

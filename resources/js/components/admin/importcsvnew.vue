@@ -3166,7 +3166,7 @@ export default {
       // export Excel file
       XLSX.writeFile(
         wb,
-        "imported_" + self.item.start.replaceAll(/ |:/g, "_") + ".xlsx"
+        "imported_" + self.item.name.replaceAll(/ |:/g, "_") + ".xlsx"
       );
     },
     exportXlsx() {
