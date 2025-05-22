@@ -26,6 +26,7 @@
             label="Провайдер"
             item-text="name"
             item-value="id"
+            clearable
             @change="userids = []"
             :menu-props="{ maxHeight: '60vh' }"
           >
@@ -36,6 +37,16 @@
             v-model="selectedBaer"
             :items="baers"
             label="Баер"
+            clearable
+          ></v-select>
+          <v-select
+            :items="responsible_user"
+            label="Ответственный"
+            item-text="fio"
+            item-value="id"
+            v-model="selectedResponsible_user"
+            multiple
+            v-if="responsible_user.length"
             clearable
           ></v-select>
         </v-col>
@@ -219,6 +230,8 @@ export default {
     akkvalue: [],
     group: [],
     offices: [],
+    responsible_user: [],
+    selectedResponsible_user: [],
   }),
 
   mounted() {
@@ -229,15 +242,33 @@ export default {
   },
   watch: {
     selectedProvider: function (newval) {
+      const prov = this.providers.find((p) => {
+        return p.id == newval;
+      });
+      if (!prov) {
+        this.selectedBaer = "";
+        this.responsible_user = [];
+        return;
+      }
       if (this.providers && this.providers.length && newval > 0) {
-        let baer = this.providers.find((p) => {
-          return p.id == newval;
-        }).baer;
+        let baer = prov.baer;
         this.baers = [];
         if (baer && baer != "") {
           this.baers = baer.split(";");
         }
       }
+      this.responsible_user = [];
+      if (prov.responsible_user != null) {
+        const a_responsible_user = JSON.parse(prov.responsible_user);
+        if (a_responsible_user.length != 0) {
+          console.log("selectedProvider", a_responsible_user);
+
+          this.responsible_user = this.users.filter((u) =>
+            a_responsible_user.includes(u.id)
+          );
+        }
+      }
+      return prov;
     },
   },
   methods: {
@@ -359,7 +390,6 @@ export default {
           info.end = response.data.date_end.substring(0, 19).replace("T", " ");
           info.geo = response.data.geo;
         })
-
         .catch(function (error) {
           console.log(error);
         });
@@ -424,6 +454,7 @@ export default {
       }
       send.message = self.load_mess;
       send.dep_reg = self.dep_reg;
+      send.responsible_user = this.selectedResponsible_user;
       if (this.userids.length == 0) {
         self.userids = [self.user.id];
       }
@@ -436,6 +467,7 @@ export default {
       n_arr.forEach(async (arr, i) => {
         send.user_id = this.userids[i];
         send.data = arr;
+
         ans_info = await self.newlids(send);
 
         if (info.start == "") {
@@ -452,6 +484,9 @@ export default {
           info.cp = self.cp;
           info.message = self.load_mess;
           info.geo = ans_info.geo;
+          info.responsible_user = Array.isArray(self.selectedResponsible_user)
+            ? "[" + self.selectedResponsible_user.join(",") + "]"
+            : self.selectedResponsible_user;
           axios
             .post("api/imports/0/0", info)
             .then(function (response) {
@@ -477,11 +512,12 @@ export default {
         .get("/api/provider")
         .then((res) => {
           self.providers = res.data.map(
-            ({ name, id, related_users_id, baer }) => ({
+            ({ name, id, related_users_id, baer, responsible_user }) => ({
               name,
               id,
               related_users_id,
               baer,
+              responsible_user,
             })
           );
         })

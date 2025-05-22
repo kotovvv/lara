@@ -32,6 +32,16 @@ class ImportsController extends Controller
     foreach ($imports as $import) {
       $import->provider_name = $import->provider ? $import->provider->name : null;
       $import->user_name = $import->user ? $import->user->fio : null;
+
+      // Get responsible_user fio names
+      $responsibleUsers = '';
+      if (!empty($import->responsible_user)) {
+        $userIds = json_decode($import->responsible_user, true);
+        if (is_array($userIds) && count($userIds)) {
+          $responsibleUsers = implode(', ', User::whereIn('id', $userIds)->pluck('fio')->toArray());
+        }
+      }
+      $import->responsible_user_fio = $responsibleUsers;
     }
 
     Import::whereNull('hm_json')

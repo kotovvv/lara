@@ -560,9 +560,12 @@
                         <div>{{ item.start.substring(0, 10) }}</div>
                         <div>{{ item.start.substring(11) }}</div>
                       </template>
-                      <template v-slot:item.provider="{ item }">
-                        <div>{{ item.provider }}</div>
-                        <div>{{ item.baer }}</div>
+                      <template v-slot:item.provider_name="{ item }">
+                        <div>{{ item.provider_name }}</div>
+                        <div>
+                          {{ item.baer }}
+                          <small>{{ item.responsible_user_fio }}</small>
+                        </div>
                       </template>
                       <template v-slot:item.message="{ item }">
                         {{ item.message }}
@@ -1937,8 +1940,8 @@ export default {
         align: "center",
       },
       { text: "Сумма", value: "sum", align: "center", class: "w100" },
-      { text: "Поставщик", value: "provider_name", sortable: false },
-      // { text: "L/A", value: "cp", sortable: false },
+      { text: "Поставщик/Ответств", value: "provider_name", sortable: false },
+      // { text: "Ответств.", value: "responsible_user_fio", sortable: false },
       {
         text: "Коментарий",
         value: "message",
@@ -3846,16 +3849,15 @@ export default {
               provider_id,
               // user,
               user_name,
-
               message,
               group_id,
               load_key,
               sum,
               cp,
               baer,
-
               hm_json,
               geo,
+              responsible_user_fio,
             }) => ({
               id,
               start,
@@ -3865,16 +3867,15 @@ export default {
               provider_id,
               // user,
               user_name,
-
               message,
               group_id,
               load_key,
               sum,
               cp,
               baer,
-
               hm_json,
               geo,
+              responsible_user_fio,
             })
           );
           self.i_geos = _.uniq(

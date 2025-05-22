@@ -108,6 +108,7 @@ class ProvidersController extends Controller
 
     $data = $request->all();
     $data['related_users_id'] = json_encode($data['related_users_id']);
+    $data['responsible_user'] = json_encode($data['responsible_user']);
     $data['office_id'] = json_encode($data['office_id']);
 
     cache()->forget('provider' . $data['office_id']);

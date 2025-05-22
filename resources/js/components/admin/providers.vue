@@ -120,6 +120,26 @@
                       ></v-select>
                     </v-col>
                     <v-col cols="6">
+                      <v-autocomplete
+                        v-model="editedItem.responsible_user"
+                        multiple
+                        :items="users"
+                        item-text="name"
+                        item-value="id"
+                        label="Отвественные за импорт"
+                      >
+                        <template v-slot:selection="{ item, index }">
+                          <span v-if="index === 0">{{ item.name }} </span>
+                          <span
+                            v-if="index === 1"
+                            class="grey--text text-caption"
+                          >
+                            (+{{ editedItem.responsible_user.length - 1 }} )
+                          </span>
+                        </template></v-autocomplete
+                      >
+                    </v-col>
+                    <v-col cols="6">
                       <v-text-field
                         v-model="editedItem.tel"
                         label="ApiKey"
@@ -202,6 +222,7 @@ export default {
       user_id: 0,
       dup: 0,
       top: 0,
+      responsible_users: [],
     },
     defaultItem: {
       name: "",
@@ -212,6 +233,7 @@ export default {
       user_id: 0,
       dup: 0,
       top: 0,
+      responsible_users: [],
     },
     offices: [],
   }),
@@ -287,6 +309,8 @@ export default {
           self.providers = self.providers.map(function (p) {
             if (p.related_users_id.length > 0)
               p.related_users_id = JSON.parse(p.related_users_id);
+            if (p.responsible_user.length > 0)
+              p.responsible_user = JSON.parse(p.responsible_user);
             if (p.office_id.length > 0) p.office_id = JSON.parse(p.office_id);
             return p;
           });
@@ -310,6 +334,8 @@ export default {
       this.editedItem = Object.assign({}, item);
       if (!Array.isArray(item.related_users_id))
         this.editedItem.related_users_id = [];
+      if (!Array.isArray(item.responsible_user))
+        this.editedItem.responsible_user = [];
       if (!Array.isArray(item.office_id)) this.editedItem.office_id = [];
       this.dialog = true;
     },

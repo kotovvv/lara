@@ -392,6 +392,7 @@ class LidsController extends Controller
     $res = [];
     $res['date_start'] = date('Y-m-d H:i:s');
     $data = $request->all();
+
     $office_id = User::where('id', (int) $data['user_id'])->value('office_id');
     //Debugbar::info($data['data']);
     $load_mess = '';
