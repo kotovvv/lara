@@ -208,6 +208,20 @@
                 </v-col>
                 <v-col cols="1" v-if="tabimport == 0">
                   <v-autocomplete
+                    v-model="filter_crm"
+                    :items="crmUsersForFilter"
+                    item-text="fio"
+                    item-value="id"
+                    label="CRM"
+                    outlined
+                    rounded
+                    multiple
+                    clearable
+                  >
+                  </v-autocomplete>
+                </v-col>
+                <v-col cols="1" v-if="tabimport == 0">
+                  <v-autocomplete
                     v-model="filter_user"
                     :items="i_users"
                     item-text="user_name"
@@ -343,6 +357,7 @@
                             <th></th>
                             <th></th>
                             <th class="text-center"></th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -564,7 +579,11 @@
                         <div>{{ item.provider_name }}</div>
                         <div>
                           {{ item.baer }}
-                          <small>{{ item.responsible_user_fio }}</small>
+                        </div>
+                      </template>
+                      <template v-slot:item.responsible_user_fio="{ item }">
+                        <div>
+                          {{ item.responsible_user_fio }}
                         </div>
                       </template>
                       <template v-slot:item.message="{ item }">
@@ -1138,174 +1157,25 @@
             ></v-container
           >
           <v-col cols="12" id="info_prov">
-            {{ item.name }} {{ item.start }}
             <v-btn class="btn mx-1" @click="getHistory">История</v-btn>
-            <span v-if="item.name">Пользователи: </span>
+            <!-- <span v-if="item.name">Пользователи: </span>
             <span v-for="usr in holdLidsUsers" :key="usr[0]">
               {{ usr[0] }}.
-            </span>
+            </span> -->
           </v-col>
-          <v-col cols="12" v-if="lidsByOffice.length > 1">
-            <p style="font-size: 1.2rem; font-weight: bold">
-              Total: {{ leads.length }}
-            </p>
-          </v-col>
-          <v-col cols="12" v-for="office in lidsByOffice" :key="office.name">
-            <div class="d-flex align-center" v-if="office.lids.length">
-              <v-checkbox
-                style="font-size: 1.2rem; font-weight: bold"
-                v-model="redistributeOffice"
-                hide-details
-                :label="office.name + ' - Total ' + office.lids.length"
-                :value="office.name"
-              ></v-checkbox>
-              <v-btn icon class="mx-2" @click="toggleOfficeShow(office.id)">
-                <v-icon>
-                  {{
-                    showOffice.includes(office.id) ? "mdi-minus" : "mdi-plus"
-                  }}
-                </v-icon>
-              </v-btn>
+          <v-col
+            cols="12"
+            v-if="lidsByOffice.length > 1"
+            class="d-flex align-center"
+          >
+            <div style="max-width: 300px; width: 300px">
+              <b>{{ item.name }}</b>
+              <small>{{ item.start.substring(0, 10) }}</small>
+              <p style="font-size: 1.2rem; font-weight: bold">
+                Total: {{ leads.length }}
+              </p>
             </div>
-            <div
-              :id="'wrp_stat' + office.id"
-              class="wrp__statuses by_offices"
-              v-if="showOffice.includes(office.id)"
-            >
-              <template>
-                <div>
-                  <v-expansion-panels multiple>
-                    <v-expansion-panel
-                      v-for="group in office.groups"
-                      :key="group.id"
-                    >
-                      <v-expansion-panel-header>
-                        <b class="ml-4 mr-2">{{ group.name }} </b>
-                        <span class="wrp__statuses by_groups">
-                          <div
-                            v-for="status in group.statuses"
-                            :key="status.id"
-                            class="status_wrp"
-                          >
-                            <b
-                              :style="{
-                                background: status.color,
-                                outline: '1px solid ' + status.color,
-                              }"
-                              >{{ status.hm }}</b
-                            >
-                            <span>{{ status.name }}</span>
-                          </div>
-                        </span>
-                      </v-expansion-panel-header>
-                      <v-expansion-panel-content>
-                        <div
-                          v-for="user in group.users"
-                          :key="user.id"
-                          class="d-flex flex-wrap"
-                        >
-                          <span class="ml-8 mr-2">{{ user.name }} </span>
-                          <span>
-                            <div class="wrp__statuses by_users">
-                              <div
-                                v-for="status in user.statuses"
-                                :key="status.id"
-                                class="status_wrp"
-                              >
-                                <b
-                                  :style="{
-                                    background: status.color,
-                                    outline: '1px solid ' + status.color,
-                                  }"
-                                  >{{ status.hm }}</b
-                                >
-                                <span>{{ status.name }}</span>
-                              </div>
-                            </div></span
-                          >
-                        </div>
-                      </v-expansion-panel-content>
-                    </v-expansion-panel>
-                  </v-expansion-panels>
-                  <div v-if="office.usersNoGroup.length">
-                    <h4>Users not in group</h4>
-                    <v-expansion-panels multiple>
-                      <v-expansion-panel
-                        v-for="user in office.usersNoGroup"
-                        :key="user.id"
-                      >
-                        <v-expansion-panel-header>
-                          User: {{ user.name }}
-                        </v-expansion-panel-header>
-                        <v-expansion-panel-content>
-                          <div class="wrp__statuses by_users">
-                            <div
-                              v-for="status in user.statuses"
-                              :key="status.id"
-                              class="status_wrp"
-                            >
-                              <b
-                                :style="{
-                                  background: status.color,
-                                  outline: '1px solid ' + status.color,
-                                }"
-                                >{{ status.hm }}</b
-                              >
-                              <span>{{ status.name }}</span>
-                            </div>
-                          </div>
-                        </v-expansion-panel-content>
-                      </v-expansion-panel>
-                    </v-expansion-panels>
-                  </div>
-                </div>
-              </template>
-            </div>
-            <v-col cols="12" v-if="office.statuses">
-              <div id="wrp_stat" class="wrp__statuses">
-                <!-- <div
-
-                v-for="u in usersStatuses"
-                :key="u.user_id"
-              >
-                {{ u.user }} -->
-                <template v-for="i in office.statuses">
-                  <div
-                    class="status_wrp"
-                    :class="{
-                      active:
-                        filterOfficeTabl.includes(office.name) &&
-                        filterStatusTabl.includes(i.id),
-                    }"
-                    :key="i.id"
-                    @click="filterOfficeStatus(office.name, i.id)"
-                  >
-                    <b
-                      :style="{
-                        background: i.color,
-                        outline: '1px solid' + i.color,
-                      }"
-                      >{{ i.hm }}</b
-                    >
-                    <span>{{ i.name }}</span>
-                    <v-btn
-                      v-if="
-                        filterOfficeTabl.includes(office.name) &&
-                        filterStatusTabl.includes(i.id)
-                      "
-                      icon
-                      x-small
-                    >
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </div>
-                </template>
-                <!-- </div> -->
-              </div>
-            </v-col>
-          </v-col>
-          <v-col cols="12" v-if="Statuses">
-            <div id="wrp_stat" class="wrp__statuses">
+            <div id="wrp_stat" class="wrp__statuses" v-if="Statuses">
               <template v-for="i in Statuses">
                 <div
                   class="status_wrp"
@@ -1339,6 +1209,253 @@
               </template>
             </div>
           </v-col>
+          <template v-for="office in lidsByOffice">
+            <v-col cols="12" v-if="office.lids.length" :key="office.name">
+              <div class="d-flex align-center blk_office">
+                <v-checkbox
+                  style="
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                    max-width: 250px;
+                    width: 250px;
+                  "
+                  v-model="redistributeOffice"
+                  hide-details
+                  :label="
+                    office.name +
+                    ' - Total ' +
+                    office.lids.length +
+                    ' ' +
+                    ((100 * office.lids.length) / leads.length).toFixed(0) +
+                    '%'
+                  "
+                  :value="office.name"
+                ></v-checkbox>
+                <v-btn icon class="mx-2" @click="toggleOfficeShow(office.id)">
+                  <v-icon>
+                    {{
+                      showOffice.includes(office.id) ? "mdi-minus" : "mdi-plus"
+                    }}
+                  </v-icon>
+                </v-btn>
+                <span class="wrp__statuses">
+                  <template v-for="i in office.statuses">
+                    <div
+                      class="status_wrp"
+                      :class="{
+                        active:
+                          filterOfficeTabl.includes(office.name) &&
+                          filterStatusTabl.includes(i.id),
+                      }"
+                      :key="i.id"
+                      @click="filterOfficeStatus(office.name, i.id)"
+                    >
+                      <b
+                        :style="{
+                          background: i.color,
+                          outline: '1px solid' + i.color,
+                        }"
+                        >{{ i.hm }}</b
+                      >
+                      <span>{{ i.name }}</span>
+                      <v-btn
+                        v-if="
+                          filterOfficeTabl.includes(office.name) &&
+                          filterStatusTabl.includes(i.id)
+                        "
+                        icon
+                        x-small
+                      >
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
+                    </div>
+                  </template>
+                  <!-- </div> -->
+                </span>
+              </div>
+              <div
+                :id="'wrp_stat' + office.id"
+                class="wrp__statuses by_offices"
+                v-if="showOffice.includes(office.id)"
+              >
+                <template>
+                  <div>
+                    <v-expansion-panels multiple>
+                      <v-expansion-panel
+                        v-for="group in office.groups"
+                        :key="group.id"
+                      >
+                        <v-expansion-panel-header>
+                          <span
+                            class="ml-4 mr-2"
+                            style="
+                              font-size: 1.2rem;
+                              max-width: 250px;
+                              width: 250px;
+                              overflow: hidden;
+                              text-overflow: ellipsis;
+                            "
+                            >{{ group.name }} -
+                            <b
+                              >{{
+                                office.lids.filter(
+                                  (g) => g.group_id == group.id
+                                ).length
+                              }}
+                              ({{
+                                (
+                                  (office.lids.filter(
+                                    (g) => g.group_id == group.id
+                                  ).length *
+                                    100) /
+                                  office.lids.length
+                                ).toFixed(0) + "%"
+                              }})</b
+                            >
+                          </span>
+                          <span class="wrp__statuses by_groups">
+                            <div
+                              v-for="status in group.statuses"
+                              :key="status.id"
+                              class="status_wrp"
+                              :class="{
+                                active:
+                                  filterOfficeTabl.includes(office.name) &&
+                                  filterStatusTabl.includes(status.id),
+                              }"
+                              @click="
+                                filterOfficeStatus(office.name, status.id)
+                              "
+                            >
+                              <b
+                                :style="{
+                                  background: status.color,
+                                  outline: '1px solid ' + status.color,
+                                }"
+                                >{{ status.hm }}</b
+                              >
+                              <span>{{ status.name }}</span>
+                              <v-btn
+                                v-if="
+                                  filterOfficeTabl.includes(office.name) &&
+                                  filterStatusTabl.includes(status.id)
+                                "
+                                icon
+                                x-small
+                              >
+                                <v-icon>mdi-close</v-icon>
+                              </v-btn>
+                            </div>
+                          </span>
+                        </v-expansion-panel-header>
+                        <v-expansion-panel-content>
+                          <div
+                            v-for="user in group.users"
+                            :key="user.id"
+                            class="d-flex flex-wrap"
+                          >
+                            <span
+                              class="ml-8 mr-2"
+                              style="
+                                display: inline-block;
+                                max-width: 235px;
+                                width: 235px;
+                              "
+                              >{{ user.name }} -
+                              <b
+                                >{{
+                                  office.lids.filter(
+                                    (u) => u.user_id == user.id
+                                  ).length
+                                }}
+                                ({{
+                                  (
+                                    (office.lids.filter(
+                                      (u) => u.user_id == user.id
+                                    ).length *
+                                      100) /
+                                    office.lids.length
+                                  ).toFixed(0) + "%"
+                                }})</b
+                              >
+                            </span>
+                            <span>
+                              <div class="wrp__statuses by_users">
+                                <div
+                                  v-for="status in user.statuses"
+                                  :key="status.id"
+                                  class="status_wrp"
+                                  :class="{
+                                    active:
+                                      filterOfficeTabl.includes(office.name) &&
+                                      filterStatusTabl.includes(status.id),
+                                  }"
+                                  @click="
+                                    filterOfficeStatus(office.name, status.id)
+                                  "
+                                >
+                                  <b
+                                    :style="{
+                                      background: status.color,
+                                      outline: '1px solid ' + status.color,
+                                    }"
+                                    >{{ status.hm }}</b
+                                  >
+                                  <span>{{ status.name }}</span>
+                                  <v-btn
+                                    v-if="
+                                      filterOfficeTabl.includes(office.name) &&
+                                      filterStatusTabl.includes(status.id)
+                                    "
+                                    icon
+                                    x-small
+                                  >
+                                    <v-icon>mdi-close</v-icon>
+                                  </v-btn>
+                                </div>
+                              </div></span
+                            >
+                          </div>
+                        </v-expansion-panel-content>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                    <div v-if="office.usersNoGroup.length">
+                      <h4>Users not in group</h4>
+                      <v-expansion-panels multiple>
+                        <v-expansion-panel
+                          v-for="user in office.usersNoGroup"
+                          :key="user.id"
+                        >
+                          <v-expansion-panel-header>
+                            User: {{ user.name }}
+                          </v-expansion-panel-header>
+                          <v-expansion-panel-content>
+                            <div class="wrp__statuses by_users">
+                              <div
+                                v-for="status in user.statuses"
+                                :key="status.id"
+                                class="status_wrp"
+                              >
+                                <b
+                                  :style="{
+                                    background: status.color,
+                                    outline: '1px solid ' + status.color,
+                                  }"
+                                  >{{ status.hm }}</b
+                                >
+                                <span>{{ status.name }}</span>
+                              </div>
+                            </div>
+                          </v-expansion-panel-content>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </v-col>
+          </template>
+
           <v-col cols="12" v-if="historyStatus.length">
             <p>Переназначенные</p>
             <div id="wrp_stat" class="wrp__statuses">
@@ -1940,8 +2057,8 @@ export default {
         align: "center",
       },
       { text: "Сумма", value: "sum", align: "center", class: "w100" },
-      { text: "Поставщик/Ответств", value: "provider_name", sortable: false },
-      // { text: "Ответств.", value: "responsible_user_fio", sortable: false },
+      { text: "Поставщик", value: "provider_name", sortable: false },
+      { text: "crm", value: "responsible_user_fio", sortable: false },
       {
         text: "Коментарий",
         value: "message",
@@ -2020,6 +2137,12 @@ export default {
         value: "provider",
         width: "100px",
         cellClass: "fz17",
+      },
+      {
+        text: "crm",
+        value: "responsible_user_fio",
+        width: "100px",
+        align: "center",
       },
       { text: "L|A", value: "", width: "100px", align: "center" },
       { text: "Sum", value: "sum", width: "100px", align: "center" },
@@ -2423,7 +2546,7 @@ export default {
     drawer: false,
     history: [],
     historyStatus: [],
-    holdLidsUsers: [],
+    //holdLidsUsers: [],
     baers: [],
     lidsByOffice: [],
     offices: [],
@@ -2451,6 +2574,7 @@ export default {
     },
     filter_user: [],
     i_users: [],
+    filter_crm: [],
     unmaskedRowId: null,
     clearLog: false,
     showOffice: [],
@@ -2478,6 +2602,27 @@ export default {
     this.getUsers();
   },
   computed: {
+    crmUsersForFilter() {
+      // Собираем все id из responsible_user по всем imports
+      const allIds = _.uniq(
+        this.imports
+          .flatMap((i) => {
+            try {
+              return JSON.parse(i.responsible_user || "[]");
+            } catch {
+              return [];
+            }
+          })
+          .filter(Boolean)
+      );
+      // Находим пользователей по id из массива users
+      return this.users
+        .filter((u) => allIds.includes(u.id))
+        .map((u) => ({
+          id: u.id,
+          fio: u.fio || u.name,
+        }));
+    },
     filteredLeads() {
       const ls = this.leads.filter((i) => {
         return (
@@ -2499,6 +2644,17 @@ export default {
     },
     filter_imports() {
       const ls = this.imports.filter((i) => {
+        if (this.filter_crm.length > 0) {
+          let crmArr = [];
+          try {
+            crmArr = JSON.parse(i.responsible_user || "[]");
+          } catch {
+            crmArr = [];
+          }
+          // Проверяем, есть ли пересечение
+          const hasUser = this.filter_crm.some((uid) => crmArr.includes(uid));
+          if (!hasUser) return false;
+        }
         return (
           (this.filter_import_provider.length == 0 ||
             this.filter_import_provider.includes(i.provider_id)) &&
@@ -2777,33 +2933,48 @@ export default {
       });
     },
     filterOfficeStatus(office, status) {
+      // Если клик по общему статусу (office == 0)
       if (office == 0) {
-        if (this.filterOfficeTabl.length > 0) {
-          this.filterStatusTabl = [];
-          this.filterOfficeTabl = [];
+        // Добавляем/убираем статус из общего фильтра
+        if (this.filterStatusTabl.includes(status)) {
+          this.filterStatusTabl = this.filterStatusTabl.filter(
+            (s) => s !== status
+          );
+        } else {
+          this.filterStatusTabl.push(status);
         }
-      } else {
-        if (this.filterOfficeTabl.length == 0) {
-          this.filterStatusTabl = [];
-          this.filterOfficeTabl = [];
-        }
-        if (!this.filterOfficeTabl.includes(office)) {
-          this.filterStatusTabl = [];
-          this.filterOfficeTabl = [];
-          this.filterOfficeTabl.push(office);
-        }
+        return;
       }
+
+      // Для офисов: мультивыбор
+      // Если офис не выбран — добавляем
+      if (!this.filterOfficeTabl.includes(office)) {
+        this.filterOfficeTabl.push(office);
+      }
+
+      // Для статусов: мультивыбор
       if (this.filterStatusTabl.includes(status)) {
-        this.filterStatusTabl = this.filterStatusTabl.filter((s) => {
-          return s != status;
-        });
+        this.filterStatusTabl = this.filterStatusTabl.filter(
+          (s) => s !== status
+        );
       } else {
         this.filterStatusTabl.push(status);
       }
-      if (this.filterStatusTabl.length == 0) {
-        this.filterOfficeTabl = [];
+
+      // Если после удаления статусов не осталось ни одного статуса — очищаем офис
+      // (только если ни один статус не выбран для этого офиса)
+      const officeStatuses =
+        this.lidsByOffice
+          .find((o) => o.name === office)
+          ?.statuses.map((s) => s.id) || [];
+      const hasStatusForOffice = officeStatuses.some((sid) =>
+        this.filterStatusTabl.includes(sid)
+      );
+      if (!hasStatusForOffice) {
+        this.filterOfficeTabl = this.filterOfficeTabl.filter(
+          (o) => o !== office
+        );
       }
-      console.log(office, status);
     },
     filter: function (evt) {
       evt = evt ? evt : window.event;
@@ -3398,7 +3569,7 @@ export default {
         self.statuses,
         self.getStatusesHelper
       );
-      self.holdLidsUsers = Object.entries(_.groupBy(self.leads, "user"));
+      //self.holdLidsUsers = Object.entries(_.groupBy(self.leads, "user"));
       stord = Object.entries(_.groupBy(stord, "status"));
       stord.map(function (i) {
         //i[0]//name
@@ -3858,6 +4029,7 @@ export default {
               hm_json,
               geo,
               responsible_user_fio,
+              responsible_user,
             }) => ({
               id,
               start,
@@ -3876,6 +4048,7 @@ export default {
               hm_json,
               geo,
               responsible_user_fio,
+              responsible_user,
             })
           );
           self.i_geos = _.uniq(
@@ -3935,7 +4108,7 @@ export default {
             }
             return acc;
           }, []);
-
+          self.crm_users;
           // if (self.$attrs.user.group_id > 0) {
           //   self.imports = self.imports.filter((i) => {
           //     return (
@@ -4420,5 +4593,16 @@ main
 }
 .by_offices .v-expansion-panel::before {
   box-shadow: none;
+}
+.blk_office .v-label {
+  margin-bottom: 0;
+}
+.blk_office
+  .v-input.v-input--hide-details.theme--light.v-input--selection-controls.v-input--checkbox {
+  margin-top: 0;
+}
+.wrp__statuses.by_groups {
+  font-size: 1.2rem;
+  line-height: 1.5;
 }
 </style>
