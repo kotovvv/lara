@@ -1125,7 +1125,7 @@
             v-if="lidsByOffice.length > 1"
             class="d-flex align-center"
           >
-            <div style="max-width: 300px; width: 300px">
+            <div style="max-width: 400px; width: 400px">
               <b>{{ item.name }}</b>
               <!-- <small>{{ item.start.substring(0, 10) }}</small> -->
               <p style="font-size: 1.2rem; font-weight: bold">
@@ -1181,8 +1181,8 @@
                   style="
                     font-size: 1.2rem;
                     font-weight: bold;
-                    max-width: 250px;
-                    width: 250px;
+                    max-width: 350px;
+                    width: 350px;
                   "
                   v-model="redistributeOffice"
                   hide-details
@@ -1255,8 +1255,8 @@
                             class="ml-4 mr-2"
                             style="
                               font-size: 1.2rem;
-                              max-width: 250px;
-                              width: 250px;
+                              max-width: 350px;
+                              width: 350px;
                               overflow: hidden;
                               text-overflow: ellipsis;
                             "
@@ -1323,8 +1323,8 @@
                               class="ml-8 mr-2"
                               style="
                                 display: inline-block;
-                                max-width: 235px;
-                                width: 235px;
+                                max-width: 335px;
+                                width: 335px;
                               "
                               >{{ user.name }} -
                               <b
@@ -2023,7 +2023,12 @@ export default {
       },
       { text: "Сумма", value: "sum", align: "center", class: "w100" },
       { text: "Поставщик", value: "provider_name", sortable: false },
-      { text: "crm", value: "responsible_user_fio", sortable: false },
+      {
+        text: "crm",
+        value: "responsible_user_fio",
+        sortable: false,
+        width: "175px",
+      },
       {
         text: "Коментарий",
         value: "message",
