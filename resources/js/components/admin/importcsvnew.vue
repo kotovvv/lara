@@ -1136,7 +1136,7 @@
                   @click="clearFilterStatusOffice"
                   alt="очистить фильтр"
                 >
-                  <v-icon>mdi-refresh</v-icon>
+                  <v-icon>mdi-close</v-icon>
                 </v-btn>
               </p>
             </div>
