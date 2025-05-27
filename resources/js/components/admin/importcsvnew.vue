@@ -114,7 +114,7 @@
           <v-row>
             <v-col cols="12">
               <v-row class="align-center pt-10">
-                <v-col cols="1">
+                <v-col cols="1" class="d-flex justify-center">
                   <v-menu
                     v-model="dateFrom"
                     :close-on-content-click="false"
@@ -141,8 +141,7 @@
                       "
                     ></v-date-picker>
                   </v-menu>
-                </v-col>
-                <v-col cols="1">
+
                   <v-menu
                     v-model="dateTo"
                     :close-on-content-click="false"
@@ -828,14 +827,14 @@
                       <template v-slot:expanded-item="{ item }">
                         <td :colspan="providerHeaders.length + 1">
                           <v-data-table
-                            :headers="dateHeaders"
-                            :items="item.dates"
+                            :headers="geoHeaders"
+                            :items="item.geo"
                             item-value="id"
-                            id="dateTable"
+                            id="geoTable"
                             show-expand
                             single-expand
                             :expanded.sync="expandedate"
-                            @click:row="toggleExpandDate"
+                            @click:row="toggleExpandGeo"
                             hide-default-header
                             hide-default-footer
                             class="common-table date-table"
@@ -845,120 +844,62 @@
                             <template v-slot:item.hmnew="{ item }">
                               {{ item.hmnew }}
                               <small>
-                                {{
-                                  ((item.hmnew * 100) / item.hm).toFixed(2)
-                                }}%</small
-                              >
+                                {{ ((item.hmnew * 100) / item.hm).toFixed(2) }}%
+                              </small>
                             </template>
-                            <template v-slot:item.hmrenew="{ item }">
-                              {{ item.hmrenew }}
-                              <small>
-                                {{
-                                  ((item.hmrenew * 100) / item.hm).toFixed(2)
-                                }}%</small
-                              >
-                            </template>
-                            <template v-slot:item.hmcb="{ item }">
-                              {{ item.hmcb }}
-                              <small>
-                                {{
-                                  ((item.hmcb * 100) / item.hm).toFixed(2)
-                                }}%</small
-                              >
-                            </template>
-                            <template v-slot:item.hmdp="{ item }">
-                              {{ item.hmdp }}
-                              <small>
-                                {{
-                                  ((item.hmdp * 100) / item.hm).toFixed(2)
-                                }}%</small
-                              >
-                            </template>
-                            <template v-slot:item.hmpnd="{ item }">
-                              {{ item.hmpnd }}
-                              <small>
-                                {{
-                                  ((item.hmpnd * 100) / item.hm).toFixed(2)
-                                }}%</small
-                              >
-                            </template>
-                            <template v-slot:item.hmpot="{ item }">
-                              {{ item.hmpot }}
-                              <small>
-                                {{
-                                  ((item.hmpot * 100) / item.hm).toFixed(2)
-                                }}%</small
-                              >
-                            </template>
-                            <template v-slot:item.hmnoans="{ item }">
-                              {{ item.hmnoans }}
-                              <small>
-                                {{
-                                  ((item.hmnoans * 100) / item.hm).toFixed(2)
-                                }}%</small
-                              >
-                            </template>
-                            <template v-slot:item.hmnointerest="{ item }">
-                              {{ item.hmnointerest }}
-                              <small>
-                                {{
-                                  ((item.hmnointerest * 100) / item.hm).toFixed(
-                                    2
-                                  )
-                                }}%</small
-                              >
-                            </template>
-
-                            <template v-slot:expanded-item="{ item: dateItem }">
-                              <td :colspan="providerHeaders.length + 1">
+                            <template v-slot:expanded-item="{ item: geoItem }">
+                              <td :colspan="geoHeaders.length + 1">
                                 <v-data-table
-                                  :headers="geoHeaders"
-                                  :items="dateItem.geo"
+                                  :headers="dateHeaders"
+                                  :items="geoItem.dates"
                                   item-value="id"
                                   item-key="id"
-                                  id="geoTable"
+                                  id="dateTable"
                                   hide-default-header
                                   hide-default-footer
                                   class="common-table"
                                   disable-pagination
                                   :items-per-page="-1"
                                   :item-class="getRowClass"
+                                  @click:row="clickrow"
                                 >
-                                  <template v-slot:item="{ item: geoItem }">
+                                  <template v-slot:item="{ item: datesGeo }">
                                     <tr
                                       :class="{
-                                        'selected-row': selectedRow === geoItem,
+                                        'selected-row':
+                                          selectedRow === datesGeo,
                                       }"
                                     >
                                       <td>
                                         <v-checkbox
-                                          :input-value="isSelected(geoItem)"
-                                          @change="clickGeo(geoItem)"
+                                          :input-value="isSelected(datesGeo)"
+                                          @change="clickGeo(datesGeo)"
                                         ></v-checkbox>
                                       </td>
                                       <td
                                         class="text-start common-column pointer pl-8"
                                         width="100px"
-                                        @click="clickrow(geoItem)"
+                                        @click="clickrow(datesGeo)"
                                       >
-                                        {{ geoItem.geo }}
+                                        {{ datesGeo.date }}
+                                      </td>
+                                      <td width="100px"></td>
+                                      <td
+                                        class="text-center common-column pointer"
+                                        width="100px"
+                                        @click="clickrow(datesGeo)"
+                                      >
+                                        {{ datesGeo.cp }}
                                       </td>
                                       <td
                                         class="text-center common-column pointer"
                                         width="100px"
-                                        @click="clickrow(geoItem)"
                                       >
-                                        {{ geoItem.cp }}
-                                      </td>
-                                      <td
-                                        class="text-center common-column pointer"
-                                        width="100px"
-                                      >
-                                        {{ geoItem.sum
+                                        {{ datesGeo.sum
                                         }}<v-icon
                                           small
                                           style="position: absolute"
-                                          @click.stop="editItem(geoItem)"
+                                          @click.stop="editItem(datesGeo)"
                                         >
                                           mdi-pencil
                                         </v-icon>
@@ -966,24 +907,24 @@
                                       <td
                                         class="text-center common-column pointer"
                                         width="100px"
-                                        @click="clickrow(geoItem)"
+                                        @click="clickrow(datesGeo)"
                                       >
-                                        {{ geoItem.hm }}
+                                        {{ datesGeo.hm }}
                                       </td>
                                       <td
                                         class="text-center common-column new pointer"
                                         width="100px"
                                         @click="
                                           changeFilterStatusClick(8);
-                                          clickrow(geoItem);
+                                          clickrow(datesGeo);
                                         "
                                       >
-                                        {{ geoItem.hmnew }}
+                                        {{ datesGeo.hmnew }}
                                         <small>
                                           {{
                                             (
-                                              (geoItem.hmnew * 100) /
-                                              geoItem.hm
+                                              (datesGeo.hmnew * 100) /
+                                              datesGeo.hm
                                             ).toFixed(2)
                                           }}%</small
                                         >
@@ -993,15 +934,15 @@
                                         width="100px"
                                         @click="
                                           changeFilterStatusClick(33);
-                                          clickrow(geoItem);
+                                          clickrow(datesGeo);
                                         "
                                       >
-                                        {{ geoItem.hmrenew }}
+                                        {{ datesGeo.hmrenew }}
                                         <small>
                                           {{
                                             (
-                                              (geoItem.hmrenew * 100) /
-                                              geoItem.hm
+                                              (datesGeo.hmrenew * 100) /
+                                              datesGeo.hm
                                             ).toFixed(2)
                                           }}%</small
                                         >
@@ -1011,15 +952,15 @@
                                         width="100px"
                                         @click="
                                           changeFilterStatusClick(9);
-                                          clickrow(geoItem);
+                                          clickrow(datesGeo);
                                         "
                                       >
-                                        {{ geoItem.hmcb }}
+                                        {{ datesGeo.hmcb }}
                                         <small>
                                           {{
                                             (
-                                              (geoItem.hmcb * 100) /
-                                              geoItem.hm
+                                              (datesGeo.hmcb * 100) /
+                                              datesGeo.hm
                                             ).toFixed(2)
                                           }}%</small
                                         >
@@ -1029,15 +970,15 @@
                                         width="100px"
                                         @click="
                                           changeFilterStatusClick(10);
-                                          clickrow(geoItem);
+                                          clickrow(datesGeo);
                                         "
                                       >
-                                        {{ geoItem.hmdp }}
+                                        {{ datesGeo.hmdp }}
                                         <small>
                                           {{
                                             (
-                                              (geoItem.hmdp * 100) /
-                                              geoItem.hm
+                                              (datesGeo.hmdp * 100) /
+                                              datesGeo.hm
                                             ).toFixed(2)
                                           }}%</small
                                         >
@@ -1047,15 +988,15 @@
                                         width="100px"
                                         @click="
                                           changeFilterStatusClick(20);
-                                          clickrow(geoItem);
+                                          clickrow(datesGeo);
                                         "
                                       >
-                                        {{ geoItem.hmpnd }}
+                                        {{ datesGeo.hmpnd }}
                                         <small>
                                           {{
                                             (
-                                              (geoItem.hmpnd * 100) /
-                                              geoItem.hm
+                                              (datesGeo.hmpnd * 100) /
+                                              datesGeo.hm
                                             ).toFixed(2)
                                           }}%</small
                                         >
@@ -1065,15 +1006,15 @@
                                         width="100px"
                                         @click="
                                           changeFilterStatusClick(32);
-                                          clickrow(geoItem);
+                                          clickrow(datesGeo);
                                         "
                                       >
-                                        {{ geoItem.hmpot }}
+                                        {{ datesGeo.hmpot }}
                                         <small>
                                           {{
                                             (
-                                              (geoItem.hmpot * 100) /
-                                              geoItem.hm
+                                              (datesGeo.hmpot * 100) /
+                                              datesGeo.hm
                                             ).toFixed(2)
                                           }}%</small
                                         >
@@ -1083,15 +1024,15 @@
                                         width="100px"
                                         @click="
                                           changeFilterStatusClick(7);
-                                          clickrow(geoItem);
+                                          clickrow(datesGeo);
                                         "
                                       >
-                                        {{ geoItem.hmnoans }}
+                                        {{ datesGeo.hmnoans }}
                                         <small>
                                           {{
                                             (
-                                              (geoItem.hmnoans * 100) /
-                                              geoItem.hm
+                                              (datesGeo.hmnoans * 100) /
+                                              datesGeo.hm
                                             ).toFixed(2)
                                           }}%</small
                                         >
@@ -1101,21 +1042,22 @@
                                         width="100px"
                                         @click="
                                           changeFilterStatusClick(12);
-                                          clickrow(geoItem);
+                                          clickrow(datesGeo);
                                         "
                                       >
-                                        {{ geoItem.hmnointerest }}
+                                        {{ datesGeo.hmnointerest }}
                                         <small>
                                           {{
                                             (
-                                              (geoItem.hmnointerest * 100) /
-                                              geoItem.hm
+                                              (datesGeo.hmnointerest * 100) /
+                                              datesGeo.hm
                                             ).toFixed(2)
                                           }}%</small
                                         >
                                       </td>
                                     </tr>
                                   </template>
+                                  <!-- ...повторить для остальных колонок дат... -->
                                 </v-data-table>
                               </td>
                             </template>
@@ -1185,7 +1127,7 @@
           >
             <div style="max-width: 300px; width: 300px">
               <b>{{ item.name }}</b>
-              <small>{{ item.start.substring(0, 10) }}</small>
+              <!-- <small>{{ item.start.substring(0, 10) }}</small> -->
               <p style="font-size: 1.2rem; font-weight: bold">
                 Total: {{ leads.length }}
               </p>
@@ -2234,11 +2176,18 @@ export default {
       },
     ],
     dateHeaders: [
+      { text: "", value: "", width: "1px" },
       {
         text: "Date",
         value: "date",
         width: "100px",
         cellClass: "pl-5",
+      },
+      {
+        text: "crm",
+        value: "",
+        width: "100px",
+        align: "center",
       },
       { text: "L|A", value: "", width: "100px", align: "center" },
       {
@@ -2320,10 +2269,17 @@ export default {
       },
     ],
     geoHeaders: [
-      { text: "", value: "", width: "1px" },
       { text: "GEO", value: "geo", width: "100px" },
-      { text: "Sum", value: "sum", width: "100px", align: "center" },
+      { text: "crm", value: "", width: "100px" },
       { text: "L|A", value: "cp", width: "100px", align: "center" },
+      { text: "Sum", value: "sum", width: "100px", align: "center" },
+      {
+        text: "Total",
+        value: "hm",
+        width: "100px",
+        cellClass: "fz17",
+        align: "center",
+      },
       {
         text: "NEW",
         value: "hmnew",
@@ -2388,13 +2344,13 @@ export default {
         cellClass: "nointerest",
         align: "center",
       },
-      {
-        text: "HM",
-        value: "hm",
-        width: "100px",
+      // {
+      //   text: "HM",
+      //   value: "hm",
+      //   width: "100px",
 
-        align: "center",
-      },
+      //   align: "center",
+      // },
     ],
     providerSummaries: [],
     // need del
@@ -2888,7 +2844,7 @@ export default {
       const providers = {};
       const office_id = this.$attrs.user.office_id;
 
-      prov.map((row) => {
+      prov.forEach((row) => {
         if (!row.hm_json) return;
         const hmData = JSON.parse(row.hm_json).find(
           (hm) => hm.office_id === office_id
@@ -2897,7 +2853,7 @@ export default {
 
         if (!providers[row.provider]) {
           providers[row.provider] = {
-            id: row.provider_id, // Add a unique identifier
+            id: row.provider_id,
             provider: row.provider,
             hmnew: 0,
             hmrenew: 0,
@@ -2909,7 +2865,7 @@ export default {
             hmnointerest: 0,
             hm: 0,
             sum: 0,
-            dates: {},
+            geo: {},
             responsible_user_fio: row.responsible_user_fio || "",
           };
         }
@@ -2925,10 +2881,11 @@ export default {
         providers[row.provider].hm += parseInt(hmData.hm);
         providers[row.provider].sum += parseInt(row.sum);
 
-        if (!providers[row.provider].dates[row.date]) {
-          providers[row.provider].dates[row.date] = {
-            date: row.date,
-            id: row.provider_id + row.date,
+        // --- Группировка по geo ---
+        if (!providers[row.provider].geo[row.geo]) {
+          providers[row.provider].geo[row.geo] = {
+            geo: row.geo,
+            id: row.provider_id + "_" + row.geo,
             hmnew: 0,
             hmrenew: 0,
             hmcb: 0,
@@ -2939,49 +2896,64 @@ export default {
             hmnointerest: 0,
             hm: 0,
             sum: 0,
+            dates: {},
+            cp: row.cp,
             provider_id: row.provider_id,
-            geo: [],
           };
         }
 
-        providers[row.provider].dates[row.date].hmnew += parseInt(hmData.hmnew);
-        providers[row.provider].dates[row.date].hmrenew += parseInt(
-          hmData.hmrenew
-        );
-        providers[row.provider].dates[row.date].hmcb += parseInt(hmData.hmcb);
-        providers[row.provider].dates[row.date].hmdp += parseInt(hmData.hmdp);
-        providers[row.provider].dates[row.date].hmpnd += parseInt(hmData.hmpnd);
-        providers[row.provider].dates[row.date].hmpot += parseInt(hmData.hmpot);
-        providers[row.provider].dates[row.date].hmnoans += parseInt(
-          hmData.hmnoans
-        );
-        providers[row.provider].dates[row.date].hmnointerest += parseInt(
-          hmData.hmnointerest
-        );
-        providers[row.provider].dates[row.date].hm += parseInt(hmData.hm);
-        providers[row.provider].dates[row.date].sum += parseInt(row.sum);
+        let geoObj = providers[row.provider].geo[row.geo];
+        geoObj.hmnew += parseInt(hmData.hmnew);
+        geoObj.hmrenew += parseInt(hmData.hmrenew);
+        geoObj.hmcb += parseInt(hmData.hmcb);
+        geoObj.hmdp += parseInt(hmData.hmdp);
+        geoObj.hmpnd += parseInt(hmData.hmpnd);
+        geoObj.hmpot += parseInt(hmData.hmpot);
+        geoObj.hmnoans += parseInt(hmData.hmnoans);
+        geoObj.hmnointerest += parseInt(hmData.hmnointerest);
+        geoObj.hm += parseInt(hmData.hm);
+        geoObj.sum += parseInt(row.sum);
 
-        providers[row.provider].dates[row.date].geo.push({
-          geo: row.geo,
-          cp: row.cp,
-          start: row.date,
-          provider_id: row.provider_id,
-          hmnew: parseInt(hmData.hmnew),
-          hmrenew: parseInt(hmData.hmrenew),
-          hmcb: parseInt(hmData.hmcb),
-          hmdp: parseInt(hmData.hmdp),
-          hmpnd: parseInt(hmData.hmpnd),
-          hmpot: parseInt(hmData.hmpot),
-          hmnoans: parseInt(hmData.hmnoans),
-          hmnointerest: parseInt(hmData.hmnointerest),
-          hm: parseInt(hmData.hm),
-          sum: parseInt(row.sum),
-          id: row.id,
-        });
+        // --- Внутри geo — даты ---
+        if (!geoObj.dates[row.date]) {
+          geoObj.dates[row.date] = {
+            start: row.date,
+            date: row.date,
+            geo: row.geo,
+            id: row.provider_id + "_" + row.geo + "_" + row.date,
+            hmnew: 0,
+            hmrenew: 0,
+            hmcb: 0,
+            hmdp: 0,
+            hmpnd: 0,
+            hmpot: 0,
+            hmnoans: 0,
+            hmnointerest: 0,
+            hm: 0,
+            sum: 0,
+            cp: row.cp,
+            provider_id: row.provider_id,
+          };
+        }
+        let dateObj = geoObj.dates[row.date];
+        dateObj.hmnew += parseInt(hmData.hmnew);
+        dateObj.hmrenew += parseInt(hmData.hmrenew);
+        dateObj.hmcb += parseInt(hmData.hmcb);
+        dateObj.hmdp += parseInt(hmData.hmdp);
+        dateObj.hmpnd += parseInt(hmData.hmpnd);
+        dateObj.hmpot += parseInt(hmData.hmpot);
+        dateObj.hmnoans += parseInt(hmData.hmnoans);
+        dateObj.hmnointerest += parseInt(hmData.hmnointerest);
+        dateObj.hm += parseInt(hmData.hm);
+        dateObj.sum += parseInt(row.sum);
       });
 
+      // Преобразуем geo и dates в массивы
       return Object.values(providers).map((provider) => {
-        provider.dates = Object.values(provider.dates);
+        provider.geo = Object.values(provider.geo).map((geo) => {
+          geo.dates = Object.values(geo.dates);
+          return geo;
+        });
         return provider;
       });
     },
@@ -3892,6 +3864,20 @@ export default {
         this.expandedate = [item];
       }
     },
+    toggleExpandGeo(item) {
+      this.clickrow(item);
+      const itemId = item.id;
+      const expandedItem = this.expandedate.find(
+        (expandedItem) => expandedItem.id === itemId
+      );
+      if (expandedItem) {
+        this.expandedate = this.expandedate.filter(
+          (expandedItem) => expandedItem.id !== itemId
+        );
+      } else {
+        this.expandedate = [item];
+      }
+    },
     toggleExpand(item) {
       const itemId = item.id; // Use the unique identifier
       const expandedItem = this.expanded.find(
@@ -3938,18 +3924,28 @@ export default {
       self.activeRequests++;
       self.loading = true;
       self.item = item;
+
       if (item.dates) {
-        self.item.name = item.provider;
-        data.provider_id = item.id;
-        data.dates = data.dates = item.dates.map((el) => {
+        self.item.name = self.providers.find(
+          (s) => s.id == item.provider_id
+        ).name;
+        data.provider_id = item.provider_id;
+        data.dates = item.dates.map((el) => {
           return el.date;
         });
+        data.geo = item.geo;
       } else if (item.date) {
         self.item.name = self.providers.find(
           (s) => s.id == item.provider_id
         ).name;
         data.provider_id = item.provider_id;
         data.date = item.date;
+        data.geo = item.geo;
+      } else if (item.provider) {
+        self.item.name = item.provider;
+        data.provider_id = item.id;
+        data.fromto = [self.datetimeFrom, self.datetimeTo];
+        data.provider = item.provider;
       } else {
         self.item.name = self.providers.find(
           (s) => s.id == item.provider_id
@@ -3957,10 +3953,9 @@ export default {
         data.id = item.id;
         data.provider_id = item.provider_id;
         data.geo = item.geo;
+        data.message = item.message;
+        data.start = item.start;
       }
-
-      data.message = item.message;
-      data.start = item.start;
 
       if (item.end != undefined) {
         data.end = item.end;
@@ -4226,7 +4221,6 @@ export default {
         .catch((error) => console.log(error));
     },
     editItem(item) {
-      console.log(item);
       this.editedItem = Object.assign({}, item);
       if (item.message != undefined) {
         this.editedIndex = this.imports.indexOf(item);

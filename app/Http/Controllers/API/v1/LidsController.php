@@ -976,13 +976,33 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
       }
     }
 
-    if (isset($req['dates'])) {
-      $lids_prov = DB::table('imported_leads')->select('lead_id')->where('api_key_id', $req['provider_id'])->whereIn(DB::raw('DATE(upload_time)'), $req['dates'])->pluck('lead_id')->toArray();
+    if (isset($req['provider'])) {
+      $lids_prov = DB::table('imported_leads')
+        ->select('lead_id')
+        ->where('api_key_id', $req['provider_id'])
+        ->whereBetween(DB::raw('DATE(upload_time)'), [$req['fromto'][0], $req['fromto'][1]])
+        ->pluck('lead_id')
+        ->toArray();
     }
     if (isset($req['date'])) {
-      $lids_prov = DB::table('imported_leads')->select('lead_id')->where('api_key_id', $req['provider_id'])->whereDate('upload_time', $req['date'])->pluck('lead_id')->toArray();
+      $lids_prov = DB::table('imported_leads')
+        ->select('lead_id')
+        ->where('api_key_id', $req['provider_id'])
+        ->where(DB::raw('DATE(upload_time)'), $req['date'])
+        ->where('geo', $req['geo'])
+        ->pluck('lead_id')
+        ->toArray();
     }
-    if (isset($req['dates']) || isset($req['date'])) {
+    if (isset($req['dates'])) {
+      $lids_prov = DB::table('imported_leads')
+        ->select('lead_id')
+        ->where('api_key_id', $req['provider_id'])
+        ->whereIn(DB::raw('DATE(upload_time)'), $req['dates'])
+        ->where('geo', $req['geo'])
+        ->pluck('lead_id')
+        ->toArray();
+    }
+    if (isset($req['dates']) || isset($req['date']) || isset($req['provider'])) {
       return Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
         ->whereIn('lids.id', $lids_prov)
         ->leftJoin('users', 'users.id', '=', 'user_id')
