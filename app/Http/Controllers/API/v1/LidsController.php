@@ -1894,7 +1894,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     }
     $ips = DB::table('imports_provider')->whereBetween('date', [$from, $to])->get();
     if (count($ips)) {
-      $sql = "SELECT ip.*,ip.date start, p.name provider,  sum(hmnew),  sum(hmcb),  sum(hmdp),  sum(hm) FROM `imports_provider` ip LEFT JOIN providers p ON p.`id` = ip.`provider_id` " . $where . " GROUP BY DATE, provider_id, geo  ORDER BY DATE DESC, provider_id ASC";
+      $sql = "SELECT ip.*,ip.date start, p.name provider,p.responsible_user,  sum(hmnew),  sum(hmcb),  sum(hmdp),  sum(hm) FROM `imports_provider` ip LEFT JOIN providers p ON p.`id` = ip.`provider_id` " . $where . " GROUP BY DATE, provider_id, geo  ORDER BY DATE DESC, provider_id ASC";
       return DB::select(DB::raw($sql));
     }
     return [];

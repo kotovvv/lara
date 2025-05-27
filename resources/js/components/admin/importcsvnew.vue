@@ -220,6 +220,20 @@
                   >
                   </v-autocomplete>
                 </v-col>
+                <v-col cols="1" v-if="tabimport == 1">
+                  <v-autocomplete
+                    v-model="filter_api_crm"
+                    :items="crmApiUsersForFilter"
+                    item-text="fio"
+                    item-value="id"
+                    label="CRM"
+                    outlined
+                    rounded
+                    multiple
+                    clearable
+                  >
+                  </v-autocomplete>
+                </v-col>
                 <v-col cols="1" v-if="tabimport == 0">
                   <v-autocomplete
                     v-model="filter_user"
@@ -702,6 +716,7 @@
                       <template v-slot:header="{ props }">
                         <thead>
                           <tr id="headerProTr2" style="border-top: none">
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -2552,6 +2567,7 @@ export default {
     offices: [],
     redistributeOffice: null,
     apigroup: [],
+    api_prov: [],
     expanded: [],
     expandedate: [],
     d_statuses: [],
@@ -2575,6 +2591,7 @@ export default {
     filter_user: [],
     i_users: [],
     filter_crm: [],
+    filter_api_crm: [],
     unmaskedRowId: null,
     clearLog: false,
     showOffice: [],
@@ -2602,6 +2619,28 @@ export default {
     this.getUsers();
   },
   computed: {
+    crmApiUsersForFilter() {
+      // Собираем все id из responsible_user по всем imports
+
+      const responsibleUserIds = this.api_prov
+        .map((pid) => {
+          const provider = this.providers.find((p) => p.id === pid);
+          if (!provider || !provider.responsible_user) return [];
+          try {
+            return JSON.parse(provider.responsible_user);
+          } catch {
+            return [];
+          }
+        })
+        .flat();
+
+      return this.users
+        .filter((u) => responsibleUserIds.includes(u.id))
+        .map((u) => ({
+          id: u.id,
+          fio: u.fio || u.name,
+        }));
+    },
     crmUsersForFilter() {
       // Собираем все id из responsible_user по всем imports
       const allIds = _.uniq(
@@ -2668,6 +2707,19 @@ export default {
     filter_importsProvLeads() {
       if (this.importsProvLeads.length) {
         let prov = this.importsProvLeads.filter((i) => {
+          if (this.filter_api_crm.length > 0) {
+            let crmArr = [];
+            try {
+              crmArr = JSON.parse(i.responsible_user || "[]");
+            } catch {
+              crmArr = [];
+            }
+            // Проверяем, есть ли пересечение
+            const hasUser = this.filter_api_crm.some((uid) =>
+              crmArr.includes(uid)
+            );
+            if (!hasUser) return false;
+          }
           return (
             (this.filter_import_provider.length == 0 ||
               this.filter_import_provider.includes(i.provider_id)) &&
@@ -2858,6 +2910,7 @@ export default {
             hm: 0,
             sum: 0,
             dates: {},
+            responsible_user_fio: row.responsible_user_fio || "",
           };
         }
 
@@ -3207,7 +3260,19 @@ export default {
               if (!self.i_geos.includes(i.geo)) {
                 self.i_geos.push(i.geo);
               }
+              // Parse responsible_user as array of ids, then get fio from users
+              let responsibleUserIds = [];
+              try {
+                responsibleUserIds = JSON.parse(i.responsible_user || "[]");
+              } catch {
+                responsibleUserIds = [];
+              }
+              i.responsible_user_fio = self.users
+                .filter((u) => responsibleUserIds.includes(u.id))
+                .map((u) => u.fio || u.name)
+                .join(", ");
             });
+
             self.i_geos.sort();
             // self.importsProvLeads = self.importsProvLeads.map((ip) => {
             //   ip.group = ip.date + " " + ip.provider;
@@ -3219,7 +3284,7 @@ export default {
               "desc"
             );
             self.apigroup = _.groupBy(self.filter_importsProvLeads, "group");
-            let a_prov = _.uniq(
+            self.api_prov = _.uniq(
               _.map(self.importsProvLeads, (el) => {
                 return el.provider_id;
               })
@@ -3227,7 +3292,7 @@ export default {
             self.i_providers = _.union(
               self.i_providers,
               self.providers.filter((i) => {
-                return a_prov.includes(i.id);
+                return self.api_prov.includes(i.id);
               })
             );
           }
@@ -3973,11 +4038,12 @@ export default {
         .get("/api/provider")
         .then((res) => {
           self.providers = res.data.map(
-            ({ name, id, related_users_id, baer }) => ({
+            ({ name, id, related_users_id, baer, responsible_user }) => ({
               name,
               id,
               related_users_id,
               baer,
+              responsible_user,
             })
           );
           // self.getImports();
