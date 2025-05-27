@@ -1130,6 +1130,14 @@
               <!-- <small>{{ item.start.substring(0, 10) }}</small> -->
               <p style="font-size: 1.2rem; font-weight: bold">
                 Total: {{ leads.length }}
+                <v-btn
+                  icon
+                  class="mx-2"
+                  @click="clearFilterStatusOffice"
+                  alt="очистить фильтр"
+                >
+                  <v-icon>mdi-refresh</v-icon>
+                </v-btn>
               </p>
             </div>
             <div id="wrp_stat" class="wrp__statuses" v-if="Statuses">
@@ -2699,6 +2707,13 @@ export default {
     },
   },
   methods: {
+    clearFilterStatusOffice() {
+      this.filterStatusTabl = [];
+      this.filterOfficeTabl = [];
+      // this.filtertel = "";
+      // this.search = "";
+      // this.selectedRow = null;
+    },
     toggleOfficeShow(office_id) {
       const index = this.showOffice.indexOf(office_id);
       if (index > -1) {
