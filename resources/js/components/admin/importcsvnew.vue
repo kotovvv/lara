@@ -1222,7 +1222,12 @@
                               overflow: hidden;
                               text-overflow: ellipsis;
                             "
-                            >{{ group.name }} -
+                          >
+                            <v-icon small class="mr-2" color="primary"
+                              >mdi-account-group</v-icon
+                            >
+
+                            {{ group.name }} -
                             <b
                               >{{
                                 office.lids.filter(
@@ -1289,7 +1294,11 @@
                                 max-width: 335px;
                                 width: 335px;
                               "
-                              >{{ user.name }} -
+                            >
+                              <v-icon small class="mr-2" color="primary"
+                                >mdi-account</v-icon
+                              >
+                              {{ user.name }} -
                               <b
                                 >{{
                                   office.lids.filter(
