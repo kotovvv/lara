@@ -481,10 +481,7 @@
                       </template>
 
                       <template v-slot:item.hmnew="{ item }">
-                        <div
-                          class="pointer"
-                          @click="changeFilterStatusClick(8)"
-                        >
+                        <div class="pointer" @click="toggleFilterStatus(8)">
                           {{ item.hmnew }}
                           <small>
                             {{
@@ -494,10 +491,7 @@
                         </div>
                       </template>
                       <template v-slot:item.hmrenew="{ item }">
-                        <div
-                          class="pointer"
-                          @click="changeFilterStatusClick(33)"
-                        >
+                        <div class="pointer" @click="toggleFilterStatus(33)">
                           {{ item.hmrenew }}
                           <small>
                             {{
@@ -507,10 +501,7 @@
                         </div>
                       </template>
                       <template v-slot:item.hmcb="{ item }">
-                        <div
-                          class="pointer"
-                          @click="changeFilterStatusClick(9)"
-                        >
+                        <div class="pointer" @click="toggleFilterStatus(9)">
                           {{ item.hmcb }}
                           <small>
                             {{
@@ -520,10 +511,7 @@
                         </div>
                       </template>
                       <template v-slot:item.hmdp="{ item }">
-                        <div
-                          class="pointer"
-                          @click="changeFilterStatusClick(10)"
-                        >
+                        <div class="pointer" @click="toggleFilterStatus(10)">
                           {{ item.hmdp }}
                           <small>
                             {{
@@ -533,10 +521,7 @@
                         </div>
                       </template>
                       <template v-slot:item.hmpnd="{ item }">
-                        <div
-                          class="pointer"
-                          @click="changeFilterStatusClick(20)"
-                        >
+                        <div class="pointer" @click="toggleFilterStatus(20)">
                           {{ item.hmpnd }}
                           <small>
                             {{
@@ -546,10 +531,7 @@
                         </div>
                       </template>
                       <template v-slot:item.hmpot="{ item }">
-                        <div
-                          class="pointer"
-                          @click="changeFilterStatusClick(32)"
-                        >
+                        <div class="pointer" @click="toggleFilterStatus(32)">
                           {{ item.hmpot }}
                           <small>
                             {{
@@ -559,10 +541,7 @@
                         </div>
                       </template>
                       <template v-slot:item.hmnoans="{ item }">
-                        <div
-                          class="pointer"
-                          @click="changeFilterStatusClick(7)"
-                        >
+                        <div class="pointer" @click="toggleFilterStatus(7)">
                           {{ item.hmnoans }}
                           <small>
                             {{
@@ -572,10 +551,7 @@
                         </div>
                       </template>
                       <template v-slot:item.hmnointerest="{ item }">
-                        <div
-                          class="pointer"
-                          @click="changeFilterStatusClick(12)"
-                        >
+                        <div class="pointer" @click="toggleFilterStatus(12)">
                           {{ item.hmnointerest }}
                           <small>
                             {{
@@ -915,7 +891,7 @@
                                         class="text-center common-column new pointer"
                                         width="100px"
                                         @click="
-                                          changeFilterStatusClick(8);
+                                          toggleFilterStatus(8);
                                           clickrow(datesGeo);
                                         "
                                       >
@@ -933,7 +909,7 @@
                                         class="text-center common-column renew pointer"
                                         width="100px"
                                         @click="
-                                          changeFilterStatusClick(33);
+                                          toggleFilterStatus(33);
                                           clickrow(datesGeo);
                                         "
                                       >
@@ -951,7 +927,7 @@
                                         class="text-center common-column callback pointer"
                                         width="100px"
                                         @click="
-                                          changeFilterStatusClick(9);
+                                          toggleFilterStatus(9);
                                           clickrow(datesGeo);
                                         "
                                       >
@@ -969,7 +945,7 @@
                                         class="text-center common-column deposit pointer"
                                         width="100px"
                                         @click="
-                                          changeFilterStatusClick(10);
+                                          toggleFilterStatus(10);
                                           clickrow(datesGeo);
                                         "
                                       >
@@ -987,7 +963,7 @@
                                         class="text-center common-column pending pointer"
                                         width="100px"
                                         @click="
-                                          changeFilterStatusClick(20);
+                                          toggleFilterStatus(20);
                                           clickrow(datesGeo);
                                         "
                                       >
@@ -1005,7 +981,7 @@
                                         class="text-center common-column potential pointer"
                                         width="100px"
                                         @click="
-                                          changeFilterStatusClick(32);
+                                          toggleFilterStatus(32);
                                           clickrow(datesGeo);
                                         "
                                       >
@@ -1023,7 +999,7 @@
                                         class="text-center common-column noans pointer"
                                         width="100px"
                                         @click="
-                                          changeFilterStatusClick(7);
+                                          toggleFilterStatus(7);
                                           clickrow(datesGeo);
                                         "
                                       >
@@ -1041,7 +1017,7 @@
                                         class="text-center common-column nointerest pointer"
                                         width="100px"
                                         @click="
-                                          changeFilterStatusClick(12);
+                                          toggleFilterStatus(12);
                                           clickrow(datesGeo);
                                         "
                                       >
@@ -1057,7 +1033,6 @@
                                       </td>
                                     </tr>
                                   </template>
-                                  <!-- ...повторить для остальных колонок дат... -->
                                 </v-data-table>
                               </td>
                             </template>
@@ -1082,12 +1057,10 @@
                     <div
                       class="status_wrp"
                       :class="{
-                        active:
-                          filterOfficeTabl.length == 0 &&
-                          filterStatusTabl.includes(i.id),
+                        active: filterStatusTabl.includes(i.id),
                       }"
+                      @click="toggleFilterStatus(i.id)"
                       :key="i.id"
-                      @click="filterOfficeStatus(0, i.id)"
                     >
                       <b
                         :style="{
@@ -1098,10 +1071,7 @@
                       >
                       <span>{{ i.name }}</span>
                       <v-btn
-                        v-if="
-                          filterOfficeTabl.length == 0 &&
-                          filterStatusTabl.includes(i.id)
-                        "
+                        v-if="filterStatusTabl.includes(i.id)"
                         icon
                         x-small
                       >
@@ -1145,12 +1115,10 @@
                 <div
                   class="status_wrp"
                   :class="{
-                    active:
-                      filterOfficeTabl.length == 0 &&
-                      filterStatusTabl.includes(i.id),
+                    active: filterStatusTabl.includes(i.id),
                   }"
+                  @click="toggleFilterStatus(i.id)"
                   :key="i.id"
-                  @click="filterOfficeStatus(0, i.id)"
                 >
                   <b
                     :style="{
@@ -1160,14 +1128,7 @@
                     >{{ i.hm }}</b
                   >
                   <span>{{ i.name }}</span>
-                  <v-btn
-                    v-if="
-                      filterOfficeTabl.length == 0 &&
-                      filterStatusTabl.includes(i.id)
-                    "
-                    icon
-                    x-small
-                  >
+                  <v-btn v-if="filterStatusTabl.includes(i.id)" icon x-small>
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
                 </div>
@@ -1208,12 +1169,12 @@
                     <div
                       class="status_wrp"
                       :class="{
-                        active:
-                          filterOfficeTabl.includes(office.name) &&
-                          filterStatusTabl.includes(i.id),
+                        active: filterOfficeStatusTabl.includes(
+                          `${office.id}_${i.id}`
+                        ),
                       }"
-                      :key="i.id"
-                      @click="filterOfficeStatus(office.name, i.id)"
+                      @click="toggleFilterOfficeStatus(office.id, i.id)"
+                      :key="`${office.id}_${i.id}`"
                     >
                       <b
                         :style="{
@@ -1225,8 +1186,9 @@
                       <span>{{ i.name }}</span>
                       <v-btn
                         v-if="
-                          filterOfficeTabl.includes(office.name) &&
-                          filterStatusTabl.includes(i.id)
+                          filterOfficeStatusTabl.includes(
+                            `${office.id}_${i.id}`
+                          )
                         "
                         icon
                         x-small
@@ -1284,12 +1246,12 @@
                               :key="status.id"
                               class="status_wrp"
                               :class="{
-                                active:
-                                  filterOfficeTabl.includes(office.name) &&
-                                  filterStatusTabl.includes(status.id),
+                                active: filterGroupStatusTabl.includes(
+                                  `${group.id}_${status.id}`
+                                ),
                               }"
                               @click="
-                                filterOfficeStatus(office.name, status.id)
+                                toggleFilterGroupStatus(group.id, status.id)
                               "
                             >
                               <b
@@ -1302,8 +1264,9 @@
                               <span>{{ status.name }}</span>
                               <v-btn
                                 v-if="
-                                  filterOfficeTabl.includes(office.name) &&
-                                  filterStatusTabl.includes(status.id)
+                                  filterGroupStatusTabl.includes(
+                                    `${group.id}_${status.id}`
+                                  )
                                 "
                                 icon
                                 x-small
@@ -1351,12 +1314,12 @@
                                   :key="status.id"
                                   class="status_wrp"
                                   :class="{
-                                    active:
-                                      filterOfficeTabl.includes(office.name) &&
-                                      filterStatusTabl.includes(status.id),
+                                    active: filterUserStatusTabl.includes(
+                                      `${user.id}_${status.id}`
+                                    ),
                                   }"
                                   @click="
-                                    filterOfficeStatus(office.name, status.id)
+                                    toggleFilterUserStatus(user.id, status.id)
                                   "
                                 >
                                   <b
@@ -1369,8 +1332,9 @@
                                   <span>{{ status.name }}</span>
                                   <v-btn
                                     v-if="
-                                      filterOfficeTabl.includes(office.name) &&
-                                      filterStatusTabl.includes(status.id)
+                                      filterUserStatusTabl.includes(
+                                        `${user.id}_${status.id}`
+                                      )
                                     "
                                     icon
                                     x-small
@@ -1558,55 +1522,6 @@
                           {{ item.name }}
                         </template>
                       </v-select>
-                      <div class="d-flex">
-                        <v-select
-                          label="Фильтр статус"
-                          v-model="filterStatusTabl"
-                          :items="Statuses"
-                          item-text="name"
-                          item-value="id"
-                          outlined
-                          rounded
-                          :multiple="true"
-                        >
-                          <template v-slot:selection="{ item, index }">
-                            <span v-if="index === 0">{{ item.name }} </span>
-                            <span
-                              v-if="index === 1"
-                              class="grey--text text-caption"
-                            >
-                              (+{{ filterStatusTabl.length - 1 }} )
-                            </span>
-                          </template>
-                          <template v-slot:item="{ item, attrs }">
-                            <v-badge
-                              :value="attrs['aria-selected'] == 'true'"
-                              color="#7620df"
-                              dot
-                              left
-                            >
-                              <i
-                                :style="{
-                                  background: item.color,
-                                  outline: '1px solid grey',
-                                }"
-                                class="sel_stat mr-4"
-                              ></i>
-                            </v-badge>
-                            {{ item.name }}
-                          </template>
-                        </v-select>
-                        <v-select
-                          label="Фильтр office"
-                          v-model="filterOfficeTabl"
-                          :items="lidsByOffice"
-                          item-text="name"
-                          item-value="name"
-                          outlined
-                          rounded
-                          :multiple="true"
-                        ></v-select>
-                      </div>
                     </v-col>
                     <v-col cols="3">
                       <v-select
@@ -2464,7 +2379,9 @@ export default {
     filter_provider: [],
     filter_office: [],
     filterStatusTabl: [],
-    filterOfficeTabl: [],
+    filterOfficeStatusTabl: [],
+    filterGroupStatusTabl: [],
+    filterUserStatusTabl: [],
     filter_geo: [],
     resetStatus: [],
     leads: [],
@@ -2632,18 +2549,38 @@ export default {
         }));
     },
     filteredLeads() {
-      const ls = this.leads.filter((i) => {
-        return (
-          (!this.filterStatusTabl.length ||
-            this.filterStatusTabl.includes(i.status_id)) &&
-          (!this.filterOfficeTabl.length ||
-            this.filterOfficeTabl.includes(i.office))
+      let ls = this.leads;
+      // If at least one filter is selected (status, office+status, group+status, user+status)
+      // then show leads that match ANY of the selected filters (OR), not just all of them at once (AND).
+      // If no filter is selected - show all of them
+
+      // Collect all conditions into a function array
+      const filters = [];
+
+      if (this.filterStatusTabl.length) {
+        filters.push((i) => this.filterStatusTabl.includes(i.status_id));
+      }
+      if (this.filterOfficeStatusTabl.length) {
+        filters.push((i) =>
+          this.filterOfficeStatusTabl.includes(`${i.office_id}_${i.status_id}`)
         );
-      });
+      }
+      if (this.filterGroupStatusTabl.length) {
+        filters.push((i) =>
+          this.filterGroupStatusTabl.includes(`${i.group_id}_${i.status_id}`)
+        );
+      }
+      if (this.filterUserStatusTabl.length) {
+        filters.push((i) =>
+          this.filterUserStatusTabl.includes(`${i.user_id}_${i.status_id}`)
+        );
+      }
 
-      return ls;
+      if (filters.length === 0) return ls;
+
+      // Keep leads that fit at least one filter
+      return ls.filter((i) => filters.some((fn) => fn(i)));
     },
-
     filteredItems() {
       let reg = new RegExp("^" + this.filtertel);
       return this.parse_csv.filter((i) => {
@@ -2712,12 +2649,48 @@ export default {
     },
   },
   methods: {
+    toggleFilterOfficeStatus(office, statusId) {
+      const key = `${office}_${statusId}`;
+      const idx = this.filterOfficeStatusTabl.indexOf(key);
+      if (idx > -1) {
+        this.filterOfficeStatusTabl.splice(idx, 1);
+      } else {
+        this.filterOfficeStatusTabl.push(key);
+      }
+    },
+
+    toggleFilterGroupStatus(groupId, statusId) {
+      const key = `${groupId}_${statusId}`;
+      const idx = this.filterGroupStatusTabl.indexOf(key);
+      if (idx > -1) {
+        this.filterGroupStatusTabl.splice(idx, 1);
+      } else {
+        this.filterGroupStatusTabl.push(key);
+      }
+    },
+
+    toggleFilterUserStatus(userId, statusId) {
+      const key = `${userId}_${statusId}`;
+      const idx = this.filterUserStatusTabl.indexOf(key);
+      if (idx > -1) {
+        this.filterUserStatusTabl.splice(idx, 1);
+      } else {
+        this.filterUserStatusTabl.push(key);
+      }
+    },
+    toggleFilterStatus(statusId) {
+      const idx = this.filterStatusTabl.indexOf(statusId);
+      if (idx > -1) {
+        this.filterStatusTabl.splice(idx, 1);
+      } else {
+        this.filterStatusTabl.push(statusId);
+      }
+    },
     clearFilterStatusOffice() {
+      this.filterOfficeStatusTabl = [];
+      this.filterGroupStatusTabl = [];
+      this.filterUserStatusTabl = [];
       this.filterStatusTabl = [];
-      this.filterOfficeTabl = [];
-      // this.filtertel = "";
-      // this.search = "";
-      // this.selectedRow = null;
     },
     toggleOfficeShow(office_id) {
       const index = this.showOffice.indexOf(office_id);
@@ -2977,50 +2950,50 @@ export default {
         return provider;
       });
     },
-    filterOfficeStatus(office, status) {
-      // Если клик по общему статусу (office == 0)
-      if (office == 0) {
-        // Добавляем/убираем статус из общего фильтра
-        if (this.filterStatusTabl.includes(status)) {
-          this.filterStatusTabl = this.filterStatusTabl.filter(
-            (s) => s !== status
-          );
-        } else {
-          this.filterStatusTabl.push(status);
-        }
-        return;
-      }
+    // filterOfficeStatus(office, status) {
+    //   // Если клик по общему статусу (office == 0)
+    //   if (office == 0) {
+    //     // Добавляем/убираем статус из общего фильтра
+    //     if (this.filterStatusTabl.includes(status)) {
+    //       this.filterStatusTabl = this.filterStatusTabl.filter(
+    //         (s) => s !== status
+    //       );
+    //     } else {
+    //       this.filterStatusTabl.push(status);
+    //     }
+    //     return;
+    //   }
 
-      // Для офисов: мультивыбор
-      // Если офис не выбран — добавляем
-      if (!this.filterOfficeTabl.includes(office)) {
-        this.filterOfficeTabl.push(office);
-      }
+    //   // Для офисов: мультивыбор
+    //   // Если офис не выбран — добавляем
+    //   if (!this.filterOfficeTabl.includes(office)) {
+    //     this.filterOfficeTabl.push(office);
+    //   }
 
-      // Для статусов: мультивыбор
-      if (this.filterStatusTabl.includes(status)) {
-        this.filterStatusTabl = this.filterStatusTabl.filter(
-          (s) => s !== status
-        );
-      } else {
-        this.filterStatusTabl.push(status);
-      }
+    //   // Для статусов: мультивыбор
+    //   if (this.filterStatusTabl.includes(status)) {
+    //     this.filterStatusTabl = this.filterStatusTabl.filter(
+    //       (s) => s !== status
+    //     );
+    //   } else {
+    //     this.filterStatusTabl.push(status);
+    //   }
 
-      // Если после удаления статусов не осталось ни одного статуса — очищаем офис
-      // (только если ни один статус не выбран для этого офиса)
-      const officeStatuses =
-        this.lidsByOffice
-          .find((o) => o.name === office)
-          ?.statuses.map((s) => s.id) || [];
-      const hasStatusForOffice = officeStatuses.some((sid) =>
-        this.filterStatusTabl.includes(sid)
-      );
-      if (!hasStatusForOffice) {
-        this.filterOfficeTabl = this.filterOfficeTabl.filter(
-          (o) => o !== office
-        );
-      }
-    },
+    //   // Если после удаления статусов не осталось ни одного статуса — очищаем офис
+    //   // (только если ни один статус не выбран для этого офиса)
+    //   const officeStatuses =
+    //     this.lidsByOffice
+    //       .find((o) => o.name === office)
+    //       ?.statuses.map((s) => s.id) || [];
+    //   const hasStatusForOffice = officeStatuses.some((sid) =>
+    //     this.filterStatusTabl.includes(sid)
+    //   );
+    //   if (!hasStatusForOffice) {
+    //     this.filterOfficeTabl = this.filterOfficeTabl.filter(
+    //       (o) => o !== office
+    //     );
+    //   }
+    // },
     filter: function (evt) {
       evt = evt ? evt : window.event;
       let expect = evt.target.value.toString() + evt.key.toString();
@@ -3031,10 +3004,7 @@ export default {
         return true;
       }
     },
-    changeFilterStatusClick(status_id) {
-      this.filterStatusTabl = [];
-      this.filterStatusTabl.push(status_id);
-    },
+
     changeFilterStatus(status_id) {
       if (this.filter_status.includes(status_id)) {
         const index = this.filter_status.indexOf(status_id);
