@@ -375,7 +375,27 @@ class ImportsController extends Controller
       DB::table('imports_provider')->where('id', $id)->update(['office_ids' => $a_office_ids]);
     }
     if (isset($data['clearLog']) && $data['clearLog'] == true) {
-      Log::whereIn('lid_id', $lid_ids)->delete();
+      $user_id = session()->get('user_id');
+      // Получаем данные для вставки в logs
+      $logs = Lid::whereIn('lids.id', $lid_ids)
+        ->join('users', 'lids.user_id', '=', 'users.id')
+        ->select(
+          DB::raw("'$user_id' as user_id"),
+          'lids.id as lid_id',
+          DB::raw("'' as tel"),
+          'lids.status_id',
+          DB::raw("CONCAT(users.name, ' : ', lids.text) as text"),
+          DB::raw('1 as last_log'),
+          DB::raw('NOW() as created_at')
+        )
+        ->get()
+        ->toArray();
+
+      // Вставляем в таблицу logs
+      if (!empty($logs)) {
+        DB::table('logs')->insert($logs);
+      }
+      Log::whereIn('lid_id', $lid_ids)->where('last_log', 0)->delete();
     }
     return response('All done', 200);
   }
@@ -456,7 +476,28 @@ class ImportsController extends Controller
         DB::table('imports_provider')->where('id', $import_['id'])->update(['office_ids' => $a_office_ids]);
       }
     }
-    Log::whereIn('lid_id', $alliads)->delete();
+    $user_id = session()->get('user_id');
+    // Получаем данные для вставки в logs
+    $logs = Lid::whereIn('lids.id', $alliads)
+      ->join('users', 'lids.user_id', '=', 'users.id')
+      ->select(
+        DB::raw("'$user_id' as user_id"),
+        'lids.id as lid_id',
+        DB::raw("'' as tel"),
+        'lids.status_id',
+        DB::raw("CONCAT(users.name, ' : ', lids.text) as text"),
+        DB::raw('1 as last_log'),
+        DB::raw('NOW() as created_at')
+      )
+      ->get()
+      ->toArray();
+
+    // Вставляем в таблицу logs
+    if (!empty($logs)) {
+      DB::table('logs')->insert($logs);
+    }
+    Log::whereIn('lid_id', $alliads)->where('last_log', 0)->delete();
+
     return response('All done', 200);
   }
 

@@ -1109,8 +1109,8 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $lids = $request->all();
     // Debugbar::info($data);
 
-    Lid::whereIn('id', $lids)->delete();
-    Log::whereIn('lid_id', $lids)->delete();
+    //Lid::whereIn('id', $lids)->delete();
+    //Log::whereIn('lid_id', $lids)->delete();
   }
 
   public function deleteImportedLids(Request $request)
@@ -1136,9 +1136,29 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
   public function clearLiads(Request $request)
   {
     $lids = $request->all();
+    $user_id = session()->get('user_id');
+    // Получаем данные для вставки в logs
+    $logs = Lid::whereIn('lids.id', $lids)
+      ->join('users', 'lids.user_id', '=', 'users.id')
+      ->select(
+        DB::raw("'$user_id' as user_id"),
+        'lids.id as lid_id',
+        DB::raw("'' as tel"),
+        'lids.status_id',
+        DB::raw("CONCAT(users.name, ' : ', lids.text) as text"),
+        DB::raw('1 as last_log'),
+        DB::raw('NOW() as created_at')
+      )
+      ->get()
+      ->toArray();
+
+    // Вставляем в таблицу logs
+    if (!empty($logs)) {
+      DB::table('logs')->insert($logs);
+    }
     Lid::whereIn('id', $lids)->where('status_id', '!=', 32)->update(['status_id' => 8, 'text' => '', 'qtytel' => 0]);
     $del = Lid::select('id')->whereIn('id', $lids)->where('status_id', '!=', 32)->get();
-    Log::whereIn('lid_id', $del)->delete();
+    Log::whereIn('lid_id', $del)->where('last_log', 0)->delete();
   }
 
   // /api/set_zaliv?api_key=rdfgsdfgsdfgsghethsdghdsf&user_id=383&umcfields[name]=name&umcfields[phone]=phone&umcfields[email]=email&text=text&umcfields[affiliate_user]=affiliate_user&client_lang=client_lang&client_geo=client_geo&client_funnel=client_funnel&client_answers=client_answers&company_name=company_name
