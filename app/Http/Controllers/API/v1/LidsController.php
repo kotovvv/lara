@@ -616,9 +616,10 @@ class LidsController extends Controller
   {
     $data = $request->all();
 
+    // Получаем office_ids только если нужно
     $office_ids = [session()->get('office_id')];
     if (in_array(0, $office_ids)) {
-      $office_ids =  $data['office_ids'];
+      $office_ids = $data['office_ids'];
     }
 
     $id = $data['id'];
@@ -627,205 +628,143 @@ class LidsController extends Controller
     $limit = $data['limit'];
     $page = (int) $data['page'];
     $filterLang = $data['filterLang'];
-    $filterGeo = $data['filterGeo'];
-    $filterRD = null;
-    if (isset($data['filterRD'])) {
-      $filterRD = $data['filterRD'];
-    }
-    $providers = $date = $users_ids = [];
+    $filterGeo = $data['filterGeo'] ?? [];
+    $filterRD = $data['filterRD'] ?? null;
+
+    $providers = [];
+    $date = [];
+    $users_ids = [];
     $where_date = '';
     $duplicate_tel = [];
+
+    // Оптимизация сортировки
+    $sortBy = false;
+    $sortDesc = 'DESC';
     if (isset($data['sortBy'])) {
-      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "provider_name" => 'provider_id', "office_name" => 'office_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'dp' => 'dp', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'status' => 'status_id', 'depozit' => 'depozit', 'client_geo' => 'client_geo'][$data['sortBy']];
+      $sortMap = [
+        "tel" => 'tel',
+        "name" => 'name',
+        "email" => 'email',
+        "provider" => 'provider_id',
+        "provider_name" => 'provider_id',
+        "office_name" => 'office_id',
+        "user" => 'user_id',
+        "date_created" => 'created_at',
+        "date_updated" => 'updated_at',
+        'afilyator' => 'afilyator',
+        'dp' => 'dp',
+        'text' => 'text',
+        'qtytel' => 'qtytel',
+        'ontime' => 'ontime',
+        'status' => 'status_id',
+        'depozit' => 'depozit',
+        'client_geo' => 'client_geo'
+      ];
+      $sortBy = $sortMap[$data['sortBy']] ?? false;
       $sortDesc = $data['sortDesc'] ? 'DESC' : 'ASC';
-    } else {
-      $sortBy = false;
-      //$sortBy = 'created_at';
-      $sortDesc = 'DESC';
     }
 
+    // Дубликаты телефонов
     if (isset($data['duplicate_tel']) && $id) {
-      $duplicate_tel = Lid::select('tel')->where('user_id', $id)->groupBy('tel')->having(DB::raw('count(tel)'), '>', 1);
+      $duplicate_tel = Lid::select('tel')->where('user_id', $id)->groupBy('tel')->havingRaw('count(tel) > 1');
     }
-    if (isset($data['group_ids']) && $data['group_ids'][0] != 0) {
-      $res = User::select('id')->whereIn('group_id', $data['group_ids'])->get()->toArray();
-      foreach ($res as $item) {
-        $users_ids[] = $item['id'];
-      }
+
+    // Группы пользователей
+    if (!empty($data['group_ids']) && $data['group_ids'][0] != 0) {
+      $users_ids = User::whereIn('group_id', $data['group_ids'])->pluck('id')->toArray();
     }
+
+    // Дата
     if (isset($data['datefrom'])) {
-      $date = [date('Y-m-d', strtotime($data['datefrom'])) . ' ' . date('H:i:s', mktime(0, 0, 0)), date('Y-m-d', strtotime($data['dateto'])) . ' ' . date('H:i:s', mktime(23, 59, 59))];
+      $date = [
+        date('Y-m-d', strtotime($data['datefrom'])) . ' 00:00:00',
+        date('Y-m-d', strtotime($data['dateto'])) . ' 23:59:59'
+      ];
       $where_date = " AND created_at >= '" . $date[0] . "' AND created_at <= '" . $date[1] . "'";
     }
 
-    if (count($data['provider_id']) > 0) {
+    // Провайдеры
+    if (!empty($data['provider_id'])) {
       $providers = $data['provider_id'];
-    } else {
-      if (!in_array(0, $office_ids)) {
-        $res = Provider::select('id')->whereIn('office_id',  $office_ids)->get()->toArray();
-        foreach ($res as $item) {
-          $providers[] = $item['id'];
-        }
+    } elseif (!in_array(0, $office_ids)) {
+      $providers = Provider::whereIn('office_id', $office_ids)->pluck('id')->toArray();
+    }
+
+    // Основной запрос
+    $q_leads = Lid::query()
+      ->select('lids.*', DB::raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') as depozit'))
+      ->when(!in_array(0, $office_ids), fn($q) => $q->whereIn('lids.office_id', $office_ids))
+      ->when(!is_array($id) && $id > 0 && empty($users_ids), fn($q) => $q->where('lids.user_id', $id))
+      ->when(!empty($users_ids), fn($q) => $q->whereIn('lids.user_id', $users_ids))
+      ->when(!empty($providers), fn($q) => $q->whereIn('lids.provider_id', $providers))
+      ->when(!empty($status_id), fn($q) => $q->whereIn('lids.status_id', $status_id))
+      ->when($tel !== '', fn($q) => $q->where('lids.tel', 'like', $tel . '%'))
+      ->when(isset($data['duplicate_tel']), fn($q) => $q->whereIn('lids.tel', $duplicate_tel))
+      ->when(!empty($date), fn($q) => $q->whereBetween('lids.created_at', $date))
+      ->when($filterLang !== '', fn($q) => $q->where('lids.client_lang', $filterLang))
+      ->when(!empty($filterGeo), fn($q) => $q->whereIn('lids.client_geo', $filterGeo))
+      ->when($filterRD !== null, fn($q) => $q->where('lids.rd', $filterRD))
+      ->when(isset($data['callback']) && $data['callback'] == 1, function ($q) {
+        return $q->whereRaw('(SELECT count(*) FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9) > 0');
+      });
+
+    // Считаем количество без выборки всех строк
+    $response['hm'] = (clone $q_leads)->count();
+
+    // Получаем лиды с пагинацией и сортировкой
+    $q_leads->when($limit !== 'all' && $page > 0, fn($q) => $q->offset($limit * ($page - 1)))
+      ->when($limit !== 'all', fn($q) => $q->limit($limit));
+
+    // Оптимизация сортировки
+    if ($sortBy) {
+      if ($sortBy === 'statuses') {
+        $q_leads->leftJoin('statuses', 'statuses.id', '=', 'status_id')->orderBy('statuses.name', $sortDesc);
+      } elseif ($sortBy === 'provider_id') {
+        $q_leads->leftJoin('providers', 'providers.id', '=', 'lids.provider_id')->orderBy('providers.name', $sortDesc);
+      } elseif ($sortBy === 'user_id') {
+        $q_leads->leftJoin('users', 'users.id', '=', 'lids.user_id')->orderBy('users.name', $sortDesc);
+      } elseif ($sortBy === 'depozit') {
+        $q_leads->orderBy('depozit', $sortDesc);
+      } else {
+        $q_leads->orderBy('lids.' . $sortBy, $sortDesc);
       }
     }
 
+    $response['lids'] = $q_leads->get();
 
-    $response = [];
-    $q_leads = Lid::select('lids.*', DB::Raw('(SELECT SUM(`depozit`) FROM `depozits` WHERE `lids`.`id` = `depozits`.`lid_id`' . $where_date . ') depozit'))
-      ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
-        return $query->whereIn('lids.office_id', $office_ids);
+    // Статусы (группировка по статусу)
+    $statusesQuery = Lid::query()
+      ->select(DB::raw('count(lids.status_id) as hm'), 'statuses.id', 'statuses.name', 'statuses.color')
+      ->leftJoin('statuses', 'statuses.id', '=', 'lids.status_id')
+      ->when(!in_array(0, $office_ids), fn($q) => $q->whereIn('lids.office_id', $office_ids))
+      ->when(!is_array($id) && $id > 0 && empty($users_ids), fn($q) => $q->where('lids.user_id', $id))
+      ->when(!empty($users_ids), fn($q) => $q->whereIn('lids.user_id', $users_ids))
+      ->when(!empty($providers), fn($q) => $q->whereIn('lids.provider_id', $providers))
+      ->when($tel !== '', fn($q) => $q->where('lids.tel', 'like', $tel . '%'))
+      ->when(isset($data['duplicate_tel']), fn($q) => $q->whereIn('lids.tel', $duplicate_tel))
+      ->when(!empty($date), fn($q) => $q->whereBetween('lids.created_at', $date))
+      ->when($filterLang !== '', fn($q) => $q->where('lids.client_lang', $filterLang))
+      ->when(!empty($filterGeo), fn($q) => $q->whereIn('lids.client_geo', $filterGeo))
+      ->when(isset($data['callback']) && $data['callback'] == 1, function ($q) {
+        return $q->whereRaw('(SELECT count(*) FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9) > 0');
       })
-      ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
-        return $query->where('lids.user_id', $id);
-      })
-      ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
-        return $query->whereIn('lids.user_id', $users_ids);
-      })
-      ->when(count($providers) > 0, function ($query) use ($providers) {
-        return $query->whereIn('lids.provider_id', $providers);
-      })
-      ->when(count($status_id) > 0, function ($query) use ($status_id) {
-        return $query->whereIn('lids.status_id', $status_id);
-      })
-      ->when($tel != '', function ($query) use ($tel) {
-        return $query->where('lids.tel', 'like', $tel . '%');
-      })
-      ->when(isset($data['duplicate_tel']), function ($query) use ($duplicate_tel) {
-        return $query->whereIn('lids.tel', $duplicate_tel);
-      })
-      ->when(count($date) > 0, function ($query) use ($date) {
-        return $query->whereBetween('lids.created_at', $date);
-      })
-      ->when($filterLang != '', function ($query) use ($filterLang) {
-        return $query->where('lids.client_lang', $filterLang);
-      })
-      ->when(count($filterGeo) > 0, function ($query) use ($filterGeo) {
-        return $query->whereIn('lids.client_geo', $filterGeo);
-      })
-      ->when($filterRD != null, function ($query) use ($filterRD) {
-        return $query->where('lids.rd', $filterRD);
-      })
-      ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {
-        return $query->where(DB::Raw('(SELECT count(*) cnt FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9)'), '>', 0);
-      });
-    // ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'afilyator', function ($query) use ($data) {
-    //   return $query->orderBy('lids.afilyator', $data['sortBy'][1]);
-    // })
-    // ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'provider', function ($query) use ($data) {
-    //   return $query->leftJoin('providers', 'lids.provider_id', '=', 'providers.id')->orderBy('providers.name', $data['sortBy'][1]);
-    // })
-    // ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'date_created', function ($query) use ($data) {
-    //   return $query->orderBy('lids.created_at', $data['sortBy'][1]);
-    // })
-    // ->when(isset($data['sortBy']) && $data['sortBy'][0] == 'date_updated', function ($query) use ($data) {
-    //   return $query->orderBy('lids.updated_at', $data['sortBy'][1]);
-    // })
+      ->groupBy('statuses.id')
+      ->orderBy('statuses.order', 'ASC');
 
-    $response['hm'] = $q_leads->count();
+    $response['statuses'] = $statusesQuery->get();
 
-    $response['lids'] = $q_leads
-      ->when($limit != 'all' && $page * $limit > $limit, function ($query) use ($limit, $page) {
-        return $query->offset($limit * ($page - 1));
-      })
-      ->when($limit != 'all', function ($query) use ($limit) {
-        return $query->limit($limit);
-      })
-      ->when($sortBy && $sortBy == 'statuses', function ($query) use ($sortDesc) {
-        return $query->leftJoin('statuses', 'statuses.id', '=', 'status_id')->orderBy('statuses.name', $sortDesc);
-      })
-      ->when($sortBy && !in_array($sortBy, ['provider_id', 'user_id', 'depozit', 'statuses']), function ($query) use ($sortBy, $sortDesc) {
-        return $query->orderBy('lids.' . $sortBy, $sortDesc);
-      })
-      ->when($sortBy && $sortBy == 'provider_id', function ($query) use ($sortDesc) {
-        return $query->leftJoin('providers', 'providers.id', '=', 'lids.provider_id')->orderBy('providers.name', $sortDesc);
-      })
-      ->when($sortBy && $sortBy == 'user_id', function ($query) use ($sortDesc) {
-        return $query->leftJoin('users', 'users.id', '=', 'lids.user_id')->orderBy('users.name', $sortDesc);
-      })
-      ->when($sortBy && $sortBy == 'depozit', function ($query) use ($sortBy, $sortDesc) {
-        return $query->orderBy($sortBy, $sortDesc);
-      })
-      ->get();
-
-    //if ($page == 0) {
-
-    $response['statuses'] = Lid::select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
-
-      ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
-      ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
-        return $query->whereIn('lids.office_id', $office_ids);
-      })
-      ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
-        return $query->where('lids.user_id', $id);
-      })
-      ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
-        return $query->whereIn('lids.user_id', $users_ids);
-      })
-      ->when(count($providers) > 0, function ($query) use ($providers) {
-        return $query->whereIn('lids.provider_id', $providers);
-      })
-      // ->when(count($status_id) > 0, function ($query) use ($status_id) {
-      //   return $query->whereIn('lids.status_id', $status_id);
-      // })
-      ->when($tel != '', function ($query) use ($tel) {
-        return $query->where('lids.tel', 'like', $tel . '%');
-      })
-      ->when(isset($data['duplicate_tel']), function ($query) use ($duplicate_tel) {
-        return $query->whereIn('lids.tel', $duplicate_tel);
-      })
-      ->when(count($date) > 0, function ($query) use ($date) {
-        return $query->whereBetween('lids.created_at', $date);
-      })
-      ->when($filterLang != '', function ($query) use ($filterLang) {
-        return $query->where('lids.client_lang', $filterLang);
-      })
-      ->when(count($filterGeo) > 0, function ($query) use ($filterGeo) {
-        return $query->whereIn('lids.client_geo', $filterGeo);
-      })
-      ->when(isset($data['callback']) && $data['callback'] == 1, function ($query) {
-        return $query->where(DB::Raw('(SELECT count(*) cnt FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9)'), '>', 0);
-      })
-      ->groupBy('id')
-      //->orderBy('lids.created_at', 'DESC')
-      ->orderBy('statuses.order', 'ASC')
-      ->get();
-
-    $response['languges'] = Lid::select('client_lang as name')
-      ->where('client_lang', '!=', null)
-      ->when(count($date) > 0, function ($query) use ($date) {
-        return $query->whereBetween('lids.created_at', $date);
-      })
-      ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
-        return $query->whereIn('lids.office_id', $office_ids);
-      })
-      ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
-        return $query->where('lids.user_id', $id);
-      })
-      ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
-        return $query->whereIn('lids.user_id', $users_ids);
-      })
+    // Языки
+    $langQuery = Lid::query()
+      ->select('client_lang as name')
+      ->whereNotNull('client_lang')
+      ->when(!empty($date), fn($q) => $q->whereBetween('lids.created_at', $date))
+      ->when(!in_array(0, $office_ids), fn($q) => $q->whereIn('lids.office_id', $office_ids))
+      ->when(!is_array($id) && $id > 0 && empty($users_ids), fn($q) => $q->where('lids.user_id', $id))
+      ->when(!empty($users_ids), fn($q) => $q->whereIn('lids.user_id', $users_ids))
       ->groupBy('client_lang')
-      //->orderBy('lids.created_at', 'DESC')
-      ->orderBy('client_lang', 'ASC')
-      ->get();
+      ->orderBy('client_lang', 'ASC');
 
-    // $response['geo'] = Lid::where('client_geo', '!=', null)
-    //   ->when(count($date) > 0, function ($query) use ($date) {
-    //     return $query->whereBetween('lids.created_at', $date);
-    //   })
-    //   ->when(!is_array($id) && $id > 0 && count($users_ids) === 0, function ($query) use ($id) {
-    //     return $query->where('lids.user_id', $id);
-    //   })
-    //   ->when(count($users_ids) > 0, function ($query) use ($users_ids) {
-    //     return $query->whereIn('lids.user_id', $users_ids);
-    //   })
-    //   ->when(!in_array(0, $office_ids), function ($query) use ($office_ids) {
-    //     return $query->whereIn('lids.office_id', $office_ids);
-    //   })
-    //   ->groupBy('client_geo')
-    //   ->pluck('client_geo');
-
-    //}
+    $response['languges'] = $langQuery->get();
 
     return response($response);
   }
