@@ -479,9 +479,26 @@
                           </tr>
                         </thead>
                       </template>
-
+                      <template v-slot:item.geo="{ item }">
+                        <div class="pl-5">
+                          <svg class="icon">
+                            <use :xlink:href="'#' + item.geo"></use></svg
+                          >{{ item.geo }}
+                        </div>
+                      </template>
                       <template v-slot:item.hmnew="{ item }">
-                        <div class="pointer" @click="toggleFilterStatus(8)">
+                        <div
+                          class="pointer pa-3"
+                          @click.stop="
+                            toggleFilterStatus(8);
+                            toggleCellBorder(item, 'hmnew');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(8) &&
+                              isCellBordered(item, 'hmnew'),
+                          }"
+                        >
                           {{ item.hmnew }}
                           <small>
                             {{
@@ -491,7 +508,18 @@
                         </div>
                       </template>
                       <template v-slot:item.hmrenew="{ item }">
-                        <div class="pointer" @click="toggleFilterStatus(33)">
+                        <div
+                          class="pointer pa-3"
+                          @click.stop="
+                            toggleFilterStatus(33);
+                            toggleCellBorder(item, 'hmrenew');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(33) &&
+                              isCellBordered(item, 'hmrenew'),
+                          }"
+                        >
                           {{ item.hmrenew }}
                           <small>
                             {{
@@ -501,7 +529,18 @@
                         </div>
                       </template>
                       <template v-slot:item.hmcb="{ item }">
-                        <div class="pointer" @click="toggleFilterStatus(9)">
+                        <div
+                          class="pointer pa-3"
+                          @click.stop="
+                            toggleFilterStatus(9);
+                            toggleCellBorder(item, 'hmcb');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(9) &&
+                              isCellBordered(item, 'hmcb'),
+                          }"
+                        >
                           {{ item.hmcb }}
                           <small>
                             {{
@@ -511,7 +550,18 @@
                         </div>
                       </template>
                       <template v-slot:item.hmdp="{ item }">
-                        <div class="pointer" @click="toggleFilterStatus(10)">
+                        <div
+                          class="pointer pa-3"
+                          @click.stop="
+                            toggleFilterStatus(10);
+                            toggleCellBorder(item, 'hmdp');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(10) &&
+                              isCellBordered(item, 'hmdp'),
+                          }"
+                        >
                           {{ item.hmdp }}
                           <small>
                             {{
@@ -521,7 +571,18 @@
                         </div>
                       </template>
                       <template v-slot:item.hmpnd="{ item }">
-                        <div class="pointer" @click="toggleFilterStatus(20)">
+                        <div
+                          class="pointer pa-3"
+                          @click.stop="
+                            toggleFilterStatus(20);
+                            toggleCellBorder(item, 'hmpnd');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(20) &&
+                              isCellBordered(item, 'hmpnd'),
+                          }"
+                        >
                           {{ item.hmpnd }}
                           <small>
                             {{
@@ -531,7 +592,18 @@
                         </div>
                       </template>
                       <template v-slot:item.hmpot="{ item }">
-                        <div class="pointer" @click="toggleFilterStatus(32)">
+                        <div
+                          class="pointer pa-3"
+                          @click.stop="
+                            toggleFilterStatus(32);
+                            toggleCellBorder(item, 'hmpot');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(32) &&
+                              isCellBordered(item, 'hmpot'),
+                          }"
+                        >
                           {{ item.hmpot }}
                           <small>
                             {{
@@ -541,7 +613,18 @@
                         </div>
                       </template>
                       <template v-slot:item.hmnoans="{ item }">
-                        <div class="pointer" @click="toggleFilterStatus(7)">
+                        <div
+                          class="pointer pa-3"
+                          @click.stop="
+                            toggleFilterStatus(7);
+                            toggleCellBorder(item, 'hmnoans');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(7) &&
+                              isCellBordered(item, 'hmnoans'),
+                          }"
+                        >
                           {{ item.hmnoans }}
                           <small>
                             {{
@@ -551,7 +634,18 @@
                         </div>
                       </template>
                       <template v-slot:item.hmnointerest="{ item }">
-                        <div class="pointer" @click="toggleFilterStatus(12)">
+                        <div
+                          class="pointer pa-3"
+                          @click.stop="
+                            toggleFilterStatus(12);
+                            toggleCellBorder(item, 'hmnointerest');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(12) &&
+                              isCellBordered(item, 'hmnointerest'),
+                          }"
+                        >
                           {{ item.hmnointerest }}
                           <small>
                             {{
@@ -609,7 +703,17 @@
                       hide-default-footer
                     >
                       <template v-slot:item.hmnew="{ item }">
-                        <div>
+                        <div
+                          @click.stop="
+                            toggleFilterStatus(8);
+                            toggleCellBorder(item, 'hmnew');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(8) &&
+                              isCellBordered(item, 'hmnew'),
+                          }"
+                        >
                           {{ item.hmnew }}
                           <small>
                             {{
@@ -619,7 +723,17 @@
                         </div>
                       </template>
                       <template v-slot:item.hmrenew="{ item }">
-                        <div>
+                        <div
+                          @click.stop="
+                            toggleFilterStatus(33);
+                            toggleCellBorder(item, 'hmrenew');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(33) &&
+                              isCellBordered(item, 'hmrenew'),
+                          }"
+                        >
                           {{ item.hmrenew }}
                           <small>
                             {{
@@ -629,7 +743,17 @@
                         </div>
                       </template>
                       <template v-slot:item.hmcb="{ item }">
-                        <div>
+                        <div
+                          @click.stop="
+                            toggleFilterStatus(9);
+                            toggleCellBorder(item, 'hmcb');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(9) &&
+                              isCellBordered(item, 'hmcb'),
+                          }"
+                        >
                           {{ item.hmcb }}
                           <small>
                             {{
@@ -639,7 +763,17 @@
                         </div>
                       </template>
                       <template v-slot:item.hmdp="{ item }">
-                        <div>
+                        <div
+                          @click.stop="
+                            toggleFilterStatus(10);
+                            toggleCellBorder(item, 'hmdp');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(10) &&
+                              isCellBordered(item, 'hmdp'),
+                          }"
+                        >
                           {{ item.hmdp }}
                           <small>
                             {{
@@ -649,7 +783,17 @@
                         </div>
                       </template>
                       <template v-slot:item.hmpnd="{ item }">
-                        <div>
+                        <div
+                          @click.stop="
+                            toggleFilterStatus(20);
+                            toggleCellBorder(item, 'hmpnd');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(20) &&
+                              isCellBordered(item, 'hmpnd'),
+                          }"
+                        >
                           {{ item.hmpnd }}
                           <small>
                             {{
@@ -659,7 +803,17 @@
                         </div>
                       </template>
                       <template v-slot:item.hmpot="{ item }">
-                        <div>
+                        <div
+                          @click.stop="
+                            toggleFilterStatus(32);
+                            toggleCellBorder(item, 'hmpot');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(32) &&
+                              isCellBordered(item, 'hmpot'),
+                          }"
+                        >
                           {{ item.hmpot }}
                           <small>
                             {{
@@ -669,7 +823,17 @@
                         </div>
                       </template>
                       <template v-slot:item.hmnoans="{ item }">
-                        <div>
+                        <div
+                          @click.stop="
+                            toggleFilterStatus(7);
+                            toggleCellBorder(item, 'hmnoans');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(7) &&
+                              isCellBordered(item, 'hmnoans'),
+                          }"
+                        >
                           {{ item.hmnoans }}
                           <small>
                             {{
@@ -679,7 +843,17 @@
                         </div>
                       </template>
                       <template v-slot:item.hmnointerest="{ item }">
-                        <div>
+                        <div
+                          @click.stop="
+                            toggleFilterStatus(12);
+                            toggleCellBorder(item, 'hmnointerest');
+                          "
+                          :class="{
+                            border:
+                              filterStatusTabl.includes(12) &&
+                              isCellBordered(item, 'hmnointerest'),
+                          }"
+                        >
                           {{ item.hmnointerest }}
                           <small>
                             {{
@@ -810,18 +984,182 @@
                             show-expand
                             single-expand
                             :expanded.sync="expandedate"
-                            @click:row="toggleExpandGeo"
+                            @click:row="toggleExpandDate"
                             hide-default-header
                             hide-default-footer
                             class="common-table date-table"
                             disable-pagination
                             :items-per-page="-1"
                           >
+                            <template v-slot:item.geo="{ item }">
+                              <div class="pl-5">
+                                <svg class="icon">
+                                  <use :xlink:href="'#' + item.geo"></use></svg
+                                >{{ item.geo }}
+                              </div>
+                            </template>
                             <template v-slot:item.hmnew="{ item }">
-                              {{ item.hmnew }}
-                              <small>
-                                {{ ((item.hmnew * 100) / item.hm).toFixed(2) }}%
-                              </small>
+                              <div
+                                :class="{
+                                  border:
+                                    filterStatusTabl.includes(8) &&
+                                    isCellBordered(item, 'hmnew'),
+                                }"
+                                @click.stop="
+                                  toggleFilterStatus(8);
+                                  toggleCellBorder(item, 'hmnew');
+                                "
+                              >
+                                {{ item.hmnew }}
+                                <small>
+                                  {{
+                                    ((item.hmnew * 100) / item.hm).toFixed(2)
+                                  }}%
+                                </small>
+                              </div>
+                            </template>
+                            <template v-slot:item.hmrenew="{ item }">
+                              <div
+                                :class="{
+                                  border:
+                                    filterStatusTabl.includes(33) &&
+                                    isCellBordered(item, 'hmrenew'),
+                                }"
+                                @click.stop="
+                                  toggleFilterStatus(33);
+                                  toggleCellBorder(item, 'hmrenew');
+                                "
+                              >
+                                {{ item.hmrenew }}
+                                <small>
+                                  {{
+                                    ((item.hmrenew * 100) / item.hm).toFixed(2)
+                                  }}%
+                                </small>
+                              </div>
+                            </template>
+                            <template v-slot:item.hmcb="{ item }">
+                              <div
+                                :class="{
+                                  border:
+                                    filterStatusTabl.includes(9) &&
+                                    isCellBordered(item, 'hmcb'),
+                                }"
+                                @click.stop="
+                                  toggleFilterStatus(9);
+                                  toggleCellBorder(item, 'hmcb');
+                                "
+                              >
+                                {{ item.hmcb }}
+                                <small>
+                                  {{
+                                    ((item.hmcb * 100) / item.hm).toFixed(2)
+                                  }}%
+                                </small>
+                              </div>
+                            </template>
+                            <template v-slot:item.hmdp="{ item }">
+                              <div
+                                :class="{
+                                  border:
+                                    filterStatusTabl.includes(10) &&
+                                    isCellBordered(item, 'hmdp'),
+                                }"
+                                @click.stop="
+                                  toggleFilterStatus(10);
+                                  toggleCellBorder(item, 'hmdp');
+                                "
+                              >
+                                {{ item.hmdp }}
+                                <small>
+                                  {{
+                                    ((item.hmdp * 100) / item.hm).toFixed(2)
+                                  }}%
+                                </small>
+                              </div>
+                            </template>
+                            <template v-slot:item.hmpnd="{ item }">
+                              <div
+                                :class="{
+                                  border:
+                                    filterStatusTabl.includes(20) &&
+                                    isCellBordered(item, 'hmpnd'),
+                                }"
+                                @click.stop="
+                                  toggleFilterStatus(20);
+                                  toggleCellBorder(item, 'hmpnd');
+                                "
+                              >
+                                {{ item.hmpnd }}
+                                <small>
+                                  {{
+                                    ((item.hmpnd * 100) / item.hm).toFixed(2)
+                                  }}%
+                                </small>
+                              </div>
+                            </template>
+                            <template v-slot:item.hmpot="{ item }">
+                              <div
+                                :class="{
+                                  border:
+                                    filterStatusTabl.includes(32) &&
+                                    isCellBordered(item, 'hmpot'),
+                                }"
+                                @click.stop="
+                                  toggleFilterStatus(32);
+                                  toggleCellBorder(item, 'hmpot');
+                                "
+                              >
+                                {{ item.hmpot }}
+                                <small>
+                                  {{
+                                    ((item.hmpot * 100) / item.hm).toFixed(2)
+                                  }}%
+                                </small>
+                              </div>
+                            </template>
+                            <template v-slot:item.hmnoans="{ item }">
+                              <div
+                                :class="{
+                                  border:
+                                    filterStatusTabl.includes(7) &&
+                                    isCellBordered(item, 'hmnoans'),
+                                }"
+                                @click.stop="
+                                  toggleFilterStatus(7);
+                                  toggleCellBorder(item, 'hmnoans');
+                                "
+                              >
+                                {{ item.hmnoans }}
+                                <small>
+                                  {{
+                                    ((item.hmnoans * 100) / item.hm).toFixed(2)
+                                  }}%
+                                </small>
+                              </div>
+                            </template>
+                            <template v-slot:item.hmnointerest="{ item }">
+                              <div
+                                :class="{
+                                  border:
+                                    filterStatusTabl.includes(12) &&
+                                    isCellBordered(item, 'hmnointerest'),
+                                }"
+                                @click.stop="
+                                  toggleFilterStatus(12);
+                                  toggleCellBorder(item, 'hmnointerest');
+                                "
+                              >
+                                {{ item.hmnointerest }}
+                                <small>
+                                  {{
+                                    (
+                                      (item.hmnointerest * 100) /
+                                      item.hm
+                                    ).toFixed(2)
+                                  }}%
+                                </small>
+                              </div>
                             </template>
                             <template v-slot:expanded-item="{ item: geoItem }">
                               <td :colspan="geoHeaders.length + 1">
@@ -857,6 +1195,12 @@
                                         width="100px"
                                         @click="clickrow(datesGeo)"
                                       >
+                                        <v-icon
+                                          small
+                                          class="mr-1"
+                                          color="primary"
+                                          >mdi-calendar</v-icon
+                                        >
                                         {{ datesGeo.date }}
                                       </td>
                                       <td width="100px"></td>
@@ -890,146 +1234,236 @@
                                       <td
                                         class="text-center common-column new pointer"
                                         width="100px"
-                                        @click="
-                                          toggleFilterStatus(8);
-                                          clickrow(datesGeo);
-                                        "
                                       >
-                                        {{ datesGeo.hmnew }}
-                                        <small>
-                                          {{
-                                            (
-                                              (datesGeo.hmnew * 100) /
-                                              datesGeo.hm
-                                            ).toFixed(2)
-                                          }}%</small
+                                        <div
+                                          class="pa-3"
+                                          :class="{
+                                            border:
+                                              filterStatusTabl.includes(8) &&
+                                              isCellBordered(datesGeo, 'hmnew'),
+                                          }"
+                                          @click.stop="
+                                            toggleFilterStatus(8);
+                                            toggleCellBorder(datesGeo, 'hmnew');
+                                          "
                                         >
+                                          {{ datesGeo.hmnew }}
+                                          <small>
+                                            {{
+                                              (
+                                                (datesGeo.hmnew * 100) /
+                                                datesGeo.hm
+                                              ).toFixed(2)
+                                            }}%</small
+                                          >
+                                        </div>
                                       </td>
                                       <td
                                         class="text-center common-column renew pointer"
                                         width="100px"
-                                        @click="
-                                          toggleFilterStatus(33);
-                                          clickrow(datesGeo);
-                                        "
                                       >
-                                        {{ datesGeo.hmrenew }}
-                                        <small>
-                                          {{
-                                            (
-                                              (datesGeo.hmrenew * 100) /
-                                              datesGeo.hm
-                                            ).toFixed(2)
-                                          }}%</small
+                                        <div
+                                          class="pa-3"
+                                          :class="{
+                                            border:
+                                              filterStatusTabl.includes(33) &&
+                                              isCellBordered(
+                                                datesGeo,
+                                                'hmrenew'
+                                              ),
+                                          }"
+                                          @click.stop="
+                                            toggleFilterStatus(33);
+                                            toggleCellBorder(
+                                              datesGeo,
+                                              'hmrenew'
+                                            );
+                                          "
                                         >
+                                          {{ datesGeo.hmrenew }}
+                                          <small>
+                                            {{
+                                              (
+                                                (datesGeo.hmrenew * 100) /
+                                                datesGeo.hm
+                                              ).toFixed(2)
+                                            }}%</small
+                                          >
+                                        </div>
                                       </td>
                                       <td
                                         class="text-center common-column callback pointer"
                                         width="100px"
-                                        @click="
-                                          toggleFilterStatus(9);
-                                          clickrow(datesGeo);
-                                        "
                                       >
-                                        {{ datesGeo.hmcb }}
-                                        <small>
-                                          {{
-                                            (
-                                              (datesGeo.hmcb * 100) /
-                                              datesGeo.hm
-                                            ).toFixed(2)
-                                          }}%</small
+                                        <div
+                                          class="pa-3"
+                                          :class="{
+                                            border:
+                                              filterStatusTabl.includes(9) &&
+                                              isCellBordered(datesGeo, 'hmcb'),
+                                          }"
+                                          @click.stop="
+                                            toggleFilterStatus(9);
+                                            toggleCellBorder(datesGeo, 'hmcb');
+                                          "
                                         >
+                                          {{ datesGeo.hmcb }}
+                                          <small>
+                                            {{
+                                              (
+                                                (datesGeo.hmcb * 100) /
+                                                datesGeo.hm
+                                              ).toFixed(2)
+                                            }}%</small
+                                          >
+                                        </div>
                                       </td>
                                       <td
                                         class="text-center common-column deposit pointer"
                                         width="100px"
-                                        @click="
-                                          toggleFilterStatus(10);
-                                          clickrow(datesGeo);
-                                        "
                                       >
-                                        {{ datesGeo.hmdp }}
-                                        <small>
-                                          {{
-                                            (
-                                              (datesGeo.hmdp * 100) /
-                                              datesGeo.hm
-                                            ).toFixed(2)
-                                          }}%</small
+                                        <div
+                                          class="pa-3"
+                                          :class="{
+                                            border:
+                                              filterStatusTabl.includes(10) &&
+                                              isCellBordered(datesGeo, 'hmdp'),
+                                          }"
+                                          @click.stop="
+                                            toggleFilterStatus(10);
+                                            toggleCellBorder(datesGeo, 'hmdp');
+                                          "
                                         >
+                                          {{ datesGeo.hmdp }}
+                                          <small>
+                                            {{
+                                              (
+                                                (datesGeo.hmdp * 100) /
+                                                datesGeo.hm
+                                              ).toFixed(2)
+                                            }}%</small
+                                          >
+                                        </div>
                                       </td>
                                       <td
                                         class="text-center common-column pending pointer"
                                         width="100px"
-                                        @click="
-                                          toggleFilterStatus(20);
-                                          clickrow(datesGeo);
-                                        "
                                       >
-                                        {{ datesGeo.hmpnd }}
-                                        <small>
-                                          {{
-                                            (
-                                              (datesGeo.hmpnd * 100) /
-                                              datesGeo.hm
-                                            ).toFixed(2)
-                                          }}%</small
+                                        <div
+                                          class="pa-3"
+                                          :class="{
+                                            border:
+                                              filterStatusTabl.includes(20) &&
+                                              isCellBordered(datesGeo, 'hmpnd'),
+                                          }"
+                                          @click.stop="
+                                            toggleFilterStatus(20);
+                                            toggleCellBorder(datesGeo, 'hmpnd');
+                                          "
                                         >
+                                          {{ datesGeo.hmpnd }}
+                                          <small>
+                                            {{
+                                              (
+                                                (datesGeo.hmpnd * 100) /
+                                                datesGeo.hm
+                                              ).toFixed(2)
+                                            }}%</small
+                                          >
+                                        </div>
                                       </td>
                                       <td
                                         class="text-center common-column potential pointer"
                                         width="100px"
-                                        @click="
-                                          toggleFilterStatus(32);
-                                          clickrow(datesGeo);
-                                        "
                                       >
-                                        {{ datesGeo.hmpot }}
-                                        <small>
-                                          {{
-                                            (
-                                              (datesGeo.hmpot * 100) /
-                                              datesGeo.hm
-                                            ).toFixed(2)
-                                          }}%</small
+                                        <div
+                                          class="pa-3"
+                                          :class="{
+                                            border:
+                                              filterStatusTabl.includes(32) &&
+                                              isCellBordered(datesGeo, 'hmpot'),
+                                          }"
+                                          @click.stop="
+                                            toggleFilterStatus(32);
+                                            toggleCellBorder(datesGeo, 'hmpot');
+                                          "
                                         >
+                                          {{ datesGeo.hmpot }}
+                                          <small>
+                                            {{
+                                              (
+                                                (datesGeo.hmpot * 100) /
+                                                datesGeo.hm
+                                              ).toFixed(2)
+                                            }}%</small
+                                          >
+                                        </div>
                                       </td>
                                       <td
                                         class="text-center common-column noans pointer"
                                         width="100px"
-                                        @click="
-                                          toggleFilterStatus(7);
-                                          clickrow(datesGeo);
-                                        "
                                       >
-                                        {{ datesGeo.hmnoans }}
-                                        <small>
-                                          {{
-                                            (
-                                              (datesGeo.hmnoans * 100) /
-                                              datesGeo.hm
-                                            ).toFixed(2)
-                                          }}%</small
+                                        <div
+                                          class="pa-3"
+                                          :class="{
+                                            border:
+                                              filterStatusTabl.includes(7) &&
+                                              isCellBordered(
+                                                datesGeo,
+                                                'hmnoans'
+                                              ),
+                                          }"
+                                          @click.stop="
+                                            toggleFilterStatus(7);
+                                            toggleCellBorder(
+                                              datesGeo,
+                                              'hmnoans'
+                                            );
+                                          "
                                         >
+                                          {{ datesGeo.hmnoans }}
+                                          <small>
+                                            {{
+                                              (
+                                                (datesGeo.hmnoans * 100) /
+                                                datesGeo.hm
+                                              ).toFixed(2)
+                                            }}%</small
+                                          >
+                                        </div>
                                       </td>
                                       <td
                                         class="text-center common-column nointerest pointer"
                                         width="100px"
-                                        @click="
-                                          toggleFilterStatus(12);
-                                          clickrow(datesGeo);
-                                        "
                                       >
-                                        {{ datesGeo.hmnointerest }}
-                                        <small>
-                                          {{
-                                            (
-                                              (datesGeo.hmnointerest * 100) /
-                                              datesGeo.hm
-                                            ).toFixed(2)
-                                          }}%</small
+                                        <div
+                                          class="pa-3"
+                                          :class="{
+                                            border:
+                                              filterStatusTabl.includes(12) &&
+                                              isCellBordered(
+                                                datesGeo,
+                                                'hmnointerest'
+                                              ),
+                                          }"
+                                          @click.stop="
+                                            toggleFilterStatus(12);
+                                            toggleCellBorder(
+                                              datesGeo,
+                                              'hmnointerest'
+                                            );
+                                          "
                                         >
+                                          {{ datesGeo.hmnointerest }}
+                                          <small>
+                                            {{
+                                              (
+                                                (datesGeo.hmnointerest * 100) /
+                                                datesGeo.hm
+                                              ).toFixed(2)
+                                            }}%</small
+                                          >
+                                        </div>
                                       </td>
                                     </tr>
                                   </template>
@@ -1475,22 +1909,9 @@
                   }"
                 >
                   <v-row>
-                    <!-- <v-spacer></v-spacer> -->
-                    <v-col cols="2">
-                      <v-btn v-if="selectedTop.length" @click="setTop"
-                        >Назначить приоритет</v-btn
-                      ></v-col
+                    <v-col cols="2" v-if="selectedTop.length">
+                      <v-btn @click="setTop">Назначить приоритет</v-btn></v-col
                     >
-                    <v-col cols="3" class="mt-3">
-                      <v-data-footer
-                        :pagination="pagination"
-                        :options="options"
-                        @update:options="updateOptions"
-                        :items-per-page-options="[50, 10, 100, 250, 500, -1]"
-                        :items-per-page-text="''"
-                      />
-                    </v-col>
-
                     <v-col cols="3">
                       <v-select
                         label="Cтатус в файл"
@@ -1551,6 +1972,15 @@
                         <v-icon left> mdi-file-excel </v-icon>
                         Скачать таблицу
                       </v-btn>
+                    </v-col>
+                    <v-col cols="3" class="mt-3">
+                      <v-data-footer
+                        :pagination="pagination"
+                        :options="options"
+                        @update:options="updateOptions"
+                        :items-per-page-options="[50, 10, 100, 250, 500, -1]"
+                        :items-per-page-text="''"
+                      />
                     </v-col>
                   </v-row>
                 </template>
@@ -1842,6 +2272,7 @@
     <v-navigation-drawer width="450" v-model="drawer" fixed temporary right>
       <selectUsers :user="$attrs.user" @getUserIds="p_user_ids" />
     </v-navigation-drawer>
+    <FlagsSVG />
   </div>
 </template>
 
@@ -1863,6 +2294,7 @@ export default {
     importxlsx,
     logtel,
     ConfirmDlg: () => import("./ConfirmDlg"),
+    FlagsSVG: () => import("../UI/FlagsSVG"),
     selectUsers,
     MaskedField,
     CanvasJSChart,
@@ -2490,6 +2922,7 @@ export default {
     unmaskedRowId: null,
     clearLog: false,
     showOffice: [],
+    cellBorders: {},
   }),
   watch: {
     selectedProvider: function (newval) {
@@ -2658,6 +3091,42 @@ export default {
     },
   },
   methods: {
+    // Check if a row is unmasked (unmasked means the phone/email is shown in full)
+    isRowUnmasked(rowId) {
+      return this.unmaskedRowId === rowId;
+    },
+    // Set a row as unmasked
+    setRowUnmasked(rowId) {
+      this.unmaskedRowId = rowId;
+    },
+    // Clear the unmasked row
+    clearUnmaskedRow() {
+      this.unmaskedRowId = null;
+    },
+    // Toggle the visibility of a specific field in the print view
+    togglePrintField(field) {
+      const index = this.printfields.indexOf(field);
+      if (index > -1) {
+        this.printfields.splice(index, 1);
+      } else {
+        this.printfields.push(field);
+      }
+    },
+
+    // Toggle border for a specific cell (by item and field)
+    toggleCellBorder(item, field) {
+      if (!this.cellBorders) this.cellBorders = {};
+      const key = `${item.id}_${field}`;
+      if (this.cellBorders[key]) {
+        this.$delete(this.cellBorders, key);
+      } else {
+        this.$set(this.cellBorders, key, true);
+      }
+    },
+    // Check if a cell is currently bordered
+    isCellBordered(item, field) {
+      return this.cellBorders && this.cellBorders[`${item.id}_${field}`];
+    },
     toggleFilterOfficeStatus(office, statusId) {
       const key = `${office}_${statusId}`;
       const idx = this.filterOfficeStatusTabl.indexOf(key);
@@ -2959,50 +3428,7 @@ export default {
         return provider;
       });
     },
-    // filterOfficeStatus(office, status) {
-    //   // Если клик по общему статусу (office == 0)
-    //   if (office == 0) {
-    //     // Добавляем/убираем статус из общего фильтра
-    //     if (this.filterStatusTabl.includes(status)) {
-    //       this.filterStatusTabl = this.filterStatusTabl.filter(
-    //         (s) => s !== status
-    //       );
-    //     } else {
-    //       this.filterStatusTabl.push(status);
-    //     }
-    //     return;
-    //   }
 
-    //   // Для офисов: мультивыбор
-    //   // Если офис не выбран — добавляем
-    //   if (!this.filterOfficeTabl.includes(office)) {
-    //     this.filterOfficeTabl.push(office);
-    //   }
-
-    //   // Для статусов: мультивыбор
-    //   if (this.filterStatusTabl.includes(status)) {
-    //     this.filterStatusTabl = this.filterStatusTabl.filter(
-    //       (s) => s !== status
-    //     );
-    //   } else {
-    //     this.filterStatusTabl.push(status);
-    //   }
-
-    //   // Если после удаления статусов не осталось ни одного статуса — очищаем офис
-    //   // (только если ни один статус не выбран для этого офиса)
-    //   const officeStatuses =
-    //     this.lidsByOffice
-    //       .find((o) => o.name === office)
-    //       ?.statuses.map((s) => s.id) || [];
-    //   const hasStatusForOffice = officeStatuses.some((sid) =>
-    //     this.filterStatusTabl.includes(sid)
-    //   );
-    //   if (!hasStatusForOffice) {
-    //     this.filterOfficeTabl = this.filterOfficeTabl.filter(
-    //       (o) => o !== office
-    //     );
-    //   }
-    // },
     filter: function (evt) {
       evt = evt ? evt : window.event;
       let expect = evt.target.value.toString() + evt.key.toString();
@@ -3640,6 +4066,8 @@ export default {
         ],
       };
       self.updateChart = true;
+      this.cellBorders = {};
+      this.filterStatusTabl = [];
     },
     // Build nested structure: offices -> groups -> users
     buildLidsByOffice(leads, offices, users, statuses, getStatusesHelper) {
@@ -3997,13 +4425,6 @@ export default {
             this.loading = false;
           }
         });
-
-      this.$nextTick(() => {
-        const element = document.getElementById("info_prov");
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      });
     },
     getOffices() {
       let self = this;
@@ -4012,10 +4433,7 @@ export default {
         .get("/api/getOffices")
         .then((res) => {
           self.offices = res.data;
-          // if (self.$attrs.user.role_id == 1) {
-          //   self.offices.unshift({ id: 0, name: "--выбор--" });
-          //   self.filterOffices = self.offices[1].id;
-          // }
+
           if (self.$attrs.user.office_id > 0) {
             self.offices = self.offices.filter(
               (o) => o.id == self.$attrs.user.office_id
@@ -4587,7 +5005,7 @@ main
 
 .pointer small {
   position: absolute;
-  bottom: -13px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -4663,5 +5081,24 @@ main
 .wrp__statuses.by_groups {
   font-size: 1.2rem;
   line-height: 1.5;
+}
+.selected-row {
+  border: 2px solid #000 !important;
+}
+.v-data-table__expanded.v-data-table__expanded__row {
+  border: 2px solid #000 !important;
+}
+svg.icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 1rem;
+}
+svg.icon.small {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+td div.border {
+  border: 2px solid #000 !important;
 }
 </style>
