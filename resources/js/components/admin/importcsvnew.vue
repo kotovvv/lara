@@ -330,7 +330,7 @@
                 <v-btn
                   class="btn"
                   v-if="importSelected.length || redistributeOffice"
-                  @click.stop="drawer = !drawer"
+                  @click="drawer = !drawer"
                   >Назначить на менеджеров</v-btn
                 >
                 <v-spacer></v-spacer>
@@ -489,10 +489,7 @@
                       <template v-slot:item.hmnew="{ item }">
                         <div
                           class="pointer pa-3"
-                          @click.stop="
-                            toggleFilterStatus(8);
-                            toggleCellBorder(item, 'hmnew');
-                          "
+                          @click="handleStatusCellClick(item, 8, 'hmnew')"
                           :class="{
                             border:
                               filterStatusTabl.includes(8) &&
@@ -501,19 +498,14 @@
                         >
                           {{ item.hmnew }}
                           <small>
-                            {{
-                              ((item.hmnew * 100) / item.hm).toFixed(2)
-                            }}%</small
-                          >
+                            {{ ((item.hmnew * 100) / item.hm).toFixed(2) }}%
+                          </small>
                         </div>
                       </template>
                       <template v-slot:item.hmrenew="{ item }">
                         <div
                           class="pointer pa-3"
-                          @click.stop="
-                            toggleFilterStatus(33);
-                            toggleCellBorder(item, 'hmrenew');
-                          "
+                          @click="handleStatusCellClick(item, 33, 'hmrenew')"
                           :class="{
                             border:
                               filterStatusTabl.includes(33) &&
@@ -522,19 +514,14 @@
                         >
                           {{ item.hmrenew }}
                           <small>
-                            {{
-                              ((item.hmrenew * 100) / item.hm).toFixed(2)
-                            }}%</small
-                          >
+                            {{ ((item.hmrenew * 100) / item.hm).toFixed(2) }}%
+                          </small>
                         </div>
                       </template>
                       <template v-slot:item.hmcb="{ item }">
                         <div
                           class="pointer pa-3"
-                          @click.stop="
-                            toggleFilterStatus(9);
-                            toggleCellBorder(item, 'hmcb');
-                          "
+                          @click="handleStatusCellClick(item, 9, 'hmcb')"
                           :class="{
                             border:
                               filterStatusTabl.includes(9) &&
@@ -543,19 +530,14 @@
                         >
                           {{ item.hmcb }}
                           <small>
-                            {{
-                              ((item.hmcb * 100) / item.hm).toFixed(2)
-                            }}%</small
-                          >
+                            {{ ((item.hmcb * 100) / item.hm).toFixed(2) }}%
+                          </small>
                         </div>
                       </template>
                       <template v-slot:item.hmdp="{ item }">
                         <div
                           class="pointer pa-3"
-                          @click.stop="
-                            toggleFilterStatus(10);
-                            toggleCellBorder(item, 'hmdp');
-                          "
+                          @click="handleStatusCellClick(item, 10, 'hmdp')"
                           :class="{
                             border:
                               filterStatusTabl.includes(10) &&
@@ -564,19 +546,14 @@
                         >
                           {{ item.hmdp }}
                           <small>
-                            {{
-                              ((item.hmdp * 100) / item.hm).toFixed(2)
-                            }}%</small
-                          >
+                            {{ ((item.hmdp * 100) / item.hm).toFixed(2) }}%
+                          </small>
                         </div>
                       </template>
                       <template v-slot:item.hmpnd="{ item }">
                         <div
                           class="pointer pa-3"
-                          @click.stop="
-                            toggleFilterStatus(20);
-                            toggleCellBorder(item, 'hmpnd');
-                          "
+                          @click="handleStatusCellClick(item, 20, 'hmpnd')"
                           :class="{
                             border:
                               filterStatusTabl.includes(20) &&
@@ -585,19 +562,14 @@
                         >
                           {{ item.hmpnd }}
                           <small>
-                            {{
-                              ((item.hmpnd * 100) / item.hm).toFixed(2)
-                            }}%</small
-                          >
+                            {{ ((item.hmpnd * 100) / item.hm).toFixed(2) }}%
+                          </small>
                         </div>
                       </template>
                       <template v-slot:item.hmpot="{ item }">
                         <div
                           class="pointer pa-3"
-                          @click.stop="
-                            toggleFilterStatus(32);
-                            toggleCellBorder(item, 'hmpot');
-                          "
+                          @click="handleStatusCellClick(item, 32, 'hmpot')"
                           :class="{
                             border:
                               filterStatusTabl.includes(32) &&
@@ -606,19 +578,14 @@
                         >
                           {{ item.hmpot }}
                           <small>
-                            {{
-                              ((item.hmpot * 100) / item.hm).toFixed(2)
-                            }}%</small
-                          >
+                            {{ ((item.hmpot * 100) / item.hm).toFixed(2) }}%
+                          </small>
                         </div>
                       </template>
                       <template v-slot:item.hmnoans="{ item }">
                         <div
                           class="pointer pa-3"
-                          @click.stop="
-                            toggleFilterStatus(7);
-                            toggleCellBorder(item, 'hmnoans');
-                          "
+                          @click="handleStatusCellClick(item, 7, 'hmnoans')"
                           :class="{
                             border:
                               filterStatusTabl.includes(7) &&
@@ -627,18 +594,15 @@
                         >
                           {{ item.hmnoans }}
                           <small>
-                            {{
-                              ((item.hmnoans * 100) / item.hm).toFixed(2)
-                            }}%</small
-                          >
+                            {{ ((item.hmnoans * 100) / item.hm).toFixed(2) }}%
+                          </small>
                         </div>
                       </template>
                       <template v-slot:item.hmnointerest="{ item }">
                         <div
                           class="pointer pa-3"
-                          @click.stop="
-                            toggleFilterStatus(12);
-                            toggleCellBorder(item, 'hmnointerest');
+                          @click="
+                            handleStatusCellClick(item, 12, 'hmnointerest')
                           "
                           :class="{
                             border:
@@ -650,8 +614,8 @@
                           <small>
                             {{
                               ((item.hmnointerest * 100) / item.hm).toFixed(2)
-                            }}%</small
-                          >
+                            }}%
+                          </small>
                         </div>
                       </template>
                       <template v-slot:item.start="{ item }">
@@ -671,7 +635,7 @@
                       </template>
                       <template v-slot:item.message="{ item }">
                         {{ item.message }}
-                        <v-icon small class="mr-2" @click.stop="editItem(item)">
+                        <v-icon small class="mr-2" @click="editItem(item)">
                           mdi-pencil
                         </v-icon>
                       </template>
@@ -679,7 +643,7 @@
                         v-slot:item.id="{ item }"
                         v-if="$attrs.user.office_id == 0"
                       >
-                        <v-icon @click.stop="deleteImport(item)" size="medium"
+                        <v-icon @click="deleteImport(item)" size="medium"
                           >mdi-delete</v-icon
                         >
                       </template>
@@ -704,10 +668,7 @@
                     >
                       <template v-slot:item.hmnew="{ item }">
                         <div
-                          @click.stop="
-                            toggleFilterStatus(8);
-                            toggleCellBorder(item, 'hmnew');
-                          "
+                          @click="handleStatusCellClick(item, 8, 'hmnew')"
                           :class="{
                             border:
                               filterStatusTabl.includes(8) &&
@@ -724,10 +685,7 @@
                       </template>
                       <template v-slot:item.hmrenew="{ item }">
                         <div
-                          @click.stop="
-                            toggleFilterStatus(33);
-                            toggleCellBorder(item, 'hmrenew');
-                          "
+                          @click="handleStatusCellClick(item, 33, 'hmrenew')"
                           :class="{
                             border:
                               filterStatusTabl.includes(33) &&
@@ -744,10 +702,7 @@
                       </template>
                       <template v-slot:item.hmcb="{ item }">
                         <div
-                          @click.stop="
-                            toggleFilterStatus(9);
-                            toggleCellBorder(item, 'hmcb');
-                          "
+                          @click="handleStatusCellClick(item, 9, 'hmcb')"
                           :class="{
                             border:
                               filterStatusTabl.includes(9) &&
@@ -764,10 +719,7 @@
                       </template>
                       <template v-slot:item.hmdp="{ item }">
                         <div
-                          @click.stop="
-                            toggleFilterStatus(10);
-                            toggleCellBorder(item, 'hmdp');
-                          "
+                          @click="handleStatusCellClick(item, 10, 'hmdp')"
                           :class="{
                             border:
                               filterStatusTabl.includes(10) &&
@@ -784,10 +736,7 @@
                       </template>
                       <template v-slot:item.hmpnd="{ item }">
                         <div
-                          @click.stop="
-                            toggleFilterStatus(20);
-                            toggleCellBorder(item, 'hmpnd');
-                          "
+                          @click="handleStatusCellClick(item, 20, 'hmpnd')"
                           :class="{
                             border:
                               filterStatusTabl.includes(20) &&
@@ -804,10 +753,7 @@
                       </template>
                       <template v-slot:item.hmpot="{ item }">
                         <div
-                          @click.stop="
-                            toggleFilterStatus(32);
-                            toggleCellBorder(item, 'hmpot');
-                          "
+                          @click="handleStatusCellClick(item, 32, 'hmpot')"
                           :class="{
                             border:
                               filterStatusTabl.includes(32) &&
@@ -824,10 +770,7 @@
                       </template>
                       <template v-slot:item.hmnoans="{ item }">
                         <div
-                          @click.stop="
-                            toggleFilterStatus(7);
-                            toggleCellBorder(item, 'hmnoans');
-                          "
+                          @click="handleStatusCellClick(item, 7, 'hmnoans')"
                           :class="{
                             border:
                               filterStatusTabl.includes(7) &&
@@ -844,9 +787,8 @@
                       </template>
                       <template v-slot:item.hmnointerest="{ item }">
                         <div
-                          @click.stop="
-                            toggleFilterStatus(12);
-                            toggleCellBorder(item, 'hmnointerest');
+                          @click="
+                            handleStatusCellClick(item, 12, 'hmnointerest')
                           "
                           :class="{
                             border:
@@ -1005,10 +947,7 @@
                                     filterStatusTabl.includes(8) &&
                                     isCellBordered(item, 'hmnew'),
                                 }"
-                                @click.stop="
-                                  toggleFilterStatus(8);
-                                  toggleCellBorder(item, 'hmnew');
-                                "
+                                @click="handleStatusCellClick(item, 8, 'hmnew')"
                               >
                                 {{ item.hmnew }}
                                 <small>
@@ -1025,9 +964,8 @@
                                     filterStatusTabl.includes(33) &&
                                     isCellBordered(item, 'hmrenew'),
                                 }"
-                                @click.stop="
-                                  toggleFilterStatus(33);
-                                  toggleCellBorder(item, 'hmrenew');
+                                @click="
+                                  handleStatusCellClick(item, 33, 'hmrenew')
                                 "
                               >
                                 {{ item.hmrenew }}
@@ -1045,10 +983,7 @@
                                     filterStatusTabl.includes(9) &&
                                     isCellBordered(item, 'hmcb'),
                                 }"
-                                @click.stop="
-                                  toggleFilterStatus(9);
-                                  toggleCellBorder(item, 'hmcb');
-                                "
+                                @click="handleStatusCellClick(item, 9, 'hmcb')"
                               >
                                 {{ item.hmcb }}
                                 <small>
@@ -1065,10 +1000,7 @@
                                     filterStatusTabl.includes(10) &&
                                     isCellBordered(item, 'hmdp'),
                                 }"
-                                @click.stop="
-                                  toggleFilterStatus(10);
-                                  toggleCellBorder(item, 'hmdp');
-                                "
+                                @click="handleStatusCellClick(item, 10, 'hmdp')"
                               >
                                 {{ item.hmdp }}
                                 <small>
@@ -1085,9 +1017,8 @@
                                     filterStatusTabl.includes(20) &&
                                     isCellBordered(item, 'hmpnd'),
                                 }"
-                                @click.stop="
-                                  toggleFilterStatus(20);
-                                  toggleCellBorder(item, 'hmpnd');
+                                @click="
+                                  handleStatusCellClick(item, 20, 'hmpnd')
                                 "
                               >
                                 {{ item.hmpnd }}
@@ -1105,9 +1036,8 @@
                                     filterStatusTabl.includes(32) &&
                                     isCellBordered(item, 'hmpot'),
                                 }"
-                                @click.stop="
-                                  toggleFilterStatus(32);
-                                  toggleCellBorder(item, 'hmpot');
+                                @click="
+                                  handleStatusCellClick(item, 32, 'hmpot')
                                 "
                               >
                                 {{ item.hmpot }}
@@ -1125,9 +1055,8 @@
                                     filterStatusTabl.includes(7) &&
                                     isCellBordered(item, 'hmnoans'),
                                 }"
-                                @click.stop="
-                                  toggleFilterStatus(7);
-                                  toggleCellBorder(item, 'hmnoans');
+                                @click="
+                                  handleStatusCellClick(item, 7, 'hmnoans')
                                 "
                               >
                                 {{ item.hmnoans }}
@@ -1145,9 +1074,12 @@
                                     filterStatusTabl.includes(12) &&
                                     isCellBordered(item, 'hmnointerest'),
                                 }"
-                                @click.stop="
-                                  toggleFilterStatus(12);
-                                  toggleCellBorder(item, 'hmnointerest');
+                                @click="
+                                  handleStatusCellClick(
+                                    item,
+                                    12,
+                                    'hmnointerest'
+                                  )
                                 "
                               >
                                 {{ item.hmnointerest }}
@@ -1219,7 +1151,7 @@
                                         }}<v-icon
                                           small
                                           style="position: absolute"
-                                          @click.stop="editItem(datesGeo)"
+                                          @click="editItem(datesGeo)"
                                         >
                                           mdi-pencil
                                         </v-icon>
@@ -1242,9 +1174,12 @@
                                               filterStatusTabl.includes(8) &&
                                               isCellBordered(datesGeo, 'hmnew'),
                                           }"
-                                          @click.stop="
-                                            toggleFilterStatus(8);
-                                            toggleCellBorder(datesGeo, 'hmnew');
+                                          @click="
+                                            handleStatusCellClick(
+                                              datesGeo,
+                                              8,
+                                              'hmnew'
+                                            )
                                           "
                                         >
                                           {{ datesGeo.hmnew }}
@@ -1272,12 +1207,12 @@
                                                 'hmrenew'
                                               ),
                                           }"
-                                          @click.stop="
-                                            toggleFilterStatus(33);
-                                            toggleCellBorder(
+                                          @click="
+                                            handleStatusCellClick(
                                               datesGeo,
+                                              33,
                                               'hmrenew'
-                                            );
+                                            )
                                           "
                                         >
                                           {{ datesGeo.hmrenew }}
@@ -1302,9 +1237,12 @@
                                               filterStatusTabl.includes(9) &&
                                               isCellBordered(datesGeo, 'hmcb'),
                                           }"
-                                          @click.stop="
-                                            toggleFilterStatus(9);
-                                            toggleCellBorder(datesGeo, 'hmcb');
+                                          @click="
+                                            handleStatusCellClick(
+                                              datesGeo,
+                                              9,
+                                              'hmcb'
+                                            )
                                           "
                                         >
                                           {{ datesGeo.hmcb }}
@@ -1329,9 +1267,12 @@
                                               filterStatusTabl.includes(10) &&
                                               isCellBordered(datesGeo, 'hmdp'),
                                           }"
-                                          @click.stop="
-                                            toggleFilterStatus(10);
-                                            toggleCellBorder(datesGeo, 'hmdp');
+                                          @click="
+                                            handleStatusCellClick(
+                                              datesGeo,
+                                              10,
+                                              'hmdp'
+                                            )
                                           "
                                         >
                                           {{ datesGeo.hmdp }}
@@ -1356,9 +1297,12 @@
                                               filterStatusTabl.includes(20) &&
                                               isCellBordered(datesGeo, 'hmpnd'),
                                           }"
-                                          @click.stop="
-                                            toggleFilterStatus(20);
-                                            toggleCellBorder(datesGeo, 'hmpnd');
+                                          @click="
+                                            handleStatusCellClick(
+                                              datesGeo,
+                                              20,
+                                              'hmpnd'
+                                            )
                                           "
                                         >
                                           {{ datesGeo.hmpnd }}
@@ -1383,9 +1327,12 @@
                                               filterStatusTabl.includes(32) &&
                                               isCellBordered(datesGeo, 'hmpot'),
                                           }"
-                                          @click.stop="
-                                            toggleFilterStatus(32);
-                                            toggleCellBorder(datesGeo, 'hmpot');
+                                          @click="
+                                            handleStatusCellClick(
+                                              datesGeo,
+                                              32,
+                                              'hmpot'
+                                            )
                                           "
                                         >
                                           {{ datesGeo.hmpot }}
@@ -1413,12 +1360,12 @@
                                                 'hmnoans'
                                               ),
                                           }"
-                                          @click.stop="
-                                            toggleFilterStatus(7);
-                                            toggleCellBorder(
+                                          @click="
+                                            handleStatusCellClick(
                                               datesGeo,
+                                              7,
                                               'hmnoans'
-                                            );
+                                            )
                                           "
                                         >
                                           {{ datesGeo.hmnoans }}
@@ -1446,12 +1393,12 @@
                                                 'hmnointerest'
                                               ),
                                           }"
-                                          @click.stop="
-                                            toggleFilterStatus(12);
-                                            toggleCellBorder(
+                                          @click="
+                                            handleStatusCellClick(
                                               datesGeo,
+                                              12,
                                               'hmnointerest'
-                                            );
+                                            )
                                           "
                                         >
                                           {{ datesGeo.hmnointerest }}
@@ -3112,6 +3059,19 @@ export default {
         this.printfields.push(field);
       }
     },
+    handleStatusCellClick(item, statusId, field) {
+      if (this.selectedRow !== item) {
+        // Клик по другой строке: сбросить всё и отметить только текущую ячейку
+        this.filterStatusTabl = [statusId];
+        this.cellBorders = { [`${item.id}_${field}`]: true };
+
+        this.clickrow(item);
+      } else {
+        // Клик по той же строке: обычное поведение (мультивыбор)
+        this.toggleFilterStatus(statusId);
+        this.toggleCellBorder(item, field);
+      }
+    },
 
     // Toggle border for a specific cell (by item and field)
     toggleCellBorder(item, field) {
@@ -4066,8 +4026,8 @@ export default {
         ],
       };
       self.updateChart = true;
-      this.cellBorders = {};
-      this.filterStatusTabl = [];
+      //this.cellBorders = {};
+      // this.filterStatusTabl = [];
     },
     // Build nested structure: offices -> groups -> users
     buildLidsByOffice(leads, offices, users, statuses, getStatusesHelper) {
@@ -4340,7 +4300,7 @@ export default {
     clickrow(item) {
       let self = this;
       let data = {};
-
+      console.log("clickrow", item);
       self.selectedRow = item;
       // self.callcSumm([item]);
       self.leads = [];
