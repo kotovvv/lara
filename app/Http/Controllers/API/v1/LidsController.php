@@ -942,7 +942,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         ->toArray();
     }
     if (isset($req['dates']) || isset($req['date']) || isset($req['provider'])) {
-      return Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office')
+      return Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office', 'users.group_id')
         ->whereIn('lids.id', $lids_prov)
         ->leftJoin('users', 'users.id', '=', 'user_id')
         ->leftJoin('offices', 'offices.id', '=', 'lids.office_id')

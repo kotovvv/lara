@@ -1738,6 +1738,37 @@
                         </v-expansion-panel-content>
                       </v-expansion-panel>
                     </v-expansion-panels>
+                    <div v-if="office.usersNoGroup.length">
+                      <h4>Users not in group</h4>
+                      <v-expansion-panels multiple>
+                        <v-expansion-panel
+                          v-for="user in office.usersNoGroup"
+                          :key="user.id"
+                        >
+                          <v-expansion-panel-header>
+                            User: {{ user.name }}
+                          </v-expansion-panel-header>
+                          <v-expansion-panel-content>
+                            <div class="wrp__statuses by_users">
+                              <div
+                                v-for="status in user.statuses"
+                                :key="status.id"
+                                class="status_wrp"
+                              >
+                                <b
+                                  :style="{
+                                    background: status.color,
+                                    outline: '1px solid ' + status.color,
+                                  }"
+                                  >{{ status.hm }}</b
+                                >
+                                <span>{{ status.name }}</span>
+                              </div>
+                            </div>
+                          </v-expansion-panel-content>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
+                    </div>
                   </div>
                 </template>
               </div>

@@ -123,7 +123,7 @@
                       <v-autocomplete
                         v-model="editedItem.responsible_user"
                         multiple
-                        :items="users"
+                        :items="sortedResponsibleUsers"
                         item-text="name"
                         item-value="id"
                         label="Отвественные за импорт"
@@ -136,8 +136,8 @@
                           >
                             (+{{ editedItem.responsible_user.length - 1 }} )
                           </span>
-                        </template></v-autocomplete
-                      >
+                        </template>
+                      </v-autocomplete>
                     </v-col>
                     <v-col cols="6">
                       <v-text-field
@@ -263,6 +263,11 @@ export default {
   },
 
   methods: {
+    sortedResponsibleUsers() {
+      return this.users
+        .filter((u) => u.role_id < 3)
+        .sort((a, b) => a.name.localeCompare(b.name));
+    },
     imputfilter: function (evt) {
       evt = evt ? evt : window.event;
       let expect = evt.target.value.toString() + evt.key.toString();
