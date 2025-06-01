@@ -261,10 +261,11 @@ export default {
       if (prov.responsible_user != null) {
         const a_responsible_user = JSON.parse(prov.responsible_user);
         if (a_responsible_user.length != 0) {
-          console.log("selectedProvider", a_responsible_user);
-
           this.responsible_user = this.users.filter((u) =>
             a_responsible_user.includes(u.id)
+          );
+          this.selectedResponsible_user = this.responsible_user.map(
+            (u) => u.id
           );
         }
       }
