@@ -244,6 +244,20 @@ export default {
         ? "Новый поставщик"
         : "Редактировать поставщика";
     },
+    sortedResponsibleUsers() {
+      // Get selected responsible users
+      const selected = this.users.filter((user) =>
+        this.editedItem.responsible_user.includes(user.id)
+      );
+      // Get the rest
+      const rest = this.users.filter(
+        (user) =>
+          user.role_id < 3 &&
+          !this.editedItem.responsible_user.includes(user.id)
+      );
+      // Combine: selected first, then the rest
+      return [...selected, ...rest];
+    },
   },
 
   watch: {
@@ -263,11 +277,6 @@ export default {
   },
 
   methods: {
-    sortedResponsibleUsers() {
-      return this.users
-        .filter((u) => u.role_id < 3)
-        .sort((a, b) => a.name.localeCompare(b.name));
-    },
     imputfilter: function (evt) {
       evt = evt ? evt : window.event;
       let expect = evt.target.value.toString() + evt.key.toString();

@@ -1135,7 +1135,11 @@
                                         >
                                         {{ datesGeo.date }}
                                       </td>
-                                      <td width="100px"></td>
+                                      <td
+                                        width="100px"
+                                        class="text-center common-column pointer"
+                                        @click="clickrow(datesGeo)"
+                                      ></td>
                                       <td
                                         class="text-center common-column pointer"
                                         width="100px"
@@ -4915,13 +4919,17 @@ export default {
   overflow-x: visible;
 }
 
-.common-table th,
-.common-table td {
+.common-table th:not(:first-child),
+.common-table td:not(:first-child) {
   width: 100px;
   max-width: 100px;
 }
+#geoTable td:first-child {
+  width: 32px;
+  max-width: 32px;
+}
 
-.common-table td {
+.common-table td:not(:first-child) {
   white-space: nowrap;
 }
 .csv .v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
@@ -5060,5 +5068,6 @@ svg.icon.small {
 }
 td div.border {
   border: 2px solid #000 !important;
+  border-radius: 0;
 }
 </style>
