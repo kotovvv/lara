@@ -629,7 +629,7 @@ class LidsController extends Controller
     $page = (int) $data['page'];
     $filterLang = $data['filterLang'];
     $filterGeo = $data['filterGeo'] ?? [];
-    $filterRD = $data['filterRD'] ?? null;
+    $filterRD = isset($data['filterRD']) && in_array($data['filterRD'], ['Depositors', 'Registrations']) ? $data['filterRD'] : null;
 
     $providers = [];
     $date = [];
@@ -701,7 +701,7 @@ class LidsController extends Controller
       ->when($tel !== '', fn($q) => $q->where('lids.tel', 'like', $tel . '%'))
       ->when(isset($data['duplicate_tel']), fn($q) => $q->whereIn('lids.tel', $duplicate_tel))
       ->when(!empty($date), fn($q) => $q->whereBetween('lids.created_at', $date))
-      ->when($filterLang !== '', fn($q) => $q->where('lids.client_lang', $filterLang))
+      ->when($filterLang !== '' && $filterLang != null, fn($q) => $q->where('lids.client_lang', $filterLang))
       ->when(!empty($filterGeo), fn($q) => $q->whereIn('lids.client_geo', $filterGeo))
       ->when($filterRD !== null, fn($q) => $q->where('lids.rd', $filterRD))
       ->when(isset($data['callback']) && $data['callback'] == 1, function ($q) {
@@ -743,8 +743,9 @@ class LidsController extends Controller
       ->when($tel !== '', fn($q) => $q->where('lids.tel', 'like', $tel . '%'))
       ->when(isset($data['duplicate_tel']), fn($q) => $q->whereIn('lids.tel', $duplicate_tel))
       ->when(!empty($date), fn($q) => $q->whereBetween('lids.created_at', $date))
-      ->when($filterLang !== '', fn($q) => $q->where('lids.client_lang', $filterLang))
+      ->when($filterLang !== '' && $filterLang != null, fn($q) => $q->where('lids.client_lang', $filterLang))
       ->when(!empty($filterGeo), fn($q) => $q->whereIn('lids.client_geo', $filterGeo))
+      ->when($filterRD !== null, fn($q) => $q->where('lids.rd', $filterRD))
       ->when(isset($data['callback']) && $data['callback'] == 1, function ($q) {
         return $q->whereRaw('(SELECT count(*) FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9) > 0');
       })
@@ -906,6 +907,14 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $where_ids_off = '';
     $office_id = 0;
     $lids_prov = [];
+    $geo = null;
+    if (isset($req['geo'])) {
+      $geo = $req['geo'];
+      if (!is_array($geo)) {
+        $geo = $geo ? [$geo] : [];
+      }
+    }
+
     if (session()->has('user_id')) {
       $user = User::where('id', (int) session()->get('user_id'))->first();
 
@@ -920,6 +929,9 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         ->select('lead_id')
         ->where('api_key_id', $req['provider_id'])
         ->whereBetween(DB::raw('DATE(upload_time)'), [$req['fromto'][0], $req['fromto'][1]])
+        ->when(isset($req['geo']), function ($query) use ($geo) {
+          return $query->whereIn('geo', $geo);
+        })
         ->pluck('lead_id')
         ->toArray();
     }
@@ -928,7 +940,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         ->select('lead_id')
         ->where('api_key_id', $req['provider_id'])
         ->where(DB::raw('DATE(upload_time)'), $req['date'])
-        ->where('geo', $req['geo'])
+        ->whereIn('geo', $geo)
         ->pluck('lead_id')
         ->toArray();
     }
@@ -937,22 +949,24 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         ->select('lead_id')
         ->where('api_key_id', $req['provider_id'])
         ->whereIn(DB::raw('DATE(upload_time)'), $req['dates'])
-        ->where('geo', $req['geo'])
+        ->where('geo', $geo)
         ->pluck('lead_id')
         ->toArray();
     }
     if (isset($req['dates']) || isset($req['date']) || isset($req['provider'])) {
-      return Lid::select('lids.*', 'users.fio AS  user', 'offices.name AS office', 'users.group_id')
+      return Lid::select('lids.*', 'lids.client_geo as geo', 'users.fio AS  user', 'offices.name AS office', 'users.group_id')
         ->whereIn('lids.id', $lids_prov)
         ->leftJoin('users', 'users.id', '=', 'user_id')
         ->leftJoin('offices', 'offices.id', '=', 'lids.office_id')
         ->when($office_id > 0, function ($query) use ($office_id) {
           return $query->where('lids.office_id', $office_id);
         })
+        ->when(isset($req['geo']), function ($query) use ($geo) {
+          return $query->whereIn('client_geo', $geo);
+        })
         ->get();
     }
 
-    $geo = isset($req['geo']) ? $req['geo'] : '';
     if (isset($req['end']) && isset($req['message'])) {
       $date_end = substr($req['end'], 0, 10);
 
@@ -1001,7 +1015,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
           ->get();
       }
     } elseif (isset($req['start'])) {
-      $sql = "SELECT l.*,users.fio as user, users.group_id, offices.name as office FROM `lids` l left join users on (users.id = l.user_id) left join offices on (offices.id = l.office_id) WHERE  " . $where_ids_off . " l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "' AND geo = '" . $geo . "') ";
+      $sql = "SELECT l.*,l.client_geo as geo,users.fio as user, users.group_id, offices.name as office FROM `lids` l left join users on (users.id = l.user_id) left join offices on (offices.id = l.office_id) WHERE  " . $where_ids_off . " l.`id` IN (SELECT `lead_id` FROM `imported_leads` WHERE `api_key_id` = " . $req['provider_id'] . " AND DATE(`upload_time`) = '" . $req['start'] . "' AND geo = '" . $geo . "') ";
       $lids = DB::select(DB::raw($sql));
       $office_ids = [];
       foreach ($lids as $key => $lid) {

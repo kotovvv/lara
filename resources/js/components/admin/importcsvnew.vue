@@ -480,7 +480,7 @@
                         </thead>
                       </template>
                       <template v-slot:item.geo="{ item }">
-                        <div class="pl-5">
+                        <div class="pl-5 d-flex align-center">
                           <svg class="icon">
                             <use :xlink:href="'#' + item.geo"></use></svg
                           >{{ item.geo }}
@@ -488,7 +488,7 @@
                       </template>
                       <template v-slot:item.hmnew="{ item }">
                         <div
-                          class="pointer pa-3"
+                          class="pointer pa-3 btn_status"
                           @click="handleStatusCellClick(item, 8, 'hmnew')"
                           :class="{
                             border:
@@ -504,7 +504,7 @@
                       </template>
                       <template v-slot:item.hmrenew="{ item }">
                         <div
-                          class="pointer pa-3"
+                          class="pointer pa-3 btn_status"
                           @click="handleStatusCellClick(item, 33, 'hmrenew')"
                           :class="{
                             border:
@@ -520,7 +520,7 @@
                       </template>
                       <template v-slot:item.hmcb="{ item }">
                         <div
-                          class="pointer pa-3"
+                          class="pointer pa-3 btn_status"
                           @click="handleStatusCellClick(item, 9, 'hmcb')"
                           :class="{
                             border:
@@ -536,7 +536,7 @@
                       </template>
                       <template v-slot:item.hmdp="{ item }">
                         <div
-                          class="pointer pa-3"
+                          class="pointer pa-3 btn_status"
                           @click="handleStatusCellClick(item, 10, 'hmdp')"
                           :class="{
                             border:
@@ -552,7 +552,7 @@
                       </template>
                       <template v-slot:item.hmpnd="{ item }">
                         <div
-                          class="pointer pa-3"
+                          class="pointer pa-3 btn_status"
                           @click="handleStatusCellClick(item, 20, 'hmpnd')"
                           :class="{
                             border:
@@ -568,7 +568,7 @@
                       </template>
                       <template v-slot:item.hmpot="{ item }">
                         <div
-                          class="pointer pa-3"
+                          class="pointer pa-3 btn_status"
                           @click="handleStatusCellClick(item, 32, 'hmpot')"
                           :class="{
                             border:
@@ -584,7 +584,7 @@
                       </template>
                       <template v-slot:item.hmnoans="{ item }">
                         <div
-                          class="pointer pa-3"
+                          class="pointer pa-3 btn_status"
                           @click="handleStatusCellClick(item, 7, 'hmnoans')"
                           :class="{
                             border:
@@ -600,7 +600,7 @@
                       </template>
                       <template v-slot:item.hmnointerest="{ item }">
                         <div
-                          class="pointer pa-3"
+                          class="pointer pa-3 btn_status"
                           @click="
                             handleStatusCellClick(item, 12, 'hmnointerest')
                           "
@@ -669,6 +669,7 @@
                       <template v-slot:item.hmnew="{ item }">
                         <div
                           @click="handleStatusCellClick(item, 8, 'hmnew')"
+                          class="btn_status"
                           :class="{
                             border:
                               filterStatusTabl.includes(8) &&
@@ -686,6 +687,7 @@
                       <template v-slot:item.hmrenew="{ item }">
                         <div
                           @click="handleStatusCellClick(item, 33, 'hmrenew')"
+                          class="btn_status"
                           :class="{
                             border:
                               filterStatusTabl.includes(33) &&
@@ -703,6 +705,7 @@
                       <template v-slot:item.hmcb="{ item }">
                         <div
                           @click="handleStatusCellClick(item, 9, 'hmcb')"
+                          class="btn_status"
                           :class="{
                             border:
                               filterStatusTabl.includes(9) &&
@@ -720,6 +723,7 @@
                       <template v-slot:item.hmdp="{ item }">
                         <div
                           @click="handleStatusCellClick(item, 10, 'hmdp')"
+                          class="btn_status"
                           :class="{
                             border:
                               filterStatusTabl.includes(10) &&
@@ -737,6 +741,7 @@
                       <template v-slot:item.hmpnd="{ item }">
                         <div
                           @click="handleStatusCellClick(item, 20, 'hmpnd')"
+                          class="btn_status"
                           :class="{
                             border:
                               filterStatusTabl.includes(20) &&
@@ -754,6 +759,7 @@
                       <template v-slot:item.hmpot="{ item }">
                         <div
                           @click="handleStatusCellClick(item, 32, 'hmpot')"
+                          class="btn_status"
                           :class="{
                             border:
                               filterStatusTabl.includes(32) &&
@@ -771,6 +777,7 @@
                       <template v-slot:item.hmnoans="{ item }">
                         <div
                           @click="handleStatusCellClick(item, 7, 'hmnoans')"
+                          class="btn_status"
                           :class="{
                             border:
                               filterStatusTabl.includes(7) &&
@@ -790,6 +797,7 @@
                           @click="
                             handleStatusCellClick(item, 12, 'hmnointerest')
                           "
+                          class="btn_status"
                           :class="{
                             border:
                               filterStatusTabl.includes(12) &&
@@ -934,7 +942,7 @@
                             :items-per-page="-1"
                           >
                             <template v-slot:item.geo="{ item }">
-                              <div class="pl-5">
+                              <div class="pl-5 d-flex align-center">
                                 <svg class="icon">
                                   <use :xlink:href="'#' + item.geo"></use></svg
                                 >{{ item.geo }}
@@ -1435,7 +1443,7 @@
                 <CanvasJSChart :options="chartOptions" />
                 <div
                   id="wrp_stat"
-                  class="wrp__statuses"
+                  class="wrp__statuses mt-4"
                   :style="{ 'flex-direction': ' column' }"
                 >
                   <template v-for="i in Statuses">
@@ -1520,8 +1528,10 @@
               </template>
             </div>
           </v-col>
+
           <template v-for="office in lidsByOffice">
             <v-col cols="12" v-if="office.lids.length" :key="office.name">
+              <v-divider class="my-3" :thickness="3" color="info"></v-divider>
               <div class="d-flex align-center blk_office">
                 <v-checkbox
                   style="
@@ -4337,6 +4347,9 @@ export default {
         data.provider_id = item.id;
         data.fromto = [self.datetimeFrom, self.datetimeTo];
         data.provider = item.provider;
+        if (this.filter_geo && this.filter_geo.length > 0) {
+          data.geo = this.filter_geo;
+        }
       } else {
         self.item.name = self.providers.find(
           (s) => s.id == item.provider_id
@@ -5067,7 +5080,10 @@ svg.icon.small {
   display: inline-block;
 }
 td div.border {
-  border: 2px solid #000 !important;
+  border: 4px solid #000 !important;
   border-radius: 0;
+}
+.btn_status:hover {
+  border: 2px solid #000;
 }
 </style>
