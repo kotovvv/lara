@@ -823,7 +823,7 @@
                             <th class="text-center">
                               {{ sumFieldProv("hm") }}
                             </th>
-                            <th class="text-center new">
+                            <th class="text-center btn_status new">
                               {{ sumFieldProv("hmnew") }}
                               <small>
                                 {{
@@ -834,7 +834,7 @@
                                 }}%</small
                               >
                             </th>
-                            <th class="text-center renew">
+                            <th class="text-center btn_status renew">
                               {{ sumFieldProv("hmrenew") }}
                               <small>
                                 {{
@@ -845,7 +845,7 @@
                                 }}%</small
                               >
                             </th>
-                            <th class="text-center callback">
+                            <th class="text-center btn_status callback">
                               {{ sumFieldProv("hmcb") }}
                               <small>
                                 {{
@@ -856,7 +856,7 @@
                                 }}%</small
                               >
                             </th>
-                            <th class="text-center deposit">
+                            <th class="text-center btn_status deposit">
                               {{ sumFieldProv("hmdp") }}
                               <small>
                                 {{
@@ -867,7 +867,7 @@
                                 }}%</small
                               >
                             </th>
-                            <th class="text-center pending">
+                            <th class="text-center btn_status pending">
                               {{ sumFieldProv("hmpnd") }}
                               <small>
                                 {{
@@ -878,7 +878,7 @@
                                 }}%</small
                               >
                             </th>
-                            <th class="text-center potential">
+                            <th class="text-center btn_status potential">
                               {{ sumFieldProv("hmpot") }}
                               <small>
                                 {{
@@ -889,7 +889,7 @@
                                 }}%</small
                               >
                             </th>
-                            <th class="text-center noans">
+                            <th class="text-center btn_status noans">
                               {{ sumFieldProv("hmnoans") }}
                               <small>
                                 {{
@@ -900,7 +900,7 @@
                                 }}%</small
                               >
                             </th>
-                            <th class="text-center nointerest">
+                            <th class="text-center btn_status nointerest">
                               {{ sumFieldProv("hmnointerest") }}
                               <small>
                                 {{
@@ -950,6 +950,7 @@
                             </template>
                             <template v-slot:item.hmnew="{ item }">
                               <div
+                                class="btn_status pointer pa-3"
                                 :class="{
                                   border:
                                     filterStatusTabl.includes(8) &&
@@ -967,6 +968,7 @@
                             </template>
                             <template v-slot:item.hmrenew="{ item }">
                               <div
+                                class="btn_status pointer pa-3"
                                 :class="{
                                   border:
                                     filterStatusTabl.includes(33) &&
@@ -986,6 +988,7 @@
                             </template>
                             <template v-slot:item.hmcb="{ item }">
                               <div
+                                class="btn_status pointer pa-3"
                                 :class="{
                                   border:
                                     filterStatusTabl.includes(9) &&
@@ -1003,6 +1006,7 @@
                             </template>
                             <template v-slot:item.hmdp="{ item }">
                               <div
+                                class="btn_status pointer pa-3"
                                 :class="{
                                   border:
                                     filterStatusTabl.includes(10) &&
@@ -1020,6 +1024,7 @@
                             </template>
                             <template v-slot:item.hmpnd="{ item }">
                               <div
+                                class="btn_status pointer pa-3"
                                 :class="{
                                   border:
                                     filterStatusTabl.includes(20) &&
@@ -1039,6 +1044,7 @@
                             </template>
                             <template v-slot:item.hmpot="{ item }">
                               <div
+                                class="btn_status pointer pa-3"
                                 :class="{
                                   border:
                                     filterStatusTabl.includes(32) &&
@@ -1058,6 +1064,7 @@
                             </template>
                             <template v-slot:item.hmnoans="{ item }">
                               <div
+                                class="btn_status pointer pa-3"
                                 :class="{
                                   border:
                                     filterStatusTabl.includes(7) &&
@@ -1077,6 +1084,7 @@
                             </template>
                             <template v-slot:item.hmnointerest="{ item }">
                               <div
+                                class="btn_status pointer pa-3"
                                 :class="{
                                   border:
                                     filterStatusTabl.includes(12) &&
@@ -1180,7 +1188,7 @@
                                         width="100px"
                                       >
                                         <div
-                                          class="pa-3"
+                                          class="pa-3 btn_status pointer"
                                           :class="{
                                             border:
                                               filterStatusTabl.includes(8) &&
@@ -1210,7 +1218,7 @@
                                         width="100px"
                                       >
                                         <div
-                                          class="pa-3"
+                                          class="pa-3 btn_status pointer"
                                           :class="{
                                             border:
                                               filterStatusTabl.includes(33) &&
@@ -1243,7 +1251,7 @@
                                         width="100px"
                                       >
                                         <div
-                                          class="pa-3"
+                                          class="pa-3 btn_status pointer"
                                           :class="{
                                             border:
                                               filterStatusTabl.includes(9) &&
@@ -1273,7 +1281,7 @@
                                         width="100px"
                                       >
                                         <div
-                                          class="pa-3"
+                                          class="pa-3 btn_status pointer"
                                           :class="{
                                             border:
                                               filterStatusTabl.includes(10) &&
@@ -1303,7 +1311,7 @@
                                         width="100px"
                                       >
                                         <div
-                                          class="pa-3"
+                                          class="pa-3 btn_status pointer"
                                           :class="{
                                             border:
                                               filterStatusTabl.includes(20) &&
@@ -1333,7 +1341,7 @@
                                         width="100px"
                                       >
                                         <div
-                                          class="pa-3"
+                                          class="pa-3 btn_status pointer"
                                           :class="{
                                             border:
                                               filterStatusTabl.includes(32) &&
@@ -1363,7 +1371,7 @@
                                         width="100px"
                                       >
                                         <div
-                                          class="pa-3"
+                                          class="pa-3 btn_status pointer"
                                           :class="{
                                             border:
                                               filterStatusTabl.includes(7) &&
@@ -1396,7 +1404,7 @@
                                         width="100px"
                                       >
                                         <div
-                                          class="pa-3"
+                                          class="pa-3 btn_status pointer"
                                           :class="{
                                             border:
                                               filterStatusTabl.includes(12) &&
@@ -4989,9 +4997,6 @@ main
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-}
-.pointer.common-column small {
-  bottom: 5px;
 }
 
 /*#provTable th,
