@@ -4049,8 +4049,6 @@ export default {
         ],
       };
       self.updateChart = true;
-      //this.cellBorders = {};
-      // this.filterStatusTabl = [];
     },
     // Build nested structure: offices -> groups -> users
     buildLidsByOffice(leads, offices, users, statuses, getStatusesHelper) {
@@ -4320,10 +4318,28 @@ export default {
     getRowClass(item) {
       return this.selectedRow === item ? "selected-row" : "";
     },
+    chekcell(item) {
+      // Получить массив id из ключей вида "7147_hmnew"
+      const ids = Object.keys(this.cellBorders)
+        .map((key) => key.split("_")[0])
+        .filter((v, i, a) => a.indexOf(v) === i); // уникальные
+
+      // Удалить из cellBorders все строки, где id != item.id
+      Object.keys(this.cellBorders).forEach((key) => {
+        if (key.split("_")[0] != item.id) {
+          this.$delete(this.cellBorders, key);
+          if (Object.keys(this.cellBorders).length === 0) {
+            this.filterStatusTabl = [];
+          }
+        }
+      });
+    },
     clickrow(item) {
       let self = this;
       let data = {};
-      console.log("clickrow", item);
+      if (self.tabimport == 0) {
+        self.chekcell(item);
+      }
       self.selectedRow = item;
       // self.callcSumm([item]);
       self.leads = [];
