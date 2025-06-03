@@ -1136,6 +1136,7 @@
                                         <v-checkbox
                                           :input-value="isSelected(datesGeo)"
                                           @change="clickGeo(datesGeo)"
+                                          hide-details
                                         ></v-checkbox>
                                       </td>
                                       <td
@@ -1491,56 +1492,56 @@
               {{ usr[0] }}.
             </span> -->
           </v-col>
-          <v-col
-            cols="12"
-            v-if="lidsByOffice.length > 1"
-            class="d-flex align-center"
-          >
-            <div style="max-width: 400px; width: 400px">
-              <b>{{ item.name }}</b>
-              <!-- <small>{{ item.start.substring(0, 10) }}</small> -->
-              <p style="font-size: 1.2rem; font-weight: bold">
-                Total: {{ leads.length }}
-                <v-btn
-                  icon
-                  class="mx-2"
-                  @click="clearFilterStatusOffice"
-                  alt="очистить фильтр"
-                >
-                  <v-icon>mdi-close</v-icon>
-                </v-btn>
-              </p>
-            </div>
-            <div id="wrp_stat" class="wrp__statuses" v-if="Statuses">
-              <template v-for="i in Statuses">
-                <div
-                  class="status_wrp"
-                  :class="{
-                    active: filterStatusTabl.includes(i.id),
-                  }"
-                  @click="toggleFilterStatus(i.id)"
-                  :key="i.id"
-                >
-                  <b
-                    :style="{
-                      background: i.color,
-                      outline: '1px solid' + i.color,
-                    }"
-                    >{{ i.hm }}</b
+          <v-col cols="12" v-if="lidsByOffice.length > 1"
+            ><div class="d-flex align-center">
+              <div style="max-width: 400px; width: 400px">
+                <b>{{ item.name }} {{ item.start }}</b>
+                <!-- <small>{{ item.start.substring(0, 10) }}</small> -->
+                <p style="font-size: 1.2rem; font-weight: bold">
+                  Total: {{ leads.length }}
+                  <v-btn
+                    icon
+                    class="mx-2"
+                    @click="clearFilterStatusOffice"
+                    alt="очистить фильтр"
                   >
-                  <span>{{ i.name }}</span>
-                  <v-btn v-if="filterStatusTabl.includes(i.id)" icon x-small>
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
-                </div>
-              </template>
+                </p>
+              </div>
+              <div id="wrp_stat" class="wrp__statuses" v-if="Statuses">
+                <template v-for="i in Statuses">
+                  <div
+                    class="status_wrp"
+                    :class="{
+                      active: filterStatusTabl.includes(i.id),
+                    }"
+                    @click="toggleFilterStatus(i.id)"
+                    :key="i.id"
+                  >
+                    <b
+                      :style="{
+                        background: i.color,
+                        outline: '1px solid' + i.color,
+                      }"
+                      >{{ i.hm }}</b
+                    >
+                    <span>{{ i.name }}</span>
+                    <v-btn v-if="filterStatusTabl.includes(i.id)" icon x-small>
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </div>
+                </template>
+              </div>
             </div>
+            <v-divider
+              style="border: 2px solid #9561e2; margin-top: -4px"
+            ></v-divider>
           </v-col>
 
           <template v-for="office in lidsByOffice">
             <v-col cols="12" v-if="office.lids.length" :key="office.name">
-              <v-divider class="my-3" :thickness="3" color="info"></v-divider>
-              <div class="d-flex align-center blk_office">
+              <div class="d-flex align-center blk_office py-2">
                 <v-checkbox
                   style="
                     font-size: 1.2rem;
@@ -1688,7 +1689,7 @@
                           <div
                             v-for="user in group.users"
                             :key="user.id"
-                            class="d-flex flex-wrap"
+                            class="d-flex flex-wrap py-2"
                           >
                             <span
                               class="ml-8 mr-2"
@@ -4333,6 +4334,7 @@ export default {
       self.activeRequests++;
       self.loading = true;
       self.item = item;
+      self.showOffice = [];
 
       if (item.dates) {
         self.item.name = self.providers.find(
@@ -4832,7 +4834,7 @@ export default {
 
 <style>
 .csv .v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
-  height: 4rem;
+  /* height: 4rem; */
 }
 .csv .v-data-footer {
   justify-content: end;
@@ -5032,6 +5034,7 @@ main
     .v-data-table__empty-wrapper
   ) {
   background: #f9f9f9;
+  border: 3px solid #000 !important;
 }
 .csv
   .theme--light.v-data-table
@@ -5069,10 +5072,10 @@ main
   line-height: 1.5;
 }
 .selected-row {
-  border: 2px solid #000 !important;
+  border: 4px solid #000 !important;
 }
 .v-data-table__expanded.v-data-table__expanded__row {
-  border: 2px solid #000 !important;
+  border: 4px solid #000 !important;
 }
 svg.icon {
   width: 40px;
@@ -5085,10 +5088,10 @@ svg.icon.small {
   display: inline-block;
 }
 td div.border {
-  border: 4px solid #000 !important;
+  border: 3px solid #000 !important;
   border-radius: 0;
 }
 .btn_status:hover {
-  border: 2px solid #000;
+  border: 3px solid #000;
 }
 </style>

@@ -222,7 +222,7 @@ export default {
       user_id: 0,
       dup: 0,
       top: 0,
-      responsible_users: [],
+      responsible_user: [],
     },
     defaultItem: {
       name: "",
@@ -233,7 +233,7 @@ export default {
       user_id: 0,
       dup: 0,
       top: 0,
-      responsible_users: [],
+      responsible_user: [],
     },
     offices: [],
   }),
