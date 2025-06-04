@@ -1170,11 +1170,24 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     if (!empty($logs)) {
       DB::table('logs')->insert($logs);
     }
-    Lid::whereIn('id', $lids)->where('status_id', '!=', 32)->update(['status_id' => 8, 'text' => '', 'qtytel' => 0]);
-    $del = Lid::select('id')->whereIn('id', $lids)->where('status_id', '!=', 32)->get();
+
+    $isAdmin = $this->isAdmin(session()->get('user_id'));
+    Lid::whereIn('id', $lids)
+      ->when(!$isAdmin, function ($query) {
+        return $query->where('status_id', '!=', 32);
+      })
+      ->update(['status_id' => 8, 'text' => '', 'qtytel' => 0]);
+    $del = Lid::select('id')->whereIn('id', $lids)->when(!$isAdmin, function ($query) {
+      return $query->where('status_id', '!=', 32);
+    })->get();
     Log::whereIn('lid_id', $del)->where('last_log', 0)->delete();
   }
 
+  public function isAdmin($user_id)
+  {
+    $user = User::where('id', $user_id)->first();
+    return ($user && $user->role_id == 1 && $user->office_id == 0) ? true : false;
+  }
   // /api/set_zaliv?api_key=rdfgsdfgsdfgsghethsdghdsf&user_id=383&umcfields[name]=name&umcfields[phone]=phone&umcfields[email]=email&text=text&umcfields[affiliate_user]=affiliate_user&client_lang=client_lang&client_geo=client_geo&client_funnel=client_funnel&client_answers=client_answers&company_name=company_name
   public function set_zaliv(Request $request)
   {
