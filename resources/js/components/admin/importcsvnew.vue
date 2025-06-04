@@ -3456,6 +3456,9 @@ export default {
       this.toggleRowMask(item);
     },
     clickrowd(item, row) {
+      // Сброс раскрытия geoTable при смене строки в provTable
+      this.expandedate = [];
+
       if (!row.isExpanded) {
         this.expanded = [item];
       } else {
