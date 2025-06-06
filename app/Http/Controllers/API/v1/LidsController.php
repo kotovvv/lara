@@ -698,10 +698,10 @@ class LidsController extends Controller
       ->when(!empty($users_ids), fn($q) => $q->whereIn('lids.user_id', $users_ids))
       ->when(!empty($providers), fn($q) => $q->whereIn('lids.provider_id', $providers))
       ->when(!empty($status_id), fn($q) => $q->whereIn('lids.status_id', $status_id))
-      ->when($tel !== '', fn($q) => $q->where('lids.tel', 'like', $tel . '%'))
+      ->when(!empty($tel), fn($q) => $q->where('lids.tel', 'like', $tel . '%'))
       ->when(isset($data['duplicate_tel']), fn($q) => $q->whereIn('lids.tel', $duplicate_tel))
       ->when(!empty($date), fn($q) => $q->whereBetween('lids.created_at', $date))
-      ->when($filterLang !== '' && $filterLang != null, fn($q) => $q->where('lids.client_lang', $filterLang))
+      ->when(!empty($filterLang) && $filterLang != null, fn($q) => $q->where('lids.client_lang', $filterLang))
       ->when(!empty($filterGeo), fn($q) => $q->whereIn('lids.client_geo', $filterGeo))
       ->when($filterRD !== null, fn($q) => $q->where('lids.rd', $filterRD))
       ->when(isset($data['callback']) && $data['callback'] == 1, function ($q) {
@@ -740,7 +740,7 @@ class LidsController extends Controller
       ->when(!is_array($id) && $id > 0 && empty($users_ids), fn($q) => $q->where('lids.user_id', $id))
       ->when(!empty($users_ids), fn($q) => $q->whereIn('lids.user_id', $users_ids))
       ->when(!empty($providers), fn($q) => $q->whereIn('lids.provider_id', $providers))
-      ->when($tel !== '', fn($q) => $q->where('lids.tel', 'like', $tel . '%'))
+      ->when(!empty($tel), fn($q) => $q->where('lids.tel', 'like', $tel . '%'))
       ->when(isset($data['duplicate_tel']), fn($q) => $q->whereIn('lids.tel', $duplicate_tel))
       ->when(!empty($date), fn($q) => $q->whereBetween('lids.created_at', $date))
       ->when($filterLang !== '' && $filterLang != null, fn($q) => $q->where('lids.client_lang', $filterLang))
@@ -1186,7 +1186,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
   public function isAdmin($user_id)
   {
     $user = User::where('id', $user_id)->first();
-    return ($user && $user->role_id == 1 && $user->office_id == 0) ? true : false;
+    return ($user && $user->role_id == 1) ? true : false; //&& $user->office_id == 0
   }
   // /api/set_zaliv?api_key=rdfgsdfgsdfgsghethsdghdsf&user_id=383&umcfields[name]=name&umcfields[phone]=phone&umcfields[email]=email&text=text&umcfields[affiliate_user]=affiliate_user&client_lang=client_lang&client_geo=client_geo&client_funnel=client_funnel&client_answers=client_answers&company_name=company_name
   public function set_zaliv(Request $request)
