@@ -182,7 +182,7 @@ class LidsController extends Controller
       return response($response);
     } else {
       // $office_ids = $data['office_ids'];
-      $q_leads = Lid::select('*')
+      $q_leads = Lid::select('*', 'lids.id as id', 'lids.tel as tel', 'lids.name as name', 'lids.email as email', 'lids.text as text', 'lids.office_id as office_id', 'lids.user_id as user_id', 'lids.provider_id as provider_id', 'lids.status_id as status_id', 'lids.created_at as created_at', 'lids.updated_at as updated_at')
         // ->when(in_array(0, $office_ids), function ($query) use ($office_ids) {
         //   return $query->whereIn('office_id', $office_ids);
         // })
@@ -193,7 +193,7 @@ class LidsController extends Controller
           return $query->where('email', $search);
         })
         ->when(strpos($search, '@') === false, function ($query) use ($search) {
-          return $query->whereRaw('MATCH(lids.name,lids.tel,lids.email,lids.text) AGAINST (\'"' . $search . '"\' IN NATURAL LANGUAGE MODE)');
+          return $query->whereRaw('MATCH(lids.name,lids.tel,lids.email,lids.text) AGAINST ("' . $search . '" IN NATURAL LANGUAGE MODE)');
         });
       $response['hm'] = $q_leads->count();
 
