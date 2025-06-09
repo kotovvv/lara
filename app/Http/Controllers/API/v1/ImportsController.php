@@ -314,6 +314,7 @@ class ImportsController extends Controller
     $lid_ids = $data['lid_ids'];
     $usersIds = $data['usersIds'];
     $resetStatus = $data['resetStatus'];
+    $resetOnStatus = $data['resetOnStatus'];
     $id = $data['id'];
     if (isset($data['provider_id'])) {
       $provider_id = $data['provider_id'];
@@ -327,6 +328,9 @@ class ImportsController extends Controller
     if (isset($data['message'])) {
       $start = $data['start'];
       $getLiads = Lid::where('load_mess', $data['message'])
+        // ->when(count($resetStatus) > 0, function ($query) use ($resetStatus) {
+        //   return $query->whereIn('status_id', $resetStatus);
+        // })
         ->whereDate('lids.created_at', date('Y-m-d', strtotime($start)));
       $historyimp['statuses'] = $getLiads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
@@ -343,7 +347,11 @@ class ImportsController extends Controller
     } else {
       // $lidsId = DB::table('imported_leads')->where('api_key_id', $provider_id)->whereDate('upload_time', $start)->where('geo', $geo)->pluck('lead_id')->toArray();
 
-      $getLiads = Lid::whereIn('lids.id', $data['lid_ids']);
+      $getLiads = Lid::whereIn('lids.id', $data['lid_ids'])
+        // ->when(count($resetStatus) > 0, function ($query) use ($resetStatus) {
+        //   return $query->whereIn('status_id', $resetStatus);
+        // })
+      ;
 
       $historyimp['statuses'] = $getLiads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
@@ -361,9 +369,9 @@ class ImportsController extends Controller
     foreach (array_chunk($lid_ids, $hm) as $n_user => $lids_id) {
       $office_id = User::where('id', (int) $usersIds[$n_user])->value('office_id');
       if (isset($data['clearLog']) && $data['clearLog'] == true) {
-        Lid::whereIn('id', $lids_id)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => 8, 'text' => '', 'qtytel' => 0]);
+        Lid::whereIn('id', $lids_id)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => $resetOnStatus, 'text' => '', 'qtytel' => 0]);
       } else {
-        Lid::whereIn('id', $lids_id)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => 8]);
+        Lid::whereIn('id', $lids_id)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => $resetOnStatus]);
       }
     }
     if (isset($data['message'])) {
@@ -406,6 +414,7 @@ class ImportsController extends Controller
     $imoprtsIdsm = $data['importsIdsm'];
     $usersIds = $data['usersIds'];
     $resetStatus = $data['resetStatus'];
+    $resetOnStatus = $data['resetOnStatus'];
     $alliads = [];
     $setLiads = [];
 
@@ -463,8 +472,7 @@ class ImportsController extends Controller
 
     foreach (array_chunk($alliads, $hm) as $n_user => $lid_ids) {
       $office_id = User::where('id', (int) $usersIds[$n_user])->value('office_id');
-
-      Lid::whereIn('id', $lid_ids)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => 8, 'text' => '', 'qtytel' => 0]);
+      Lid::whereIn('id', $lid_ids)->update(['user_id' => $usersIds[$n_user], 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => $resetOnStatus, 'text' => '', 'qtytel' => 0]);
     }
     foreach ($imoprtsIdsm as $import_) {
       if (isset($import_['message'])) {
