@@ -414,7 +414,7 @@ class ImportsController extends Controller
     $imoprtsIdsm = $data['importsIdsm'];
     $usersIds = $data['usersIds'];
     $resetStatus = $data['resetStatus'];
-    $resetOnStatus = $data['resetOnStatus'];
+    $resetOnStatus = isset($data['resetOnStatus']) ? $data['resetOnStatus'] : 8;
     $alliads = [];
     $setLiads = [];
 

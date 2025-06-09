@@ -132,7 +132,7 @@ class LidsController extends Controller
       return response(['hm' => 0, 'lids' => []]);
     }
     if (isset($data['sortBy'])) {
-      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'status' => 'status_id', 'depozit' => false][$data['sortBy']];
+      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'rd' => 'rd', 'status' => 'status_id', 'depozit' => false][$data['sortBy']];
       $sortDesc = $data['sortDesc'] ? 'DESC' : 'ASC';
     } else {
       $sortBy = 'created_at';
@@ -340,6 +340,7 @@ class LidsController extends Controller
     $data = $request->all();
     $a_lids_id = $data['data'];
     $new_status_id = $data['status_id'];
+    //$searchAll = isset($data['searchAll']) ? $data['searchAll'] : false;
     $res = [];
     $res = Lid::whereIn('id', $a_lids_id)->update(['status_id' => $new_status_id, 'updated_at' => Now()]);
 

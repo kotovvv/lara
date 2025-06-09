@@ -1811,18 +1811,25 @@ export default {
         let send = {};
         let duplstat_id = [];
         send.status_id = self.selectedStatus;
-        if (self.hmrow != "") {
-          self.lidsRedistribute = [];
-          self.forRedistribute = true;
-          console.log("redistribute  1");
-          await this.getLids3();
-          console.log("redistribute  2");
-          this.forRedistribute = false;
-          send.data = this.lidsRedistribute.map((e) => e.id);
-        } else if (this.selected.length && this.selectedStatus) {
-          send.data = this.selected.map((e) => e.id);
-        }
 
+        if (self.searchAll != "") {
+          send.searchAll = self.searchAll;
+          if (this.selected.length && this.selectedStatus) {
+            send.data = this.selected.map((e) => e.id);
+          }
+        } else {
+          if (self.hmrow != "") {
+            self.lidsRedistribute = [];
+            self.forRedistribute = true;
+            console.log("redistribute  1");
+            await this.getLids3();
+            console.log("redistribute  2");
+            this.forRedistribute = false;
+            send.data = this.lidsRedistribute.map((e) => e.id);
+          } else if (this.selected.length && this.selectedStatus) {
+            send.data = this.selected.map((e) => e.id);
+          }
+        }
         this.changeLids(send);
       }
     },
@@ -1846,11 +1853,14 @@ export default {
     },
     changeLids(send) {
       const self = this;
-      this.loading = true;
+      self.loading = true;
+
       axios
         .post("api/changeStatusLids", send)
         .then(function (response) {
-          self.afterUpdateLids();
+          if (send.searchAll == "") {
+            self.afterUpdateLids();
+          }
           send.data.map((e) => {
             const lidindex = self.lids.findIndex((l) => l.id === e.id);
             if (lidindex !== -1) {
@@ -1861,7 +1871,7 @@ export default {
               });
             }
           });
-          this.loading = false;
+          self.loading = false;
         })
         .catch(function (error) {
           console.log(error);
