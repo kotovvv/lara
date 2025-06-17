@@ -3591,6 +3591,7 @@ export default {
 
           (self.redistributeOffice = null), (self.user_ids = []);
           self.snackbar = true;
+          self.clickrow(self.item);
         })
         .catch(function (error) {
           console.log(error);
