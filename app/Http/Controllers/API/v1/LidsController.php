@@ -527,6 +527,7 @@ class LidsController extends Controller
       $where_email_tel = " WHERE  l.created_at > '" . $hmmonth . "' AND `email` IN (\"" . implode('","', $data['emails']) . "\")";
 
       $where_email_tel_next = " WHERE  l.created_at < '" . $hmmonth . "' AND l.status_id IN (9,10,20,21) AND `email` IN (\"" . implode('","', $data['emails']) . "\")";
+      $where_email_tel_all = " WHERE  `email` IN (\"" . implode('","', $data['emails']) . "\")";
       $group_email_tel = " GROUP BY `email`";
     }
     if (isset($data['check'])) {
