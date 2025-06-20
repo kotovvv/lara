@@ -2001,217 +2001,7 @@
       </v-tab-item>
       <!-- CHECK DUBLIKATE MAIL -->
       <v-tab-item>
-        <v-container fluid>
-          <v-row>
-            <v-col class="d-flex align-center radiolabel">
-              <v-radio-group v-model="email_tel" row>
-                <v-radio label="email" value="email"></v-radio>
-                <v-radio label="телефон" value="tel"></v-radio>
-              </v-radio-group>
-              <span class="label">Выгрузка дублей за </span>
-              <v-text-field
-                style="max-width: 3rem; padding-top: 0"
-                class="inline-block center"
-                @keypress="filter()"
-                v-model.number="hmmonth"
-                hide-details="auto"
-              ></v-text-field>
-              <span class="label"> месяц(ев)</span>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="6">
-              <v-textarea
-                class="border pa-3"
-                v-model="list_email"
-                label="Почтовые адреса или телефоны "
-              ></v-textarea>
-            </v-col>
-            <v-col cols="6">
-              <v-file-input
-                v-model="file_emails"
-                label="загрузить txt"
-                show-size
-                truncate-length="24"
-                @change="onFileChange"
-              ></v-file-input>
-              <v-btn @click="checkEmails" v-if="list_email" class="primary"
-                >Проверить<v-progress-circular
-                  v-if="loading"
-                  indeterminate
-                  color="amber"
-                ></v-progress-circular
-              ></v-btn>
-            </v-col>
-            <v-col cols="12">
-              <div class="wrp__statuses">
-                <template v-for="(i, x) in d_statuses">
-                  <div
-                    class="status_wrp"
-                    :class="{
-                      borderactive: filter_status.includes(i.id),
-                      bordernot: !filter_status.includes(i.id),
-                    }"
-                    :key="x"
-                    @click="changeFilterStatus(i.id)"
-                  >
-                    <b
-                      :style="{
-                        background: i.color,
-                        outline: '1px solid' + i.color,
-                      }"
-                      >{{ i.hm }}</b
-                    >
-                    <span>{{ i.name }}</span>
-                    <v-btn v-if="filter_status.includes(i.id)" icon x-small>
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </div>
-                </template>
-              </div>
-            </v-col>
-            <v-col cols="12" v-if="duplicate_leads.length || out_db.length">
-              <v-data-table
-                :headers="duplicate_leads_headers"
-                item-key="id"
-                :items="filtereduplicate_leads"
-                id="duplicate_leads"
-                ref="duplicatetable"
-                @click:row="clickrowe"
-                show-expand
-                :expanded.sync="expanded"
-                :footer-props="{
-                  'items-per-page-options': [100, 200, 500, -1],
-                  'items-per-page-text': '',
-                }"
-                v-model.lazy.trim="selectedTop"
-                show-select
-              >
-                <template v-slot:expanded-item="{ headers, item }">
-                  <td
-                    :colspan="headers.length"
-                    class="blackborder"
-                    v-if="
-                      $attrs.user.office_id == 0 ||
-                      item.office_id == $attrs.user.office_id
-                    "
-                  >
-                    <logtel :lid_id="item.id" :key="item.id" />
-                  </td>
-                </template>
-
-                <template v-slot:item.email="{ item }">
-                  <template
-                    v-if="
-                      $attrs.user.role_id == 1 && $attrs.user.office_id == 0
-                    "
-                  >
-                    {{ item.email }}
-                  </template>
-                  <template v-else>
-                    <MaskedField
-                      :value="item.email"
-                      type="email"
-                      :isUnmasked="isRowUnmasked(item.id)"
-                    />
-                  </template>
-                </template>
-                <template v-slot:item.tel="{ item }">
-                  <template
-                    v-if="
-                      $attrs.user.role_id == 1 && $attrs.user.office_id == 0
-                    "
-                  >
-                    {{ item.tel }}
-                  </template>
-                  <template v-else>
-                    <MaskedField
-                      :value="item.tel"
-                      type="phone"
-                      :isUnmasked="isRowUnmasked(item.id)"
-                    />
-                  </template>
-                </template>
-                <template v-slot:top="{ pagination, options, updateOptions }">
-                  <v-row>
-                    <v-col cols="2">
-                      <v-btn v-if="selectedTop.length" @click="setTop"
-                        >Назначить приоритет</v-btn
-                      ></v-col
-                    >
-                    <v-col>
-                      <!--:menu-props="{ maxHeight: '80vh' }" -->
-                      <v-autocomplete
-                        v-model="filter_provider"
-                        label="Фильтр поставщик"
-                        :items="d_providers"
-                        item-text="name"
-                        item-value="id"
-                        outlined
-                        rounded
-                        multiple
-                        clearable="clearable"
-                      >
-                        <template v-slot:selection="{ item, index }">
-                          <span v-if="index === 0">{{ item.name }} </span>
-                          <span
-                            v-if="index === 1"
-                            class="grey--text text-caption"
-                          >
-                            (+{{ filter_provider.length - 1 }} )
-                          </span>
-                        </template>
-                        <template v-slot:item="{ item, attrs }">
-                          <v-badge
-                            :value="attrs['aria-selected'] == 'true'"
-                            color="#7620df"
-                            dot
-                            left
-                          >
-                            {{ item.name }}
-                          </v-badge>
-                        </template>
-                      </v-autocomplete></v-col
-                    >
-                    <v-col>
-                      <v-select
-                        v-model="filter_office"
-                        :items="d_offices"
-                        item-text="name"
-                        item-value="id"
-                        label="Фильтр офис"
-                        outlined
-                        rounded
-                        multiple
-                      >
-                      </v-select
-                    ></v-col>
-                    <v-col>
-                      <v-btn
-                        outlined
-                        rounded
-                        @click="exportXlsx"
-                        class="border"
-                      >
-                        <v-icon left> mdi-file-excel </v-icon>
-                        Скачать таблицу
-                      </v-btn></v-col
-                    >
-                    <v-col>
-                      <v-data-footer
-                        :pagination="pagination"
-                        :options="options"
-                        @update:options="updateOptions"
-                        :items-per-page-options="pages"
-                        items-per-page-text=""
-                      />
-                    </v-col>
-                  </v-row>
-                </template>
-              </v-data-table>
-            </v-col>
-          </v-row>
-        </v-container>
+        <checkDuplicate />
       </v-tab-item>
     </v-tabs-items>
     <ConfirmDlg ref="confirm" />
@@ -2293,6 +2083,7 @@ import selectUsers from "./UI/selectUsers";
 import MaskedField from "../UI/MaskedField.vue";
 
 import CanvasJSChart from "./UI/pieCanvasJsComponent.vue";
+import CheckDuplicate from "./checkDuplicate.vue";
 export default {
   name: "ImportCSV",
   components: {
@@ -2304,6 +2095,7 @@ export default {
     selectUsers,
     MaskedField,
     CanvasJSChart,
+    CheckDuplicate,
   },
   data: () => ({
     true: true,
