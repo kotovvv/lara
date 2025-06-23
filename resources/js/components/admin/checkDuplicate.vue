@@ -26,14 +26,14 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="6">
+      <v-col cols="3">
         <v-textarea
           class="border pa-3"
           v-model="list_email"
           label="Почтовые адреса или телефоны "
         ></v-textarea>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="1">
         <v-file-input
           v-model="file_emails"
           label="загрузить txt"
@@ -50,8 +50,12 @@
         ></v-btn>
       </v-col>
       <v-col cols="3">
-        <p>За {{ hmmonth }} мес. {{ message }}</p>
-        <p>Всего {{ message_all }}</p>
+        <p>
+          <b>За {{ hmmonth }} мес. {{ message }}</b>
+        </p>
+        <p>
+          <b>Всего {{ message_all }}</b>
+        </p>
       </v-col>
       <v-col cols="12">
         <div class="wrp__statuses">
@@ -82,10 +86,8 @@
       </v-col>
     </v-row>
     <v-row v-if="dup.length || dup_all.length">
-      <v-col cols="2">
-        <v-btn v-if="selectedTop.length" @click="setTop"
-          >Назначить приоритет</v-btn
-        ></v-col
+      <v-col cols="2" v-if="selectedTop.length">
+        <v-btn @click="setTop">Назначить приоритет</v-btn></v-col
       >
       <v-col>
         <!--:menu-props="{ maxHeight: '80vh' }" -->
