@@ -2001,7 +2001,7 @@
       </v-tab-item>
       <!-- CHECK DUBLIKATE MAIL -->
       <v-tab-item>
-        <checkDuplicate />
+        <checkDuplicate :user="$attrs.user" />
       </v-tab-item>
     </v-tabs-items>
     <ConfirmDlg ref="confirm" />
@@ -3750,93 +3750,7 @@ export default {
         );
       }
     },
-    checkEmails() {
-      let vm = this;
-      vm.activeRequests++;
-      vm.loading = true;
-      vm.snackbar = false;
-      vm.message = "";
-      vm.duplicate_leads = [];
-      vm.in_db = [];
-      vm.out_db = [];
-      let data = {};
-      data.emails = vm.list_email.replace(/[\r\t ]/g, "").split("\n");
 
-      data.check = 1;
-      data.email_tel = vm.email_tel;
-      data.hmmonth = vm.hmmonth;
-      axios
-        .post("api/checkEmails", data)
-        .then(function (res) {
-          vm.in_db = res.data.emails.filter((n) => n);
-
-          vm.out_db = [
-            ...new Set(
-              data.emails.filter((i) => !vm.in_db.includes(i.toLowerCase()))
-            ),
-          ];
-          vm.out_db = vm.out_db.filter((e) => e != "");
-          vm.message =
-            "Уникальных: " +
-            vm.out_db.length +
-            "<br>Дубликатов: " +
-            vm.in_db.length;
-          vm.snackbar = true;
-          vm.duplicate_leads = res.data.leads;
-          vm.duplicate_leads = vm.duplicate_leads.map((dl) => {
-            dl.date_created = dl.created_at.substring(0, 10);
-            dl.date_updated = dl.updated_at.substring(0, 10);
-            if (
-              vm.$attrs.user.office_id != 0 &&
-              dl.office_id != vm.$attrs.user.office_id
-            ) {
-              dl.text = "";
-            }
-            return dl;
-          });
-          let a_status = _.uniq(
-            _.map(vm.duplicate_leads, (el) => {
-              return el.status_id;
-            })
-          );
-          vm.d_statuses = vm.statuses.filter((i) => {
-            return a_status.includes(i.id);
-          });
-          let a_hm = _.groupBy(vm.duplicate_leads, "status_id");
-          vm.d_statuses.map((el) => {
-            el.hm = a_hm[el.id].length;
-          });
-
-          let a_prov = _.uniq(
-            _.map(vm.duplicate_leads, (el) => {
-              return el.provider_id;
-            })
-          );
-          vm.d_providers = vm.providers.filter((i) => {
-            return a_prov.includes(i.id);
-          });
-          let a_offices = _.uniq(
-            _.map(vm.duplicate_leads, (el) => {
-              return el.office_id;
-            })
-          );
-          vm.d_offices = vm.offices.filter((i) => {
-            return a_offices.includes(i.id);
-          });
-
-          vm.list_email = "";
-          vm.files = [];
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .finally(() => {
-          this.activeRequests--;
-          if (this.activeRequests === 0) {
-            this.loading = false;
-          }
-        });
-    },
     filterStatuses() {
       const self = this;
       let stord = this.leads;

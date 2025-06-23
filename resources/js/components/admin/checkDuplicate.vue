@@ -1,5 +1,13 @@
 <template>
   <v-container fluid>
+    <v-snackbar v-model="snackbar" top right timeout="-1">
+      {{ message }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          X
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-row>
       <v-col class="d-flex align-center radiolabel">
         <v-radio-group v-model="email_tel" row>
@@ -25,7 +33,7 @@
           label="Почтовые адреса или телефоны "
         ></v-textarea>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="3">
         <v-file-input
           v-model="file_emails"
           label="загрузить txt"
@@ -40,6 +48,10 @@
             color="amber"
           ></v-progress-circular
         ></v-btn>
+      </v-col>
+      <v-col cols="3">
+        <p>За {{ hmmonth }} мес. {{ message }}</p>
+        <p>Всего {{ message_all }}</p>
       </v-col>
       <v-col cols="12">
         <div class="wrp__statuses">
@@ -68,162 +80,187 @@
           </template>
         </div>
       </v-col>
-      <v-col cols="12" v-if="duplicate_leads.length || out_db.length">
-        <v-data-table
-          :headers="duplicate_leads_headers"
-          item-key="id"
-          :items="filtereduplicate_leads"
-          id="duplicate_leads"
-          ref="duplicatetable"
-          @click:row="clickrowe"
-          show-expand
-          :expanded.sync="expanded"
-          :footer-props="{
-            'items-per-page-options': [100, 200, 500, -1],
-            'items-per-page-text': '',
-          }"
-          v-model.lazy.trim="selectedTop"
-          show-select
+    </v-row>
+    <v-row v-if="dup.length || dup_all.length">
+      <v-col cols="2">
+        <v-btn v-if="selectedTop.length" @click="setTop"
+          >Назначить приоритет</v-btn
+        ></v-col
+      >
+      <v-col>
+        <!--:menu-props="{ maxHeight: '80vh' }" -->
+        <v-autocomplete
+          v-model="filter_provider"
+          label="Фильтр поставщик"
+          :items="d_providers"
+          item-text="name"
+          item-value="id"
+          outlined
+          rounded
+          multiple
+          clearable="clearable"
         >
-          <template v-slot:expanded-item="{ headers, item }">
-            <td
-              :colspan="headers.length"
-              class="blackborder"
-              v-if="
-                $attrs.user.office_id == 0 ||
-                item.office_id == $attrs.user.office_id
-              "
-            >
-              <logtel :lid_id="item.id" :key="item.id" />
-            </td>
+          <template v-slot:selection="{ item, index }">
+            <span v-if="index === 0">{{ item.name }} </span>
+            <span v-if="index === 1" class="grey--text text-caption">
+              (+{{ filter_provider.length - 1 }} )
+            </span>
           </template>
+          <template v-slot:item="{ item, attrs }">
+            <v-badge
+              :value="attrs['aria-selected'] == 'true'"
+              color="#7620df"
+              dot
+              left
+            >
+              {{ item.name }}
+            </v-badge>
+          </template>
+        </v-autocomplete>
+      </v-col>
+      <v-col>
+        <v-select
+          v-model="filter_office"
+          :items="d_offices"
+          item-text="name"
+          item-value="id"
+          label="Фильтр офис"
+          outlined
+          rounded
+          multiple
+        >
+        </v-select
+      ></v-col>
+      <v-col>
+        <v-btn outlined rounded @click="exportXlsx" class="border">
+          <v-icon left> mdi-file-excel </v-icon>
+          Скачать таблицу
+        </v-btn></v-col
+      >
+    </v-row>
+    <v-row v-if="dup.length || dup_all.length">
+      <v-col cols="12">
+        <v-tabs v-model="tabs">
+          <v-tab>За {{ hmmonth }} мес.</v-tab>
+          <v-tab>Всего</v-tab>
+        </v-tabs>
+        <v-col cols="12">
+          <v-data-table
+            :headers="duplicate_leads_headers"
+            item-key="id"
+            :items="filtereduplicate_leads"
+            id="duplicate_leads"
+            ref="duplicatetable"
+            @click:row="clickrowe"
+            show-expand
+            :expanded.sync="expanded"
+            :footer-props="{
+              'items-per-page-options': [100, 200, 500, -1],
+              'items-per-page-text': '',
+            }"
+            v-model.lazy.trim="selectedTop"
+            show-select
+          >
+            <template v-slot:expanded-item="{ headers, item }">
+              <td
+                :colspan="headers.length"
+                class="blackborder"
+                v-if="
+                  $props.user.office_id == 0 ||
+                  item.office_id == $props.user.office_id
+                "
+              >
+                <logtel :lid_id="item.id" :key="item.id" />
+              </td>
+            </template>
 
-          <template v-slot:item.email="{ item }">
-            <template
-              v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0"
-            >
-              {{ item.email }}
-            </template>
-            <template v-else>
-              <MaskedField
-                :value="item.email"
-                type="email"
-                :isUnmasked="isRowUnmasked(item.id)"
-              />
-            </template>
-          </template>
-          <template v-slot:item.tel="{ item }">
-            <template
-              v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0"
-            >
-              {{ item.tel }}
-            </template>
-            <template v-else>
-              <MaskedField
-                :value="item.tel"
-                type="phone"
-                :isUnmasked="isRowUnmasked(item.id)"
-              />
-            </template>
-          </template>
-          <template v-slot:top="{ pagination, options, updateOptions }">
-            <v-row>
-              <v-col cols="2">
-                <v-btn v-if="selectedTop.length" @click="setTop"
-                  >Назначить приоритет</v-btn
-                ></v-col
+            <template v-slot:item.email="{ item }">
+              <template
+                v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
               >
-              <v-col>
-                <!--:menu-props="{ maxHeight: '80vh' }" -->
-                <v-autocomplete
-                  v-model="filter_provider"
-                  label="Фильтр поставщик"
-                  :items="d_providers"
-                  item-text="name"
-                  item-value="id"
-                  outlined
-                  rounded
-                  multiple
-                  clearable="clearable"
-                >
-                  <template v-slot:selection="{ item, index }">
-                    <span v-if="index === 0">{{ item.name }} </span>
-                    <span v-if="index === 1" class="grey--text text-caption">
-                      (+{{ filter_provider.length - 1 }} )
-                    </span>
-                  </template>
-                  <template v-slot:item="{ item, attrs }">
-                    <v-badge
-                      :value="attrs['aria-selected'] == 'true'"
-                      color="#7620df"
-                      dot
-                      left
-                    >
-                      {{ item.name }}
-                    </v-badge>
-                  </template>
-                </v-autocomplete></v-col
-              >
-              <v-col>
-                <v-select
-                  v-model="filter_office"
-                  :items="d_offices"
-                  item-text="name"
-                  item-value="id"
-                  label="Фильтр офис"
-                  outlined
-                  rounded
-                  multiple
-                >
-                </v-select
-              ></v-col>
-              <v-col>
-                <v-btn outlined rounded @click="exportXlsx" class="border">
-                  <v-icon left> mdi-file-excel </v-icon>
-                  Скачать таблицу
-                </v-btn></v-col
-              >
-              <v-col>
-                <v-data-footer
-                  :pagination="pagination"
-                  :options="options"
-                  @update:options="updateOptions"
-                  :items-per-page-options="pages"
-                  items-per-page-text=""
+                {{ item.email }}
+              </template>
+              <template v-else>
+                <MaskedField
+                  :value="item.email"
+                  type="email"
+                  :isUnmasked="isRowUnmasked(item.id)"
                 />
-              </v-col>
-            </v-row>
-          </template>
-        </v-data-table>
+              </template>
+            </template>
+
+            <template v-slot:item.tel="{ item }">
+              <template
+                v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
+              >
+                {{ item.tel }}
+              </template>
+              <template v-else>
+                <MaskedField
+                  :value="item.tel"
+                  type="phone"
+                  :isUnmasked="isRowUnmasked(item.id)"
+                />
+              </template>
+            </template>
+
+            <template v-slot:top="{ pagination, options, updateOptions }">
+              <v-row>
+                <v-col>
+                  <v-data-footer
+                    :pagination="pagination"
+                    :options="options"
+                    @update:options="updateOptions"
+                    :items-per-page-options="pages"
+                    items-per-page-text=""
+                  />
+                </v-col>
+              </v-row>
+            </template>
+          </v-data-table>
+        </v-col>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
+
 <script>
 import axios from "axios";
 import XLSX from "xlsx";
 import _ from "lodash";
-
+import logtel from "../manager/logtel";
 export default {
   name: "CheckDuplicate",
-  components: {},
+  props: {
+    user: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  components: { logtel },
   data() {
     return {
+      statuses: [],
+      providers: [],
+      offices: [],
+      filterOffices: [],
       email_tel: "email",
       hmmonth: 6,
       list_email: "",
       file_emails: [],
+      dup: [],
+      dup_all: [],
       in_db: [],
       out_db: [],
+      in_db_all: [],
+      out_db_all: [],
       message: "",
+      message_all: "",
       snackbar: false,
       loading: false,
       activeRequests: 0,
-      duplicate_leads: [],
-      d_statuses: [],
-      d_providers: [],
-      d_offices: [],
+
       filter_status: [],
       filter_provider: [],
       filter_office: [],
@@ -246,11 +283,20 @@ export default {
         { text: "Pending", value: "pending" },
         { text: "Депозит", value: "depozit" },
       ],
+      pages: [100, 200, 500, -1],
+      tabs: 0,
     };
+  },
+  mounted() {
+    this.getOffices();
+    this.getProviders();
+    this.getStatuses();
   },
   computed: {
     filtereduplicate_leads() {
-      return this.duplicate_leads.filter((i) => {
+      // Выбираем массив данных в зависимости от выбранной вкладки
+      const leads = this.tabs === 1 ? this.dup_all : this.dup;
+      return leads.filter((i) => {
         return (
           (this.filter_status.length == 0 ||
             this.filter_status.includes(i.status_id)) &&
@@ -261,8 +307,83 @@ export default {
         );
       });
     },
+    d_statuses() {
+      // Универсальный расчёт статусов для текущего массива данных
+      const leads = this.tabs === 1 ? this.dup_all : this.dup;
+      const a_status = _.uniq(leads.map((el) => el.status_id));
+      const a_hm = _.groupBy(leads, "status_id");
+      return (this.statuses || [])
+        .filter((i) => a_status.includes(i.id))
+        .map((el) => ({
+          ...el,
+          hm: a_hm[el.id] ? a_hm[el.id].length : 0,
+        }));
+    },
+    d_providers() {
+      // Универсальный расчёт провайдеров для текущего массива данных
+      const leads = this.tabs === 1 ? this.dup_all : this.dup;
+      const a_prov = _.uniq(leads.map((el) => el.provider_id));
+      return (this.providers || []).filter((i) => a_prov.includes(i.id));
+    },
+    d_offices() {
+      // Универсальный расчёт офисов для текущего массива данных
+      const leads = this.tabs === 1 ? this.dup_all : this.dup;
+      const a_offices = _.uniq(leads.map((el) => el.office_id));
+      return (this.offices || []).filter((i) => a_offices.includes(i.id));
+    },
   },
   methods: {
+    getOffices() {
+      let self = this;
+      self.filterOffices = self.$props.user.office_id;
+      axios
+        .get("/api/getOffices")
+        .then((res) => {
+          self.offices = res.data;
+
+          if (self.$props.user.office_id > 0) {
+            self.offices = self.offices.filter(
+              (o) => o.id == self.$props.user.office_id
+            );
+          }
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    },
+    getProviders() {
+      let self = this;
+      axios
+        .get("/api/provider")
+        .then((res) => {
+          self.providers = res.data.map(
+            ({ name, id, related_users_id, baer, responsible_user }) => ({
+              name,
+              id,
+              related_users_id,
+              baer,
+              responsible_user,
+            })
+          );
+          // self.getImports();
+        })
+        .catch((error) => console.log(error));
+    },
+    getStatuses() {
+      let self = this;
+      axios
+        .get("/api/statuses")
+        .then((res) => {
+          self.statuses = res.data.map(({ uname, name, id, color, order }) => ({
+            uname,
+            name,
+            id,
+            color,
+            order,
+          }));
+        })
+        .catch((error) => console.log(error));
+    },
     filter(evt) {
       evt = evt ? evt : window.event;
       let expect = evt.target.value.toString() + evt.key.toString();
@@ -271,6 +392,25 @@ export default {
       } else {
         return true;
       }
+    },
+    changeTabImport(tab) {
+      this.tabs = tab;
+      this.filter_status = [];
+      this.filter_provider = [];
+      this.filter_office = [];
+    },
+    setTop() {
+      const vm = this;
+      let data = {
+        data: vm.selectedTop,
+      };
+      data.data = data.data.map((el) => {
+        return { id: el.id, top: 1, status_id: el.status_id };
+      });
+      axios.post("api/setTop", data).then((response) => {
+        console.log("Сохранено");
+        vm.selectedTop = [];
+      });
     },
     changeFilterStatus(status_id) {
       if (this.filter_status.includes(status_id)) {
@@ -340,9 +480,13 @@ export default {
       vm.loading = true;
       vm.snackbar = false;
       vm.message = "";
-      vm.duplicate_leads = [];
+      vm.message_all = "";
+      vm.dup = [];
+      vm.dup_all = [];
       vm.in_db = [];
       vm.out_db = [];
+      vm.in_db_all = [];
+      vm.out_db_all = [];
       let data = {};
       data.emails = vm.list_email.replace(/[\r\t ]/g, "").split("\n");
       data.check = 1;
@@ -361,51 +505,39 @@ export default {
           vm.message =
             "Уникальных: " +
             vm.out_db.length +
-            "<br>Дубликатов: " +
+            " Дубликатов: " +
             vm.in_db.length;
+          vm.in_db_all = res.data.emails_all.filter((n) => n);
+          vm.out_db_all = [
+            ...new Set(
+              data.emails.filter((i) => !vm.in_db_all.includes(i.toLowerCase()))
+            ),
+          ];
+          vm.out_db_all = vm.out_db_all.filter((e) => e != "");
+          vm.message =
+            "Уникальных: " +
+            vm.out_db.length +
+            " Дубликатов: " +
+            vm.in_db.length;
+          vm.message_all =
+            "Уникальных: " +
+            vm.out_db_all.length +
+            " Дубликатов: " +
+            vm.in_db_all.length;
           vm.snackbar = true;
-          vm.duplicate_leads = res.data.leads;
-          vm.duplicate_leads = vm.duplicate_leads.map((dl) => {
+          vm.dup = res.data.leads;
+          vm.dup = vm.dup.map((dl) => {
             dl.date_created = dl.created_at.substring(0, 10);
             dl.date_updated = dl.updated_at.substring(0, 10);
             return dl;
           });
-          let a_status = _.uniq(
-            _.map(vm.duplicate_leads, (el) => {
-              return el.status_id;
-            })
-          );
-          vm.d_statuses = vm.statuses
-            ? vm.statuses.filter((i) => {
-                return a_status.includes(i.id);
-              })
-            : [];
-          let a_hm = _.groupBy(vm.duplicate_leads, "status_id");
-          vm.d_statuses.map((el) => {
-            el.hm = a_hm[el.id].length;
+          vm.dup_all = res.data.leads_all;
+          vm.dup_all = vm.dup_all.map((dl) => {
+            dl.date_created = dl.created_at.substring(0, 10);
+            dl.date_updated = dl.updated_at.substring(0, 10);
+            return dl;
           });
-          let a_prov = _.uniq(
-            _.map(vm.duplicate_leads, (el) => {
-              return el.provider_id;
-            })
-          );
-          vm.d_providers = vm.providers
-            ? vm.providers.filter((i) => {
-                return a_prov.includes(i.id);
-              })
-            : [];
-          let a_offices = _.uniq(
-            _.map(vm.duplicate_leads, (el) => {
-              return el.office_id;
-            })
-          );
-          vm.d_offices = vm.offices
-            ? vm.offices.filter((i) => {
-                return a_offices.includes(i.id);
-              })
-            : [];
-          vm.list_email = "";
-          vm.file_emails = [];
+          console.log("dup_all", vm.dup_all);
         })
         .catch(function (error) {
           console.log(error);
@@ -422,8 +554,10 @@ export default {
       let unique = [];
       var wb = XLSX.utils.book_new();
       var wbuni = XLSX.utils.book_new();
+      // Выбираем уникальные значения в зависимости от выбранной вкладки
+      const outDb = self.tabs === 1 ? self.out_db_all : self.out_db;
       if (self.email_tel === "tel") {
-        unique = self.out_db.map((i) => ({
+        unique = outDb.map((i) => ({
           id: "",
           created: "",
           updated: "",
@@ -434,7 +568,7 @@ export default {
           tel: i,
         }));
       } else {
-        unique = self.out_db.map((i) => ({ email: i }));
+        unique = outDb.map((i) => ({ email: i }));
       }
       unique = unique.filter((el) => {
         return ![9, 10, 20].includes(el["status_id"]);
@@ -449,9 +583,9 @@ export default {
         return !a_bad_tel.includes(dd["tel"]);
       });
       if (
-        self.$attrs.user &&
-        self.$attrs.user.role_id == 1 &&
-        self.$attrs.user.office_id == 0
+        self.$props.user &&
+        self.$props.user.role_id == 1 &&
+        self.$props.user.office_id == 0
       ) {
         con = con.concat(unique, dup_not);
         window["con"] = XLSX.utils.json_to_sheet(con);
@@ -461,9 +595,9 @@ export default {
       XLSX.utils.book_append_sheet(wb, window["unique"], "unique");
       XLSX.utils.book_append_sheet(wbuni, window["unique"], "unique");
       if (
-        self.$attrs.user &&
-        self.$attrs.user.role_id == 1 &&
-        self.$attrs.user.office_id == 0
+        self.$props.user &&
+        self.$props.user.role_id == 1 &&
+        self.$props.user.office_id == 0
       ) {
         window["list"] = XLSX.utils.json_to_sheet(self.filtereduplicate_leads);
       } else {
@@ -485,9 +619,9 @@ export default {
       }
       XLSX.utils.book_append_sheet(wb, window["list"], "duplicate");
       if (
-        self.$attrs.user &&
-        self.$attrs.user.role_id == 1 &&
-        self.$attrs.user.office_id == 0
+        self.$props.user &&
+        self.$props.user.role_id == 1 &&
+        self.$props.user.office_id == 0
       ) {
         const dup_dep = self.filtereduplicate_leads.filter((dd) => {
           return dd.status_id == 10;
@@ -548,3 +682,22 @@ export default {
 };
 </script>
 
+<style >
+.borderactive {
+  border: 4px solid #47cf0b;
+}
+.bordernot {
+  border: 4px solid transparent;
+}
+.radiolabel label {
+  margin-bottom: 0;
+}
+</style>
+}
+.bordernot {
+  border: 4px solid transparent;
+}
+.radiolabel label {
+  margin-bottom: 0;
+}
+</style>
