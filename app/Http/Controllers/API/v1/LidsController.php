@@ -521,20 +521,27 @@ class LidsController extends Controller
       }
       $where_email_tel = " WHERE l.created_at > '" . $hmmonth . "' AND l.`tel` IN (\"" . implode('","', array_filter($a_tel)) . "\")";
       $where_email_tel_next = " WHERE l.created_at < '" . $hmmonth . "' AND l.status_id IN (9,10,20,21) AND l.`tel` IN (\"" . implode('","', array_filter($a_tel)) . "\")";
+      $where_email_tel_all = " WHERE l.`tel` IN (\"" . implode('","', array_filter($a_tel)) . "\")";
       $group_email_tel = " GROUP BY `tel`";
     } else {
       $where_email_tel = " WHERE  l.created_at > '" . $hmmonth . "' AND `email` IN (\"" . implode('","', $data['emails']) . "\")";
 
       $where_email_tel_next = " WHERE  l.created_at < '" . $hmmonth . "' AND l.status_id IN (9,10,20,21) AND `email` IN (\"" . implode('","', $data['emails']) . "\")";
+      $where_email_tel_all = " WHERE  `email` IN (\"" . implode('","', $data['emails']) . "\")";
       $group_email_tel = " GROUP BY `email`";
     }
     if (isset($data['check'])) {
+      $sql_all = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel_all . " ORDER BY l.created_at ASC";
       $sql = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel . " ORDER BY l.created_at ASC";
       // . " ORDER BY l.created_at ASC"
       $sql_next = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel_next . " ORDER BY l.created_at ASC";
 
       $results['leads'] = DB::table(DB::raw("($sql) as first_query"))
         ->union(DB::table(DB::raw("($sql_next) as second_query")))
+        ->get();
+
+      $results['leads_all'] = DB::table(DB::raw("($sql_all) as first_query"))
+
         ->get();
     }
 
@@ -546,11 +553,19 @@ class LidsController extends Controller
     $leads = array_map(function ($item) {
       return (array) $item;
     }, $leads);
+    $sql = "SELECT l.`tel`, LOWER(l.`email`) email FROM `lids` l " . $where_email_tel_all . $group_email_tel;
+    $leads_all =  DB::select(DB::raw($sql));
+
+    $leads_all = array_map(function ($item) {
+      return (array) $item;
+    }, $leads_all);
     // Lid::insert($leads);
     if (isset($data['email_tel']) && $data['email_tel'] == 'tel') {
       $results['emails'] = array_column($leads, 'tel');
+      $results['emails_all'] = array_column($leads_all, 'tel');
     } else {
       $results['emails'] = array_column($leads, 'email');
+      $results['emails_all'] = array_column($leads_all, 'email');
     }
     return response($results);
   }
