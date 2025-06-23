@@ -348,9 +348,13 @@ class ImportsController extends Controller
       $historyimp['created_at'] = Now();
       DB::table('historyimport')->insert($historyimp);
     } else {
+      $office_id = session()->get('office_id');
       // $lidsId = DB::table('imported_leads')->where('api_key_id', $provider_id)->whereDate('upload_time', $start)->where('geo', $geo)->pluck('lead_id')->toArray();
 
       $getLiads = Lid::whereIn('lids.id', $data['lid_ids'])
+        ->when($office_id > 0, function ($query) use ($office_id) {
+          return $query->where('office_id', $office_id);
+        })
         // ->when(count($resetStatus) > 0, function ($query) use ($resetStatus) {
         //   return $query->whereIn('status_id', $resetStatus);
         // })
