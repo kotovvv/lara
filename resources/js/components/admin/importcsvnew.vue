@@ -1528,7 +1528,7 @@
               {{ usr[0] }}.
             </span> -->
           </v-col>
-          <v-col cols="12" v-if="lidsByOffice.length > 1"
+          <v-col cols="12" v-if="lidsByOffice.length > 0"
             ><div class="d-flex align-center">
               <div style="max-width: 400px; width: 400px">
                 <b>{{ item.name }} {{ item.start }}</b>
