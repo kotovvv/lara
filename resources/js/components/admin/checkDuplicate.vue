@@ -231,6 +231,7 @@
 import axios from "axios";
 import XLSX from "xlsx";
 import _ from "lodash";
+import MaskedField from "../UI/MaskedField.vue";
 import logtel from "../manager/logtel";
 export default {
   name: "CheckDuplicate",
@@ -240,7 +241,7 @@ export default {
       default: () => ({}),
     },
   },
-  components: { logtel },
+  components: { logtel, MaskedField },
   data() {
     return {
       statuses: [],
@@ -335,6 +336,18 @@ export default {
     },
   },
   methods: {
+    // Check if a row is unmasked (unmasked means the phone/email is shown in full)
+    isRowUnmasked(rowId) {
+      return this.unmaskedRowId === rowId;
+    },
+    // Set a row as unmasked
+    setRowUnmasked(rowId) {
+      this.unmaskedRowId = rowId;
+    },
+    // Clear the unmasked row
+    clearUnmaskedRow() {
+      this.unmaskedRowId = null;
+    },
     getOffices() {
       let self = this;
       self.filterOffices = self.$props.user.office_id;
