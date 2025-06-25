@@ -751,7 +751,7 @@ class LidsController extends Controller
     // Статусы (группировка по статусу)
     $statusesQuery = Lid::query()
       ->select(DB::raw('count(lids.status_id) as hm'), 'statuses.id', 'statuses.name', 'statuses.color')
-      ->innerJoin('statuses', 'statuses.id', '=', 'lids.status_id')
+      ->join('statuses', 'statuses.id', '=', 'lids.status_id')
       ->when(!in_array(0, $office_ids), fn($q) => $q->whereIn('lids.office_id', $office_ids))
       ->when(!is_array($id) && $id > 0 && empty($users_ids), fn($q) => $q->where('lids.user_id', $id))
       ->when(!empty($users_ids), fn($q) => $q->whereIn('lids.user_id', $users_ids))
