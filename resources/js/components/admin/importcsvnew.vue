@@ -3373,6 +3373,9 @@ export default {
         data.end = this.item.end;
       }
       data.clearLog = this.clearLog;
+      data.redistributeOffice = this.offices.filter(
+        (o) => o.name == this.redistributeOffice
+      ).id;
       axios
         .post("api/redistributeLids", data)
         .then(function (response) {
