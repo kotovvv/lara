@@ -75,7 +75,7 @@
             </v-col>
             <v-col cols="4">
               <v-card height="100%" class="pa-5">
-                Укажите пользователя для лидов
+                Укажите пользователя для лидов 1
                 <v-list>
                   <v-radio-group
                     @change="putSelectedLidsDB"

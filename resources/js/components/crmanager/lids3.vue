@@ -657,6 +657,9 @@
                           <v-btn data="cb" v-if="user.cb" label small>
                             {{ user.cb }}
                           </v-btn>
+                          <v-btn data="pool" v-if="user.pool" label small>
+                            {{ user.pool }}
+                          </v-btn>
                         </v-row>
                       </v-expansion-panel-content>
                     </v-expansion-panel>
@@ -1673,6 +1676,7 @@ export default {
               inp,
               cb,
               office_id,
+              pool,
             }) => ({
               name,
               id,
@@ -1686,6 +1690,7 @@ export default {
               inp,
               cb,
               office_id,
+              pool,
             })
           );
           if (
@@ -2347,6 +2352,12 @@ export default {
 }
 .v-btn[data="cb"]::after {
   color: #7b80cc;
+}
+#usersradiogroup .v-btn[data="pool"] {
+  background: #bbe5dbff;
+}
+.v-btn[data="pool"]::after {
+  color: rgb(70, 223, 188);
 }
 
 .v-btn__content {
