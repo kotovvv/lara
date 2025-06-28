@@ -748,27 +748,38 @@ class LidsController extends Controller
 
     $response['lids'] = $q_leads->get();
 
-    // Статусы (группировка по статусу)
-    $statusesQuery = Lid::query()
-      ->select(DB::raw('count(lids.status_id) as hm'), 'statuses.id', 'statuses.name', 'statuses.color')
-      ->join('statuses', 'statuses.id', '=', 'lids.status_id')
-      ->when(!in_array(0, $office_ids), fn($q) => $q->whereIn('lids.office_id', $office_ids))
-      ->when(!is_array($id) && $id > 0 && empty($users_ids), fn($q) => $q->where('lids.user_id', $id))
-      ->when(!empty($users_ids), fn($q) => $q->whereIn('lids.user_id', $users_ids))
-      ->when(!empty($providers), fn($q) => $q->whereIn('lids.provider_id', $providers))
-      ->when(!empty($tel), fn($q) => $q->where('lids.tel', 'like', $tel . '%'))
-      ->when(isset($data['duplicate_tel']), fn($q) => $q->whereIn('lids.tel', $duplicate_tel))
-      ->when(!empty($date), fn($q) => $q->whereBetween('lids.created_at', $date))
-      ->when($filterLang !== '' && $filterLang != null, fn($q) => $q->where('lids.client_lang', $filterLang))
-      ->when(!empty($filterGeo), fn($q) => $q->whereIn('lids.client_geo', $filterGeo))
-      ->when($filterRD !== null, fn($q) => $q->where('lids.rd', $filterRD))
-      ->when(isset($data['callback']) && $data['callback'] == 1, function ($q) {
-        return $q->whereRaw('(SELECT count(*) FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9) > 0');
-      })
-      ->groupBy('statuses.id')
-      ->orderBy('statuses.order', 'ASC');
+    $subQuery = $q_leads
+      ->select('status_id', DB::raw('COUNT(*) as hm'))
+      ->groupBy('status_id');
 
-    $response['statuses'] = $statusesQuery->get();
+    // Основной запрос с LEFT JOIN
+    $response['statuses'] = DB::table('statuses as s')
+      ->leftJoinSub($subQuery, 'cnt', 'cnt.status_id', '=', 's.id')
+      ->select('s.id', 's.name', 's.color', DB::raw('IFNULL(cnt.hm, 0) as hm'))
+      ->orderBy('s.order')
+      ->get();
+
+    // // Статусы (группировка по статусу)
+    // $statusesQuery = Lid::query()
+    //   ->select(DB::raw('count(lids.status_id) as hm'), 'statuses.id', 'statuses.name', 'statuses.color')
+    //   ->join('statuses', 'statuses.id', '=', 'lids.status_id')
+    //   ->when(!in_array(0, $office_ids), fn($q) => $q->whereIn('lids.office_id', $office_ids))
+    //   ->when(!is_array($id) && $id > 0 && empty($users_ids), fn($q) => $q->where('lids.user_id', $id))
+    //   ->when(!empty($users_ids), fn($q) => $q->whereIn('lids.user_id', $users_ids))
+    //   ->when(!empty($providers), fn($q) => $q->whereIn('lids.provider_id', $providers))
+    //   ->when(!empty($tel), fn($q) => $q->where('lids.tel', 'like', $tel . '%'))
+    //   ->when(isset($data['duplicate_tel']), fn($q) => $q->whereIn('lids.tel', $duplicate_tel))
+    //   ->when(!empty($date), fn($q) => $q->whereBetween('lids.created_at', $date))
+    //   ->when($filterLang !== '' && $filterLang != null, fn($q) => $q->where('lids.client_lang', $filterLang))
+    //   ->when(!empty($filterGeo), fn($q) => $q->whereIn('lids.client_geo', $filterGeo))
+    //   ->when($filterRD !== null, fn($q) => $q->where('lids.rd', $filterRD))
+    //   ->when(isset($data['callback']) && $data['callback'] == 1, function ($q) {
+    //     return $q->whereRaw('(SELECT count(*) FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9) > 0');
+    //   })
+    //   ->groupBy('statuses.id')
+    //   ->orderBy('statuses.order', 'ASC');
+
+    // $response['statuses'] = $statusesQuery->get();
 
     // Языки
     $langQuery = Lid::query()

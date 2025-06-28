@@ -314,6 +314,7 @@ class ImportsController extends Controller
     $usersIds = $data['usersIds'];
     $resetStatus = $data['resetStatus'];
     $resetOnStatus = $data['resetOnStatus'];
+    $redistributeOffice = isset($data['redistributeOffice']) ? $data['redistributeOffice'] : false;
     $id = $data['id'];
     if (isset($data['provider_id'])) {
       $provider_id = $data['provider_id'];
@@ -325,14 +326,14 @@ class ImportsController extends Controller
 
     $historyimp = [];
     if (isset($data['message'])) {
-      $office_id = session()->get('office_id');
+
       $start = $data['start'];
       $getLiads = Lid::where('load_mess', $data['message'])
         // ->when(count($resetStatus) > 0, function ($query) use ($resetStatus) {
         //   return $query->whereIn('status_id', $resetStatus);
         // })
-        ->when($office_id > 0, function ($query) use ($office_id) {
-          return $query->where('office_id', $office_id);
+        ->when($redistributeOffice > 0, function ($query) use ($redistributeOffice) {
+          return $query->where('office_id', $redistributeOffice);
         })
         ->whereDate('lids.created_at', date('Y-m-d', strtotime($start)));
       $historyimp['statuses'] = $getLiads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')

@@ -110,8 +110,7 @@ export default {
     clear() {
       this.user = {};
       Cookies.remove("auth_token");
-      Cookies.remove("lovecrm_session");
-      Cookies.remove("XSRF-TOKEN"); // Ensure XSRF-TOKEN is removed
+      //Cookies.remove("XSRF-TOKEN"); // Ensure XSRF-TOKEN is removed
     },
   },
 };

@@ -75,7 +75,7 @@
             </v-col>
             <v-col cols="4">
               <v-card height="100%" class="pa-5">
-                Укажите пользователя для лидов
+                Укажите пользователя для лидов 1
                 <v-list>
                   <v-radio-group
                     @change="putSelectedLidsDB"
@@ -3373,6 +3373,9 @@ export default {
         data.end = this.item.end;
       }
       data.clearLog = this.clearLog;
+      data.redistributeOffice = this.offices.filter(
+        (o) => o.name == this.redistributeOffice
+      ).id;
       axios
         .post("api/redistributeLids", data)
         .then(function (response) {

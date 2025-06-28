@@ -31,7 +31,6 @@ Route::middleware('auth.user_or_provider')->get('/user', function (Request $requ
 
 
 Route::post('/login', [loginController::class, 'login']);
-Route::get('logout', [loginController::class, 'logout']);
 
 Route::resource('provider', ProvidersController::class);
 Route::resource('statuses', StatusesController::class);

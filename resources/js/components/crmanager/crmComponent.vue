@@ -28,7 +28,7 @@
         </v-list-item-group>
 
         <v-list-item-group class="mt-10">
-          <v-list-item @click="logout" title="Exit">
+          <v-list-item @click="$emit('logout')" title="Exit">
             <v-list-item-icon>
               <v-icon>mdi-logout</v-icon>
             </v-list-item-icon>
@@ -55,8 +55,6 @@
 </template>
 
 <script>
-import Cookies from "js-cookie";
-import axios from "axios";
 // const lids = () => import("../crmanager/lids.vue");
 const lids3 = () => import("./lids3.vue");
 const mlids = () => import("../manager/mlids.vue");
@@ -86,18 +84,6 @@ export default {
       if (this.managerMenu == "report") return report;
     },
   },
-  methods: {
-    async logout() {
-      try {
-        await axios.get("/api/logout"); // endpoint для очистки сессии на сервере
-      } catch (e) {
-        // ignore errors
-      }
-      Cookies.remove("auth_token");
-      //Cookies.remove("lovecrm_session");
-      //Cookies.remove("XSRF-TOKEN");
-      this.$emit("logout");
-    },
-  },
+  methods: {},
 };
 </script>

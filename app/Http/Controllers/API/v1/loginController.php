@@ -81,16 +81,6 @@ class loginController extends Controller
     }
   }
 
-  public function logout(Request $request)
-  {
-    // Log::info('Logout attempt', ['user_id' => Auth::id()]);
-    if (Auth::check()) {
-      Auth::user()->tokens()->delete();
-    }
-    session()->flush();
-    return response()->json(['status' => 'success', 'message' => 'Logged out successfully']);
-  }
-
   /**
    * Store a newly created resource in storage.
    *

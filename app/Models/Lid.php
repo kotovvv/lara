@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Status;
 
 class Lid extends Model
 {
@@ -23,4 +24,10 @@ class Lid extends Model
     'qtytel',
     'rd'
   ];
+
+
+  public function status()
+  {
+    return $this->belongsTo(Status::class, 'status_id');
+  }
 }
