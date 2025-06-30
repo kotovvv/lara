@@ -363,10 +363,11 @@
                     ></v-col>
                   </v-row>
                 </v-col>
+                <!-- @click="drawer = !drawer" -->
                 <v-btn
                   class="btn"
                   v-if="importSelected.length || redistributeOffice"
-                  @click="drawer = !drawer"
+                  @click="openDialogSelectUsers"
                   >Назначить на менеджеров</v-btn
                 >
                 <v-spacer></v-spacer>
@@ -2065,6 +2066,13 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialogSelectUsers" width="50vw">
+      <selectUsersNew
+        :lids="selectedLids"
+        :user="$attrs.user"
+        @getUserIds="p_user_ids"
+      />
+    </v-dialog>
     <v-navigation-drawer width="450" v-model="drawer" fixed temporary right>
       <selectUsers :user="$attrs.user" @getUserIds="p_user_ids" />
     </v-navigation-drawer>
@@ -2080,6 +2088,7 @@ import importBTC from "./importBTC";
 import importxlsx from "./importxlsx";
 import logtel from "../manager/logtel";
 import selectUsers from "./UI/selectUsers";
+import selectUsersNew from "./UI/selectUsersnew";
 import MaskedField from "../UI/MaskedField.vue";
 
 import CanvasJSChart from "./UI/pieCanvasJsComponent.vue";
@@ -2093,11 +2102,13 @@ export default {
     ConfirmDlg: () => import("./ConfirmDlg"),
     FlagsSVG: () => import("../UI/FlagsSVG"),
     selectUsers,
+    selectUsersNew,
     MaskedField,
     CanvasJSChart,
     CheckDuplicate,
   },
   data: () => ({
+    dialogSelectUsers: false,
     true: true,
     i_geos: [],
     tabimport: "files",
@@ -2132,6 +2143,7 @@ export default {
     providers: [],
     statuses: [],
     imports: [],
+    selectedLids: {},
     selectedStatus: 8,
     selectedProvider: 0,
     related_user: [],
@@ -2890,6 +2902,10 @@ export default {
     },
   },
   methods: {
+    openDialogSelectUsers() {
+      this.getSelectedLids();
+      this.dialogSelectUsers = true;
+    },
     // Check if a row is unmasked (unmasked means the phone/email is shown in full)
     isRowUnmasked(rowId) {
       return this.unmaskedRowId === rowId;
@@ -3335,6 +3351,40 @@ export default {
         .then(function (response) {
           self.history = response.data.history;
           self.historyStatus = response.data.statuses;
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {
+          this.activeRequests--;
+          if (this.activeRequests === 0) {
+            this.loading = false;
+          }
+        });
+    },
+    getSelectedLids() {
+      const self = this;
+      self.activeRequests++;
+      self.loading = true;
+      let data = {};
+      data.importsIdsm = this.importSelected.map(
+        ({ id, message, provider_id, start, geo }) => ({
+          id,
+          message,
+          provider_id,
+          start,
+          geo,
+        })
+      );
+
+      axios
+        .post("api/getSelectedLids", data)
+        .then(function (response) {
+          self.selectedLids = response.data.lids;
+
+          self.redistributeOffice = null;
+          self.user_ids = [];
+          self.dialogSelectUsers = true;
         })
         .catch(function (error) {
           console.log(error);

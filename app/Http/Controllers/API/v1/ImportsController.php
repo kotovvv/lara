@@ -416,6 +416,33 @@ class ImportsController extends Controller
     return response('All done', 200);
   }
 
+  public function getSelectedLids(Request $request)
+  {
+    $data = $request->all();
+    $imoprtsIdsm = $data['importsIdsm'];
+    $response = [];
+    $allLidsIDs = collect();
+
+    foreach ($imoprtsIdsm as $import_) {
+      if (isset($import_['message'])) {
+        $lids = Lid::where('load_mess', $import_['message'])
+          ->select('lids.id', 'lids.provider_id', 'lids.office_id', 'lids.user_id', 'lids.status_id', 'lids.text', 'lids.created_at', 'users.group_id')
+          ->leftJoin('users', 'lids.user_id', '=', 'users.id')
+          ->get();
+      } else {
+        $lidsId = DB::table('imported_leads')->where('api_key_id', $import_['provider_id'])->whereDate('upload_time', $import_['start'])->where('geo', $import_['geo'])->pluck('lead_id')->toArray();
+        $lids = Lid::whereIn('lids.id', $lidsId)
+          ->select('lids.id', 'lids.provider_id', 'lids.office_id', 'lids.user_id', 'lids.status_id', 'lids.text', 'lids.created_at', 'users.group_id')
+          ->leftJoin('users', 'lids.user_id', '=', 'users.id')
+          ->get();
+      }
+      $allLidsIDs = $allLidsIDs->merge($lids);
+    }
+
+    $response['lids'] = $allLidsIDs;
+    return response()->json($response);
+  }
+
   public function redistribute(Request $request)
   {
     $data = $request->all();
