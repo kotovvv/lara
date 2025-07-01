@@ -101,17 +101,6 @@
             </v-select>
           </v-col>
           <v-col>
-            <p>
-              <b v-if="userids.length">Получателей {{ userids.length }} </b>
-              по
-              <input
-                type="number"
-                min="0"
-                v-model.number="hmset"
-                style="width: 60px; margin-left: 10px; border: 1px solid #ccc"
-              />
-              <span v-if="hmset > 0"> осталось: {{ hmleft }}</span>
-            </p>
             <v-row>
               <v-col>
                 <v-select
@@ -159,7 +148,17 @@
               ></v-col>
               <v-btn class="btn ma-3" @click="setUserIds">Назначить</v-btn>
             </v-row>
-
+            <p>
+              <b v-if="userids.length">Получателей {{ userids.length }} </b>
+              по
+              <input
+                type="number"
+                min="0"
+                v-model.number="hmset"
+                style="width: 60px; margin-left: 10px; border: 1px solid #ccc"
+              />
+              <span v-if="hmset > 0"> осталось: {{ hmleft }}</span>
+            </p>
             <div style="height: 70vh" class="overflow-x-auto">
               <v-expansion-panels v-model="panel">
                 <v-expansion-panel v-for="office in offices" :key="office.id">
@@ -273,14 +272,18 @@ export default {
         let counts = {};
         let left = total;
 
-        // If hmset > 0, assign it to each user, else use default calculation
         if (this.hmset > 0) {
-          newVal.forEach((uid) => {
+          newVal.forEach((uid, idx) => {
             // If user already has a custom value, keep it, else assign hmset
             if (this.userLeadCounts[uid] && this.userLeadCounts[uid] > 0) {
               counts[uid] = this.userLeadCounts[uid];
             } else {
-              counts[uid] = this.hmset;
+              // For the last user, if left < hmset, assign left
+              if (idx === newVal.length - 1 && left < this.hmset) {
+                counts[uid] = left > 0 ? left : 0;
+              } else {
+                counts[uid] = left >= this.hmset ? this.hmset : 0;
+              }
             }
             left -= counts[uid];
           });
