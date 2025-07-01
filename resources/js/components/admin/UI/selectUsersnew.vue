@@ -257,6 +257,7 @@ export default {
     this.getOffices();
     this.getStatuses();
   },
+
   beforeDestroy() {
     this.panel = [];
     this.userids = [];
@@ -264,8 +265,15 @@ export default {
     this.filterGroups = [];
     this.filterUsers = [];
     this.filterStatus = [];
+    this.hmleft = 0;
   },
   watch: {
+    lids: {
+      handler() {
+        this.hmleft = 0;
+      },
+      immediate: true,
+    },
     userids: {
       handler(newVal) {
         const total = this.checkedLids.length;
@@ -489,6 +497,7 @@ export default {
       this.filterGroups = [];
       this.filterUsers = [];
       this.filterStatus = [];
+      this.hmleft = 0;
     },
     getOffices() {
       let self = this;
@@ -615,6 +624,7 @@ export default {
       this.filterGroups = [];
       this.filterUsers = [];
       this.filterStatus = [];
+      this.hmleft = 0;
       this.$emit("close");
     },
   },
