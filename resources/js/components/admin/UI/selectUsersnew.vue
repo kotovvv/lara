@@ -5,7 +5,14 @@
       indeterminate
       color="purple"
     ></v-progress-linear>
-
+    <v-btn
+      icon
+      class="dialog-close-btn"
+      style="position: absolute; right: -8px; top: -8px; z-index: 10"
+      @click="close()"
+    >
+      <v-icon>mdi-close</v-icon>
+    </v-btn>
     <v-list>
       <div>
         <v-row class="direction-column">
@@ -19,11 +26,11 @@
               outlined
               rounded
               multiple
-              label="Office"
+              label="Офис"
               @change="
-                getGroup();
-                getUsers();
-                getStatuses();
+                filterGroups = [];
+                filterUsers = [];
+                filterStatus = [];
               "
               style="width: 20rem"
             >
@@ -34,8 +41,12 @@
               outlined
               rounded
               multiple
-              label="Group"
+              label="Группа"
               style="width: 20rem"
+              @change="
+                filterUsers = [];
+                filterStatus = [];
+              "
             >
             </v-select>
             <v-select
@@ -44,7 +55,8 @@
               outlined
               rounded
               multiple
-              label="Users"
+              @change="filterStatus = []"
+              label="Менеджеры"
               style="width: 20rem"
             >
             </v-select>
@@ -89,9 +101,18 @@
             </v-select>
           </v-col>
           <v-col>
-            <p v-if="userids.length">Отбор: {{ userids.length }}</p>
-
-            <v-row class="">
+            <p>
+              <b v-if="userids.length">Получателей {{ userids.length }} </b>
+              по
+              <input
+                type="number"
+                min="0"
+                v-model.number="hmset"
+                style="width: 60px; margin-left: 10px; border: 1px solid #ccc"
+              />
+              <span v-if="hmset > 0"> осталось: {{ hmleft }}</span>
+            </p>
+            <v-row>
               <v-col>
                 <v-select
                   ref="resetStatus"
@@ -140,7 +161,7 @@
             </v-row>
 
             <div style="height: 70vh" class="overflow-x-auto">
-              <v-expansion-panels>
+              <v-expansion-panels v-model="panel">
                 <v-expansion-panel v-for="office in offices" :key="office.id">
                   <v-expansion-panel-header>
                     <p class="title">{{ office.name }}</p>
@@ -179,7 +200,11 @@
                                 min="0"
                                 :max="checkedLids.length"
                                 v-model.number="userLeadCounts[user.id]"
-                                style="width: 50px; margin-left: 10px"
+                                style="
+                                  width: 60px;
+                                  margin-left: 10px;
+                                  border: 1px solid #ccc;
+                                "
                               />
                             </label>
                           </v-col>
@@ -226,23 +251,58 @@ export default {
     userLeadCounts: {},
     resetOnStatus: 8,
     clearLog: false,
+    hmset: 0, // Default value for hmset
+    hmleft: 0, // Default value for hmleft
   }),
   mounted() {
     this.getOffices();
     this.getStatuses();
   },
+  beforeDestroy() {
+    this.panel = [];
+    this.userids = [];
+    this.filterOffices = [];
+    this.filterGroups = [];
+    this.filterUsers = [];
+    this.filterStatus = [];
+  },
   watch: {
     userids: {
       handler(newVal) {
         const total = this.checkedLids.length;
-        const n = newVal.length;
-        let base = n ? Math.floor(total / n) : 0;
-        let rest = n ? total - base * n : 0;
         let counts = {};
-        newVal.forEach((uid, idx) => {
-          counts[uid] = base + (idx === n - 1 ? rest : 0);
-        });
+        let left = total;
+
+        // If hmset > 0, assign it to each user, else use default calculation
+        if (this.hmset > 0) {
+          newVal.forEach((uid) => {
+            // If user already has a custom value, keep it, else assign hmset
+            if (this.userLeadCounts[uid] && this.userLeadCounts[uid] > 0) {
+              counts[uid] = this.userLeadCounts[uid];
+            } else {
+              counts[uid] = this.hmset;
+            }
+            left -= counts[uid];
+          });
+          // Remove users that are no longer selected
+          Object.keys(this.userLeadCounts).forEach((uid) => {
+            if (!newVal.includes(Number(uid))) {
+              delete this.userLeadCounts[uid];
+            }
+          });
+        } else {
+          // Default calculation (even distribution)
+          const n = newVal.length;
+          let base = n ? Math.floor(total / n) : 0;
+          let rest = n ? total - base * n : 0;
+          newVal.forEach((uid, idx) => {
+            counts[uid] = base + (idx === n - 1 ? rest : 0);
+          });
+          left = 0;
+        }
+
         this.userLeadCounts = counts;
+        this.hmleft = left < 0 ? 0 : left;
       },
       immediate: true,
     },
@@ -382,7 +442,6 @@ export default {
   },
   methods: {
     getStatusColor(statusId) {
-      console.log(statusId);
       const status = this.statuses.find((s) => s.id === statusId);
       return status ? status.color : "#fff"; // Default color if not found
     },
@@ -421,6 +480,7 @@ export default {
         resetOnStatus: this.resetOnStatus,
         clearLog: this.clearLog,
       });
+      this.panel = [];
       this.userids = [];
       this.filterOffices = [];
       this.filterGroups = [];
@@ -526,9 +586,7 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    deb(u) {
-      console.log(u);
-    },
+
     usercolor(user) {
       return user.role_id == 2 ? "green" : "blue";
     },
@@ -546,6 +604,15 @@ export default {
           }));
         })
         .catch((error) => console.log(error));
+    },
+    close() {
+      this.panel = [];
+      this.userids = [];
+      this.filterOffices = [];
+      this.filterGroups = [];
+      this.filterUsers = [];
+      this.filterStatus = [];
+      this.$emit("close");
     },
   },
 };

@@ -492,7 +492,7 @@ class ImportsController extends Controller
       $id = $forhistory->id;
       $hlids = explode(',', $forhistory->lidid);
 
-      $historyimp['statuses'] = Lid::whereIn('id', $hlids)->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
+      $historyimp['statuses'] = Lid::whereIn('lids.id', $hlids)->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
         ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
         ->groupBy('statuses.id')
         ->orderBy('statuses.order', 'ASC')

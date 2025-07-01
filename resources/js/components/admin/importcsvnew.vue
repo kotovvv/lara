@@ -2017,18 +2017,11 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialogSelectUsers" width="50vw">
-      <v-btn
-        icon
-        class="dialog-close-btn"
-        style="position: absolute; right: 8px; top: 8px; z-index: 10"
-        @click="dialogSelectUsers = false"
-      >
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
       <selectUsersNew
         :lids="selectedLids"
         :user="$attrs.user"
         @getUserIds="redis_lids"
+        @close="dialogSelectUsers = false"
       />
     </v-dialog>
     <v-navigation-drawer width="450" v-model="drawer" fixed temporary right>
