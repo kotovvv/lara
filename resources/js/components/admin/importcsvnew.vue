@@ -312,57 +312,7 @@
                     </template>
                   </v-select>
                 </v-col>
-                <v-col cols="2">
-                  <v-row>
-                    <v-col>
-                      <v-select
-                        ref="resetStatus"
-                        label="На статус"
-                        v-model="resetOnStatus"
-                        :items="statuses"
-                        item-text="name"
-                        item-value="id"
-                        outlined
-                        rounded
-                      >
-                        <template v-slot:selection="{ item, index }">
-                          <span v-if="index === 0">{{ item.name }} </span>
-                          <span
-                            v-if="index === 1"
-                            class="grey--text text-caption"
-                          >
-                            (+{{ resetStatus.length - 1 }} )
-                          </span>
-                        </template>
-                        <template v-slot:item="{ item, attrs }">
-                          <v-badge
-                            :value="attrs['aria-selected'] == 'true'"
-                            color="#7620df"
-                            dot
-                            left
-                          >
-                            <i
-                              :style="{
-                                background: item.color,
-                                outline: '1px solid grey',
-                              }"
-                              class="sel_stat mr-4"
-                            ></i>
-                          </v-badge>
-                          {{ item.name }}
-                        </template>
-                      </v-select></v-col
-                    >
-                    <v-col>
-                      <v-switch
-                        class="mt-0"
-                        v-model="clearLog"
-                        :label="`Удалять логи: ${clearLog.toString()}`"
-                        hide-details
-                      ></v-switch
-                    ></v-col>
-                  </v-row>
-                </v-col>
+
                 <!-- @click="drawer = !drawer" -->
                 <v-btn
                   class="btn"
@@ -2067,10 +2017,18 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialogSelectUsers" width="50vw">
+      <v-btn
+        icon
+        class="dialog-close-btn"
+        style="position: absolute; right: 8px; top: 8px; z-index: 10"
+        @click="dialogSelectUsers = false"
+      >
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
       <selectUsersNew
         :lids="selectedLids"
         :user="$attrs.user"
-        @getUserIds="p_user_ids"
+        @getUserIds="redis_lids"
       />
     </v-dialog>
     <v-navigation-drawer width="450" v-model="drawer" fixed temporary right>
@@ -2635,7 +2593,6 @@ export default {
     filterUserStatusTabl: [],
     filter_geo: [],
     resetStatus: [],
-    resetOnStatus: 8,
     leads: [],
     email_tel: "email",
     printfield: [
@@ -3447,6 +3404,22 @@ export default {
             this.loading = false;
           }
         });
+    },
+    redis_lids(get_user_lids) {
+      console.log("redis_lids", get_user_lids);
+      get_user_lids.resetStatus = this.resetStatus;
+      get_user_lids.resetOnStatus = get_user_lids.resetOnStatus;
+      get_user_lids.checkedLids = get_user_lids.checkedLids.map((l) => l.id);
+      axios
+        .post("api/newRedistributeLids", get_user_lids)
+        .then((response) => {
+          this.message = "Переназначение успешно выполнено";
+          this.snackbar = true;
+        })
+        .catch((error) => {
+          console.error("Ошибка при переназначении лидов:", error);
+        });
+      this.dialogSelectUsers = false;
     },
     p_user_ids(user_ids) {
       const self = this;
@@ -4650,9 +4623,6 @@ export default {
 </script>
 
 <style>
-.csv .v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
-  /* height: 4rem; */
-}
 .csv .v-data-footer {
   justify-content: end;
 }

@@ -11,7 +11,7 @@
         <v-row class="direction-column">
           <v-col>
             <div class="mb-5">
-              <b>Отобр: {{ checkedLids.length }} z {{ lids.length }}</b>
+              <b>Отобр: {{ checkedLids.length }} из {{ lids.length }}</b>
             </div>
             <v-select
               v-model="filterOffices"
@@ -90,7 +90,55 @@
           </v-col>
           <v-col>
             <p v-if="userids.length">Отбор: {{ userids.length }}</p>
-            <v-btn class="btn ma-3" @click="setUserIds">Назначить</v-btn>
+
+            <v-row class="">
+              <v-col>
+                <v-select
+                  ref="resetStatus"
+                  label="На статус"
+                  v-model="resetOnStatus"
+                  :items="statuses"
+                  item-text="name"
+                  item-value="id"
+                  outlined
+                  rounded
+                >
+                  <template v-slot:selection="{ item, index }">
+                    <span v-if="index === 0">{{ item.name }} </span>
+                    <span v-if="index === 1" class="grey--text text-caption">
+                      (+{{ resetOnStatus.length - 1 }} )
+                    </span>
+                  </template>
+                  <template v-slot:item="{ item, attrs }">
+                    <v-badge
+                      :value="attrs['aria-selected'] == 'true'"
+                      color="#7620df"
+                      dot
+                      left
+                    >
+                      <i
+                        :style="{
+                          background: item.color,
+                          outline: '1px solid grey',
+                        }"
+                        class="sel_stat mr-4"
+                      ></i>
+                    </v-badge>
+                    {{ item.name }}
+                  </template>
+                </v-select></v-col
+              >
+              <v-col>
+                <v-switch
+                  class="mt-0"
+                  v-model="clearLog"
+                  :label="`Удалять логи: ${clearLog.toString()}`"
+                  hide-details
+                ></v-switch
+              ></v-col>
+              <v-btn class="btn ma-3" @click="setUserIds">Назначить</v-btn>
+            </v-row>
+
             <div style="height: 70vh" class="overflow-x-auto">
               <v-expansion-panels>
                 <v-expansion-panel v-for="office in offices" :key="office.id">
@@ -131,6 +179,14 @@
                                 overlap
                               >
                               </v-badge>
+                              <input
+                                v-if="userids.includes(user.id)"
+                                type="number"
+                                min="0"
+                                :max="checkedLids.length"
+                                v-model.number="userLeadCounts[user.id]"
+                                style="width: 50px; margin-left: 10px"
+                              />
                             </label>
                           </v-col>
                         </v-expansion-panel-content>
@@ -173,10 +229,29 @@ export default {
     filterGroups: [],
     filterUsers: [],
     filterStatus: [],
+    userLeadCounts: {},
+    resetOnStatus: 8,
+    clearLog: false,
   }),
   mounted() {
     this.getOffices();
     this.getStatuses();
+  },
+  watch: {
+    userids: {
+      handler(newVal) {
+        const total = this.checkedLids.length;
+        const n = newVal.length;
+        let base = n ? Math.floor(total / n) : 0;
+        let rest = n ? total - base * n : 0;
+        let counts = {};
+        newVal.forEach((uid, idx) => {
+          counts[uid] = base + (idx === n - 1 ? rest : 0);
+        });
+        this.userLeadCounts = counts;
+      },
+      immediate: true,
+    },
   },
   computed: {
     checkedLids() {
@@ -342,8 +417,21 @@ export default {
       }
     },
     setUserIds() {
-      this.$emit("getUserIds", this.userids);
+      const result = this.userids.map((uid) => ({
+        user_id: uid,
+        count: this.userLeadCounts[uid] || 0,
+      }));
+      this.$emit("getUserIds", {
+        users: result,
+        checkedLids: this.checkedLids,
+        resetOnStatus: this.resetOnStatus,
+        clearLog: this.clearLog,
+      });
       this.userids = [];
+      this.filterOffices = [];
+      this.filterGroups = [];
+      this.filterUsers = [];
+      this.filterStatus = [];
     },
     getOffices() {
       let self = this;

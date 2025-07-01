@@ -307,6 +307,8 @@ class ImportsController extends Controller
     return $response;
   }
 
+
+
   public function redistributeLids(Request $request)
   {
     $data = $request->all();
@@ -442,6 +444,49 @@ class ImportsController extends Controller
     $response['lids'] = $allLidsIDs;
     return response()->json($response);
   }
+
+  public function newRedistributeLids(Request $request)
+  {
+    $data = $request->all();
+    $lids = $data['checkedLids'];
+    $users = $data['users'];
+    //$resetStatus = $data['resetStatus'];
+    $resetOnStatus = isset($data['resetOnStatus']) ? $data['resetOnStatus'] : 8;
+
+    $historyimp = [];
+
+    $getLiads = Lid::whereIn('id', $lids);
+
+
+    $historyimp['statuses'] = $getLiads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
+      ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
+      ->groupBy('statuses.id')
+      ->orderBy('statuses.order', 'ASC')
+      ->get();
+
+    $historyimp['lids'] = implode(',', $lids);
+
+    $historyimp['imports_id'] = $id;
+    $historyimp['load_mess'] = $data['message'];
+    $historyimp['created_at'] = Now();
+    DB::table('historyimport')->insert($historyimp);
+
+    foreach ($users as $user) {
+
+      $user_id = $user['user_id'];
+      $count = $user['count'];
+
+      $selectedLids = array_splice($lids, 0, $count);
+      if (!empty($selectedLids)) {
+        Lid::whereIn('id', $selectedLids)->update([
+          'user_id' => $user_id,
+          'status_id' => $resetOnStatus,
+          'updated_at' => now()
+        ]);
+      }
+    }
+  }
+
 
   public function redistribute(Request $request)
   {
