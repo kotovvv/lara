@@ -172,13 +172,7 @@
                             />
                             <label :for="user.id"
                               >{{ user.fio }}
-                              <v-badge
-                                :content="user.hmlids"
-                                :value="user.hmlids"
-                                :color="usercolor(user)"
-                                overlap
-                              >
-                              </v-badge>
+
                               <input
                                 v-if="userids.includes(user.id)"
                                 type="number"

@@ -455,36 +455,92 @@ class ImportsController extends Controller
 
     $historyimp = [];
 
-    $getLiads = Lid::whereIn('id', $lids);
+    $withLoadMess = DB::table('lids')
+      ->join('imports', 'lids.load_mess', '=', 'imports.message')
+      ->whereIn('lids.id', $lids)
+      ->whereNotNull('lids.load_mess')
+      ->where('lids.load_mess', '<>', '')
+      ->select('imports.id', 'imports.message as load_mess', 'lids.id as lidid');
 
+    // Lids with an empty `load_mess`
+    $withoutLoadMess = DB::table('lids')
+      ->join('imported_leads', 'lids.id', '=', 'imported_leads.lead_id')
+      ->join('imports_provider', function ($join) {
+        $join->on('imported_leads.api_key_id', '=', 'imports_provider.provider_id')
+          ->on(DB::raw('DATE(imported_leads.upload_time)'), '=', 'imports_provider.date')
+          ->on('imported_leads.geo', '=', 'imports_provider.geo');
+      })
+      ->whereIn('lids.id', $lids)
+      ->where(function ($query) {
+        $query->whereNull('lids.load_mess')
+          ->orWhere('lids.load_mess', '=', '');
+      })
+      ->select('imports_provider.id', DB::raw("'' as load_mess"), 'lids.id as lidid');
 
-    $historyimp['statuses'] = $getLiads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
-      ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
-      ->groupBy('statuses.id')
-      ->orderBy('statuses.order', 'ASC')
+    // Combine the two queries using UNION
+    $unionQuery = $withLoadMess->unionAll($withoutLoadMess);
+
+    // Create a subquery from the union and then group the results
+    $forhistory = DB::query()
+      ->fromSub($unionQuery, 'history_cte')
+      ->select('id', 'load_mess', DB::raw('GROUP_CONCAT(lidid) as lidid'))
+      ->groupBy('id', 'load_mess')
+      ->orderBy('id', 'desc')
       ->get();
 
-    $historyimp['lids'] = implode(',', $lids);
+    foreach ($forhistory as $forhistory) {
+      $id = $forhistory->id;
+      $hlids = explode(',', $forhistory->lidid);
 
-    $historyimp['imports_id'] = $id;
-    $historyimp['load_mess'] = $data['message'];
-    $historyimp['created_at'] = Now();
-    DB::table('historyimport')->insert($historyimp);
+      $historyimp['statuses'] = Lid::whereIn('id', $hlids)->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
+        ->leftJoin('statuses', 'statuses.id', '=', 'status_id')
+        ->groupBy('statuses.id')
+        ->orderBy('statuses.order', 'ASC')
+        ->get();
 
+      $historyimp['lids'] = $forhistory->lidid;
+
+      $historyimp['imports_id'] = $id;
+      $historyimp['load_mess'] = $forhistory->load_mess;
+      $historyimp['created_at'] = Now();
+      DB::table('historyimport')->insert($historyimp);
+    }
+    // Если clearLog == true, то удаляем старые логи и добавляем новые
+    if (isset($data['clearLog']) && $data['clearLog'] == true) {
+      $user_id = session()->get('user_id');
+      // Получаем данные для вставки в logs
+      $logs = Lid::whereIn('lids.id', $lids)
+        ->join('users', 'lids.user_id', '=', 'users.id')
+        ->select(
+          DB::raw("'$user_id' as user_id"),
+          'lids.id as lid_id',
+          DB::raw("'' as tel"),
+          'lids.status_id',
+          DB::raw("CONCAT(users.name, ' : ', lids.text) as text"),
+          DB::raw('1 as last_log'),
+          DB::raw('NOW() as created_at')
+        )
+        ->get()
+        ->toArray();
+
+      // Вставляем в таблицу logs
+      if (!empty($logs)) {
+        DB::table('logs')->insert($logs);
+      }
+      Log::whereIn('lid_id', $lids)->where('last_log', 0)->delete();
+    }
     foreach ($users as $user) {
-
       $user_id = $user['user_id'];
       $count = $user['count'];
-
+      $office_id = User::where('id', (int) $user_id)->value('office_id');
       $selectedLids = array_splice($lids, 0, $count);
-      if (!empty($selectedLids)) {
-        Lid::whereIn('id', $selectedLids)->update([
-          'user_id' => $user_id,
-          'status_id' => $resetOnStatus,
-          'updated_at' => now()
-        ]);
+      if (isset($data['clearLog']) && $data['clearLog'] == true) {
+        Lid::whereIn('id', $selectedLids)->update(['user_id' => $user_id, 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => $resetOnStatus, 'text' => '', 'qtytel' => 0]);
+      } else {
+        Lid::whereIn('id', $selectedLids)->update(['user_id' => $user_id, 'updated_at' => Now(), 'office_id' => $office_id, 'status_id' => $resetOnStatus]);
       }
     }
+    return response('All done', 200);
   }
 
 
