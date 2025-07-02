@@ -275,45 +275,7 @@
                     ></v-autocomplete
                   ></v-col>
                 </v-col>
-                <v-col cols="1">
-                  <v-select
-                    ref="resetStatus"
-                    label="Переназначить статусы c"
-                    v-model="resetStatus"
-                    :items="statuses"
-                    item-text="name"
-                    item-value="id"
-                    outlined
-                    rounded
-                    :multiple="true"
-                  >
-                    <template v-slot:selection="{ item, index }">
-                      <span v-if="index === 0">{{ item.name }} </span>
-                      <span v-if="index === 1" class="grey--text text-caption">
-                        (+{{ resetStatus.length - 1 }} )
-                      </span>
-                    </template>
-                    <template v-slot:item="{ item, attrs }">
-                      <v-badge
-                        :value="attrs['aria-selected'] == 'true'"
-                        color="#7620df"
-                        dot
-                        left
-                      >
-                        <i
-                          :style="{
-                            background: item.color,
-                            outline: '1px solid grey',
-                          }"
-                          class="sel_stat mr-4"
-                        ></i>
-                      </v-badge>
-                      {{ item.name }}
-                    </template>
-                  </v-select>
-                </v-col>
 
-                <!-- @click="drawer = !drawer" -->
                 <v-btn
                   class="btn"
                   v-if="importSelected.length || redistributeOffice"

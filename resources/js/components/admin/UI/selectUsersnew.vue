@@ -99,6 +99,20 @@
                 {{ item.name }} {{ item.count ? ` (${item.count})` : "" }}
               </template>
             </v-select>
+            <div class="wrp__statuses">
+              <template v-for="(i, x) in statusesItemsFromLids">
+                <div class="status_wrp" :key="x">
+                  <b
+                    :style="{
+                      background: i.color,
+                      outline: '1px solid ' + i.color,
+                    }"
+                    >{{ i.count }}</b
+                  >
+                  <span>{{ i.name }}</span>
+                </div>
+              </template>
+            </div>
           </v-col>
           <v-col>
             <v-row>
@@ -346,7 +360,17 @@ export default {
       return this.offices
         .filter((o) => officeIds.includes(o.id))
         .map((o) => ({
-          text: o.name,
+          text: `${o.name} (${
+            this.lids.filter((l) => l.office_id === o.id).length
+          }, ${
+            this.lids.length
+              ? Math.round(
+                  (this.lids.filter((l) => l.office_id === o.id).length /
+                    this.lids.length) *
+                    100
+                )
+              : 0
+          }%)`,
           value: o.id,
         }));
     },
@@ -382,7 +406,17 @@ export default {
       for (const user of groupUsers) {
         if (!seen.has(user.id)) {
           uniqueGroups.push({
-            text: user.fio,
+            text: `${user.fio} (${
+              this.lids.filter((l) => l.group_id === user.id).length
+            }, ${
+              this.lids.length
+                ? Math.round(
+                    (this.lids.filter((l) => l.group_id === user.id).length /
+                      this.lids.length) *
+                      100
+                  )
+                : 0
+            }%)`,
             value: user.id,
           });
           seen.add(user.id);
@@ -405,7 +439,17 @@ export default {
         .filter((u) => userIds.includes(u.id))
         .filter((u) => !selectedGroups || selectedGroups.includes(u.group_id))
         .map((u) => ({
-          text: u.fio,
+          text: `${u.fio} (${
+            this.lids.filter((l) => l.user_id === u.id).length
+          }, ${
+            this.lids.length
+              ? Math.round(
+                  (this.lids.filter((l) => l.user_id === u.id).length /
+                    this.lids.length) *
+                    100
+                )
+              : 0
+          }%)`,
           value: u.id,
         }));
     },
@@ -443,18 +487,23 @@ export default {
         return acc;
       }, {});
 
-      return Object.entries(statusCounts).map(([id, { name, count }]) => ({
-        id: parseInt(id),
-        name,
-        count,
-        color: this.getStatusColor(id),
-      }));
+      return Object.entries(statusCounts).map(
+        ([status_id, { name, count }]) => ({
+          id: parseInt(status_id), // id для v-select
+          status_id: parseInt(status_id), // явно сохраняем status_id
+          name,
+          count,
+          color: this.getStatusColor(status_id),
+        })
+      );
     },
   },
   methods: {
     getStatusColor(statusId) {
-      const status = this.statuses.find((s) => s.id === statusId);
-      return status ? status.color : "#fff"; // Default color if not found
+      // statusId can be string or number, ensure both are compared as numbers
+      const id = typeof statusId === "string" ? parseInt(statusId) : statusId;
+      const status = this.statuses.find((s) => Number(s.id) === id);
+      return status && status.color ? status.color : "#fff"; // Default color if not found
     },
     setGroup(group_id, level, e) {
       let au = [];
