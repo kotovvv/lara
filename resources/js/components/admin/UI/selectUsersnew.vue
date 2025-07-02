@@ -99,9 +99,10 @@
                 {{ item.name }} {{ item.count ? ` (${item.count})` : "" }}
               </template>
             </v-select>
-            <div class="wrp__statuses">
+            <v-spacer></v-spacer>
+            <div class="w-50">
               <template v-for="(i, x) in statusesItemsFromLids">
-                <div class="status_wrp" :key="x">
+                <div class="status_wrp mb-1" :key="x">
                   <b
                     :style="{
                       background: i.color,
@@ -166,9 +167,7 @@
               <b v-if="userids.length">Получателей {{ userids.length }} </b>
               по
               <input
-                type="number"
-                min="0"
-                v-model.number="hmset"
+                v-model="hmset"
                 style="width: 60px; margin-left: 10px; border: 1px solid #ccc"
               />
               <span v-if="hmset > 0"> осталось: {{ hmleft }}</span>
@@ -209,10 +208,7 @@
 
                               <input
                                 v-if="userids.includes(user.id)"
-                                type="number"
-                                min="0"
-                                :max="checkedLids.length"
-                                v-model.number="userLeadCounts[user.id]"
+                                v-model="userLeadCounts[user.id]"
                                 style="
                                   width: 60px;
                                   margin-left: 10px;
@@ -318,8 +314,33 @@ export default {
         } else {
           // Default calculation (even distribution)
           const n = newVal.length;
+          // Равномерное распределение с разницей не более 5 между пользователями
           let base = n ? Math.floor(total / n) : 0;
-          let rest = n ? total - base * n : 0;
+          let countsArr = Array(n).fill(base);
+          let rest = total - base * n;
+
+          // Распределяем остаток по одному к первым rest пользователям
+          for (let i = 0; i < rest; i++) {
+            countsArr[i]++;
+          }
+
+          // Теперь countsArr содержит распределение, где разница между max и min не больше 1
+          // Если n > 0, но base < 5, увеличиваем base до 5 и перераспределяем
+          if (n > 0 && base < 5) {
+            countsArr = Array(n).fill(5);
+            let sum = 5 * n;
+            let diff = sum - total;
+            // Уменьшаем по одному у последних diff пользователей
+            for (let i = n - 1; i >= 0 && diff > 0; i--, diff--) {
+              countsArr[i]--;
+            }
+          }
+
+          // Присваиваем значения counts по userids
+          newVal.forEach((uid, idx) => {
+            counts[uid] = countsArr[idx];
+          });
+          // let rest = n ? total - base * n : 0; // Removed duplicate declaration
           newVal.forEach((uid, idx) => {
             counts[uid] = base + (idx === n - 1 ? rest : 0);
           });
@@ -360,9 +381,9 @@ export default {
       return this.offices
         .filter((o) => officeIds.includes(o.id))
         .map((o) => ({
-          text: `${o.name} (${
+          text: `${o.name} - ${
             this.lids.filter((l) => l.office_id === o.id).length
-          }, ${
+          } (${
             this.lids.length
               ? Math.round(
                   (this.lids.filter((l) => l.office_id === o.id).length /
@@ -406,9 +427,9 @@ export default {
       for (const user of groupUsers) {
         if (!seen.has(user.id)) {
           uniqueGroups.push({
-            text: `${user.fio} (${
+            text: `${user.fio} - ${
               this.lids.filter((l) => l.group_id === user.id).length
-            }, ${
+            } (${
               this.lids.length
                 ? Math.round(
                     (this.lids.filter((l) => l.group_id === user.id).length /
@@ -439,9 +460,9 @@ export default {
         .filter((u) => userIds.includes(u.id))
         .filter((u) => !selectedGroups || selectedGroups.includes(u.group_id))
         .map((u) => ({
-          text: `${u.fio} (${
+          text: `${u.fio} - ${
             this.lids.filter((l) => l.user_id === u.id).length
-          }, ${
+          } (${
             this.lids.length
               ? Math.round(
                   (this.lids.filter((l) => l.user_id === u.id).length /

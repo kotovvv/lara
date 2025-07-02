@@ -441,6 +441,9 @@ class ImportsController extends Controller
       $allLidsIDs = $allLidsIDs->merge($lids);
     }
 
+    // Перемешиваем лиды
+    $allLidsIDs = $allLidsIDs->shuffle()->values();
+
     $response['lids'] = $allLidsIDs;
     return response()->json($response);
   }
