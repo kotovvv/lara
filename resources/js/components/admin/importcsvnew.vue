@@ -3361,7 +3361,6 @@ export default {
         });
     },
     redis_lids(get_user_lids) {
-      console.log("redis_lids", get_user_lids);
       get_user_lids.resetStatus = this.resetStatus;
       get_user_lids.resetOnStatus = get_user_lids.resetOnStatus;
       get_user_lids.checkedLids = get_user_lids.checkedLids.map((l) => l.id);
@@ -3370,6 +3369,7 @@ export default {
         .then((response) => {
           this.message = "Переназначение успешно выполнено";
           this.snackbar = true;
+          this.importSelected = [];
         })
         .catch((error) => {
           console.error("Ошибка при переназначении лидов:", error);
