@@ -892,6 +892,12 @@
                           >
                             <template v-slot:item.geo="{ item }">
                               <div class="pl-5 d-flex align-center">
+                                <v-checkbox
+                                  :input-value="isGeoSelected(item)"
+                                  @change="toggleGeoSelection(item)"
+                                  hide-details
+                                  class="mr-2"
+                                ></v-checkbox>
                                 <svg class="icon">
                                   <use :xlink:href="'#' + item.geo"></use></svg
                                 >{{ item.geo }}
@@ -2818,6 +2824,41 @@ export default {
     },
   },
   methods: {
+    // Проверяет, выбраны ли все даты для данного geo
+    isGeoSelected(geoItem) {
+      if (!geoItem.dates || geoItem.dates.length === 0) {
+        return false;
+      }
+      return geoItem.dates.every((date) => this.isSelected(date));
+    },
+
+    // Переключает выбор всех дат для данного geo
+    toggleGeoSelection(geoItem) {
+      if (!geoItem.dates || geoItem.dates.length === 0) {
+        return;
+      }
+
+      const allSelected = this.isGeoSelected(geoItem);
+
+      if (allSelected) {
+        // Снимаем выбор со всех дат этого geo
+        geoItem.dates.forEach((date) => {
+          const index = this.importSelected.findIndex(
+            (item) => item.id === date.id
+          );
+          if (index > -1) {
+            this.importSelected.splice(index, 1);
+          }
+        });
+      } else {
+        // Добавляем все даты этого geo в выбранные
+        geoItem.dates.forEach((date) => {
+          if (!this.isSelected(date)) {
+            this.importSelected.push(date);
+          }
+        });
+      }
+    },
     openDialogSelectUsers() {
       this.getSelectedLids();
       this.dialogSelectUsers = true;
@@ -4839,5 +4880,13 @@ td div.border {
 }
 .btn_status:hover {
   border: 3px solid #000;
+}
+.v-input--checkbox.mr-2 {
+  margin-top: 0;
+  margin-right: 8px;
+}
+
+.pl-5.d-flex.align-center .v-input--checkbox {
+  flex: 0 0 auto;
 }
 </style>
