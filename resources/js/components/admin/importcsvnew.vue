@@ -1399,6 +1399,9 @@
                   ><v-icon>mdi-refresh</v-icon></v-btn
                 >
                 <CanvasJSChart :options="chartOptions" />
+                <p v-if="lidsByOffice.length > 0">
+                  <b>{{ item.name }} {{ item.start }}</b>
+                </p>
                 <div
                   id="wrp_stat"
                   class="wrp__statuses mt-4"

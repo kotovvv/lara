@@ -325,42 +325,93 @@ export default {
             }
           });
         } else {
-          // Default calculation (even distribution)
+          // Default calculation (even distribution with max difference of 3)
           const n = newVal.length;
-          // Равномерное распределение с разницей не более 5 между пользователями
-          let base = n
-            ? Math.floor(total / n) +
-              (total / n - Math.floor(total / n) > 0.5 ? 1 : 0)
-            : 0;
-          let countsArr = Array(n).fill(base);
-          let rest = total - base * n;
+          if (n === 0) {
+            left = 0;
+          } else {
+            // Базовое количество для каждого пользователя
+            const base = Math.floor(total / n);
+            const remainder = total % n;
 
-          // Распределяем остаток по одному к первым rest пользователям
-          for (let i = 0; i < rest; i++) {
-            countsArr[i]++;
-          }
+            // Создаем массив с базовым распределением
+            let countsArr = Array(n).fill(base);
 
-          // Теперь countsArr содержит распределение, где разница между max и min не больше 1
-          // Если n > 0, но base < 5, увеличиваем base до 5 и перераспределяем
-          if (n > 0 && base < 5) {
-            countsArr = Array(n).fill(5);
-            let sum = 5 * n;
-            let diff = sum - total;
-            // Уменьшаем по одному у последних diff пользователей
-            for (let i = n - 1; i >= 0 && diff > 0; i--, diff--) {
-              countsArr[i]--;
+            // Добавляем остаток к первым remainder пользователям
+            for (let i = 0; i < remainder; i++) {
+              countsArr[i]++;
             }
-          }
 
-          // Присваиваем значения counts по userids
-          newVal.forEach((uid, idx) => {
-            counts[uid] = countsArr[idx];
-          });
-          // let rest = n ? total - base * n : 0; // Removed duplicate declaration
-          newVal.forEach((uid, idx) => {
-            counts[uid] = base + (idx === n - 1 ? rest : 0);
-          });
-          left = 0;
+            // Проверяем разницу между максимальным и минимальным значением
+            const maxCount = Math.max(...countsArr);
+            const minCount = Math.min(...countsArr);
+            const difference = maxCount - minCount;
+
+            // Если разница больше 3, перераспределяем
+            if (difference > 3) {
+              // Находим пользователей с максимальным количеством
+              const maxUsers = [];
+              const minUsers = [];
+
+              countsArr.forEach((count, idx) => {
+                if (count === maxCount) {
+                  maxUsers.push(idx);
+                } else if (count === minCount) {
+                  minUsers.push(idx);
+                }
+              });
+
+              // Перераспределяем лишние лиды
+              let excessLeads = 0;
+              maxUsers.forEach((idx) => {
+                const excess = countsArr[idx] - (minCount + 3);
+                if (excess > 0) {
+                  excessLeads += excess;
+                  countsArr[idx] -= excess;
+                }
+              });
+
+              // Распределяем лишние лиды среди пользователей с минимальным количеством
+              let redistIndex = 0;
+              while (excessLeads > 0 && redistIndex < n) {
+                if (countsArr[redistIndex] < minCount + 3) {
+                  const canAdd = Math.min(
+                    excessLeads,
+                    minCount + 3 - countsArr[redistIndex]
+                  );
+                  countsArr[redistIndex] += canAdd;
+                  excessLeads -= canAdd;
+                }
+                redistIndex++;
+              }
+
+              // Если всё ещё есть лишние лиды, распределяем их равномерно
+              redistIndex = 0;
+              while (excessLeads > 0 && redistIndex < n) {
+                if (countsArr[redistIndex] === minCount + 3) {
+                  // Можем добавить ещё, но не больше чем разница в 3
+                  const currentMin = Math.min(...countsArr);
+                  if (countsArr[redistIndex] - currentMin < 3) {
+                    countsArr[redistIndex]++;
+                    excessLeads--;
+                  }
+                }
+                redistIndex++;
+
+                // Если прошли всех пользователей, начинаем заново
+                if (redistIndex >= n) {
+                  redistIndex = 0;
+                }
+              }
+            }
+
+            // Присваиваем значения counts по userids
+            newVal.forEach((uid, idx) => {
+              counts[uid] = countsArr[idx] || 0;
+            });
+
+            left = 0;
+          }
         }
 
         this.userLeadCounts = counts;
