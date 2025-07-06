@@ -428,15 +428,23 @@ class ImportsController extends Controller
     foreach ($imoprtsIdsm as $import_) {
       if (isset($import_['message'])) {
         $lids = Lid::where('load_mess', $import_['message'])
-          ->select('lids.id', 'lids.provider_id', 'lids.office_id', 'lids.user_id', 'lids.status_id', 'lids.text', 'lids.created_at', 'users.group_id')
+          ->select('lids.id', 'lids.provider_id', 'lids.office_id', 'lids.user_id', 'lids.status_id', 'lids.created_at', 'users.group_id')
           ->leftJoin('users', 'lids.user_id', '=', 'users.id')
           ->get();
+        $provider_name = \App\Models\Provider::where('id', $import_['provider_id'])->value('name');
+        $message = $import_['message'] ?? '';
+        $date = date('Y-m-d', strtotime($import_['start']));
+        $response['files'][] = $provider_name . ' - ' . $message . ' - ' . $date;
       } else {
         $lidsId = DB::table('imported_leads')->where('api_key_id', $import_['provider_id'])->whereDate('upload_time', $import_['start'])->where('geo', $import_['geo'])->pluck('lead_id')->toArray();
         $lids = Lid::whereIn('lids.id', $lidsId)
-          ->select('lids.id', 'lids.provider_id', 'lids.office_id', 'lids.user_id', 'lids.status_id', 'lids.text', 'lids.created_at', 'users.group_id')
+          ->select('lids.id', 'lids.provider_id', 'lids.office_id', 'lids.user_id', 'lids.status_id', 'lids.created_at', 'users.group_id')
           ->leftJoin('users', 'lids.user_id', '=', 'users.id')
           ->get();
+        $provider_name = \App\Models\Provider::where('id', $import_['provider_id'])->value('name');
+        $geo = $import_['geo'] ?? '';
+        $date = date('Y-m-d', strtotime($import_['start']));
+        $response['files'][] = $provider_name . ' - ' . $geo . ' - ' . $date;
       }
       $allLidsIDs = $allLidsIDs->merge($lids);
     }

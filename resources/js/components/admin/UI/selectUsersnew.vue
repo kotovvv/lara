@@ -20,6 +20,11 @@
             <div class="mb-5">
               <b>Отобр: {{ checkedLids.length }} из {{ lids.length }}</b>
             </div>
+            <div>
+              <ul>
+                <li v-for="(file, idx) in files" :key="idx">{{ file }}</li>
+              </ul>
+            </div>
             <v-select
               v-model="filterOffices"
               :items="officeItemsFromLids"
@@ -101,7 +106,11 @@
             </v-select>
             <v-spacer></v-spacer>
             <div class="w-50">
-              <template v-for="(i, x) in statusesItemsFromLids">
+              <template
+                v-for="(i, x) in statuses.filter((s) =>
+                  filterStatus.includes(s.id)
+                )"
+              >
                 <div class="status_wrp mb-1" :key="x">
                   <b
                     :style="{
@@ -242,6 +251,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    files: {
+      type: Array,
+      default: () => [],
+    },
   },
   data: () => ({
     users: [],
@@ -315,7 +328,10 @@ export default {
           // Default calculation (even distribution)
           const n = newVal.length;
           // Равномерное распределение с разницей не более 5 между пользователями
-          let base = n ? Math.floor(total / n) : 0;
+          let base = n
+            ? Math.floor(total / n) +
+              (total / n - Math.floor(total / n) > 0.5 ? 1 : 0)
+            : 0;
           let countsArr = Array(n).fill(base);
           let rest = total - base * n;
 

@@ -1980,6 +1980,7 @@
     </v-dialog>
     <v-dialog v-model="dialogSelectUsers" width="50vw">
       <selectUsersNew
+        :files="files"
         :lids="selectedLids"
         :user="$attrs.user"
         @getUserIds="redis_lids"
@@ -3293,7 +3294,7 @@ export default {
         .post("api/getSelectedLids", data)
         .then(function (response) {
           self.selectedLids = response.data.lids;
-
+          self.files = response.data.files;
           self.redistributeOffice = null;
           self.user_ids = [];
           self.dialogSelectUsers = true;
