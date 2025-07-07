@@ -190,7 +190,7 @@
                     <template v-slot:selection="{ item, index }">
                       <span v-if="index === 0">{{ item.name }} </span>
                       <span v-if="index === 1" class="grey--text text-caption">
-                        (+{{ filterProviders.length - 1 }} )
+                        (+{{ filter_import_provider.length - 1 }} )
                       </span>
                     </template>
                     <template v-slot:item="{ item, attrs }">
