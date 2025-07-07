@@ -756,6 +756,7 @@ class LidsController extends Controller
     $response['statuses'] = DB::table('statuses as s')
       ->leftJoinSub($subQuery, 'cnt', 'cnt.status_id', '=', 's.id')
       ->select('s.id', 's.name', 's.color', DB::raw('IFNULL(cnt.hm, 0) as hm'))
+      ->whereNotNull('cnt.hm')
       ->orderBy('s.order')
       ->get();
 
