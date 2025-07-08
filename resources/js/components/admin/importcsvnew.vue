@@ -1960,14 +1960,14 @@
                 </v-radio-group>
               </v-col>
               <v-col cols="12" v-if="editedItem.message">
-                <v-select
+                <v-autocomplete
                   v-model="editedItem.provider_id"
                   :items="providers"
                   item-text="name"
                   item-value="id"
                   label="Провайдер"
                   @change="setBaer()"
-                ></v-select>
+                ></v-autocomplete>
                 <v-select
                   v-if="baers.length"
                   v-model="editedItem.baer"
