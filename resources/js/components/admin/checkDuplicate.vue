@@ -175,19 +175,51 @@
                 <logtel :lid_id="item.id" :key="item.id" />
               </td>
             </template>
-
+            <template v-slot:item.name="{ item }">
+              <div class="d-flex">
+                {{ item.name }}
+                <v-btn
+                  icon
+                  x-small
+                  @click.stop="copyToClickboard(item, 'name')"
+                  title="Скопировать имя, емаил, телефон, поставщик "
+                >
+                  <v-icon>mdi-content-copy</v-icon>
+                </v-btn>
+              </div>
+            </template>
             <template v-slot:item.email="{ item }">
               <template
                 v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
               >
-                {{ item.email }}
+                <div class="d-flex">
+                  {{ item.email }}
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="copyToClickboard(item, 'email')"
+                    title="Скопировать email"
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
+                </div>
               </template>
               <template v-else>
-                <MaskedField
-                  :value="item.email"
-                  type="email"
-                  :isUnmasked="isRowUnmasked(item.id)"
-                />
+                <div class="d-flex">
+                  <MaskedField
+                    :value="item.email"
+                    type="email"
+                    :isUnmasked="isRowUnmasked(item.id)"
+                  />
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="copyToClickboard(item, 'email')"
+                    title="Скопировать email"
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
+                </div>
               </template>
             </template>
 
@@ -195,17 +227,50 @@
               <template
                 v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
               >
-                {{ item.tel }}
+                <div class="d-flex">
+                  <span>{{ item.tel }}</span>
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="copyToClickboard(item, 'tel')"
+                    title="Скопировать телефон"
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
+                </div>
               </template>
+
               <template v-else>
-                <MaskedField
-                  :value="item.tel"
-                  type="phone"
-                  :isUnmasked="isRowUnmasked(item.id)"
-                />
+                <div class="d-flex">
+                  <MaskedField
+                    :value="item.tel"
+                    type="phone"
+                    :isUnmasked="isRowUnmasked(item.id)"
+                  />
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="copyToClickboard(item, 'tel')"
+                    title="Скопировать телефон"
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
+                </div>
               </template>
             </template>
-
+            <template v-slot:item.status_name="{ item }">
+              <div class="d-flex">
+                <span>{{ item.status_name }}</span>
+                <v-btn
+                  icon
+                  x-small
+                  @click.stop="copyToClickboard(item, 'status_name')"
+                  title="Скопировать статус, сообщение "
+                >
+                  <v-icon>mdi-content-copy</v-icon>
+                </v-btn>
+              </div>
+            </template>
             <template v-slot:top="{ pagination, options, updateOptions }">
               <v-row>
                 <v-col>
@@ -225,6 +290,7 @@
     </v-row>
   </v-container>
 </template>
+
 
 
 <script>
@@ -336,6 +402,25 @@ export default {
     },
   },
   methods: {
+    copyToClickboard(item, type) {
+      if (type == "name") {
+        navigator.clipboard.writeText(
+          item[type] +
+            ", " +
+            item.email +
+            ", " +
+            item.tel +
+            ", " +
+            item.provider
+        );
+      } else if (type == "status_name") {
+        navigator.clipboard.writeText(item[type] + ": " + item.text);
+      } else {
+        navigator.clipboard.writeText(item[type]);
+      }
+      this.snackbar = true;
+      this.message = "Cкопировано в буфер обмена";
+    },
     // Check if a row is unmasked (unmasked means the phone/email is shown in full)
     isRowUnmasked(rowId) {
       return this.unmaskedRowId === rowId;

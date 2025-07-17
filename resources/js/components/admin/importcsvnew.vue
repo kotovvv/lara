@@ -1912,6 +1912,52 @@
                     </v-col>
                   </v-row>
                 </template>
+                <template v-slot:item.name="{ item }">
+                  {{ item.name }}
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="copyToClickboard(item, 'name')"
+                    title="Скопировать имя, емаил, телефон, поставщик "
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
+                <template v-slot:item.tel="{ item }">
+                  {{ item.tel }}
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="copyToClickboard(item, 'tel')"
+                    title="Скопировать телефон"
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
+                <template v-slot:item.email="{ item }">
+                  {{ item.tel }}
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="copyToClickboard(item, 'email')"
+                    title="Скопировать email"
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
+                <template v-slot:item.status="{ item }">
+                  <div class="d-flex">
+                    {{ item.status }}
+                    <v-btn
+                      icon
+                      x-small
+                      @click.stop="copyToClickboard(item, 'status')"
+                      title="Скопировать статус, сообщение "
+                    >
+                      <v-icon>mdi-content-copy</v-icon>
+                    </v-btn>
+                  </div>
+                </template>
               </v-data-table>
             </div>
           </v-col>
@@ -2824,6 +2870,25 @@ export default {
     },
   },
   methods: {
+    copyToClickboard(item, type) {
+      if (type == "name") {
+        navigator.clipboard.writeText(
+          item[type] +
+            ", " +
+            item.email +
+            ", " +
+            item.tel +
+            ", " +
+            item.provider
+        );
+      } else if (type == "status") {
+        navigator.clipboard.writeText(item[type] + ": " + item.text);
+      } else {
+        navigator.clipboard.writeText(item[type]);
+      }
+      this.snackbar = true;
+      this.message = "Cкопировано в буфер обмена";
+    },
     // Проверяет, выбраны ли все даты для данного geo
     isGeoSelected(geoItem) {
       if (!geoItem.dates || geoItem.dates.length === 0) {

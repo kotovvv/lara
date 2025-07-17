@@ -437,32 +437,87 @@
                 </v-col>
               </v-row>
             </template>
-            <template v-slot:item.email="{ item }">
-              <template
-                v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
+            <template v-slot:item.name="{ item }">
+              {{ item.name }}
+              <v-btn
+                icon
+                x-small
+                @click.stop="copyToClickboard(item, 'name')"
+                title="Скопировать имя, емаил, телефон, поставщик "
               >
-                {{ item.email }}
-              </template>
-              <template v-else>
-                <MaskedField
-                  :value="item.email"
-                  type="email"
-                  :isUnmasked="isRowUnmasked(item.id)"
-                />
-              </template>
+                <v-icon>mdi-content-copy</v-icon>
+              </v-btn>
             </template>
+            <template v-slot:item.status="{ item }">
+              <div class="d-flex">
+                {{ item.status }}
+                <v-btn
+                  icon
+                  x-small
+                  @click.stop="copyToClickboard(item, 'status')"
+                  title="Скопировать статус, сообщение "
+                >
+                  <v-icon>mdi-content-copy</v-icon>
+                </v-btn>
+              </div>
+            </template>
+            <template v-slot:item.email="{ item }">
+              <div class="d-flex">
+                <template
+                  v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
+                >
+                  {{ item.email }}
+                </template>
+                <template v-else>
+                  <MaskedField
+                    :value="item.email"
+                    type="email"
+                    :isUnmasked="isRowUnmasked(item.id)"
+                  />
+                </template>
+                <v-btn
+                  icon
+                  x-small
+                  @click.stop="copyToClickboard(item, 'email')"
+                  title="Скопировать email"
+                >
+                  <v-icon>mdi-content-copy</v-icon>
+                </v-btn>
+              </div>
+            </template>
+
             <template v-slot:item.tel="{ item }">
               <template
                 v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
               >
-                {{ item.tel }}
+                <div class="d-flex">
+                  {{ item.tel }}
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="copyToClickboard(item, 'tel')"
+                    title="Скопировать телефон"
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
+                </div>
               </template>
               <template v-else>
-                <MaskedField
-                  :value="item.tel"
-                  type="phone"
-                  :isUnmasked="isRowUnmasked(item.id)"
-                />
+                <div class="d-flex">
+                  <MaskedField
+                    :value="item.tel"
+                    type="phone"
+                    :isUnmasked="isRowUnmasked(item.id)"
+                  />
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="copyToClickboard(item, 'tel')"
+                    title="Скопировать телефон"
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
+                </div>
               </template>
             </template>
             <template v-slot:item.client_lang="{ item }">
@@ -1050,6 +1105,25 @@ export default {
     scrollBoundaryTimer: null, // Таймер для сброса счетчика
   }),
   methods: {
+    copyToClickboard(item, type) {
+      if (type == "name") {
+        navigator.clipboard.writeText(
+          item[type] +
+            ", " +
+            item.email +
+            ", " +
+            item.tel +
+            ", " +
+            item.provider
+        );
+      } else if (type == "status") {
+        navigator.clipboard.writeText(item[type] + ": " + item.text);
+      } else {
+        navigator.clipboard.writeText(item[type]);
+      }
+      this.snackbar = true;
+      this.message = "Cкопировано в буфер обмена";
+    },
     isRowUnmasked(id) {
       return this.unmaskedRowId === id;
     },

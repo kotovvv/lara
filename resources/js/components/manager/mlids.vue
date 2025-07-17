@@ -275,6 +275,17 @@
                 </v-row>
               </template>
 
+              <template v-slot:item.name="{ item }">
+                {{ item.name }}
+                <v-btn
+                  icon
+                  x-small
+                  @click.stop="copyToClickboard(item, 'name')"
+                  title="Скопировать имя, емаил, телефон, поставщик "
+                >
+                  <v-icon>mdi-content-copy</v-icon>
+                </v-btn>
+              </template>
               <template v-slot:item.tel="{ item }">
                 <div class="d-flex justify-space-between">
                   <template v-if="$props.user.sip == 0">
@@ -294,6 +305,14 @@
                         />
                       </template>
                     </span>
+                    <v-btn
+                      icon
+                      x-small
+                      @click.stop="copyToClickboard(item, 'tel')"
+                      title="Скопировать телефон"
+                    >
+                      <v-icon>mdi-content-copy</v-icon>
+                    </v-btn>
                     <span
                       @click.prevent.stop="
                         qtytel(item.id);
@@ -326,30 +345,49 @@
                         />
                       </template>
                     </span>
-                    <span>
-                      <span @click="runSIP(item)">
-                        <v-icon small> mdi-headset </v-icon>
-                      </span>
+                    <v-btn
+                      icon
+                      x-small
+                      @click.stop="copyToClickboard(item, 'tel')"
+                      title="Скопировать телефон"
+                    >
+                      <v-icon>mdi-content-copy</v-icon>
+                    </v-btn>
+                    <span @click="runSIP(item)">
+                      <v-icon small> mdi-headset </v-icon>
                     </span>
                   </template>
+
                   <span @click.prevent.stop="openDialogBTC(item)">
                     <v-icon class="bitcoin"> mdi-bitcoin </v-icon>
                   </span>
                 </div>
               </template>
               <template v-slot:item.email="{ item }">
-                <template
-                  v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
-                >
-                  {{ item.email }}
-                </template>
-                <template v-else>
-                  <MaskedField
-                    :value="item.email"
-                    type="email"
-                    :isUnmasked="isRowUnmasked(item.id)"
-                  />
-                </template>
+                <div class="d-flex">
+                  <template
+                    v-if="
+                      $props.user.role_id == 1 && $props.user.office_id == 0
+                    "
+                  >
+                    {{ item.email }}
+                  </template>
+                  <template v-else>
+                    <MaskedField
+                      :value="item.email"
+                      type="email"
+                      :isUnmasked="isRowUnmasked(item.id)"
+                    />
+                  </template>
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="copyToClickboard(item, 'email')"
+                    title="Скопировать email"
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
+                </div>
               </template>
               <template v-slot:item.status="{ item }">
                 <div class="status_wrp mx-1" @click.stop="openDialog(item)">
@@ -360,6 +398,14 @@
                     }"
                   ></b>
                   <span>{{ item.status }}</span>
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="copyToClickboard(item, 'status')"
+                    title="Скопировать статус, сообщение "
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
                 </div>
               </template>
               <template v-slot:item.text="{ item }">
@@ -703,6 +749,25 @@ export default {
   },
   computed: {},
   methods: {
+    copyToClickboard(item, type) {
+      if (type == "name") {
+        navigator.clipboard.writeText(
+          item[type] +
+            ", " +
+            item.email +
+            ", " +
+            item.tel +
+            ", " +
+            item.provider
+        );
+      } else if (type == "status") {
+        navigator.clipboard.writeText(item[type] + ": " + item.text);
+      } else {
+        navigator.clipboard.writeText(item[type]);
+      }
+      this.snackbar = true;
+      this.message = "Cкопировано в буфер обмена";
+    },
     runSIP(item) {
       this.qtytel(item.id);
       window.location.href = "sip:" + item.tel;
