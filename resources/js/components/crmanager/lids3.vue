@@ -448,19 +448,7 @@
                 <v-icon>mdi-content-copy</v-icon>
               </v-btn>
             </template>
-            <template v-slot:item.status="{ item }">
-              <div class="d-flex">
-                {{ item.status }}
-                <v-btn
-                  icon
-                  x-small
-                  @click.stop="copyToClickboard(item, 'status')"
-                  title="Скопировать статус, сообщение "
-                >
-                  <v-icon>mdi-content-copy</v-icon>
-                </v-btn>
-              </div>
-            </template>
+
             <template v-slot:item.email="{ item }">
               <div class="d-flex">
                 <template

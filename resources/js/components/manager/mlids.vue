@@ -4,7 +4,7 @@
       <v-col cols="2">
         <v-card-title>
           <v-text-field
-            v-model="search"
+            :value="search"
             append-icon="mdi-magnify"
             label="Поиск"
             outlined
@@ -398,14 +398,6 @@
                     }"
                   ></b>
                   <span>{{ item.status }}</span>
-                  <v-btn
-                    icon
-                    x-small
-                    @click.stop="copyToClickboard(item, 'status')"
-                    title="Скопировать статус, сообщение "
-                  >
-                    <v-icon>mdi-content-copy</v-icon>
-                  </v-btn>
                 </div>
               </template>
               <template v-slot:item.text="{ item }">
@@ -488,7 +480,6 @@
             class="px-2 border mb-4"
             rows="1"
             ref="textArea"
-            v-model="text_message"
             :value="text_message"
           ></v-textarea>
 

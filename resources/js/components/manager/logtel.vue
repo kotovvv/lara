@@ -21,6 +21,14 @@
             <td>{{ item.fio }}</td>
             <td>
               <div class="d-flex">
+                <v-btn
+                  icon
+                  x-small
+                  @click.stop="copyToClickboard(item.name + ': ' + item.text)"
+                  title="Скопировать статус, сообщение "
+                >
+                  <v-icon>mdi-content-copy</v-icon>
+                </v-btn>
                 <i
                   :style="{
                     width: '20px',
@@ -64,6 +72,18 @@ export default {
     this.tellog(this.$props.lid_id);
   },
   methods: {
+    copyToClickboard(text) {
+      navigator.clipboard.writeText(text).then(
+        () => {
+          this.snackbar = true;
+          this.message = "Cкопировано в буфер обмена";
+        },
+        (err) => {
+          this.snackbar = true;
+          this.message = "Ошибка копирования в буфер обмена";
+        }
+      );
+    },
     tellog(lid_id) {
       const self = this;
       self.loading = true;

@@ -432,9 +432,9 @@ class ImportsController extends Controller
           ->leftJoin('users', 'lids.user_id', '=', 'users.id')
           ->get();
         $provider_name = \App\Models\Provider::where('id', $import_['provider_id'])->value('name');
-        $message = $import_['message'] ?? '';
+
         $date = date('Y-m-d', strtotime($import_['start']));
-        $response['files'][] = $provider_name . ' - ' . $message . ' - ' . $date;
+        $response['files'][] = $provider_name . ' - ' . $date;
       } else {
         $lidsId = DB::table('imported_leads')->where('api_key_id', $import_['provider_id'])->whereDate('upload_time', $import_['start'])->where('geo', $import_['geo'])->pluck('lead_id')->toArray();
         $lids = Lid::whereIn('lids.id', $lidsId)

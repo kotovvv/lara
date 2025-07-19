@@ -1407,6 +1407,21 @@
                 <CanvasJSChart :options="chartOptions" />
                 <p v-if="lidsByOffice.length > 0">
                   <b>{{ item.name }} {{ item.start }}</b>
+                  <v-btn
+                    icon
+                    x-small
+                    @click.stop="
+                      copyToClickboard(
+                        item.name +
+                          ' ' +
+                          (item.start ? item.start.substring(0, 10) : ''),
+                        'namestart'
+                      )
+                    "
+                    title="Скопировать"
+                  >
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
                 </p>
                 <div
                   id="wrp_stat"
@@ -2871,7 +2886,9 @@ export default {
   },
   methods: {
     copyToClickboard(item, type) {
-      if (type == "name") {
+      if (type == "namestart") {
+        navigator.clipboard.writeText(item);
+      } else if (type == "name") {
         navigator.clipboard.writeText(
           item[type] +
             ", " +
