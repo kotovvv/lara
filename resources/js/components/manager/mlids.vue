@@ -481,6 +481,9 @@
             rows="1"
             ref="textArea"
             :value="text_message"
+            @blur="
+              onTextInput($refs.textArea.$el.querySelector('textarea').value)
+            "
           ></v-textarea>
 
           <div
@@ -742,6 +745,10 @@ export default {
   },
   computed: {},
   methods: {
+    onTextInput(value) {
+      console.log("value", value);
+      this.text_message = value;
+    },
     copyToClickboard(item, type) {
       if (type == "name") {
         navigator.clipboard.writeText(
