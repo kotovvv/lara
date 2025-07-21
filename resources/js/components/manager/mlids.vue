@@ -746,7 +746,6 @@ export default {
   computed: {},
   methods: {
     onTextInput(value) {
-      console.log("value", value);
       this.text_message = value;
     },
     copyToClickboard(item, type) {
