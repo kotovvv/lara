@@ -9,6 +9,7 @@
             label="Поиск"
             outlined
             rounded
+            ref="searchField"
             @click:append="
               page = 0;
               getLidsPost();
@@ -1203,7 +1204,9 @@ export default {
       data.status_id = self.filterStatus;
       data.tel = self.filtertel;
       data.filterRD = self.filterRD;
-      data.search = self.search;
+      data.search = self.$refs.searchField
+        ? self.$refs.searchField.internalValue
+        : self.search;
       data.limit = self.limit;
       data.page = p;
 
@@ -1249,7 +1252,7 @@ export default {
     getLids(id) {
       let self = this;
       let data = {};
-      self.search = "";
+      //self.search = "";
       self.filtertel = "";
       self.disableuser = id;
       data.id = id;
