@@ -428,6 +428,34 @@
                           </tr>
                         </thead>
                       </template>
+
+                      <template v-slot:item.start="{ item }">
+                        <div class="d-flex">
+                          <v-btn
+                            icon
+                            x-small
+                            @click.stop="
+                              copyToClickboard(
+                                item.provider_name +
+                                  ' : ' +
+                                  (item.start
+                                    ? item.start.substring(0, 10)
+                                    : '') +
+                                  ' : ' +
+                                  item.geo,
+                                'namestart'
+                              )
+                            "
+                            title="Скопировать"
+                          >
+                            <v-icon>mdi-content-copy</v-icon>
+                          </v-btn>
+                          <div>
+                            <div>{{ item.start.substring(0, 10) }}</div>
+                            <div>{{ item.start.substring(11) }}</div>
+                          </div>
+                        </div>
+                      </template>
                       <template v-slot:item.geo="{ item }">
                         <div class="pl-5 d-flex align-center">
                           <svg class="icon">
@@ -567,10 +595,7 @@
                           </small>
                         </div>
                       </template>
-                      <template v-slot:item.start="{ item }">
-                        <div>{{ item.start.substring(0, 10) }}</div>
-                        <div>{{ item.start.substring(11) }}</div>
-                      </template>
+
                       <template v-slot:item.provider_name="{ item }">
                         <div>{{ item.provider_name }}</div>
                         <div>
