@@ -123,6 +123,46 @@
                 </div>
               </template>
             </div>
+            <!-- for selected users -->
+            <div v-if="userids.length > 0" class="selected-users-tree mb-4">
+              <p class="mb-2">Выбранные пользователи:</p>
+              <div
+                v-for="office in selectedOfficesWithUsers"
+                :key="office.id"
+                class="office-section mb-3"
+              >
+                <div class="office-title font-weight-bold mb-2">
+                  {{ office.name }}
+                </div>
+                <div
+                  v-for="group in groups.filter(
+                    (g) =>
+                      g.office_id === office.id &&
+                      selectedUsersByGroup[g.id] &&
+                      selectedUsersByGroup[g.id].length > 0
+                  )"
+                  :key="group.id"
+                  class="group-section ml-4 mb-2"
+                >
+                  <div class="group-title font-weight-medium mb-1">
+                    <v-icon class="mr-2">mdi-account-group</v-icon
+                    >{{ group.fio }}
+                  </div>
+                  <div class="user-list">
+                    <div
+                      v-for="user in selectedUsersByGroup[group.id]"
+                      :key="user.id"
+                      class="user-item ml-4 d-flex justify-space-between align-center"
+                    >
+                      <span>{{ user.fio }}</span>
+                      <v-chip small color="primary" class="ml-2">
+                        {{ userLeadCounts[user.id] || 0 }}
+                      </v-chip>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </v-col>
           <v-col>
             <v-row>
@@ -248,7 +288,7 @@ export default {
   props: {
     user: {},
     lids: {
-      type: Array,
+      type: [Array, Object],
       default: () => [],
     },
     files: {
@@ -542,8 +582,8 @@ export default {
         }));
     },
     statusesItemsFromLids() {
-      // Фильтруем lids по выбранным офисам, группам, пользователям
-      let filteredLids = this.lids;
+      // Убеждаемся что lids это массив
+      let filteredLids = Array.isArray(this.lids) ? [...this.lids] : [];
 
       if (this.filterOffices && this.filterOffices.length) {
         filteredLids = filteredLids.filter((lid) =>
@@ -561,13 +601,13 @@ export default {
         );
       }
 
-      // Count statuses in filteredLids
+      // Безопасный reduce с проверкой на массив
       const statusCounts = filteredLids.reduce((acc, lid) => {
         if (!acc[lid.status_id]) {
-          // Find status in this.statuses by id
+          // Найти статус в this.statuses по id
           const status = this.statuses.find((s) => s.id === lid.status_id);
           acc[lid.status_id] = {
-            name: status.name,
+            name: status ? status.name : "Unknown Status", // защита от undefined
             count: 0,
           };
         }
@@ -577,13 +617,39 @@ export default {
 
       return Object.entries(statusCounts).map(
         ([status_id, { name, count }]) => ({
-          id: parseInt(status_id), // id для v-select
-          status_id: parseInt(status_id), // явно сохраняем status_id
+          id: parseInt(status_id),
+          status_id: parseInt(status_id),
           name,
           count,
           color: this.getStatusColor(status_id),
         })
       );
+    },
+    selectedUsersByOffice() {
+      const result = {};
+      this.offices.forEach((office) => {
+        result[office.id] = this.users.filter(
+          (user) =>
+            this.userids.includes(user.id) && user.office_id === office.id
+        );
+      });
+      return result;
+    },
+    selectedOfficesWithUsers() {
+      return this.offices.filter(
+        (office) =>
+          this.selectedUsersByOffice[office.id] &&
+          this.selectedUsersByOffice[office.id].length > 0
+      );
+    },
+    selectedUsersByGroup() {
+      const result = {};
+      this.groups.forEach((group) => {
+        result[group.id] = this.users.filter(
+          (user) => this.userids.includes(user.id) && user.group_id === group.id
+        );
+      });
+      return result;
     },
   },
   methods: {
@@ -604,7 +670,7 @@ export default {
       } else {
         au = this.users
           .filter((u) => {
-            return u.group_id == group_id && u.level == level;
+            return u.group_id == group_id;
           })
           .map(({ id }) => id);
       }
@@ -617,6 +683,7 @@ export default {
         });
       }
     },
+
     setUserIds() {
       const result = this.userids.map((uid) => ({
         user_id: uid,
