@@ -1975,7 +1975,7 @@
                   </v-btn>
                 </template>
                 <template v-slot:item.email="{ item }">
-                  {{ item.tel }}
+                  {{ item.email }}
                   <v-btn
                     icon
                     x-small
