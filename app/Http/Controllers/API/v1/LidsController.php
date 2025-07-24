@@ -132,7 +132,7 @@ class LidsController extends Controller
       return response(['hm' => 0, 'lids' => []]);
     }
     if (isset($data['sortBy'])) {
-      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'rd' => 'rd', 'status' => 'status_id', 'depozit' => false][$data['sortBy']];
+      $sortBy = ["tel" => 'tel', "name" => 'name', "email" => 'email', "provider" => 'provider_id', "office_name" => 'office_id', "user" => 'user_id', "date_created" => 'created_at', "date_updated" => 'updated_at', 'afilyator' => 'afilyator', 'text' => 'text', 'qtytel' => 'qtytel', 'ontime' => 'ontime', 'rd' => 'rd', 'status' => 'status_id', 'depozit' => false][$data['sortBy']];
       $sortDesc = $data['sortDesc'] ? 'DESC' : 'ASC';
     } else {
       $sortBy = 'created_at';
@@ -739,9 +739,11 @@ class LidsController extends Controller
         $q_leads->leftJoin('providers', 'providers.id', '=', 'lids.provider_id')->orderBy('providers.name', $sortDesc);
       } elseif ($sortBy === 'user_id') {
         $q_leads->leftJoin('users', 'users.id', '=', 'lids.user_id')->orderBy('users.name', $sortDesc);
-      } elseif ($sortBy === 'depozit') {
-        $q_leads->orderBy('depozit', $sortDesc);
-      } else {
+      }
+      // elseif ($sortBy === 'depozit') {
+      //   $q_leads->orderBy('depozit', $sortDesc);
+      // }
+      else {
         $q_leads->orderBy('lids.' . $sortBy, $sortDesc);
       }
     }
