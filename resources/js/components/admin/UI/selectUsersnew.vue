@@ -152,12 +152,13 @@
                     <div
                       v-for="user in selectedUsersByGroup[group.id]"
                       :key="user.id"
-                      class="user-item ml-4 d-flex justify-space-between align-center"
+                      class="user-item ml-4 d-flex"
+                      style="gap: 1rem"
                     >
-                      <span>{{ user.fio }}</span>
                       <v-chip small color="primary" class="ml-2">
                         {{ userLeadCounts[user.id] || 0 }}
                       </v-chip>
+                      <span>{{ user.fio }}</span>
                     </div>
                   </div>
                 </div>
@@ -329,6 +330,7 @@ export default {
     this.filterUsers = [];
     this.filterStatus = [];
     this.hmleft = 0;
+    this.hmset = 0;
   },
   watch: {
     lids: {
