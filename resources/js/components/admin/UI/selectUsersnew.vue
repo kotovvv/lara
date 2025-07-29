@@ -318,6 +318,7 @@ export default {
     hmleft: 0, // Default value for hmleft
   }),
   mounted() {
+    this.clearFilters();
     this.getOffices();
     this.getStatuses();
   },
@@ -655,6 +656,16 @@ export default {
     },
   },
   methods: {
+    clearFilters() {
+      this.filterOffices = [];
+      this.filterGroups = [];
+      this.filterUsers = [];
+      this.filterStatus = [];
+      this.userids = [];
+      this.userLeadCounts = {};
+      this.hmleft = 0;
+      this.hmset = 0;
+    },
     getStatusColor(statusId) {
       // statusId can be string or number, ensure both are compared as numbers
       const id = typeof statusId === "string" ? parseInt(statusId) : statusId;
