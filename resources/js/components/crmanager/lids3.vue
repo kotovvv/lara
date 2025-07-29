@@ -2153,7 +2153,7 @@ export default {
         try {
           e.user = this.users.find((u) => u.id == e.user_id).fio;
         } catch (error) {
-          euser = "";
+          e.user = "";
         }
         try {
           e.provider = this.providers.find((p) => p.id == e.provider_id).name;
