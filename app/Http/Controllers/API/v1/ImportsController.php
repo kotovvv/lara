@@ -424,12 +424,16 @@ class ImportsController extends Controller
     $imoprtsIdsm = $data['importsIdsm'];
     $response = [];
     $allLidsIDs = collect();
+    $office_id = session()->get('office_id');
 
     foreach ($imoprtsIdsm as $import_) {
       if (isset($import_['message'])) {
         $lids = Lid::where('load_mess', $import_['message'])
           ->select('lids.id', 'lids.provider_id', 'lids.office_id', 'lids.user_id', 'lids.status_id', 'lids.created_at', 'users.group_id')
           ->leftJoin('users', 'lids.user_id', '=', 'users.id')
+          ->when($office_id > 0, function ($query) use ($office_id) {
+            return $query->where('lids.office_id', $office_id);
+          })
           ->get();
         $provider_name = \App\Models\Provider::where('id', $import_['provider_id'])->value('name');
 
@@ -440,6 +444,9 @@ class ImportsController extends Controller
         $lids = Lid::whereIn('lids.id', $lidsId)
           ->select('lids.id', 'lids.provider_id', 'lids.office_id', 'lids.user_id', 'lids.status_id', 'lids.created_at', 'users.group_id')
           ->leftJoin('users', 'lids.user_id', '=', 'users.id')
+          ->when($office_id > 0, function ($query) use ($office_id) {
+            return $query->where('lids.office_id', $office_id);
+          })
           ->get();
         $provider_name = \App\Models\Provider::where('id', $import_['provider_id'])->value('name');
         $geo = $import_['geo'] ?? '';
