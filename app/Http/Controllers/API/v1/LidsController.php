@@ -251,6 +251,26 @@ class LidsController extends Controller
       'office_id' => User::where('id', (int) $data['user_id'])->value('office_id'),
       'updated_at' => Now()
     ];
+    $user_id = session()->get('user_id');
+    // Получаем данные для вставки в logs
+    $logs = Lid::whereIn('lids.id', $data['data'])
+      ->join('users', 'lids.user_id', '=', 'users.id')
+      ->select(
+        DB::raw("'$user_id' as user_id"),
+        'lids.id as lid_id',
+        DB::raw("'' as tel"),
+        'lids.status_id',
+        DB::raw("CONCAT(users.name, ' : ', lids.text) as text"),
+        DB::raw('1 as last_log'),
+        DB::raw('NOW() as created_at')
+      )
+      ->get()
+      ->toArray();
+
+    // Вставляем в таблицу logs
+    if (!empty($logs)) {
+      DB::table('logs')->insert($logs);
+    }
     if (isset($data['status_id'])) $a_lid['status_id'] = $data['status_id'];
     $res =  DB::table('lids')->whereIn('id', $data['data'])->update($a_lid);
     foreach ($data['date_provider'] as $date_provider) {
