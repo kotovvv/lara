@@ -29,7 +29,7 @@
       <v-tab-item>
         <v-container>
           <v-row>
-            <h2 class="col col-12 text-center">Постачальник {{ user.name }}</h2>
+            <h2 class="col col-12 text-center">Provider {{ user.name }}</h2>
             <div class="col-12 text-center">Start date {{ start_date }}</div>
             <div class="title col-12 text-center">FTD Statistic</div>
           </v-row>

@@ -183,6 +183,7 @@
             rounded
             label="Глобальный поиск"
             style="width: 13rem"
+            clearable
           ></v-text-field>
         </div>
         <div v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
@@ -837,6 +838,7 @@ export default {
     lidsRedistribute: [],
     forRedistribute: false,
     forXls: false,
+    isSearching: false,
     search: "",
     searchAll: "",
     filtertel: "",
@@ -1196,6 +1198,7 @@ export default {
       if (this.searchAll != "") {
         this.searchlids3();
       } else {
+        this.isSearching = false; // Сбрасываем флаг поиска при переключении на обычный режим
         if (page == 0) {
           this.page = 0;
         }
@@ -1259,6 +1262,7 @@ export default {
     clearuser() {
       this.disableuser = 0;
       this.filterGroups = [];
+      this.isSearching = false; // Сбрасываем флаг поиска
       if (this.$props.user.role_id == 2) {
         this.disableuser = this.$props.user.id;
         //this.filterGroups.push(this.$props.user.id);
@@ -1273,6 +1277,12 @@ export default {
     },
     async getLids3() {
       let self = this;
+
+      // Если выполняется поиск, не загружаем стандартные лиды
+      if (self.isSearching) {
+        return;
+      }
+
       let data = {};
       data.page = self.page;
       data.limit = self.limit;
@@ -1347,6 +1357,15 @@ export default {
       self.loading = true;
       try {
         const res = await axios.post("/api/getLids3", data);
+
+        // Проверяем флаг поиска после получения данных - если пользователь начал поиск,
+        // не обновляем данные компонента
+        if (self.isSearching) {
+          self.loading = false;
+          self.process--;
+          return;
+        }
+
         self.hm = res.data.hm;
 
         //if (self.page == 0) {
@@ -1439,6 +1458,7 @@ export default {
         localStorage.removeItem("datetimeTo");
         localStorage.removeItem("datetimeFrom");
       }
+      this.isSearching = false; // Сбрасываем флаг поиска
       if (this.disableuser == 0) {
         this.getLids3();
       }
@@ -1456,6 +1476,8 @@ export default {
       this.filterGeo = [];
       this.filtertel = "";
       this.disableuser = 0;
+      this.searchAll = ""; // Очищаем поиск
+      this.isSearching = false; // Сбрасываем флаг поиска
       this.getLids3();
       this.controller.abort();
     },
@@ -1521,6 +1543,8 @@ export default {
         data.sortDesc = sortDesc[0];
       }
       self.loading = true;
+      self.isSearching = true; // Устанавливаем флаг поиска
+      self.disableuser = 0;
       data.group_id = self.$props.user.group_id;
       data.role_id = self.$props.user.role_id;
       data.limit = self.limit;
@@ -1565,10 +1589,11 @@ export default {
             }
           });
           self.loading = false;
-          self.disableuser = 0;
         })
         .catch(function (error) {
           console.log(error);
+          self.loading = false;
+          self.isSearching = false; // Сбрасываем флаг в случае ошибки
         });
     },
     deleteItem() {
