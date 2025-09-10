@@ -33,6 +33,7 @@ class loginController extends Controller
     if ($provider && Hash::check($request->password, $provider['password'])) {
       $provider->role_id = 4;
       $token = $provider->createToken('auth_token')->plainTextToken;
+      session()->put('provider_id', $provider['id']);
       return response()->json([
         'status'   => 'success',
         'user' =>  $provider,

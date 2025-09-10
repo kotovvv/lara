@@ -1,21 +1,12 @@
 <template>
   <v-card class="mx-auto" max-width="500">
-    <v-data-table
-      :headers="headers"
-      :items="providers"
-      sort-by="role_id"
-      class="elevation-1"
-    >
+    <v-data-table :headers="headers" :items="providers" sort-by="role_id" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Поставщики</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-dialog
-            v-model="dialog"
-            max-width="500px"
-            content-class="dialogtop"
-          >
+          <v-dialog v-model="dialog" max-width="500px" content-class="dialogtop">
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
                 Добавить поставщика
@@ -38,15 +29,9 @@
                 <v-container>
                   <v-row>
                     <v-col cols="6">
-                      <v-text-field
-                        v-model="editedItem.name"
-                        label="Наименование"
-                      ></v-text-field>
+                      <v-text-field v-model="editedItem.name" label="Наименование"></v-text-field>
                     </v-col>
-                    <v-text-field
-                      v-model="editedItem.password"
-                      label="Пароль"
-                    ></v-text-field>
+                    <v-text-field v-model="editedItem.password" label="Пароль"></v-text-field>
                     <!-- <v-col cols="6">
                     <v-switch
                       v-model="editedItem.active"
@@ -54,99 +39,58 @@
                     ></v-switch>
                   </v-col> -->
                     <v-col cols="6">
-                      <v-switch
-                        v-model="editedItem.dup"
-                        label="Запретить дупликаты:"
-                      ></v-switch>
+                      <v-switch v-model="editedItem.dup" label="Запретить дупликаты:"></v-switch>
                     </v-col>
                     <v-col cols="6">
-                      <v-text-field
-                        v-model="editedItem.weekdup"
-                        label="Запрет дупликат на недель:"
-                        @keypress="imputfilter()"
-                      ></v-text-field>
+                      <v-text-field v-model="editedItem.weekdup" label="Запрет дупликат на недель:"
+                        @keypress="imputfilter()"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-select
-                        multiple
-                        :items="offices"
-                        v-model="editedItem.office_id"
-                        item-text="name"
-                        item-value="id"
-                        label="Office"
-                      ></v-select>
+                      <v-select multiple :items="offices" v-model="editedItem.office_id" item-text="name"
+                        item-value="id" label="Office"></v-select>
                     </v-col>
                     <v-col cols="6">
-                      <v-autocomplete
-                        multiple
-                        :items="
-                          users.filter((u) => {
-                            return editedItem.office_id.includes(u.office_id);
-                          })
-                        "
-                        v-model="editedItem.related_users_id"
-                        item-text="name"
-                        item-value="id"
-                        label="Связанные пользователи"
-                      >
+                      <v-autocomplete multiple :items="users.filter((u) => {
+                        return editedItem.office_id.includes(u.office_id);
+                      })
+                        " v-model="editedItem.related_users_id" item-text="name" item-value="id"
+                        label="Связанные пользователи">
                         <template v-slot:selection="{ item, index }">
                           <span v-if="index === 0">{{ item.name }} </span>
-                          <span
-                            v-if="index === 1"
-                            class="grey--text text-caption"
-                          >
+                          <span v-if="index === 1" class="grey--text text-caption">
                             +
                           </span>
                         </template>
                         <template v-slot:item="{ item, attrs }">
-                          <v-badge
-                            :value="attrs['aria-selected'] == 'true'"
-                            color="#7620df"
-                            dot
-                            left
-                          >
+                          <v-badge :value="attrs['aria-selected'] == 'true'" color="#7620df" dot left>
                             {{ item.name }}
                           </v-badge>
                         </template>
                       </v-autocomplete>
                     </v-col>
                     <v-col cols="6">
-                      <v-select
-                        :items="users"
-                        v-model="editedItem.user_id"
-                        item-text="name"
-                        item-value="id"
-                        label="Пользователь для импорта"
-                      ></v-select>
+                      <v-select :items="users" v-model="editedItem.user_id" item-text="name" item-value="id"
+                        label="Пользователь для импорта"></v-select>
                     </v-col>
                     <v-col cols="6">
-                      <v-autocomplete
-                        v-model="editedItem.responsible_user"
-                        multiple
-                        :items="sortedResponsibleUsers"
-                        item-text="name"
-                        item-value="id"
-                        label="Отвественные за импорт"
-                      >
+                      <v-autocomplete v-model="editedItem.responsible_user" multiple :items="sortedResponsibleUsers"
+                        item-text="name" item-value="id" label="Отвественные за импорт">
                         <template v-slot:selection="{ item, index }">
                           <span v-if="index === 0">{{ item.name }} </span>
-                          <span
-                            v-if="index === 1"
-                            class="grey--text text-caption"
-                          >
+                          <span v-if="index === 1" class="grey--text text-caption">
                             (+{{ editedItem.responsible_user.length - 1 }} )
                           </span>
                         </template>
                       </v-autocomplete>
                     </v-col>
                     <v-col cols="6">
-                      <v-text-field
-                        v-model="editedItem.tel"
-                        label="ApiKey"
-                      ></v-text-field>
+                      <v-text-field v-model="editedItem.tel" label="ApiKey"></v-text-field>
                     </v-col>
                     <v-col cols="6">
                       <v-switch v-model="editedItem.top" label="Top"></v-switch>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-switch v-model="editedItem.showInfo" label="Показывать информацию"></v-switch>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -158,12 +102,8 @@
               <v-card-title class="headline">Удалить поставщика?</v-card-title>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeDelete"
-                  >Нет</v-btn
-                >
-                <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                  >Да</v-btn
-                >
+                <v-btn color="blue darken-1" text @click="closeDelete">Нет</v-btn>
+                <v-btn color="blue darken-1" text @click="deleteItemConfirm">Да</v-btn>
                 <v-spacer></v-spacer>
               </v-card-actions>
             </v-card>
@@ -172,11 +112,7 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-        <v-icon
-          small
-          v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0"
-          @click="deleteItem(item)"
-        >
+        <v-icon small v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0" @click="deleteItem(item)">
           mdi-delete
         </v-icon>
       </template>
@@ -198,6 +134,7 @@
 import statusesProvider from "./statusProvider";
 import axios from "axios";
 export default {
+  name: "providers",
   data: () => ({
     provider: {},
     dialog: false,
@@ -222,6 +159,7 @@ export default {
       user_id: 0,
       dup: 0,
       top: 0,
+      showInfo: 0,
       responsible_user: [],
     },
     defaultItem: {
@@ -233,6 +171,7 @@ export default {
       user_id: 0,
       dup: 0,
       top: 0,
+      showInfo: 0,
       responsible_user: [],
     },
     offices: [],
@@ -403,7 +342,7 @@ export default {
 };
 </script>
 <style scoped>
->>> .dialogtop {
+>>>.dialogtop {
   align-self: flex-start;
 }
 </style>

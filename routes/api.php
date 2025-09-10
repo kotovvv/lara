@@ -114,6 +114,7 @@ Route::post('redistribute', [ImportsController::class, 'redistribute']);
 Route::post('redistributeLids', [ImportsController::class, 'redistributeLids']);
 Route::post('newRedistributeLids', [ImportsController::class, 'newRedistributeLids']);
 Route::post('getHistory', [ImportsController::class, 'getHistory']);
+Route::post('getImportOnDate', [ImportsController::class, 'getImportOnDate']);
 Route::post('changeDateBTC', [LidsController::class, 'changeDateBTC']);
 Route::post('getAssignedBTC', [LidsController::class, 'getAssignedBTC']);
 Route::post('provider_importlid', [LidsController::class, 'provider_importlid']);

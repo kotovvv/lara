@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 use App\Models\Import;
 use App\Models\Lid;
 use App\Models\Log;
+use App\Models\Status;
 use App\Models\User;
 use Storage;
 use Illuminate\Support\Facades\DB;
@@ -690,5 +691,27 @@ class ImportsController extends Controller
     }
 
     return response()->json(['error' => 'No command provided'], 400);
+  }
+
+  public function getImportOnDate(Request $request)
+  {
+    $req = $request->all();
+    $res = [];
+    $provider_id = session()->get('provider_id');
+
+    $dateFrom = $req['dateFrom'];
+    $dateTo = $req['dateTo'];
+    $statuses = Status::select('id', 'name', 'order', 'color')->get()->toArray();
+    $lids = Lid::select('id', 'name', 'tel', 'email', 'created_at', 'status_id', 'load_mess')
+      // ->with('status:id,name,color,order')
+      ->where('provider_id', $provider_id)
+      ->whereDate('created_at', '>=', $dateFrom)
+      ->whereDate('created_at', '<=', $dateTo)
+      ->get();
+    $res = [
+      'statuses' => $statuses,
+      'lids' => $lids
+    ];
+    return response()->json($res);
   }
 }
