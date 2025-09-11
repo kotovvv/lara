@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <v-snackbar v-model="snackbar" top right timeout="-1">
       {{ message }}
       <template v-slot:action="{ attrs }">
@@ -8,20 +8,19 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <v-row>
-      <v-col class="d-flex align-center radiolabel">
-        <v-radio-group v-model="email_tel" row>
-          <v-radio label="email" value="email"></v-radio>
-          <v-radio label="телефон" value="tel"></v-radio>
-        </v-radio-group>
 
-      </v-col>
-    </v-row>
-    <v-row>
+
+    <v-row class="justify-center">
       <v-col cols="3">
+        <p>
+          <v-radio-group v-model="email_tel" row>
+            <v-radio label="email" value="email"></v-radio>
+            <v-radio label="телефон" value="tel"></v-radio>
+          </v-radio-group>
+        </p>
         <v-textarea class="border pa-3" v-model="list_email" label="Почтовые адреса или телефоны "></v-textarea>
       </v-col>
-      <v-col cols="1">
+      <v-col cols="2">
         <v-file-input v-model="file_emails" label="загрузить txt" show-size truncate-length="24"
           @change="onFileChange"></v-file-input>
         <v-btn @click="checkEmails" v-if="list_email" class="primary">Проверить<v-progress-circular v-if="loading"
@@ -29,18 +28,18 @@
       </v-col>
       <v-col cols="3">
 
-        <p>
+        <!-- <p>
           <b>Всего {{ message_all }}</b>
-        </p>
+        </p> -->
         <div v-if="in_db.length" class="mt-4">
           <v-btn @click="download('in')">{{
             "Скачать дубликаты (" + in_db.length + ")"
-          }}</v-btn>
+            }}</v-btn>
         </div>
         <div v-if="out_db.length" class="mt-4">
           <v-btn @click="download('out')">{{
             "Скачать уникальные (" + out_db.length + ")"
-          }}</v-btn>
+            }}</v-btn>
         </div>
       </v-col>
       <v-col cols="12">
@@ -66,10 +65,10 @@
 
     <v-row v-if="dup.length || dup_all.length">
       <v-col cols="12">
-        <v-tabs v-model="tabs">
+        <!-- <v-tabs v-model="tabs">
           <v-tab>За {{ hmmonth }} мес.</v-tab>
           <v-tab>Всего</v-tab>
-        </v-tabs>
+        </v-tabs> -->
         <v-col cols="12">
           <v-data-table :headers="duplicate_leads_headers" item-key="id" :items="filtereduplicate_leads"
             id="duplicate_leads" ref="duplicatetable" :footer-props="{
@@ -201,7 +200,7 @@ export default {
         // { text: "Депозит", value: "depozit" },
       ],
       pages: [100, 200, 500, -1],
-      tabs: 0,
+      tabs: 1,
     };
   },
   mounted() {
@@ -210,7 +209,8 @@ export default {
   computed: {
     filtereduplicate_leads() {
       // Выбираем массив данных в зависимости от выбранной вкладки
-      const leads = this.tabs === 1 ? this.dup_all : this.dup;
+      // const leads = this.tabs === 1 ? this.dup_all : this.dup;
+      const leads = this.dup_all;
       return leads.filter((i) => {
         return (
           (this.filter_status.length == 0 ||
