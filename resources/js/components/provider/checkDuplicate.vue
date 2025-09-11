@@ -10,7 +10,7 @@
     </v-snackbar>
 
 
-    <v-row class="justify-center">
+    <v-row>
       <v-col cols="3">
         <p>
           <v-radio-group v-model="email_tel" row>
@@ -30,7 +30,7 @@
 
         <!-- <p>
           <b>Всего {{ message_all }}</b>
-        </p> -->
+        </p>
         <div v-if="in_db.length" class="mt-4">
           <v-btn @click="download('in')">{{
             "Скачать дубликаты (" + in_db.length + ")"
@@ -40,7 +40,7 @@
           <v-btn @click="download('out')">{{
             "Скачать уникальные (" + out_db.length + ")"
             }}</v-btn>
-        </div>
+        </div> -->
       </v-col>
       <v-col cols="12">
         <div class="wrp__statuses">
