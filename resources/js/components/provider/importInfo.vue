@@ -91,7 +91,13 @@
     <v-row v-if="filteredLids.length > 0">
       <v-col>
         <p>{{ selectedFilter }}</p>
-        <v-data-table :headers="headers_lids" :items="filteredLids" item-key="id">
+        <v-data-table :headers="headers_lids" :items="filteredLids" item-key="id" show-expand :expanded.sync="expanded"
+          expand-icon="" @click:row="clickrow">
+          <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length" class="blackborder">
+              <logtel :lid_id="item.id" :key="item.id" />
+            </td>
+          </template>
         </v-data-table>
       </v-col>
     </v-row>
@@ -101,8 +107,12 @@
 
 <script>
 import axios from 'axios';
+import Logtel from '../manager/logtel.vue';
 export default {
   name: 'LaraImportInfo',
+  components: {
+    Logtel,
+  },
 
   data() {
     return {
@@ -120,7 +130,7 @@ export default {
       tabimport: 'cpl',
       headers_cpl: [
         { text: 'Date', value: 'created_at', align: 'start', width: '120px' },
-        { text: 'Заголовок', value: 'load_mess', align: 'start' },
+        { text: 'Название файла', value: 'load_mess', align: 'start' },
         { text: 'GEO', value: 'geo', align: 'start' },
         { text: 'All', value: 'count_all', align: 'center', width: '75px' },
         { text: 'New', value: 'count_status_8', align: 'center', width: '100px' },
@@ -155,11 +165,13 @@ export default {
         { text: 'Created', value: 'created_at', align: 'start', width: '150px' },
       ],
       selectedFilter: null, // Для хранения выбранного фильтра (CPL ключ или CPA дата)
+      expanded: [],
     };
   },
 
   mounted() {
     this.getImportOnDate()
+    this.setUser();
   },
 
   computed: {
@@ -182,6 +194,27 @@ export default {
   },
 
   methods: {
+    clickrow(item, row) {
+      if (this.$attrs.user.showInfo != 1) {
+        return;
+      }
+      // this.tel = item.tel;
+      // this.lid_id = item.id;
+      if (!row.isExpanded) {
+        this.expanded = [item];
+      } else {
+        this.expanded = [];
+      }
+
+    },
+    setUser() {
+
+      // Add conditional header after user is set
+      if (this.$attrs.user.showInfo == 1) {
+        this.headers_lids.splice(3, 0, { text: "Сообщение", value: "text" });
+        this.headers_lids.splice(4, 0, { text: "Депозит", value: "depozit" });
+      }
+    },
     getImportOnDate() {
       axios.post('/api/getImportOnDate', {
         dateFrom: this.datetimeFrom,

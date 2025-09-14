@@ -702,7 +702,7 @@ class ImportsController extends Controller
     $dateFrom = $req['dateFrom'];
     $dateTo = $req['dateTo'];
     $statuses = Status::select('id', 'name', 'order', 'color')->get()->toArray();
-    $lids = Lid::select('lids.id', 'name', 'tel', 'email', 'lids.created_at', 'status_id', 'load_mess', 'i.geo')
+    $lids = Lid::select('lids.id', 'name', 'tel', 'email', 'lids.created_at', 'status_id', 'load_mess', 'i.geo', 'text', DB::raw('COALESCE(SUM(d.depozit), 0) as depozit'))
       // ->with('status:id,name,color,order')
 
       ->leftJoin('imports as i', function ($join) {
@@ -710,9 +710,15 @@ class ImportsController extends Controller
           ->whereNotNull('lids.load_mess')
           ->where('lids.load_mess', '!=', '');
       })
+      ->leftJoin('depozits as d', function ($join) use ($dateFrom, $dateTo) {
+        $join->on('lids.id', '=', 'd.lid_id')
+          ->where('d.created_at', '>=', $dateFrom . ' 00:00:00')
+          ->where('d.created_at', '<=', $dateTo . ' 23:59:59');
+      })
       ->where('lids.provider_id', $provider_id)
       ->whereDate('lids.created_at', '>=', $dateFrom)
       ->whereDate('lids.created_at', '<=', $dateTo)
+      ->groupBy('lids.id', 'name', 'tel', 'email', 'lids.created_at', 'status_id', 'load_mess', 'i.geo', 'text')
       ->get();
     $res = [
       'statuses' => $statuses,

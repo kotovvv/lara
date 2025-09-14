@@ -144,31 +144,7 @@
                 </template>
               </v-data-table>
             </v-col>
-            <v-dialog v-model="popup" max-width="500">
-              <v-card>
-                <v-card-title class="text-h5"> History statuses </v-card-title>
-                <v-progress-linear :active="history_load" :indeterminate="history_load"
-                  color="deep-purple accent-4"></v-progress-linear>
-                <v-card-text>
-                  <v-simple-table>
-                    <template v-slot:default>
-                      <thead>
-                        <tr>
-                          <th class="text-left">Date</th>
-                          <th class="text-left">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="item in history" :key="item.id">
-                          <td>{{ item.date }}</td>
-                          <td>{{ item.status }}</td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-card-text>
-              </v-card>
-            </v-dialog>
+
           </v-row>
         </v-container>
       </v-tab-item>
@@ -192,7 +168,7 @@
           :loading="loading"></v-data-table>
       </v-tab-item>
       <!-- Import info -->
-      <v-tab-item>
+      <v-tab-item v-if="$attrs.user.showInfo == 1">
         <importInfo :user="user" />
       </v-tab-item>
       <v-tab-item>
@@ -405,6 +381,9 @@ export default {
       );
     },
     clickrow(item, row) {
+      if (this.$attrs.user.showInfo != 1) {
+        return;
+      }
       // this.tel = item.tel;
       // this.lid_id = item.id;
       if (!row.isExpanded) {
@@ -413,12 +392,6 @@ export default {
         this.expanded = [];
       }
 
-      /* if (!row.isSelected) {
-        this.tel = item.tel;
-        this.lid_id = item.id;
-        this.expanded = [item];
-      } else this.tel = "";
-       row.select(!row.isSelected); */
     },
     // clickrow(item, row) {
     //   const self = this;
