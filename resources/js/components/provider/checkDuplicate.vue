@@ -63,7 +63,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="dup.length || dup_all.length">
+    <v-row v-if="(dup.length || dup_all.length) && $props.user.showInfo == 1">
       <v-col cols="12">
         <!-- <v-tabs v-model="tabs">
           <v-tab>За {{ hmmonth }} мес.</v-tab>
