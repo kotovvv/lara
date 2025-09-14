@@ -28,10 +28,10 @@
       </v-col>
       <v-col cols="3">
 
-        <!-- <p>
+        <p>
           <b>Всего {{ message_all }}</b>
         </p>
-        <div v-if="in_db.length" class="mt-4">
+        <!--  <div v-if="in_db.length" class="mt-4">
           <v-btn @click="download('in')">{{
             "Скачать дубликаты (" + in_db.length + ")"
             }}</v-btn>

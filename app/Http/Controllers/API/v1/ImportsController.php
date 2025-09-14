@@ -702,11 +702,17 @@ class ImportsController extends Controller
     $dateFrom = $req['dateFrom'];
     $dateTo = $req['dateTo'];
     $statuses = Status::select('id', 'name', 'order', 'color')->get()->toArray();
-    $lids = Lid::select('id', 'name', 'tel', 'email', 'created_at', 'status_id', 'load_mess')
+    $lids = Lid::select('lids.id', 'name', 'tel', 'email', 'lids.created_at', 'status_id', 'load_mess', 'i.geo')
       // ->with('status:id,name,color,order')
-      ->where('provider_id', $provider_id)
-      ->whereDate('created_at', '>=', $dateFrom)
-      ->whereDate('created_at', '<=', $dateTo)
+
+      ->leftJoin('imports as i', function ($join) {
+        $join->on('lids.load_mess', '=', 'i.message')
+          ->whereNotNull('lids.load_mess')
+          ->where('lids.load_mess', '!=', '');
+      })
+      ->where('lids.provider_id', $provider_id)
+      ->whereDate('lids.created_at', '>=', $dateFrom)
+      ->whereDate('lids.created_at', '<=', $dateTo)
       ->get();
     $res = [
       'statuses' => $statuses,

@@ -44,7 +44,7 @@
         </v-tabs>
         <v-tabs-items v-model="tabimport">
           <v-tab-item :key="'cpl'">
-            <v-data-table height="80vh" :headers="headers" :fixed-header="true" item-key="id" id="cpl" :items="cpl"
+            <v-data-table height="60vh" :headers="headers_cpl" :fixed-header="true" item-key="id" id="cpl" :items="cpl"
               hide-default-header>
               <template v-slot:header="{ props }">
                 <tr>
@@ -55,7 +55,7 @@
                 </tr>
               </template>
               <template v-slot:item="{ item, headers }">
-                <tr>
+                <tr @click="onCplRowClick(item)" style="cursor: pointer;">
                   <td v-for="header in headers" :key="header.value" :style="getCellStyle(header.value, item)"
                     style="text-align: center;">
                     {{ item[header.value] }}
@@ -65,7 +65,7 @@
             </v-data-table>
           </v-tab-item>
           <v-tab-item :key="'cpa'">
-            <v-data-table height="80vh" :headers="headers" :fixed-header="true" item-key="id" id="cpa" :items="cpa"
+            <v-data-table height="60vh" :headers="headers_cpa" :fixed-header="true" item-key="id" id="cpa" :items="cpa"
               hide-default-header>
               <template v-slot:header="{ props }">
                 <tr>
@@ -76,7 +76,7 @@
                 </tr>
               </template>
               <template v-slot:item="{ item, headers }">
-                <tr>
+                <tr @click="onCpaRowClick(item)" style="cursor: pointer;">
                   <td v-for="header in headers" :key="header.value" :style="getCellStyle(header.value, item)"
                     style="text-align: center;">
                     {{ item[header.value] }}
@@ -86,6 +86,13 @@
             </v-data-table>
           </v-tab-item>
         </v-tabs-items>
+      </v-col>
+    </v-row>
+    <v-row v-if="filteredLids.length > 0">
+      <v-col>
+        <p>{{ selectedFilter }}</p>
+        <v-data-table :headers="headers_lids" :items="filteredLids" item-key="id">
+        </v-data-table>
       </v-col>
     </v-row>
   </v-container>
@@ -111,8 +118,10 @@ export default {
       cpl: [],
       cpa: [],
       tabimport: 'cpl',
-      headers: [
+      headers_cpl: [
         { text: 'Date', value: 'created_at', align: 'start', width: '120px' },
+        { text: 'Заголовок', value: 'load_mess', align: 'start' },
+        { text: 'GEO', value: 'geo', align: 'start' },
         { text: 'All', value: 'count_all', align: 'center', width: '75px' },
         { text: 'New', value: 'count_status_8', align: 'center', width: '100px' },
         { text: 'RE-NEW', value: 'count_status_33', align: 'center', width: '100px' },
@@ -124,11 +133,52 @@ export default {
         { text: 'No answer', value: 'count_status_7', align: 'center', width: '100px' },
         // { text: 'Source/Campaign', value: 'load_mess', align: 'start' }
       ],
+      headers_cpa: [
+        { text: 'Date', value: 'created_at', align: 'start', width: '120px' },
+
+        { text: 'All', value: 'count_all', align: 'center', width: '75px' },
+        { text: 'New', value: 'count_status_8', align: 'center', width: '100px' },
+        { text: 'RE-NEW', value: 'count_status_33', align: 'center', width: '100px' },
+        { text: 'Call back', value: 'count_status_9', align: 'center', width: '100px' },
+        { text: 'Deposit', value: 'count_status_10', align: 'center', width: '100px' },
+        { text: 'Pending', value: 'count_status_20', align: 'center', width: '100px' },
+        { text: 'POTENTIAL', value: 'count_status_32', align: 'center', width: '100px' },
+        { text: 'Not interested', value: 'count_status_12', align: 'center', width: '100px' },
+        { text: 'No answer', value: 'count_status_7', align: 'center', width: '100px' },
+        // { text: 'Source/Campaign', value: 'load_mess', align: 'start' }
+      ],
+      headers_lids: [
+        { text: 'Name', value: 'name', align: 'start' },
+        { text: 'Email', value: 'email', align: 'start' },
+        { text: 'Phone', value: 'tel', align: 'start' },
+        { text: 'Status', value: 'status_name', align: 'start' },
+        { text: 'Created', value: 'created_at', align: 'start', width: '150px' },
+      ],
+      selectedFilter: null, // Для хранения выбранного фильтра (CPL ключ или CPA дата)
     };
   },
 
   mounted() {
     this.getImportOnDate()
+  },
+
+  computed: {
+    headers() {
+      return this.tabimport === 'cpl' ? this.headers_cpl : this.headers_cpa;
+    },
+    filteredLids() {
+      if (!this.selectedFilter) {
+        return [];
+      }
+
+      if (this.tabimport == 0) {
+        // Фильтрация по load_mess для CPL
+        return this.lids.filter(lid => lid.load_mess === this.selectedFilter);
+      } else {
+        // Фильтрация по дате для CPA
+        return this.lids.filter(lid => lid.created_at.substring(0, 10) === this.selectedFilter);
+      }
+    }
   },
 
   methods: {
@@ -165,6 +215,7 @@ export default {
                 count_status_32: 0,
                 count_status_12: 0,
                 count_status_7: 0,
+                geo: lid.geo,
                 load_mess: key
               };
             }
@@ -226,6 +277,15 @@ export default {
       const statusId = parseInt(value.replace('count_status_', ''));
       const status = this.statuses.find(s => s.id === statusId);
       return status ? { background: status.color, color: this.getTextColor(statusId) } : {};
+    },
+    onCplRowClick(item) {
+      // Клик по строке CPL - фильтруем лиды по load_mess
+      console.log(item);
+      this.selectedFilter = item.load_mess;
+    },
+    onCpaRowClick(item) {
+      // Клик по строке CPA - фильтруем лиды по дате
+      this.selectedFilter = item.created_at;
     },
   },
 };

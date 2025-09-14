@@ -526,7 +526,12 @@ class LidsController extends Controller
   {
     $data = $request->all();
     $data['emails'] = array_values(array_filter($data['emails']));
-    // dd($data['emails']);
+
+    $where_provider_id   = '';
+    if (session()->has('provider_id')) {
+      $provider_id = session()->get('provider_id');
+      $where_provider_id = " AND l.`provider_id` = " . (int)$provider_id;
+    }
 
     $hmmonth = Carbon::now()->subMonths(6);
     if (isset($data['hmmonth'])) {
@@ -551,10 +556,10 @@ class LidsController extends Controller
       $group_email_tel = " GROUP BY `email`";
     }
     if (isset($data['check'])) {
-      $sql_all = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel_all . " ORDER BY l.created_at ASC";
-      $sql = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel . " ORDER BY l.created_at ASC";
+      $sql_all = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel_all . $where_provider_id . " ORDER BY l.created_at ASC";
+      $sql = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel . $where_provider_id . " ORDER BY l.created_at ASC";
       // . " ORDER BY l.created_at ASC"
-      $sql_next = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel_next . " ORDER BY l.created_at ASC";
+      $sql_next = "SELECT l.*, s.`name` status_name,  u.`name` user_name, p.`name` provider_name,  o.`name` office_name FROM `lids` l LEFT JOIN `providers` p ON (p.`id` = l.`provider_id`) LEFT JOIN `statuses` s ON (s.`id` = l.`status_id`) LEFT JOIN `users` u ON (u.`id` = l.`user_id`) LEFT JOIN `offices` o ON (o.`id` = l.`office_id`) " . $where_email_tel_next . $where_provider_id . " ORDER BY l.created_at ASC";
 
       $results['leads'] = DB::table(DB::raw("($sql) as first_query"))
         ->union(DB::table(DB::raw("($sql_next) as second_query")))
