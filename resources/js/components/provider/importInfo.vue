@@ -55,7 +55,8 @@
                 </tr>
               </template>
               <template v-slot:item="{ item, headers }">
-                <tr @click="onCplRowClick(item)" style="cursor: pointer;">
+                <tr @click="onCplRowClick(item)" style="cursor: pointer;"
+                  :style="{ border: selectedFilter === item.load_mess ? '2px solid #000' : '' }">
                   <td v-for="header in headers" :key="header.value" :style="getCellStyle(header.value, item)"
                     style="text-align: center;">
                     {{ item[header.value] }}
@@ -76,7 +77,8 @@
                 </tr>
               </template>
               <template v-slot:item="{ item, headers }">
-                <tr @click="onCpaRowClick(item)" style="cursor: pointer;">
+                <tr @click="onCpaRowClick(item)" style="cursor: pointer;"
+                  :style="{ border: selectedFilter === item.load_mess ? '2px solid #000' : '' }">
                   <td v-for="header in headers" :key="header.value" :style="getCellStyle(header.value, item)"
                     style="text-align: center;">
                     {{ item[header.value] }}
@@ -91,6 +93,21 @@
     <v-row v-if="filteredLids.length > 0">
       <v-col>
         <p>{{ selectedFilter }}</p>
+        <div class="wrp__statuses">
+          <template v-for="i in statusesWithCounts">
+            <div class="status_wrp" :class="{ active: filterStatus.includes(i.id) }" :key="i.id"
+              @click.stop="changeFilterStatus(i.id)">
+              <b :style="{
+                background: i.color,
+                outline: '1px solid ' + i.color,
+              }">{{ i.hm }}</b>
+              <span>{{ i.name }}</span>
+              <v-btn v-if="filterStatus.includes(i.id)" icon x-small>
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </div>
+          </template>
+        </div>
         <v-data-table :headers="headers_lids" :items="filteredLids" item-key="id" show-expand :expanded.sync="expanded"
           expand-icon="" @click:row="clickrow">
           <template v-slot:expanded-item="{ headers, item }">
@@ -166,6 +183,7 @@ export default {
       ],
       selectedFilter: null, // Для хранения выбранного фильтра (CPL ключ или CPA дата)
       expanded: [],
+      filterStatus: [],
     };
   },
 
@@ -183,17 +201,54 @@ export default {
         return [];
       }
 
+      let filtered = [];
+
       if (this.tabimport == 0) {
         // Фильтрация по load_mess для CPL
-        return this.lids.filter(lid => lid.load_mess === this.selectedFilter);
+        filtered = this.lids.filter(lid => lid.load_mess === this.selectedFilter);
+
       } else {
         // Фильтрация по дате для CPA
-        return this.lids.filter(lid => lid.created_at.substring(0, 10) === this.selectedFilter);
+        filtered = this.lids.filter(lid => lid.created_at.substring(0, 10) === this.selectedFilter);
       }
+
+      // Подсчитываем статусы в отфильтрованных лидах
+      const statusCounts = {};
+      filtered.forEach(lid => {
+        if (statusCounts[lid.status_id]) {
+          statusCounts[lid.status_id]++;
+        } else {
+          statusCounts[lid.status_id] = 1;
+        }
+      });
+
+      // Обновляем статусы с количеством
+      this.statusesWithCounts = this.statuses
+        .filter(status => statusCounts[status.id])
+        .map(status => ({
+          ...status,
+          hm: statusCounts[status.id]
+        }));
+
+
+      // Дополнительная фильтрация по статусам, если выбраны статусы
+      if (this.filterStatus.length > 0) {
+        filtered = filtered.filter(lid => this.filterStatus.includes(lid.status_id));
+      }
+
+      return filtered;
     }
   },
 
   methods: {
+    changeFilterStatus(el_id) {
+      if (this.filterStatus.includes(el_id)) {
+        this.filterStatus = this.filterStatus.filter((i) => i != el_id);
+      } else {
+        this.filterStatus.push(el_id);
+      }
+
+    },
     clickrow(item, row) {
       if (this.$attrs.user.showInfo != 1) {
         return;
@@ -211,8 +266,8 @@ export default {
 
       // Add conditional header after user is set
       if (this.$attrs.user.showInfo == 1) {
-        this.headers_lids.splice(3, 0, { text: "Сообщение", value: "text" });
-        this.headers_lids.splice(4, 0, { text: "Депозит", value: "depozit" });
+        this.headers_lids.splice(5, 0, { text: "Сообщение", value: "text" });
+        this.headers_lids.splice(6, 0, { text: "Депозит", value: "depozit" });
       }
     },
     getImportOnDate() {
@@ -313,13 +368,20 @@ export default {
     },
     onCplRowClick(item) {
       // Клик по строке CPL - фильтруем лиды по load_mess
-      console.log(item);
+      this.filterStatus = [];
       this.selectedFilter = item.load_mess;
     },
     onCpaRowClick(item) {
       // Клик по строке CPA - фильтруем лиды по дате
+      this.filterStatus = [];
       this.selectedFilter = item.created_at;
     },
   },
 };
 </script>
+
+<style scoped>
+.status_wrp.active {
+  box-shadow: 0px 0px 9.5px 5px rgb(0, 255, 98);
+}
+</style>

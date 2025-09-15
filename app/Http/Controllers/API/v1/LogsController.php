@@ -135,12 +135,19 @@ ORDER BY grp ASC, u.name ASC
   {
     $user_id = session()->get('user_id');
     $role_id = User::where('id', $user_id)->value('role_id');
+    session()->has('provider_id') ? $provider_id = session()->get('provider_id') : $provider_id = 0;
     $logs =  DB::table('logs')
-      ->select('users.fio', 'statuses.name', 'statuses.color', 'logs.text', 'logs.created_at') //,'logs.tel'
+      ->select(
+        DB::raw($provider_id > 0 ? "''" : 'users.fio'),
+        'statuses.name',
+        'statuses.color',
+        'logs.text',
+        'logs.created_at'
+      )
       ->leftJoin('statuses', 'logs.status_id', '=', 'statuses.id')
       ->leftJoin('users', 'logs.user_id', '=', 'users.id')
       ->where('logs.lid_id', $request->lid_id)
-      ->when($role_id == 3, function ($query) {
+      ->when($role_id == 3 || $provider_id > 0, function ($query) {
         $query->where('logs.last_log', 0);
       })
       ->reorder('logs.created_at', 'desc')

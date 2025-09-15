@@ -90,7 +90,8 @@
                       <v-switch v-model="editedItem.top" label="Top"></v-switch>
                     </v-col>
                     <v-col cols="6">
-                      <v-switch v-model="editedItem.showInfo" label="Показывать информацию"></v-switch>
+                      <v-switch v-model="editedItem.showInfo"
+                        label="Показывать скрытую информацию поставщику"></v-switch>
                     </v-col>
                   </v-row>
                 </v-container>

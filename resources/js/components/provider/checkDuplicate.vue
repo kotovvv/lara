@@ -42,7 +42,8 @@
             }}</v-btn>
         </div> -->
       </v-col>
-      <v-col cols="12">
+      <v-col cols="12"
+        v-if="(dup.length || dup_all.length) && ($props.user.role_id == 1 || ($props.user.role_id == 4 && $props.user.showInfo == 1))">
         <div class="wrp__statuses">
           <template v-for="(i, x) in d_statuses">
             <div class="status_wrp" :class="{
@@ -63,7 +64,8 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="(dup.length || dup_all.length) && $props.user.showInfo == 1">
+    <v-row
+      v-if="(dup.length || dup_all.length) && ($props.user.role_id == 1 || ($props.user.role_id == 4 && $props.user.showInfo == 1))">
       <v-col cols="12">
         <!-- <v-tabs v-model="tabs">
           <v-tab>За {{ hmmonth }} мес.</v-tab>

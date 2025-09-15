@@ -233,9 +233,9 @@ export default {
       { text: "Name", value: "name" },
       { text: "Email", value: "email" },
       { text: "Phone.", value: "tel" },
+      { text: "Status", value: "status_name" },
       { text: "Start data", value: "created_at" },
       { text: "Edit date", value: "updated_at" },
-      { text: "Status", value: "status_name" },
     ],
     parse_header: [],
     parse_csv: [],
@@ -416,8 +416,8 @@ export default {
       this.user = this.$attrs.user;
       // Add conditional header after user is set
       if (this.user.showInfo == 1) {
-        this.headers.splice(3, 0, { text: "Сообщение", value: "text" });
-        this.headers.splice(4, 0, { text: "Депозит", value: "depozit" });
+        this.headers.splice(6, 0, { text: "Сообщение", value: "text" });
+        this.headers.splice(7, 0, { text: "Депозит", value: "depozit" });
       }
     },
     getDataTime() {
