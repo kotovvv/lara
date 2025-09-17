@@ -37,26 +37,18 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col class="csv">
         <v-tabs v-model="tabimport">
           <v-tab value="cpl">CPL</v-tab>
           <v-tab value="cpa">CPA</v-tab>
         </v-tabs>
         <v-tabs-items v-model="tabimport">
           <v-tab-item :key="'cpl'">
-            <v-data-table height="60vh" :headers="headers_cpl" :fixed-header="true" item-key="id" id="cpl" :items="cpl"
-              hide-default-header>
-              <template v-slot:header="{ props }">
-                <tr>
-                  <th v-for="header in props.headers" :key="header.value" :style="getHeaderStyle(header.value)"
-                    style="text-align: center;font-size: 1rem;">
-                    {{ header.text }}
-                  </th>
-                </tr>
-              </template>
+            <v-data-table height="60vh" :headers="headers_cpl" fixed-header item-key="id" id="cpl" :items="cpl">
+
               <template v-slot:item="{ item, headers }">
                 <tr @click="onCplRowClick(item)" style="cursor: pointer;"
-                  :style="{ border: selectedFilter === item.load_mess ? '2px solid #000' : '' }">
+                  :style="{ border: selectedFilter === item.load_mess ? '4px solid #000' : '' }">
                   <td v-for="header in headers" :key="header.value" :style="getCellStyle(header.value, item)"
                     style="text-align: center;">
                     {{ item[header.value] }}
@@ -66,19 +58,11 @@
             </v-data-table>
           </v-tab-item>
           <v-tab-item :key="'cpa'">
-            <v-data-table height="60vh" :headers="headers_cpa" :fixed-header="true" item-key="id" id="cpa" :items="cpa"
-              hide-default-header>
-              <template v-slot:header="{ props }">
-                <tr>
-                  <th v-for="header in props.headers" :key="header.value" :style="getHeaderStyle(header.value)"
-                    style="text-align: center;font-size: 1rem;">
-                    {{ header.text }}
-                  </th>
-                </tr>
-              </template>
+            <v-data-table height="60vh" :headers="headers_cpa" :fixed-header="true" item-key="id" id="cpa" :items="cpa">
+
               <template v-slot:item="{ item, headers }">
                 <tr @click="onCpaRowClick(item)" style="cursor: pointer;"
-                  :style="{ border: selectedFilter === item.load_mess ? '2px solid #000' : '' }">
+                  :style="{ border: selectedFilter === item.load_mess ? '4px solid #000' : '' }">
                   <td v-for="header in headers" :key="header.value" :style="getCellStyle(header.value, item)"
                     style="text-align: center;">
                     {{ item[header.value] }}
@@ -146,32 +130,31 @@ export default {
       cpa: [],
       tabimport: 'cpl',
       headers_cpl: [
-        { text: 'Date', value: 'created_at', align: 'start', width: '120px' },
-        { text: 'Название файла', value: 'load_mess', align: 'start' },
-        { text: 'GEO', value: 'geo', align: 'start' },
+        { text: 'Date', value: 'created_at', align: 'center', width: '120px' },
+        { text: 'Название файла', value: 'load_mess', align: 'center' },
+        { text: 'GEO', value: 'geo', align: 'center' },
         { text: 'All', value: 'count_all', align: 'center', width: '75px' },
-        { text: 'New', value: 'count_status_8', align: 'center', width: '100px' },
-        { text: 'RE-NEW', value: 'count_status_33', align: 'center', width: '100px' },
-        { text: 'Call back', value: 'count_status_9', align: 'center', width: '100px' },
-        { text: 'Deposit', value: 'count_status_10', align: 'center', width: '100px' },
-        { text: 'Pending', value: 'count_status_20', align: 'center', width: '100px' },
-        { text: 'POTENTIAL', value: 'count_status_32', align: 'center', width: '100px' },
-        { text: 'Not interested', value: 'count_status_12', align: 'center', width: '100px' },
-        { text: 'No answer', value: 'count_status_7', align: 'center', width: '100px' },
+        { text: 'New', value: 'count_status_8', align: 'center', width: '100px', sortable: false, class: "new", cellClass: "new fz17", },
+        { text: 'RE-NEW', value: 'count_status_33', align: 'center', width: '100px', sortable: false, class: "renew", cellClass: "renew fz17", },
+        { text: 'Call back', value: 'count_status_9', align: 'center', width: '100px', sortable: false, class: "callback", cellClass: "callback fz17", },
+        { text: 'Deposit', value: 'count_status_10', align: 'center', width: '100px', sortable: false, class: "deposit", cellClass: "deposit fz17", },
+        { text: 'Pending', value: 'count_status_20', align: 'center', width: '100px', sortable: false, class: "pending", cellClass: "pending fz17", },
+        { text: 'POTENTIAL', value: 'count_status_32', align: 'center', width: '100px', sortable: false, class: "potential", cellClass: "potential fz17", },
+        { text: 'Not interested', value: 'count_status_12', align: 'center', width: '100px', sortable: false, class: "nointerest", cellClass: "nointerest fz17", },
+        { text: 'No answer', value: 'count_status_7', align: 'center', width: '100px', sortable: false, class: "noans", cellClass: "noans fz17", },
         // { text: 'Source/Campaign', value: 'load_mess', align: 'start' }
       ],
       headers_cpa: [
-        { text: 'Date', value: 'created_at', align: 'start', width: '120px' },
-
+        { text: 'Date', value: 'created_at', align: 'center', width: '120px' },
         { text: 'All', value: 'count_all', align: 'center', width: '75px' },
-        { text: 'New', value: 'count_status_8', align: 'center', width: '100px' },
-        { text: 'RE-NEW', value: 'count_status_33', align: 'center', width: '100px' },
-        { text: 'Call back', value: 'count_status_9', align: 'center', width: '100px' },
-        { text: 'Deposit', value: 'count_status_10', align: 'center', width: '100px' },
-        { text: 'Pending', value: 'count_status_20', align: 'center', width: '100px' },
-        { text: 'POTENTIAL', value: 'count_status_32', align: 'center', width: '100px' },
-        { text: 'Not interested', value: 'count_status_12', align: 'center', width: '100px' },
-        { text: 'No answer', value: 'count_status_7', align: 'center', width: '100px' },
+        { text: 'New', value: 'count_status_8', align: 'center', width: '100px', sortable: false, class: "new", cellClass: "new fz17", },
+        { text: 'RE-NEW', value: 'count_status_33', align: 'center', width: '100px', sortable: false, class: "renew", cellClass: "renew fz17", },
+        { text: 'Call back', value: 'count_status_9', align: 'center', width: '100px', sortable: false, class: "callback", cellClass: "callback fz17", },
+        { text: 'Deposit', value: 'count_status_10', align: 'center', width: '100px', sortable: false, class: "deposit", cellClass: "deposit fz17", },
+        { text: 'Pending', value: 'count_status_20', align: 'center', width: '100px', sortable: false, class: "pending", cellClass: "pending fz17", },
+        { text: 'POTENTIAL', value: 'count_status_32', align: 'center', width: '100px', sortable: false, class: "potential", cellClass: "potential fz17", },
+        { text: 'Not interested', value: 'count_status_12', align: 'center', width: '100px', sortable: false, class: "nointerest", cellClass: "nointerest fz17", },
+        { text: 'No answer', value: 'count_status_7', align: 'center', width: '100px', sortable: false, class: "noans", cellClass: "noans fz17", },
         // { text: 'Source/Campaign', value: 'load_mess', align: 'start' }
       ],
       headers_lids: [
@@ -260,10 +243,8 @@ export default {
       } else {
         this.expanded = [];
       }
-
     },
     setUser() {
-
       // Add conditional header after user is set
       if (this.$attrs.user.showInfo == 1) {
         this.headers_lids.splice(5, 0, { text: "Сообщение", value: "text" });
@@ -271,6 +252,7 @@ export default {
       }
     },
     getImportOnDate() {
+
       axios.post('/api/getImportOnDate', {
         dateFrom: this.datetimeFrom,
         dateTo: this.datetimeTo,
@@ -380,7 +362,72 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+.new,
+.renew,
+.callback,
+.deposit,
+.pending,
+.potential,
+.nointerest,
+.noans {
+  font-size: 1.2rem;
+
+}
+
+.new,
+.csv .theme--light.v-data-table.v-data-table--fixed-header thead th.new {
+  background: #dde4e4ff !important;
+  border: none !important;
+}
+
+.renew,
+.csv .theme--light.v-data-table.v-data-table--fixed-header thead th.renew {
+  background: #c3f3ff !important;
+  border: none !important;
+}
+
+.callback,
+.csv .theme--light.v-data-table.v-data-table--fixed-header thead th.callback {
+  background: rgba(29, 146, 240, 0.624) !important;
+  border: none !important;
+}
+
+.deposit,
+.csv .theme--light.v-data-table.v-data-table--fixed-header thead th.deposit {
+  background: #21cb7bff !important;
+  border: none !important;
+}
+
+.pending,
+.csv .theme--light.v-data-table.v-data-table--fixed-header thead th.pending {
+  background: #a3adb7ff !important;
+  border: none !important;
+}
+
+.potential,
+.csv .theme--light.v-data-table.v-data-table--fixed-header thead th.potential {
+  background: #7fd74e !important;
+  border: none !important;
+}
+
+.nointerest,
+.csv .theme--light.v-data-table.v-data-table--fixed-header thead th.nointerest {
+  background: rgba(165, 68, 210, 0.698) !important;
+  border: none !important;
+}
+
+.noans,
+.csv .theme--light.v-data-table.v-data-table--fixed-header thead th.noans {
+  background: rgba(239, 160, 35, 0.55) !important;
+  border: none !important;
+}
+
+.fz17 {
+  font-size: 17px !important;
+  font-weight: bold;
+}
+
 .status_wrp.active {
   box-shadow: 0px 0px 9.5px 5px rgb(0, 255, 98);
 }
