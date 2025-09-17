@@ -31,11 +31,7 @@
       </v-col>
 
     </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-progress-linear :active="loading" indeterminate color="purple"></v-progress-linear>
-      </v-col>
-    </v-row>
+
     <v-row>
       <v-col class="csv">
         <v-tabs v-model="tabimport">
@@ -44,8 +40,8 @@
         </v-tabs>
         <v-tabs-items v-model="tabimport">
           <v-tab-item :key="'cpl'">
-            <v-data-table height="60vh" :headers="headers_cpl" fixed-header item-key="id" id="cpl" :items="cpl">
-
+            <v-data-table style="max-height: 60vh;" :headers="headers_cpl" fixed-header item-key="id" id="cpl"
+              :items="cpl" :loading="loading" class="elevation-1">
               <template v-slot:item="{ item, headers }">
                 <tr @click="onCplRowClick(item)" style="cursor: pointer;"
                   :style="{ border: selectedFilter === item.load_mess ? '4px solid #000' : '' }">
@@ -58,8 +54,8 @@
             </v-data-table>
           </v-tab-item>
           <v-tab-item :key="'cpa'">
-            <v-data-table height="60vh" :headers="headers_cpa" :fixed-header="true" item-key="id" id="cpa" :items="cpa">
-
+            <v-data-table style="max-height: 60vh;" :headers="headers_cpa" :fixed-header="true" item-key="id" id="cpa"
+              :items="cpa" :loading="loading" class="elevation-1">
               <template v-slot:item="{ item, headers }">
                 <tr @click="onCpaRowClick(item)" style="cursor: pointer;"
                   :style="{ border: selectedFilter === item.load_mess ? '4px solid #000' : '' }">
@@ -93,7 +89,7 @@
           </template>
         </div>
         <v-data-table :headers="headers_lids" :items="filteredLids" item-key="id" show-expand :expanded.sync="expanded"
-          expand-icon="" @click:row="clickrow">
+          expand-icon="" @click:row="clickrow" :loading="loading" class="elevation-1">
           <template v-slot:expanded-item="{ headers, item }">
             <td :colspan="headers.length" class="blackborder">
               <logtel :lid_id="item.id" :key="item.id" />
@@ -117,6 +113,7 @@ export default {
 
   data() {
     return {
+      loading: false,
       dateFrom: false,
       dateTo: false,
       datetimeFrom: new Date(new Date().setDate(new Date().getDate() - 14))
@@ -252,7 +249,7 @@ export default {
       }
     },
     getImportOnDate() {
-
+      this.loading = true;
       axios.post('/api/getImportOnDate', {
         dateFrom: this.datetimeFrom,
         dateTo: this.datetimeTo,
@@ -323,6 +320,7 @@ export default {
           this.loading = false;
         })
         .catch((error) => {
+          this.loading = false;
           console.error('There was an error!', error);
         });
     },
