@@ -72,6 +72,23 @@ class ImportCallc extends Command
 
         if ($a_hm) {
           $a_hm_json = json_encode(DB::select('SELECT if(isnull(office_id),0,office_id) office_id, SUM(status_id = 8) hmnew, SUM(status_id = 33) hmrenew,SUM(status_id = 9) hmcb,SUM(status_id = 10) hmdp, SUM(status_id = 20) hmpnd, SUM(status_id = 32) hmpot, SUM(status_id = 7) hmnoans, SUM(status_id = 12) hmnointerest, COUNT(*) hm FROM lids l WHERE l.`id` IN (' . implode(',', $lid_ids) . ') GROUP BY office_id WITH ROLLUP'));
+
+          // получить массив office_id из $a_hm_json, исключая office_id = 0
+          $office_ids = [];
+          if (!empty($a_hm_json)) {
+            $decoded = json_decode($a_hm_json, true);
+            if (is_array($decoded)) {
+              // извлечь значения office_id, привести к целым, исключить 0 и null
+              $office_ids = array_values(array_filter(array_map(function ($r) {
+                return isset($r['office_id']) ? (int) $r['office_id'] : null;
+              }, $decoded), function ($v) {
+                return $v !== null && $v !== 0;
+              }));
+            }
+          }
+
+          // сохранить в объекте как JSON (по аналогии с imports)
+          $a_hm->office_ids = json_encode($office_ids);
           $a_hm->hm_json = $a_hm_json;
           $a_hm->callc = 0;
           $a_hm->updated_at = date('Y-m-d H:m:s');
