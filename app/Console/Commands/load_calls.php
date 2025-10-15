@@ -6,9 +6,9 @@ use Illuminate\Console\Command;
 use App\Models\Lid;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Str;
 
 //$ php artisan loadcalls:two
 //$ php artisan schedule:list
@@ -21,7 +21,8 @@ class Load_calls extends Command
    *
    * @var string
    */
-  protected $signature = 'loadcalls:two';
+  // Added optional --debug flag for verbose output
+  protected $signature = 'loadcalls:two {--debug : Verbose per-file output}';
 
   /**
    * The console command description.
@@ -32,65 +33,155 @@ class Load_calls extends Command
 
   /**
    * Create a new command instance.
-   *
-   * @return void
    */
   public function __construct()
   {
     parent::__construct();
   }
 
-  /**
-   * Execute the console command.
-   *
-   * @return int
-   */
   public function handle()
   {
+    $start = microtime(true);
     $directory = 'copy';
     $files = Storage::disk('public')->allFiles($directory);
-    // $files = Storage::disk('public')->files($directory);
     $curdate = date('Y-m-d');
-    foreach ($files as  $file) {
+
+    $this->info('[' . now() . "] Start loadcalls:two. Files found: " . count($files));
+    //Log::info('loadcalls:two start', ['files' => count($files)]);
+
+    if (empty($files)) {
+      $this->info('No files in ' . $directory);
+      //Log::info('loadcalls:two no files');
+      return 0; // nothing to do
+    }
+
+    $processedFiles = 0; // number of files iterated
+    $affectedRows = 0;   // number of DB upserts
+    $skippedRows = 0;    // filtered out rows
+
+    foreach ($files as $file) {
+      $processedFiles++;
       if (!Storage::disk('public')->exists($file)) {
+        $this->warn("Skip missing: $file");
+        Log::warning('loadcalls:two missing file', ['file' => $file]);
         continue;
       }
-      $user_serv = explode('/', $file)[2];
-      $serv = explode('/', $file)[1];
-      $data = [];
-      $a_row = $this->parseIni($file);
-      foreach ($a_row as $row) {
-        // $row[0] - tel
-        // $row[3] - date
-        // $row[4] - sec
-        // $row[5] - status
-        if (!is_array($row)) continue;
-        if (!preg_match('/^[0-9]+$/', $row[0])) continue;
-        if (!is_numeric($row[3]) || $curdate != date('Y-m-d', $row[3])) continue; //only today
-        // $a_lid =  $this->getLeadOnTel($row[0], $row[3]);
-        $user = User::where(['serv' => $serv, 'user_serv' => $user_serv, 'active' => 1])->first();
-        if (!$user) {
+
+      // Skip partially written files
+      if (Str::endsWith($file, '.filepart')) {
+        $this->warn("Skip partial file: $file");
+        //Log::info('loadcalls:two skip filepart', ['file' => $file]);
+        continue;
+      }
+
+      $parts = explode('/', $file);
+      $serv = $parts[1] ?? null;
+      $user_serv = $parts[2] ?? null;
+      if (!$serv || !$user_serv) {
+        $this->warn("Bad path structure: $file");
+        Log::warning('loadcalls:two bad path', ['file' => $file]);
+        continue;
+      }
+
+      if ($this->option('debug')) {
+        $this->line("Processing file: $file (serv=$serv user_serv=$user_serv)");
+      }
+
+      $rows = $this->parseIni($file);
+      $fileAffected = 0;
+
+      foreach ($rows as $row) {
+        if (!is_array($row)) {
+          $skippedRows++;
+          continue;
+        }
+        if (!preg_match('/^[0-9]+$/', $row[0] ?? '')) {
+          $skippedRows++;
+          continue;
+        }
+        if (!is_numeric($row[3] ?? null) || $curdate != date('Y-m-d', $row[3])) {
+          $skippedRows++;
           continue;
         }
 
-        $data['user_id'] = $user['id'];
-        $data['office_id'] = $user['office_id'];
+        $user = User::where([
+          'serv' => $serv,
+          'user_serv' => $user_serv,
+          'active' => 1
+        ])->first();
+        if (!$user) {
+          $skippedRows++;
+          continue;
+        }
 
-        $data['tel'] = $row[0];
-        $data['timecall'] = date('Y-m-d H:i:s', $row[3]);
-        $data['duration'] = $row[4];
-        $data['status'] = $row[5];
+        $data = [
+          'user_id' => $user->id,
+          'office_id' => $user->office_id,
+          'tel' => $row[0],
+          'timecall' => date('Y-m-d H:i:s', $row[3]),
+          'duration' => $row[4] ?? 0,
+          'status' => $row[5] ?? null,
+        ];
         try {
           DB::table('calls')->updateOrInsert($data);
+          $affectedRows++;
+          $fileAffected++;
         } catch (\Throwable $th) {
-          Log::error('Error insert call: ' . $th->getMessage());
-          //return 0;
+          Log::error('loadcalls:two DB error: ' . $th->getMessage(), ['data' => $data]);
+          $this->error('DB error: ' . $th->getMessage());
         }
       }
-      //return $a_row;
-      Storage::disk('public')->delete($file);
+
+      $this->info("File processed: $file rows: $fileAffected");
+      //Log::info('loadcalls:two file processed', ['file' => $file, 'rows' => $fileAffected]);
+
+      // Remove processed file (with fallback and logging)
+      $deleted = Storage::disk('public')->delete($file);
+      $realPath = storage_path('app/public/' . $file);
+      if (!$deleted && file_exists($realPath)) {
+        // Try to adjust permissions then unlink directly
+        @chmod($realPath, 0666);
+        try {
+          @unlink($realPath);
+          $deleted = !file_exists($realPath);
+        } catch (\Throwable $e) {
+          Log::error('loadcalls:two unlink failed', ['file' => $file, 'real' => $realPath, 'err' => $e->getMessage()]);
+        }
+      }
+      if ($deleted) {
+        //Log::info('loadcalls:two deleted', ['file' => $file]);
+      } else {
+        $this->warn("Delete failed: $file");
+        $dir = dirname($realPath);
+        $perms = file_exists($realPath) ? substr(sprintf('%o', fileperms($realPath)), -4) : null;
+        $dperms = is_dir($dir) ? substr(sprintf('%o', fileperms($dir)), -4) : null;
+        $owner = function_exists('fileowner') && file_exists($realPath) ? @fileowner($realPath) : null;
+        $group = function_exists('filegroup') && file_exists($realPath) ? @filegroup($realPath) : null;
+        $ownerName = function_exists('posix_getpwuid') && $owner ? (@posix_getpwuid($owner)['name'] ?? $owner) : $owner;
+        $groupName = function_exists('posix_getgrgid') && $group ? (@posix_getgrgid($group)['name'] ?? $group) : $group;
+        Log::warning('loadcalls:two delete failed', [
+          'file' => $file,
+          'real' => $realPath,
+          'file_exists' => file_exists($realPath),
+          'is_writable_file' => file_exists($realPath) ? @is_writable($realPath) : null,
+          'is_writable_dir' => is_dir($dir) ? @is_writable($dir) : null,
+          'file_perms' => $perms,
+          'dir_perms' => $dperms,
+          'owner' => $ownerName,
+          'group' => $groupName,
+        ]);
+      }
     }
-    return 1;
+
+    $duration = round(microtime(true) - $start, 3);
+    $this->info('[' . now() . "] Finished loadcalls:two. Files: $processedFiles Rows: $affectedRows Skipped: $skippedRows Time: {$duration}s");
+    //Log::info('loadcalls:two finished', [
+    //   'files' => $processedFiles,
+    //   'rows' => $affectedRows,
+    //   'skipped' => $skippedRows,
+    //   'time' => $duration
+    // ]);
+    return 0;
   }
 
   protected function parseIni($filename)
