@@ -601,7 +601,8 @@ class ImportsController extends Controller
         DB::table('imports')->where('id', $import_['id'])->update(['office_ids' => $a_office_ids]);
       } else {
         $lidsId = DB::table('imported_leads')->where('api_key_id', $import_['provider_id'])->whereDate('upload_time', $import_['start'])->where('geo', $import_['geo'])->pluck('lead_id')->toArray();
-
+        $a_office_ids = json_encode(Lid::whereIn('lids.id', $lidsId)->where('office_id', '!=', 0)->groupBy('office_id')->orderBy('id', 'ASC')->pluck('office_id')->toArray());
+        DB::table('imports_provider')->where('id', $import_['id'])->update(['office_ids' => $a_office_ids]);
         $getLiads = Lid::whereIn('lids.id', $lidsId);
 
         $historyimp['statuses'] = $getLiads->select(DB::Raw('count(statuses.id) hm'), 'statuses.id', 'statuses.name', 'statuses.color')
