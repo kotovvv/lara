@@ -13,41 +13,19 @@
         <v-col cols="9">
           <!-- <v-card class="mx-auto"> -->
           <!-- max-width="900" -->
-          <v-data-table
-            v-model="selected"
-            :headers="headers"
-            :items="filteredUser"
-            sort-by="role_id"
-            show-select
-            class="border"
-            :single-select="true"
-          >
+          <v-data-table v-model="selected" :headers="headers" :items="filteredUser" sort-by="role_id" show-select
+            class="border" :single-select="true">
             <template v-slot:top>
               <v-toolbar flat>
                 <v-toolbar-title>Пользователи</v-toolbar-title>
                 <v-divider class="mx-4" inset vertical></v-divider>
-                <v-switch
-                  hide-details
-                  v-model="showActive"
-                  :label="`Показывать : ${
-                    showActive ? 'Активных' : 'Не активных'
-                  }`"
-                ></v-switch>
+                <v-switch hide-details v-model="showActive" :label="`Показывать : ${showActive ? 'Активных' : 'Не активных'
+                  }`"></v-switch>
                 <v-spacer></v-spacer>
-                <v-dialog
-                  v-model="dialog"
-                  max-width="600px"
-                  content-class="dialogtop"
-                >
+                <v-dialog v-model="dialog" max-width="600px" content-class="dialogtop">
                   <template v-slot:activator="{ on, attrs }">
                     <statusUsers :o_users="selected" />
-                    <v-btn
-                      color="primary"
-                      dark
-                      class="mb-2"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
+                    <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
                       Добавить пользователя
                     </v-btn>
                   </template>
@@ -60,10 +38,7 @@
                       <v-container>
                         <v-row>
                           <v-col cols="6">
-                            <v-text-field
-                              v-model="editedItem.fio"
-                              label="ФИО"
-                            ></v-text-field>
+                            <v-text-field v-model="editedItem.fio" label="ФИО"></v-text-field>
                           </v-col>
                           <!-- <v-col cols="6">
                         <img
@@ -81,94 +56,49 @@
                         ></v-file-input>
                       </v-col> -->
                           <v-col cols="6">
-                            <v-text-field
-                              v-model="editedItem.name"
-                              label="Логин"
-                            ></v-text-field>
+                            <v-text-field v-model="editedItem.name" label="Логин"></v-text-field>
                           </v-col>
                           <v-col cols="6">
-                            <v-text-field
-                              v-model="editedItem.password"
-                              label="Пароль"
-                            ></v-text-field>
+                            <v-text-field v-model="editedItem.password" label="Пароль"></v-text-field>
                           </v-col>
                           <v-col cols="6">
-                            <v-select
-                              :items="roles"
-                              v-model="editedItem.role_id"
-                              item-text="name"
-                              item-value="id"
-                              label="Роль"
-                            ></v-select>
+                            <v-select :items="roles" v-model="editedItem.role_id" item-text="name" item-value="id"
+                              label="Роль"></v-select>
                           </v-col>
                           <v-col cols="6">
-                            <v-select
-                              :items="offices"
-                              v-model="editedItem.office_id"
-                              item-text="name"
-                              item-value="id"
-                              label="Office"
-                            ></v-select>
+                            <v-select :items="offices" v-model="editedItem.office_id" item-text="name" item-value="id"
+                              label="Office"></v-select>
                           </v-col>
                           <v-col cols="6">
-                            <v-autocomplete
-                              :items="
-                                group.filter((g) => {
-                                  return g.office_id == editedItem.office_id;
-                                })
-                              "
-                              v-model="editedItem.group_id"
-                              item-text="fio"
-                              item-value="id"
-                              label="Группа"
-                              :menu-props="{ maxHeight: '60vh' }"
-                              clearable
-                            ></v-autocomplete>
+                            <v-autocomplete :items="group.filter((g) => {
+                              return g.office_id == editedItem.office_id;
+                            })
+                              " v-model="editedItem.group_id" item-text="fio" item-value="id" label="Группа"
+                              :menu-props="{ maxHeight: '60vh' }" clearable></v-autocomplete>
                           </v-col>
 
                           <v-col cols="12">
-                            <v-textarea
-                              outlined
-                              label="Name;Server;Login;Password;Prefix"
-                              v-model="editedItem.servers"
-                              value="editedItem.servers"
-                            ></v-textarea>
+                            <v-textarea outlined label="Name;Server;Login;Password;Prefix" v-model="editedItem.servers"
+                              value="editedItem.servers"></v-textarea>
                           </v-col>
                           <v-col cols="4">
-                            <v-switch
-                              v-model="editedItem.sip"
-                              label="sip"
-                              color="deep-purple accent-3"
-                              hide-details
-                            ></v-switch>
+                            <v-switch v-model="editedItem.sip" label="sip" color="deep-purple accent-3"
+                              hide-details></v-switch>
                           </v-col>
 
                           <v-col cols="4">
-                            <v-switch
-                              hide-details
-                              v-model="editedItem.active"
-                              :label="`${
-                                editedItem.active ? 'Активный' : 'Спрятан'
-                              }`"
-                            ></v-switch>
+                            <v-switch hide-details v-model="editedItem.active" :label="`${editedItem.active ? 'Активный' : 'Спрятан'
+                              }`"></v-switch>
                           </v-col>
                           <v-col cols="4">
-                            <v-text-field
-                              v-model="editedItem.order"
-                              label="Номер сортировки"
-                            ></v-text-field>
+                            <v-text-field v-model="editedItem.order" label="Номер сортировки"></v-text-field>
                           </v-col>
                           <v-col cols="4">
-                            <v-text-field
-                              v-model="editedItem.serv"
-                              label="Имя сервера"
-                            ></v-text-field>
+                            <v-text-field v-model="editedItem.serv" label="Имя сервера"></v-text-field>
                           </v-col>
                           <v-col cols="4">
-                            <v-text-field
-                              v-model="editedItem.user_serv"
-                              label="Имя менеджера на сервере (User*)"
-                            ></v-text-field>
+                            <v-text-field v-model="editedItem.user_serv"
+                              label="Имя менеджера на сервере (User*)"></v-text-field>
                           </v-col>
                         </v-row>
                       </v-container>
@@ -187,36 +117,18 @@
                 </v-dialog>
                 <v-dialog v-model="dialogDelete" max-width="500px">
                   <v-card>
-                    <v-card-title class="headline"
-                      >Точно удалить пользователя?</v-card-title
-                    >
+                    <v-card-title class="headline">Точно удалить пользователя?</v-card-title>
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn color="blue darken-1" text @click="closeDelete"
-                        >Нет</v-btn
-                      >
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="deleteItemConfirm"
-                        >Да</v-btn
-                      >
+                      <v-btn color="blue darken-1" text @click="closeDelete">Нет</v-btn>
+                      <v-btn color="blue darken-1" text @click="deleteItemConfirm">Да</v-btn>
                       <v-spacer></v-spacer>
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
-                <v-col
-                  v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0"
-                >
+                <v-col v-if="$attrs.user.role_id == 1 && $attrs.user.office_id == 0">
                   <p>Фильтр office</p>
-                  <v-select
-                    v-model="filterOffices"
-                    :items="offices"
-                    item-text="name"
-                    item-value="id"
-                    outlined
-                    rounded
-                  >
+                  <v-select v-model="filterOffices" :items="offices" item-text="name" item-value="id" outlined rounded>
                   </v-select>
                 </v-col>
               </v-toolbar>
@@ -225,11 +137,7 @@
               <v-icon small class="mr-2" @click="editItem(item)">
                 mdi-pencil
               </v-icon>
-              <v-icon
-                v-if="$attrs.user.office_id == 0"
-                small
-                @click="deleteItem(item)"
-              >
+              <v-icon v-if="$attrs.user.office_id == 0" small @click="deleteItem(item)">
                 mdi-delete
               </v-icon>
             </template>
@@ -240,12 +148,7 @@
           <!-- </v-card> -->
         </v-col>
         <v-col cols="3">
-          <v-data-table
-            :headers="headers_office"
-            :items="offices"
-            class="border"
-            :single-select="true"
-          >
+          <v-data-table :headers="headers_office" :items="offices" class="border" :single-select="true">
             <template v-slot:top>
               <v-toolbar flat>
                 <v-toolbar-title>Offices</v-toolbar-title>
@@ -253,13 +156,7 @@
                 <v-spacer></v-spacer>
                 <v-dialog v-model="dialogOffice" max-width="600px">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      color="primary"
-                      dark
-                      class="mb-2"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
+                    <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
                       Добавить Office
                     </v-btn>
                   </template>
@@ -272,10 +169,7 @@
                       <v-container>
                         <v-row>
                           <v-col cols="12">
-                            <v-text-field
-                              v-model="editedItemOffice.name"
-                              label="Имя"
-                            ></v-text-field>
+                            <v-text-field v-model="editedItemOffice.name" label="Имя"></v-text-field>
                           </v-col>
                         </v-row>
                       </v-container>
@@ -533,7 +427,7 @@ export default {
       }
       axios
         .post("/api/office/update", form_data)
-        .then((res) => {})
+        .then((res) => { })
         .catch((error) => console.log(error));
     },
 
@@ -557,7 +451,7 @@ export default {
     deleteItemConfirm() {
       axios
         .delete("/api/user/" + this.editedItem.id)
-        .then((res) => {})
+        .then((res) => { })
         .catch((error) => console.log(error));
       this.users.splice(this.editedIndex, 1);
       this.closeDelete();
@@ -588,6 +482,23 @@ export default {
     },
 
     save() {
+      // Проверка уникальности пары serv и user_serv
+      if (this.editedItem.serv && this.editedItem.user_serv) {
+        const duplicate = this.users.find((u) => {
+          return (
+            u.serv === this.editedItem.serv &&
+            u.user_serv === this.editedItem.user_serv &&
+            u.id !== this.editedItem.id
+          );
+        });
+
+        if (duplicate) {
+          this.message = `Такой пользователь уже зарегистрирован: ${duplicate.fio}`;
+          this.snackbar = true;
+          return;
+        }
+      }
+
       if (this.editedIndex > -1) {
         delete this.editedItem.role;
         this.saveUsers(this.editedItem);
@@ -636,7 +547,7 @@ export default {
 </script>
 
 <style scoped>
->>> .dialogtop {
+>>>.dialogtop {
   align-self: flex-start;
 }
 </style>

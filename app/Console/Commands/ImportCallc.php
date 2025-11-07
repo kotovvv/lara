@@ -47,9 +47,9 @@ class ImportCallc extends Command
     foreach ($imports as $import) {
       $a_hm = (object) [];
       if ($import->message != '') {
-        $a_hm = DB::selectOne('SELECT SUM(status_id = 8) hmnew,SUM(status_id = 9) hmcb,SUM(status_id = 10) hmdp, SUM(status_id = 20) hmpnd, SUM(status_id = 32) hmpot, COUNT(*) hm FROM lids l WHERE l.`load_mess` = "' . $import->message . '"');
+        $a_hm = DB::selectOne('SELECT SUM(status_id = 8) hmnew, SUM(status_id = 9) hmcb, SUM(status_id = 10) hmdp, SUM(status_id = 20) hmpnd, SUM(status_id = 32) hmpot, COUNT(*) hm FROM lids l WHERE l.`load_mess` = ?', [$import->message]);
 
-        $a_hm_json = json_encode(DB::select('SELECT if(isnull(office_id),0,office_id) office_id, SUM(status_id = 8) hmnew,SUM(status_id = 33) hmrenew, SUM(status_id = 9) hmcb, SUM(status_id = 10) hmdp, SUM(status_id = 20) hmpnd, SUM(status_id = 32) hmpot, SUM(status_id = 7) hmnoans, SUM(status_id = 12) hmnointerest, COUNT(*) hm FROM lids l WHERE l.`load_mess` = "' . $import->message . '" GROUP BY office_id WITH ROLLUP'));
+        $a_hm_json = json_encode(DB::select('SELECT IF(ISNULL(office_id),0,office_id) office_id, SUM(status_id = 8) hmnew, SUM(status_id = 33) hmrenew, SUM(status_id = 9) hmcb, SUM(status_id = 10) hmdp, SUM(status_id = 20) hmpnd, SUM(status_id = 32) hmpot, SUM(status_id = 7) hmnoans, SUM(status_id = 12) hmnointerest, COUNT(*) hm FROM lids l WHERE l.`load_mess` = ? GROUP BY office_id WITH ROLLUP', [$import->message]));
         $a_hm->hm_json = $a_hm_json;
 
         // get offices users
