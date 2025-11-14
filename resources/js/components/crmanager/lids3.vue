@@ -4,7 +4,9 @@
       <v-row style="font-size: 0.8rem; gap: 6px">
         <div style="width: 26rem">
           <v-row class="px-4">
-            <v-col><p></p></v-col>
+            <v-col>
+              <p></p>
+            </v-col>
           </v-row>
 
           <div class="status_wrp wrp_date px-3">
@@ -16,64 +18,29 @@
                 <v-icon>mdi-refresh</v-icon>
               </v-btn>
               <v-col>
-                <v-menu
-                  v-model="dateFrom"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
+                <v-menu v-model="dateFrom" :close-on-content-click="false" :nudge-right="40"
+                  transition="scale-transition" offset-y min-width="auto">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="datetimeFrom"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
+                    <v-text-field v-model="datetimeFrom" readonly v-bind="attrs" v-on="on"></v-text-field>
                   </template>
-                  <v-date-picker
-                    locale="ru-ru"
-                    v-model="datetimeFrom"
-                    @input="dateFrom = false"
-                  ></v-date-picker>
+                  <v-date-picker locale="ru-ru" v-model="datetimeFrom" @input="dateFrom = false"></v-date-picker>
                 </v-menu>
               </v-col>
               <v-col>
-                <v-menu
-                  v-model="dateTo"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
+                <v-menu v-model="dateTo" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+                  offset-y min-width="auto">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="datetimeTo"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
+                    <v-text-field v-model="datetimeTo" readonly v-bind="attrs" v-on="on"></v-text-field>
                   </template>
-                  <v-date-picker
-                    locale="ru-ru"
-                    v-model="datetimeTo"
-                    @input="
-                      dateTo = false;
-                      getLids3(0);
-                    "
-                  ></v-date-picker>
+                  <v-date-picker locale="ru-ru" v-model="datetimeTo" @input="
+                    dateTo = false;
+                  getLids3(0);
+                  "></v-date-picker>
                 </v-menu>
               </v-col>
 
-              <v-btn @click="cleardate" small icon title="Даты по умолчанию"
-                ><v-icon>mdi-close</v-icon></v-btn
-              >
-              <v-checkbox
-                v-model="savedates"
-                title="Запоминать даты"
-              ></v-checkbox>
+              <v-btn @click="cleardate" small icon title="Даты по умолчанию"><v-icon>mdi-close</v-icon></v-btn>
+              <v-checkbox v-model="savedates" title="Запоминать даты"></v-checkbox>
               <v-checkbox v-model="callback" title="CallBack"></v-checkbox>
             </v-row>
           </div>
@@ -82,22 +49,9 @@
         <div>
           <!-- statuses_lids -->
           <p></p>
-          <v-select
-            ref="filterStatus"
-            color="red"
-            v-model="filterStatus"
-            @change="getPage(0)"
-            :items="statuses"
-            item-text="name"
-            item-value="id"
-            outlined
-            rounded
-            :multiple="true"
-            :menu-props="{ maxHeight: '80vh' }"
-            label="Статусы"
-            style="width: 14rem"
-            clearable
-          >
+          <v-select ref="filterStatus" color="red" v-model="filterStatus" @change="getPage(0)" :items="statuses"
+            item-text="name" item-value="id" outlined rounded :multiple="true" :menu-props="{ maxHeight: '80vh' }"
+            label="Статусы" style="width: 14rem" clearable>
             <template v-slot:selection="{ item, index }">
               <span v-if="index === 0">{{ item.name }} </span>
               <span v-if="index === 1" class="grey--text text-caption">
@@ -105,19 +59,11 @@
               </span>
             </template>
             <template v-slot:item="{ item, attrs }">
-              <v-badge
-                :value="attrs['aria-selected'] == 'true'"
-                color="#7620df"
-                dot
-                left
-              >
-                <i
-                  :style="{
-                    background: item.color,
-                    outline: '1px solid grey',
-                  }"
-                  class="sel_stat mr-4"
-                ></i>
+              <v-badge :value="attrs['aria-selected'] == 'true'" color="#7620df" dot left>
+                <i :style="{
+                  background: item.color,
+                  outline: '1px solid grey',
+                }" class="sel_stat mr-4"></i>
               </v-badge>
               {{ item.name }}
             </template>
@@ -126,20 +72,9 @@
 
         <div>
           <p></p>
-          <v-autocomplete
-            v-model="filterProviders"
-            :items="providers"
-            item-text="name"
-            item-value="id"
-            @change="getPage(0)"
-            outlined
-            rounded
-            multiple
-            :menu-props="{ maxHeight: '70vh' }"
-            clearable="clearable"
-            label="Поставщики"
-            style="width: 15rem"
-          >
+          <v-autocomplete v-model="filterProviders" :items="providers" item-text="name" item-value="id"
+            @change="getPage(0)" outlined rounded multiple :menu-props="{ maxHeight: '70vh' }" clearable="clearable"
+            label="Поставщики" style="width: 15rem">
             <template v-slot:selection="{ item, index }">
               <span v-if="index === 0">{{ item.name }} </span>
               <span v-if="index === 1" class="grey--text text-caption">
@@ -147,12 +82,7 @@
               </span>
             </template>
             <template v-slot:item="{ item, attrs }">
-              <v-badge
-                :value="attrs['aria-selected'] == 'true'"
-                color="#7620df"
-                dot
-                left
-              >
+              <v-badge :value="attrs['aria-selected'] == 'true'" color="#7620df" dot left>
                 {{ item.name }}
               </v-badge>
             </template>
@@ -162,47 +92,22 @@
         <div>
           <p></p>
           <!-- @click:append="getPage(0)" -->
-          <v-text-field
-            v-model.lazy.trim="filtertel"
-            append-icon="mdi-phone"
-            @input="getPage"
-            outlined
-            rounded
-            label="Телефон"
-            style="width: 12rem"
-          ></v-text-field>
+          <v-text-field v-model.lazy.trim="filtertel" append-icon="mdi-phone" @input="getPage" outlined rounded
+            label="Телефон" style="width: 12rem"></v-text-field>
         </div>
         <!-- v-if="$props.user.role_id == 1" -->
         <div>
           <p></p>
-          <v-text-field
-            v-model="searchAll"
-            append-icon="mdi-magnify"
-            @click:append="searchlids3"
-            outlined
-            rounded
-            label="Глобальный поиск"
-            style="width: 13rem"
-            clearable
-          ></v-text-field>
+          <v-text-field v-model="searchAll" append-icon="mdi-magnify" @click:append="searchlids3" outlined rounded
+            label="Глобальный поиск" style="width: 13rem" clearable></v-text-field>
         </div>
         <div v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
           <p></p>
-          <v-select
-            v-model="filterOffices"
-            :items="offices"
-            item-text="name"
-            item-value="id"
-            outlined
-            rounded
-            multiple
-            label="Фильтр office"
-            @change="
+          <v-select v-model="filterOffices" :items="offices" item-text="name" item-value="id" outlined rounded multiple
+            label="Фильтр office" @change="
               getUsers();
-              getPage(0);
-            "
-            style="width: 13rem"
-          >
+            getPage(0);
+            " style="width: 13rem">
             <!--
             <template v-slot:selection="{ item, index }">
               <v-chip v-if="index === 0">
@@ -215,20 +120,9 @@
         </div>
         <div>
           <p></p>
-          <v-select
-            ref="filterLang"
-            v-model="filterLang"
-            @change="getPage(0)"
-            :items="languges"
-            item-text="name"
-            item-value="id"
-            outlined
-            rounded
-            :menu-props="{ maxHeight: '80vh' }"
-            label="Языки"
-            style="width: 12rem"
-            clearable
-          >
+          <v-select ref="filterLang" v-model="filterLang" @change="getPage(0)" :items="languges" item-text="name"
+            item-value="id" outlined rounded :menu-props="{ maxHeight: '80vh' }" label="Языки" style="width: 12rem"
+            clearable>
             <template v-slot:item="{ item }">
               {{ item.id }} <span>{{ item.name }} </span>
             </template>
@@ -236,67 +130,37 @@
         </div>
         <div>
           <p></p>
-          <v-autocomplete
-            v-model="filterGeo"
-            :items="GeoTel"
-            @change="getPage(0)"
-            item-text="txt"
-            item-value="code"
-            outlined
-            rounded
-            clearable
-            label="GEO код"
-            style="width: 12rem"
-            multiple
-          >
+          <v-autocomplete v-model="filterGeo" :items="GeoTel" @change="getPage(0)" item-text="txt" item-value="code"
+            outlined rounded clearable label="GEO код" style="width: 12rem" multiple>
             <template v-slot:selection="{ item }">
               {{ item.code }}
             </template>
             <template v-slot:item="{ item }">
               <svg class="icon">
-                <use :xlink:href="'#' + item.code"></use></svg
-              >{{ item.txt }}
+                <use :xlink:href="'#' + item.code"></use>
+              </svg>{{ item.txt }}
             </template>
           </v-autocomplete>
         </div>
         <div>
           <p></p>
-          <v-select
-            v-model="filterRD"
-            :items="['', 'Depositors', 'Registrations']"
-            @change="getPage(0)"
-            outlined
-            rounded
-            clearable
-            label="R/D"
-            style="width: 10rem"
-          ></v-select>
+          <v-select v-model="filterRD" :items="['', 'Depositors', 'Registrations']" @change="getPage(0)" outlined
+            rounded clearable label="R/D" style="width: 10rem"></v-select>
         </div>
         <v-col></v-col>
       </v-row>
     </v-container>
-    <v-progress-linear
-      :active="loading"
-      indeterminate
-      color="purple"
-    ></v-progress-linear>
+    <v-progress-linear :active="loading" indeterminate color="purple"></v-progress-linear>
     <v-row>
       <v-col>
         <div class="wrp__statuses">
           <template v-for="(i, x) in Statuses">
-            <div
-              class="status_wrp"
-              :class="{ active: filterStatus.includes(i.id) }"
-              :key="x"
-              @click.stop="changeFilterStatus(i.id)"
-            >
-              <b
-                :style="{
-                  background: i.color,
-                  outline: '1px solid ' + i.color,
-                }"
-                >{{ i.hm }}</b
-              >
+            <div class="status_wrp" :class="{ active: filterStatus.includes(i.id) }" :key="x"
+              @click.stop="changeFilterStatus(i.id)">
+              <b :style="{
+                background: i.color,
+                outline: '1px solid ' + i.color,
+              }">{{ i.hm }}</b>
               <span>{{ i.name }}</span>
               <v-btn v-if="filterStatus.includes(i.id)" icon x-small>
                 <v-icon>mdi-close</v-icon>
@@ -321,14 +185,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-snackbar
-      v-model="snackbar"
-      top
-      rigth
-      timeout="6000"
-      color="success"
-      dark
-    >
+    <v-snackbar v-model="snackbar" top rigth timeout="6000" color="success" dark>
       {{ message }}
       <template v-slot:action="{ attrs }">
         <v-btn color="white" text v-bind="attrs" @click="snackbar = false">
@@ -339,54 +196,24 @@
     <v-row>
       <v-col cols="10">
         <div class="border pa-4">
-          <v-data-table
-            v-model.lazy.trim="selected"
-            id="tablids"
-            :headers="headers"
-            fixed-header
-            :search="search"
-            :single-select="false"
-            item-key="id"
-            show-select
-            show-expand
-            :options.sync="options"
-            @click:row="clickrow"
-            :items="lids"
-            :disable-pagination="true"
-            hide-default-footer
-            :footer-props="{
+          <v-data-table v-model.lazy.trim="selected" id="tablids" :headers="headers" fixed-header :search="search"
+            :single-select="false" item-key="id" show-select show-expand :options.sync="options" @click:row="clickrow"
+            :items="lids" :disable-pagination="true" hide-default-footer :footer-props="{
               disablePagination: true,
               disableItemsPerPage: true,
-            }"
-            :expanded.sync="expanded"
-            ref="datatable"
-            :loading="loading"
-            loading-text="Загружаю... Ожидайте"
-            expand-icon=""
-            :item-class="getRowClass"
-          >
-            <template v-slot:top="{}">
+            }" :expanded.sync="expanded" ref="datatable" :loading="loading" loading-text="Загружаю... Ожидайте"
+            expand-icon="" :item-class="getRowClass">
+            <template v-slot:top="{ }">
               <v-row class="mb-4">
                 <v-col class="ml-3 wrp_group" cols="8">
-                  <v-row
-                    v-for="office in filterOffices.includes(0)
-                      ? offices
-                      : offices.filter((o) => filterOffices.includes(o.id))"
-                    :key="office.id"
-                  >
-                    <span v-if="office.id > 0" class="pt-5" style="width: 80px"
-                      >{{ office.name }}:
+                  <v-row v-for="office in filterOffices.includes(0)
+                    ? offices
+                    : offices.filter((o) => filterOffices.includes(o.id))" :key="office.id">
+                    <span v-if="office.id > 0" class="pt-5" style="width: 80px">{{ office.name }}:
                     </span>
-                    <v-checkbox
-                      v-model="filterGroups"
-                      v-for="groupa in group.filter(
-                        (g) => g.office_id == office.id
-                      )"
-                      :key="groupa.id"
-                      :value="groupa.id"
-                      :hide-details="true"
-                      @change="getLids3"
-                    >
+                    <v-checkbox v-model="filterGroups" v-for="groupa in group.filter(
+                      (g) => g.office_id == office.id
+                    )" :key="groupa.id" :value="groupa.id" :hide-details="true" @change="getLids3">
                       <template v-slot:label>
                         <div class="img">{{ groupa.fio.slice(0, 3) }}</div>
                       </template>
@@ -396,114 +223,62 @@
                   <v-row class="align-center">
                     <div class="d-flex pl-2 align-center border">
                       Отбор
-                      <v-text-field
-                        class="mx-2 mt-0 pt-0 talign-center nn"
-                        v-model.number="hmrow"
-                        hide-details="auto"
-                        color="#004D40"
-                      ></v-text-field>
+                      <v-text-field class="mx-2 mt-0 pt-0 talign-center nn" v-model.number="hmrow" hide-details="auto"
+                        color="#004D40"></v-text-field>
                     </div>
                     <h5 class="mb-0">Всего:{{ hm }}</h5>
-                    <v-pagination
-                      v-model="page"
-                      class="my--4"
-                      :length="parseInt(hm / (limit != 'all' ? limit : hm)) + 1"
-                      @input="getPage()"
-                      total-visible="10"
-                    ></v-pagination>
+                    <v-pagination v-model="page" class="my--4"
+                      :length="parseInt(hm / (limit != 'all' ? limit : hm)) + 1" @input="getPage()"
+                      total-visible="10"></v-pagination>
                   </v-row>
                 </v-col>
                 <v-spacer></v-spacer>
                 <v-col>
-                  <v-text-field
-                    v-model="search"
-                    append-icon="mdi-magnify"
-                    label="Поиск"
-                    single-line
-                    hide-details
-                    class="border px-2"
-                    style="width: 12rem"
-                  ></v-text-field>
+                  <v-text-field v-model="search" append-icon="mdi-magnify" label="Поиск" single-line hide-details
+                    class="border px-2" style="width: 12rem"></v-text-field>
                 </v-col>
 
                 <v-col>
-                  <v-select
-                    v-model="limit"
-                    rounded
-                    class="border"
-                    :items="[10, 50, 100, 250, 500, 'all']"
-                    @change="getPage(0)"
-                    style="width: 10rem"
-                  ></v-select>
+                  <v-select v-model="limit" rounded class="border" :items="[10, 50, 100, 250, 500, 'all']"
+                    @change="getPage(0)" style="width: 10rem"></v-select>
                 </v-col>
               </v-row>
             </template>
             <template v-slot:item.name="{ item }">
               {{ item.name }}
-              <v-btn
-                icon
-                x-small
-                @click.stop="copyToClickboard(item, 'name')"
-                title="Скопировать имя, емаил, телефон, поставщик "
-              >
+              <v-btn icon x-small @click.stop="copyToClickboard(item, 'name')"
+                title="Скопировать имя, емаил, телефон, поставщик ">
                 <v-icon>mdi-content-copy</v-icon>
               </v-btn>
             </template>
 
             <template v-slot:item.email="{ item }">
               <div class="d-flex">
-                <template
-                  v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
-                >
+                <template v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
                   {{ item.email }}
                 </template>
                 <template v-else>
-                  <MaskedField
-                    :value="item.email"
-                    type="email"
-                    :isUnmasked="isRowUnmasked(item.id)"
-                  />
+                  <MaskedField :value="item.email" type="email" :isUnmasked="isRowUnmasked(item.id)" />
                 </template>
-                <v-btn
-                  icon
-                  x-small
-                  @click.stop="copyToClickboard(item, 'email')"
-                  title="Скопировать email"
-                >
+                <v-btn icon x-small @click.stop="copyToClickboard(item, 'email')" title="Скопировать email">
                   <v-icon>mdi-content-copy</v-icon>
                 </v-btn>
               </div>
             </template>
 
             <template v-slot:item.tel="{ item }">
-              <template
-                v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
-              >
+              <template v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
                 <div class="d-flex">
                   {{ item.tel }}
-                  <v-btn
-                    icon
-                    x-small
-                    @click.stop="copyToClickboard(item, 'tel')"
-                    title="Скопировать телефон"
-                  >
+                  <v-btn icon x-small @click.stop="copyToClickboard(item, 'tel')" title="Скопировать телефон">
                     <v-icon>mdi-content-copy</v-icon>
                   </v-btn>
                 </div>
               </template>
               <template v-else>
                 <div class="d-flex">
-                  <MaskedField
-                    :value="item.tel"
-                    type="phone"
-                    :isUnmasked="isRowUnmasked(item.id)"
-                  />
-                  <v-btn
-                    icon
-                    x-small
-                    @click.stop="copyToClickboard(item, 'tel')"
-                    title="Скопировать телефон"
-                  >
+                  <MaskedField :value="item.tel" type="phone" :isUnmasked="isRowUnmasked(item.id)" />
+                  <v-btn icon x-small @click.stop="copyToClickboard(item, 'tel')" title="Скопировать телефон">
                     <v-icon>mdi-content-copy</v-icon>
                   </v-btn>
                 </div>
@@ -512,7 +287,7 @@
             <template v-slot:item.client_lang="{ item }">
               <span class="light-green--text lighten-1 lngtxt">{{
                 getLangName(item)
-              }}</span>
+                }}</span>
             </template>
             <template v-slot:item.client_geo="{ item }">
               <div class="d-flex align-center">
@@ -530,81 +305,44 @@
           </v-data-table>
 
           <v-row class="align-center mt-2">
-            <v-col
-              cols="2"
-              v-if="$props.user.role_id == 1 && $props.user.office_id == 0"
-            >
+            <v-col cols="2" v-if="$props.user.role_id == 1 && $props.user.office_id == 0">
               <v-btn outlined rounded @click="getAllLidsForXls" class="border">
                 <v-icon left> mdi-file-excel </v-icon>
                 Скачать таблицу
               </v-btn>
             </v-col>
             <v-col>
-              <v-btn
-                @click.stop="clearLiads()"
-                plain
-                v-if="
-                  (selected.length || hmrow != '') &&
-                  $props.user.role_id === 1 &&
-                  $props.user.group_id == 0
-                "
-                ><v-icon>mdi-delete</v-icon>Удалить логи</v-btn
-              ></v-col
-            >
+              <v-btn @click.stop="clearLiads()" plain v-if="
+                (selected.length || hmrow != '') &&
+                $props.user.role_id === 1 &&
+                $props.user.group_id == 0
+              "><v-icon>mdi-delete</v-icon>Удалить логи</v-btn></v-col>
             <v-spacer></v-spacer>
             <v-col>
-              <v-btn v-if="selected.length" @click="setTop"
-                >Назначить приоритет</v-btn
-              ></v-col
-            >
+              <v-btn v-if="selected.length" @click="setTop">Назначить приоритет</v-btn></v-col>
             <v-col>
-              <v-btn class="btn" v-if="selected.length" @click="dialog = true"
-                >Редактировать</v-btn
-              >
+              <v-btn class="btn" v-if="selected.length" @click="dialog = true">Редактировать</v-btn>
             </v-col>
             <v-col cols="3">
-              <v-select
-                v-model="selectedStatus"
-                :items="filterstatuses"
-                item-text="name"
-                item-value="id"
-                outlined
-                rounded
-                label="Назначение статусов"
-                clearable
-              >
+              <v-select v-model="selectedStatus" :items="filterstatuses" item-text="name" item-value="id" outlined
+                rounded label="Назначение статусов" clearable>
                 <template v-slot:selection="{ item }">
-                  <i
-                    :style="{
-                      background: item.color,
-                      outline: '1px solid grey',
-                    }"
-                    class="sel_stat mr-4"
-                  ></i
-                  >{{ item.name }}
+                  <i :style="{
+                    background: item.color,
+                    outline: '1px solid grey',
+                  }" class="sel_stat mr-4"></i>{{ item.name }}
                 </template>
                 <template v-slot:item="{ item }">
-                  <i
-                    :style="{
-                      background: item.color,
-                      outline: '1px solid grey',
-                    }"
-                    class="sel_stat mr-4"
-                  ></i
-                  >{{ item.name }}
+                  <i :style="{
+                    background: item.color,
+                    outline: '1px solid grey',
+                  }" class="sel_stat mr-4"></i>{{ item.name }}
                 </template>
               </v-select>
             </v-col>
             <!-- <v-col> -->
-            <v-btn
-              :disable="
-                (!selected.length && selectedStatus == 0) || hmrow != ''
-              "
-              class="border ma-2"
-              outlined
-              rounded
-              @click="changeStatus"
-            >
+            <v-btn :disable="(!selected.length && selectedStatus == 0) || hmrow != ''
+              " class="border ma-2" outlined rounded @click="changeStatus">
               Сменить статус
             </v-btn>
             <!-- </v-col> -->
@@ -614,49 +352,25 @@
       <v-col cols="2" class="px-0">
         <div class="py-3 w-100 border wrp_users">
           <!-- <div class="my-3">Поиск пользователей</div> -->
-          <v-autocomplete
-            v-model="selectedUser"
-            :items="users"
-            label="Поиск пользователей"
-            item-text="fio"
-            item-value="id"
-            :return-object="true"
-            append-icon="mdi-close"
-            outlined
-            rounded
-            @click:append="clearuser()"
-          ></v-autocomplete>
+          <v-autocomplete v-model="selectedUser" :items="users" label="Поиск пользователей" item-text="fio"
+            item-value="id" :return-object="true" append-icon="mdi-close" outlined rounded
+            @click:append="clearuser()"></v-autocomplete>
 
           <div class="scroll-y">
             <v-list>
-              <v-radio-group
-                id="usersradiogroup"
-                ref="radiogroup"
-                v-model="userid"
-                v-bind="users"
-                @change="changeLidsUser"
-              >
-                <div
-                  v-for="office in filterOffices.includes(0) ||
+              <v-radio-group id="usersradiogroup" ref="radiogroup" v-model="userid" v-bind="users"
+                @change="changeLidsUser">
+                <div v-for="office in filterOffices.includes(0) ||
                   ($props.user.group_id < 1 && $props.user.office_id < 1)
-                    ? offices
-                    : offices.filter((o) => filterOffices.includes(o.id))"
-                  :key="office.id"
-                >
+                  ? offices
+                  : offices.filter((o) => filterOffices.includes(o.id))" :key="office.id">
                   <p class="title" v-if="office.id > 0">{{ office.name }}</p>
                   <v-expansion-panels v-model="akkvalue[office.id]">
-                    <v-expansion-panel
-                      v-for="item in group.filter(
-                        (g) => g.office_id == office.id
-                      )"
-                      :key="item.group_id"
-                    >
+                    <v-expansion-panel v-for="item in group.filter(
+                      (g) => g.office_id == office.id
+                    )" :key="item.group_id">
                       <v-expansion-panel-header>
-                        <div
-                          height="60"
-                          width="60"
-                          class="img v-expansion-panel-header__icon mr-1"
-                        >
+                        <div height="60" width="60" class="img v-expansion-panel-header__icon mr-1">
                           {{ item.fio.slice(0, 3) }}
                         </div>
 
@@ -664,34 +378,17 @@
                         <div></div>
                       </v-expansion-panel-header>
                       <v-expansion-panel-content style="pa-0">
-                        <v-row
-                          v-for="user in users.filter(function (i) {
-                            return i.group_id == item.group_id;
-                          })"
-                          :key="user.id"
-                          class="mb-3"
-                        >
-                          <v-radio
-                            :label="user.fio"
-                            :value="user.id"
-                            :disabled="disableuser == user.id"
-                            class="mb-0"
-                          >
+                        <v-row v-for="user in users.filter(function (i) {
+                          return i.group_id == item.group_id;
+                        })" :key="user.id" class="mb-3">
+                          <v-radio :label="user.fio" :value="user.id" :disabled="disableuser == user.id" class="mb-0">
                           </v-radio>
 
-                          <v-btn
-                            class="ml-1"
-                            small
-                            :color="usercolor(user)"
-                            @click="
-                              disableuser = user.id;
-                              filterGroups = [];
-                              getPage(0);
-                            "
-                            :value="user.hmlids"
-                            :disabled="disableuser == user.id"
-                            >{{ user.hmlids }}</v-btn
-                          >
+                          <v-btn class="ml-1" small :color="usercolor(user)" @click="
+                            disableuser = user.id;
+                          filterGroups = [];
+                          getPage(0);
+                          " :value="user.hmlids" :disabled="disableuser == user.id">{{ user.hmlids }}</v-btn>
                           <v-btn data="new" v-if="user.statnew" label small>
                             {{ user.statnew }}
                           </v-btn>
@@ -726,34 +423,17 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-autocomplete
-                  v-model="change_lang"
-                  :items="lng"
-                  item-text="name"
-                  item-value="id"
-                  outlined
-                  rounded
-                  clearable
-                  label="Язык"
-                >
+                <v-autocomplete v-model="change_lang" :items="lng" item-text="name" item-value="id" outlined rounded
+                  clearable label="Язык">
                   <template v-slot:item="{ item }">
-                    <span :style="{ fontSize: '1.2rem' }"
-                      >{{ item.name }}
+                    <span :style="{ fontSize: '1.2rem' }">{{ item.name }}
                     </span>
                   </template>
                 </v-autocomplete>
               </v-col>
               <v-col cols="12">
-                <v-autocomplete
-                  v-model="change_geo"
-                  :items="GeoTel"
-                  item-text="txt"
-                  item-value="code"
-                  outlined
-                  rounded
-                  clearable
-                  label="Назначение GEO код"
-                >
+                <v-autocomplete v-model="change_geo" :items="GeoTel" item-text="txt" item-value="code" outlined rounded
+                  clearable label="Назначение GEO код">
                   <template v-slot:selection="{ item }">
                     <svg class="icon">
                       <use :xlink:href="'#' + item.code"></use>
@@ -762,8 +442,8 @@
                   </template>
                   <template v-slot:item="{ item }">
                     <svg class="icon">
-                      <use :xlink:href="'#' + item.code"></use></svg
-                    >{{ item.txt }}
+                      <use :xlink:href="'#' + item.code"></use>
+                    </svg>{{ item.txt }}
                   </template>
                 </v-autocomplete>
               </v-col>
@@ -1099,12 +779,12 @@ export default {
       if (type == "name") {
         navigator.clipboard.writeText(
           item[type] +
-            ", " +
-            item.email +
-            ", " +
-            item.tel +
-            ", " +
-            item.provider
+          ", " +
+          item.email +
+          ", " +
+          item.tel +
+          ", " +
+          item.provider
         );
       } else if (type == "status") {
         navigator.clipboard.writeText(item[type] + ": " + item.text);
@@ -1131,7 +811,7 @@ export default {
     },
     getLangName(ln) {
       if (!ln.client_lang) return "";
-      return this.lng.find(({ id }) => id == ln.client_lang).name;
+      return this.lng.find(({ id }) => id == ln.client_lang)?.name ?? "";
     },
     editSelect() {
       if (this.selected) {
@@ -1164,7 +844,7 @@ export default {
         }
         axios
           .post("/api/updateLiads", data)
-          .then((res) => {})
+          .then((res) => { })
           .catch((error) => console.log(error));
       }
       this.dialog = false;
@@ -1862,7 +1542,7 @@ export default {
     getLocalDateTime(DateTime) {
       return new Date(
         new Date(DateTime).getTime() -
-          new Date(DateTime).getTimezoneOffset() * 60 * 1000
+        new Date(DateTime).getTimezoneOffset() * 60 * 1000
       )
         .toJSON()
         .slice(0, 16)
@@ -2360,17 +2040,20 @@ export default {
   display: none;
 }
 
-.wrp_date .v-text-field > .v-input__control > .v-input__slot {
+.wrp_date .v-text-field>.v-input__control>.v-input__slot {
   margin-top: 3px;
   margin-bottom: 0;
 }
+
 .nn input {
   width: 3rem;
   border-bottom: 1px solid gray;
 }
+
 .v-application--is-ltr .v-data-footer__select {
   margin-top: -12px;
 }
+
 #usersradiogroup .img,
 .wrp_group .img {
   height: 60px;
@@ -2383,22 +2066,27 @@ export default {
   color: #fff;
   font-weight: bold;
 }
+
 .wrp_group .row {
   gap: 0.7rem;
 }
+
 .wrp_group .img {
   height: 34px;
   width: 34px;
 }
+
 .v-input--is-label-active .img {
   border: 1px solid #7620df;
   background: #fff;
   color: #7620df;
 }
+
 .wrp__providers {
   display: flex;
   gap: 1rem;
 }
+
 .provider_wrp {
   display: flex;
   align-items: center;
@@ -2406,12 +2094,15 @@ export default {
   border-radius: 30px;
   padding: 3px 5px;
 }
+
 #usersradiogroup .v-btn:not(.ml-3) {
   margin-left: 3px;
 }
+
 #usersradiogroup .v-btn {
   font-size: 1rem;
 }
+
 .v-btn::after {
   content: attr(data);
   position: absolute;
@@ -2422,27 +2113,35 @@ export default {
   font-size: 0.7rem;
   box-shadow: none;
 }
+
 #usersradiogroup .v-btn[data="new"] {
   background: #e0e0e0;
 }
+
 .v-btn[data="new"]::after {
   color: #aaa;
 }
+
 #usersradiogroup .v-btn[data="renew"] {
   background: #b5d7898c;
 }
+
 .v-btn[data="renew"]::after {
   color: #4aaf5b;
 }
+
 #usersradiogroup .v-btn[data="cb"] {
   background: #9fc6f3;
 }
+
 .v-btn[data="cb"]::after {
   color: #7b80cc;
 }
+
 #usersradiogroup .v-btn[data="pool"] {
   background: #bbe5dbff;
 }
+
 .v-btn[data="pool"]::after {
   color: rgb(70, 223, 188);
 }
@@ -2452,29 +2151,36 @@ export default {
   z-index: 2;
   font-weight: bold;
 }
+
 .v-radio .v-label {
   font-weight: bold;
 }
+
 .title {
   font-weight: bold;
   font-size: 1.1rem;
 }
+
 .v-select__selections {
   gap: 1rem;
 }
+
 svg.icon {
   width: 60px;
   height: 60px;
   margin-right: 1rem;
 }
+
 svg.icon.small {
   width: 30px;
   height: 30px;
   display: inline-block;
 }
+
 .lngtxt {
   font-variant-caps: all-small-caps;
 }
+
 .status_wrp.active {
   box-shadow: 0px 0px 9.5px 5px rgb(0, 255, 98);
 }

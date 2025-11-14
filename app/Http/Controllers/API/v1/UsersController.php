@@ -39,7 +39,7 @@ class UsersController extends Controller
           // ->orderBy('group_id')
           ->orderBy('order')
           ->get();
-        cache(['users' . $office_id => $data], 60); // Cache for 360 minutes
+        cache(['users' . $office_id => $data], 60); // Cache for 60 minutes
       }
       return $data;
     }
@@ -149,7 +149,8 @@ class UsersController extends Controller
   public function update(Request $request)
   {
     $data = $request->all();
-
+    $office_id = session()->get('office_id');
+    cache()->forget('users' .  $office_id);
     if (isset($data['password'])) $password = $data['password'] ? Hash::make($data['password']) : Auth::user()->password;
     // $file_name = $data['pic'] == 'null' ? NULL : $data['pic'];
     // if ($data['pic'] != 'null' && is_file($data['pic'])) {
