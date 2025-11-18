@@ -16,6 +16,7 @@
       <v-row>
         <v-tabs v-model="tab">
           <v-tab>Report</v-tab>
+          <v-tab>Import XLS</v-tab>
           <v-tab>Import CSV</v-tab>
           <v-tab v-if="$attrs.user.showInfo == 1">Import info</v-tab>
           <v-tab>CHECK DUBLIKATE MAIL</v-tab>
@@ -149,6 +150,10 @@
         </v-container>
       </v-tab-item>
       <v-tab-item>
+        <!-- Import XLS -->
+        <importXlsx :user="user" :key="'xlsx-' + tab" />
+      </v-tab-item>
+      <v-tab-item>
         <v-container>
           <v-row>
             <v-col cols="3">
@@ -185,6 +190,7 @@ import _ from "lodash";
 import JsonCSV from "vue-json-csv";
 import checkDuplicate from "./checkDuplicate.vue";
 import importInfo from "./importInfo.vue";
+import importXlsx from "./importXlsx.vue";
 import logtel from "../manager/logtel.vue";
 
 export default {
@@ -194,6 +200,7 @@ export default {
     logtel,
     checkDuplicate,
     importInfo,
+    importXlsx,
   },
   data: () => ({
     expanded: [],

@@ -28,23 +28,24 @@ class LidsController extends Controller
     $req = $request->all();
     $data = [];
     $provider = Provider::select('providers.id', 'providers.name', 'providers.user_id')->where('providers.id', $req['provider_id'])->first();
-    if (!$provider->user_id) return $request('no user', 400);
+    if (!$provider->user_id) return response('no user', 400);
     $data['user_id'] = $provider['user_id'];
     $data['provider_id'] = $provider->id;
+    $data['dep_reg'] = 1;
     foreach ($req['lids'] as $lid) {
       if (!isset($lid["tel"])) {
         continue;
       }
       $data['data'][] = [
-        'name' => $lid['name'],
+        'name' => isset($lid['name']) ? $lid['name'] : '',
         'tel' => $lid["tel"],
-        'email' => $lid['email'],
-        'afilyator' => $lid['afilyator'],
+        'email' => isset($lid['email']) ? $lid['email'] : '',
+        'afilyator' => isset($lid['afilyator']) ? $lid['afilyator'] : '',
       ];
     }
-    $request = new Request();
+    $newRequest = new Request();
 
-    return $this->newlids($request->merge($data));
+    return $this->newlids($newRequest->merge($data));
   }
 
   public function importlid(Request $request)
