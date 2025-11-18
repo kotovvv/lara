@@ -488,7 +488,8 @@ export default {
           return (
             u.serv === this.editedItem.serv &&
             u.user_serv === this.editedItem.user_serv &&
-            u.id !== this.editedItem.id
+            u.id !== this.editedItem.id &&
+            u.active === this.editedItem.active
           );
         });
 

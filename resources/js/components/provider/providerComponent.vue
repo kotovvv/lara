@@ -16,7 +16,7 @@
       <v-row>
         <v-tabs v-model="tab">
           <v-tab>Report</v-tab>
-          <v-tab>Import</v-tab>
+          <v-tab>Import CSV</v-tab>
           <v-tab v-if="$attrs.user.showInfo == 1">Import info</v-tab>
           <v-tab>CHECK DUBLIKATE MAIL</v-tab>
         </v-tabs>
