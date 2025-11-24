@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto" max-width="500">
+  <v-card class="mx-auto" max-width="600">
     <v-data-table :headers="headers" :items="providers" sort-by="role_id" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat>
@@ -12,7 +12,7 @@
                 Добавить поставщика
               </v-btn>
             </template>
-            <v-card>
+            <v-card style="height:85vh; overflow-y:auto;">
               <v-card-title>
                 <span class="headline">{{ formTitle }}</span>
               </v-card-title>
@@ -69,8 +69,8 @@
                       </v-autocomplete>
                     </v-col>
                     <v-col cols="6">
-                      <v-select :items="users" v-model="editedItem.user_id" item-text="name" item-value="id"
-                        label="Пользователь для импорта"></v-select>
+                      <v-autocomplete :items="users" v-model="editedItem.user_id" item-text="name" item-value="id"
+                        label="Пользователь для импорта"></v-autocomplete>
                     </v-col>
                     <v-col cols="6">
                       <v-autocomplete v-model="editedItem.responsible_user" multiple :items="sortedResponsibleUsers"
