@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Lid;
-use App\Models\Log;
+use App\Models\Log as LogModel;
 use App\Models\Depozit;
 use App\Models\User;
 use App\Models\Provider;
 use Illuminate\Support\Facades\DB;
 use Debugbar;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log as LogFacade;
 
 class LidsController extends Controller
 {
@@ -240,7 +241,7 @@ class LidsController extends Controller
   public function store(Request $request)
   {
     //
-    Log::alert($request);
+    LogFacade::alert($request);
   }
 
   public function changelidsuser(Request $request)
@@ -318,12 +319,12 @@ class LidsController extends Controller
       //only for lids3
       if (isset($data['duplstat_id']) && in_array($lid['id'], $data['duplstat_id'])) {
         //count rows withs status id in not(22,8)
-        $other_status = Log::select('status_id')->where('lid_id', $lid['id'])->whereNotIn('status_id', [22, 8])->count();
+        $other_status = LogModel::select('status_id')->where('lid_id', $lid['id'])->whereNotIn('status_id', [22, 8])->count();
 
         if (!$other_status) {
-          $a_lid['text'] = Log::where('lid_id', $lid['id'])->where('status_id', 22)->orderBy('created_at', 'desc')->value('text');
+          $a_lid['text'] = LogModel::where('lid_id', $lid['id'])->where('status_id', 22)->orderBy('created_at', 'desc')->value('text');
           //if not another status delete log for only duplicate
-          Log::where('lid_id', $lid['id'])->delete();
+          LogModel::where('lid_id', $lid['id'])->delete();
         }
       }
       if (isset($lid['top']) && $lid['top'] == 1) {
@@ -513,7 +514,7 @@ class LidsController extends Controller
           'created_at' => $res['date_start'],
           'lid_id' => $n_lid->id
         ];
-        Log::insert($log);
+        LogModel::insert($log);
       } catch (\Throwable $th) {
         $res['error'] = $th;
       }
@@ -750,8 +751,11 @@ class LidsController extends Controller
         return $q->whereRaw('(SELECT count(*) FROM `logs` WHERE `lids`.`id` = `logs`.`lid_id` AND `logs`.`status_id` = 9) > 0');
       });
 
-    // Считаем количество без выборки всех строк
-    $response['hm'] = (clone $q_leads)->count();
+    // Клон без сортировки и пагинации для подсчетов
+    $countsBase = clone $q_leads;
+
+    // Считаем количество без влияния сортировки/лимитов
+    $response['hm'] = (clone $countsBase)->count();
 
     // Получаем лиды с пагинацией и сортировкой
     $q_leads->when($limit !== 'all' && $page > 0, fn($q) => $q->offset($limit * ($page - 1)))
@@ -759,24 +763,26 @@ class LidsController extends Controller
 
     // Оптимизация сортировки
     if ($sortBy) {
+
       if ($sortBy === 'statuses') {
         $q_leads->leftJoin('statuses', 'statuses.id', '=', 'status_id')->orderBy('statuses.name', $sortDesc);
       } elseif ($sortBy === 'provider_id') {
         $q_leads->leftJoin('providers', 'providers.id', '=', 'lids.provider_id')->orderBy('providers.name', $sortDesc);
       } elseif ($sortBy === 'user_id') {
         $q_leads->leftJoin('users', 'users.id', '=', 'lids.user_id')->orderBy('users.name', $sortDesc);
-      }
-      // elseif ($sortBy === 'depozit') {
-      //   $q_leads->orderBy('depozit', $sortDesc);
-      // }
-      else {
+      } elseif ($sortBy === 'depozit') {
+
+        $q_leads->orderBy('depozit', $sortDesc);
+      } else {
+
         $q_leads->orderBy('lids.' . $sortBy, $sortDesc);
       }
     }
 
     $response['lids'] = $q_leads->get();
 
-    $subQuery = $q_leads
+    // Статистику по статусам считаем на базе без сортировки/лимитов
+    $subQuery = $countsBase
       ->select('status_id', DB::raw('COUNT(*) as hm'))
       ->groupBy('status_id');
 
@@ -1236,7 +1242,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
     $del = Lid::select('id')->whereIn('id', $lids)->when(!$isAdmin, function ($query) {
       return $query->where('status_id', '!=', 32);
     })->get();
-    Log::whereIn('lid_id', $del)->where('last_log', 0)->delete();
+    LogModel::whereIn('lid_id', $del)->where('last_log', 0)->delete();
   }
 
   public function isAdmin($user_id)
@@ -1359,7 +1365,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         'created_at' => $n_lid->created_at,
         'lid_id' => $n_lid->id
       ];
-      Log::insert($log);
+      LogModel::insert($log);
     }
 
     $res['status'] = 'OK';
@@ -1909,7 +1915,7 @@ WHERE l.`provider_id` = '" . $f_key->id . "' AND DATE(d.`created_at`) BETWEEN '"
         $sql = "UPDATE `lids` SET `address` = '" . $btc[0]->address . "' WHERE `id` = " . $req['id'];
         DB::select(DB::raw($sql));
 
-        $log = new Log;
+        $log = new LogModel;
         $log->tel = $req['tel'];
         $log->lid_id = $req['id'];
         $log->user_id = $req['user_id'];
